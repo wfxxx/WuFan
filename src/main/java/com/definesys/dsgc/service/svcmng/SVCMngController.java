@@ -1,0 +1,97 @@
+package com.definesys.dsgc.service.svcmng;
+
+import com.definesys.dsgc.service.svcmng.bean.*;
+import com.definesys.mpaas.common.http.Response;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping(value = "dsgc/svcmng")
+public class SVCMngController {
+
+    @Autowired
+    private SVCMngService svcMngService;
+
+    @RequestMapping(value = "/querySvcMngServList",method = RequestMethod.POST)
+    public Response querySvcMngServList(@RequestBody SVCCommonReqBean param,
+                                 @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
+                                 @RequestParam(value = "pageIndex", required = false, defaultValue = "1") int pageIndex, HttpServletRequest request){
+        String userId = request.getHeader("uid");
+        String userRole= request.getHeader("userRole");
+        return Response.ok().setData(svcMngService.querySvcMngServList(param,pageIndex,pageSize,userId,userRole));
+    }
+    @RequestMapping(value = "/generateMsgExample",method = RequestMethod.POST)
+    public Response generateMsgExample(@RequestBody SVCMngGenerateMsgVO param){
+        Map<String,Object> result = svcMngService.generateMsgExample(param);
+    return Response.ok().setData(result);
+    }
+    @RequestMapping(value = "/generateMsgParameter",method = RequestMethod.POST)
+    public Response generateMsgParameter(@RequestBody SVCMngGenerateMsgVO param){
+        List<SVCMngIoParameterDTO> result =  svcMngService.generateMsgParameter(param);
+        return Response.ok().setData(result);
+    }
+    @RequestMapping(value = "/initSvcMngIoParameterData",method = RequestMethod.POST)
+    public Response initSvcMngIoParameterData(@RequestBody SVCCommonReqBean param){
+        Map<String ,Object> result =  svcMngService.initSvcMngIoParameterData(param.getCon0());
+        return Response.ok().setData(result);
+    }
+    @RequestMapping(value = "/queryBasicInfoByServNo",method = RequestMethod.POST)
+    public Response queryBasicInfoByServNo(@RequestBody SVCCommonReqBean param){
+        SVCServBasicInfoDTO result =  svcMngService.queryBasicInfoByServNo(param.getCon0());
+        return Response.ok().setData(result);
+    }
+    @RequestMapping(value = "/saveServBasicInfo",method = RequestMethod.POST)
+    public Response saveServBasicInfo(@RequestBody SVCServBasicInfoDTO svcServBasicInfo){
+        svcMngService.saveServBasicInfo(svcServBasicInfo);
+        return Response.ok();
+    }
+    @RequestMapping(value = "/queryServUri",method = RequestMethod.POST)
+    public Response queryServUri(@RequestBody SVCCommonReqBean param){
+        List<ServUriDTO> result =  svcMngService.queryServUri(param.getCon0());
+        return Response.ok().setData(result);
+    }
+    @RequestMapping(value = "/delServUri",method = RequestMethod.POST)
+    public Response delServUri(@RequestBody SVCCommonReqBean param){
+        List<ServUriDTO> result =  svcMngService.queryServUri(param.getCon0());
+        return Response.ok().setData(result);
+    }
+    @RequestMapping(value = "/queryServUriParamter",method = RequestMethod.POST)
+    public Response queryServUriParamter(@RequestBody SVCCommonReqBean param){
+        List<ServUriParamterDTO> result =  svcMngService.queryServUriParamter(param.getCon0());
+        return Response.ok().setData(result);
+    }
+    @RequestMapping(value = "/queryUriParamTemplateList",method = RequestMethod.GET)
+    public Response queryUriParamTemplateList(){
+        return Response.ok().setData(svcMngService.queryUriParamTemplateList());
+    }
+    @RequestMapping(value = "/saveAsTemplate",method = RequestMethod.POST)
+    public Response saveAsTemplate(@RequestBody SaveAsTemplateVO vo,HttpServletRequest request){
+        String userId = request.getHeader("uid");
+        String userRole= request.getHeader("userRole");
+        if(!"SuperAdministrators".equals(userRole) || "Administrators".equals(userRole)){
+        return Response.error("无权限操作");
+        }
+        svcMngService.saveAsTemplate(vo);
+        return Response.ok();
+    }
+    @RequestMapping(value = "/saveServLocationData",method = RequestMethod.POST)
+    public Response saveServLocationData(@RequestBody SaveServLocationDataVO vo,HttpServletRequest request){
+        String userId = request.getHeader("uid");
+        String userRole= request.getHeader("userRole");
+        if(!"SuperAdministrators".equals(userRole) || "Administrators".equals(userRole)){
+            return Response.error("无权限操作");
+        }
+       int temp = svcMngService.saveServLocationData(vo);
+        if(temp == -1){
+
+            return Response.error("服务URL不能为空");
+        }else {
+            return Response.ok();
+        }
+
+    }
+}
