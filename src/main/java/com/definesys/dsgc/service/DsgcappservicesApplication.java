@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @EnableSwagger2
-@ComponentScan(basePackages = {"com.definesys.mpaas","com.definesys.dsgc"})
+@ComponentScan(basePackages = {"com.definesys.mpaas","com.definesys.dsgc.service"})
 @SpringBootApplication(exclude = {ValidationAutoConfiguration.class,FreeMarkerAutoConfiguration.class})
 @EnableTransactionManagement
 public class DsgcappservicesApplication {
