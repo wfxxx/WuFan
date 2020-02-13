@@ -1,15 +1,21 @@
 package com.definesys.dsgc.service.market.bean;
 
+import com.definesys.mpaas.query.annotation.*;
 
+@Table("DSGC_APIS")
 public class MarketApiBean {
 
+    @RowID(type = RowIDType.UUID)
     private String apiId;
     private String apiName;
     private String apiDesc;
     private String appCode;
     private String marketCategory;
     private String marketStat;
+    @Column(type = ColumnType.JAVA)
     private String type;
+    @Column(type = ColumnType.JAVA)
+    private String cateName;
 
     public String getApiId() {
         return apiId;
@@ -66,5 +72,13 @@ public class MarketApiBean {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getCateName() {
+        return cateName;
+    }
+
+    public void setCateName(String cateName) {
+        this.cateName = cateName;
     }
 }
