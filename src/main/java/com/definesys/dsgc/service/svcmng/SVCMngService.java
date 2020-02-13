@@ -432,17 +432,19 @@ public class SVCMngService {
     public ReqParamBaseDataDTO queryReqParamBaseData(SVCCommonReqBean param){
         ReqParamBaseDataDTO result = new ReqParamBaseDataDTO();
         List<DSGCPayloadParamsBean> dsgcPayloadParams =svcMngDao.queryServPayloadParam(param);
-        List<PayloadParamDTO> paramDTOS = new ArrayList<>();
+        List<SVCMngIoParameterDTO> paramDTOS = new ArrayList<>();
         if(dsgcPayloadParams != null){
             Iterator<DSGCPayloadParamsBean> iterator = dsgcPayloadParams.iterator();
             while (iterator.hasNext()){
                 DSGCPayloadParamsBean temp = iterator.next();
-                PayloadParamDTO dto = new PayloadParamDTO();
-                dto.setParamCode(temp.getParamCode());
-                dto.setParamDesc(temp.getParamDesc());
-                dto.setParamNeed(temp.getParamNeed());
-                dto.setParamSample(temp.getParamSample());
-                dto.setParamType(temp.getParamType());
+               // PayloadParamDTO dto = new PayloadParamDTO();
+                SVCMngIoParameterDTO dto = new SVCMngIoParameterDTO();
+                dto.setNodeName(temp.getParamCode());
+                dto.setNodeDesc(temp.getParamDesc());
+                dto.setRequired(temp.getParamNeed()=="Y"?true:false);
+                dto.setNodeValue(temp.getParamSample());
+                dto.setDataType(temp.getParamType());
+                dto.setNodeType("custom");
                 paramDTOS.add(dto);
             }
         }
@@ -469,6 +471,81 @@ public class SVCMngService {
         }
         result.setSampleMap(map);
         return result;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void saveParamData(SaveParamDataVO param){
+        if(StringUtil.isBlank(param.getRestSample()) && StringUtil.isBlank(param.getSoapSample())){
+            return;
+        }
+        if(StringUtil.isNotBlank(param.getRestSample())){
+            DSGCPayloadSampleBean dsgcPayloadSampleBean = new DSGCPayloadSampleBean();
+            dsgcPayloadSampleBean.setResCode(param.getServNo());
+            dsgcPayloadSampleBean.setReqOrRes(param.getParamType());
+            dsgcPayloadSampleBean.setUriType("REST");
+            DSGCPayloadSampleBean payloadRestSampleBean = svcMngDao.querySrvPaloadSoapOrRestSample(dsgcPayloadSampleBean);
+            if(payloadRestSampleBean != null){
+                payloadRestSampleBean.setPlSample(param.getRestSample());
+                svcMngDao.updateServPayloadById(payloadRestSampleBean);
+            }else {
+                DSGCPayloadSampleBean bean = new DSGCPayloadSampleBean();
+                bean.setResCode(param.getServNo());
+                bean.setReqOrRes(param.getParamType());
+                bean.setUriType("REST");
+                bean.setPlSample(param.getRestSample());
+                bean.setPlType("JSON");
+                svcMngDao.addServPayload(bean);
+            }
+        }
+        if(StringUtil.isNotBlank(param.getSoapSample())){
+            DSGCPayloadSampleBean dsgcPayloadSampleBean = new DSGCPayloadSampleBean();
+            dsgcPayloadSampleBean.setResCode(param.getServNo());
+            dsgcPayloadSampleBean.setReqOrRes(param.getParamType());
+            dsgcPayloadSampleBean.setUriType("SOAP");
+            DSGCPayloadSampleBean payloadSoapSampleBean = svcMngDao.querySrvPaloadSoapOrRestSample(dsgcPayloadSampleBean);
+            if(payloadSoapSampleBean != null){
+                payloadSoapSampleBean.setPlSample(param.getSoapSample());
+                svcMngDao.updateServPayloadById(payloadSoapSampleBean);
+            }else {
+                DSGCPayloadSampleBean bean = new DSGCPayloadSampleBean();
+                bean.setResCode(param.getServNo());
+                bean.setReqOrRes(param.getParamType());
+                bean.setUriType("SOAP");
+                bean.setPlSample(param.getSoapSample());
+                bean.setPlType("XML");
+                svcMngDao.addServPayload(bean);
+            }
+
+        }
+
+
+        if(param.getParamList() != null &&param.getParamList().size()>0){
+            SVCCommonReqBean svcCommonReqBean = new SVCCommonReqBean();
+            svcCommonReqBean.setCon0(param.getServNo());
+            svcCommonReqBean.setQueryType(param.getParamType());
+            List<DSGCPayloadParamsBean> list = svcMngDao.queryServPayloadParam(svcCommonReqBean);
+            if(list.size()>0) {
+                DSGCPayloadParamsBean dsgcPayloadParamsBean = new DSGCPayloadParamsBean();
+                dsgcPayloadParamsBean.setResCode(param.getServNo());
+                dsgcPayloadParamsBean.setReqOrRes(param.getParamType());
+                svcMngDao.delServPayloadParam(dsgcPayloadParamsBean);
+                }
+                List<DSGCPayloadParamsBean> payloadParamsBeans = new ArrayList<>();
+                Iterator<SVCMngIoParameterDTO> iterator = param.getParamList().iterator();
+                while (iterator.hasNext()){
+                    SVCMngIoParameterDTO dto = iterator.next();
+                    DSGCPayloadParamsBean paramsBean = new DSGCPayloadParamsBean();
+                    paramsBean.setResCode(param.getServNo());
+                    paramsBean.setReqOrRes(param.getParamType());
+                    paramsBean.setParamCode(dto.getNodeName());
+                    paramsBean.setParamType(dto.getDataType());
+                    paramsBean.setParamDesc(dto.getNodeDesc());
+                    paramsBean.setParamNeed(dto.getRequired()?"Y":"N");
+                    paramsBean.setParamSample(dto.getNodeValue());
+                    payloadParamsBeans.add(paramsBean);
+                }
+                svcMngDao.addServPayloadParam(payloadParamsBeans);
+        }
     }
 
 }

@@ -4,14 +4,14 @@ import java.util.List;
 import java.util.Map;
 
 public class ReqParamBaseDataDTO {
-    private List<PayloadParamDTO> paramList;
+    private List<SVCMngIoParameterDTO> paramList;
     private Map<String,String> sampleMap;
 
-    public List<PayloadParamDTO> getParamList() {
+    public List<SVCMngIoParameterDTO> getParamList() {
         return paramList;
     }
 
-    public void setParamList(List<PayloadParamDTO> paramList) {
+    public void setParamList(List<SVCMngIoParameterDTO> paramList) {
         this.paramList = paramList;
     }
 

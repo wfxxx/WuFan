@@ -99,4 +99,9 @@ public class SVCMngController {
         ReqParamBaseDataDTO result =  svcMngService.queryReqParamBaseData(param);
         return Response.ok().setData(result);
     }
+    @RequestMapping(value = "/saveParamData",method = RequestMethod.POST)
+    public Response saveParamData(@RequestBody SaveParamDataVO param){
+       svcMngService.saveParamData(param);
+        return Response.ok();
+    }
 }

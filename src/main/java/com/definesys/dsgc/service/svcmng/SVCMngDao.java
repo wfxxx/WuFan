@@ -147,4 +147,34 @@ public class SVCMngDao {
                 .eq("req_or_res",param.getQueryType())
                 .doQuery(DSGCPayloadSampleBean.class);
     }
+    public DSGCPayloadSampleBean querySrvPaloadSoapOrRestSample(DSGCPayloadSampleBean param){
+        return sw.buildQuery()
+                .eq("res_code",param.getResCode())
+                .eq("req_or_res",param.getReqOrRes())
+                .eq("uri_type",param.getUriType())
+                .doQueryFirst(DSGCPayloadSampleBean.class);
+    }
+    public void addServPayload(DSGCPayloadSampleBean bean){
+        sw.buildQuery().doInsert(bean);
+    }
+    public void updateServPayloadById(DSGCPayloadSampleBean bean){
+        sw.buildQuery()
+                .eq("dpsam_id",bean.getDpsamId())
+                .update("pl_sample",bean.getPlSample())
+                .doUpdate(DSGCPayloadSampleBean.class);
+    }
+    public void delServPayloadParam(DSGCPayloadParamsBean dsgcPayloadParamsBean){
+        sw.buildQuery()
+                .eq("res_code",dsgcPayloadParamsBean.getResCode())
+                .eq("req_or_res",dsgcPayloadParamsBean.getReqOrRes())
+                .doDelete(DSGCPayloadParamsBean.class);
+    }
+
+    public void addServPayloadParam(List<DSGCPayloadParamsBean> payloadParamsBeans){
+        sw.buildQuery()
+                .doBatchInsert(payloadParamsBeans);
+    }
+//    public void addServSoapPayload(DSGCPayloadSampleBean bean){
+//        sw.buildQuery().doInsert(bean);
+//    }
 }
