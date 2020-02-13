@@ -392,6 +392,7 @@ public class SVCMngService {
         }
         return 1;
     }
+    @Transactional(rollbackFor = Exception.class)
     public void updateServDataCompletion(String servNo){
         int completion = 0;
         DSGCService dsgcService = svcMngDao.queryServByServNo(servNo);
@@ -474,22 +475,22 @@ public class SVCMngService {
         result.setSampleMap(map);
         return result;
     }
-    
+
     @Transactional(rollbackFor = Exception.class)
-    public void saveParamData(SaveParamDataVO param){
-        if(StringUtil.isBlank(param.getRestSample()) && StringUtil.isBlank(param.getSoapSample())){
+    public void saveParamData(SaveParamDataVO param) {
+        if (StringUtil.isBlank(param.getRestSample()) && StringUtil.isBlank(param.getSoapSample())) {
             return;
         }
-        if(StringUtil.isNotBlank(param.getRestSample())){
+        if (StringUtil.isNotBlank(param.getRestSample())) {
             DSGCPayloadSampleBean dsgcPayloadSampleBean = new DSGCPayloadSampleBean();
             dsgcPayloadSampleBean.setResCode(param.getServNo());
             dsgcPayloadSampleBean.setReqOrRes(param.getParamType());
             dsgcPayloadSampleBean.setUriType("REST");
             DSGCPayloadSampleBean payloadRestSampleBean = svcMngDao.querySrvPaloadSoapOrRestSample(dsgcPayloadSampleBean);
-            if(payloadRestSampleBean != null){
+            if (payloadRestSampleBean != null) {
                 payloadRestSampleBean.setPlSample(param.getRestSample());
                 svcMngDao.updateServPayloadById(payloadRestSampleBean);
-            }else {
+            } else {
                 DSGCPayloadSampleBean bean = new DSGCPayloadSampleBean();
                 bean.setResCode(param.getServNo());
                 bean.setReqOrRes(param.getParamType());
@@ -499,16 +500,16 @@ public class SVCMngService {
                 svcMngDao.addServPayload(bean);
             }
         }
-        if(StringUtil.isNotBlank(param.getSoapSample())){
+        if (StringUtil.isNotBlank(param.getSoapSample())) {
             DSGCPayloadSampleBean dsgcPayloadSampleBean = new DSGCPayloadSampleBean();
             dsgcPayloadSampleBean.setResCode(param.getServNo());
             dsgcPayloadSampleBean.setReqOrRes(param.getParamType());
             dsgcPayloadSampleBean.setUriType("SOAP");
             DSGCPayloadSampleBean payloadSoapSampleBean = svcMngDao.querySrvPaloadSoapOrRestSample(dsgcPayloadSampleBean);
-            if(payloadSoapSampleBean != null){
+            if (payloadSoapSampleBean != null) {
                 payloadSoapSampleBean.setPlSample(param.getSoapSample());
                 svcMngDao.updateServPayloadById(payloadSoapSampleBean);
-            }else {
+            } else {
                 DSGCPayloadSampleBean bean = new DSGCPayloadSampleBean();
                 bean.setResCode(param.getServNo());
                 bean.setReqOrRes(param.getParamType());
@@ -521,33 +522,34 @@ public class SVCMngService {
         }
 
 
-        if(param.getParamList() != null &&param.getParamList().size()>0){
+        if (param.getParamList() != null && param.getParamList().size() > 0) {
             SVCCommonReqBean svcCommonReqBean = new SVCCommonReqBean();
             svcCommonReqBean.setCon0(param.getServNo());
             svcCommonReqBean.setQueryType(param.getParamType());
             List<DSGCPayloadParamsBean> list = svcMngDao.queryServPayloadParam(svcCommonReqBean);
-            if(list.size()>0) {
+            if (list.size() > 0) {
                 DSGCPayloadParamsBean dsgcPayloadParamsBean = new DSGCPayloadParamsBean();
                 dsgcPayloadParamsBean.setResCode(param.getServNo());
                 dsgcPayloadParamsBean.setReqOrRes(param.getParamType());
                 svcMngDao.delServPayloadParam(dsgcPayloadParamsBean);
-                }
-                List<DSGCPayloadParamsBean> payloadParamsBeans = new ArrayList<>();
-                Iterator<SVCMngIoParameterDTO> iterator = param.getParamList().iterator();
-                while (iterator.hasNext()){
-                    SVCMngIoParameterDTO dto = iterator.next();
-                    DSGCPayloadParamsBean paramsBean = new DSGCPayloadParamsBean();
-                    paramsBean.setResCode(param.getServNo());
-                    paramsBean.setReqOrRes(param.getParamType());
-                    paramsBean.setParamCode(dto.getNodeName());
-                    paramsBean.setParamType(dto.getDataType());
-                    paramsBean.setParamDesc(dto.getNodeDesc());
-                    paramsBean.setParamNeed(dto.getRequired()?"Y":"N");
-                    paramsBean.setParamSample(dto.getNodeValue());
-                    payloadParamsBeans.add(paramsBean);
-                }
-                svcMngDao.addServPayloadParam(payloadParamsBeans);
+            }
+            List<DSGCPayloadParamsBean> payloadParamsBeans = new ArrayList<>();
+            Iterator<SVCMngIoParameterDTO> iterator = param.getParamList().iterator();
+            while (iterator.hasNext()) {
+                SVCMngIoParameterDTO dto = iterator.next();
+                DSGCPayloadParamsBean paramsBean = new DSGCPayloadParamsBean();
+                paramsBean.setResCode(param.getServNo());
+                paramsBean.setReqOrRes(param.getParamType());
+                paramsBean.setParamCode(dto.getNodeName());
+                paramsBean.setParamType(dto.getDataType());
+                paramsBean.setParamDesc(dto.getNodeDesc());
+                paramsBean.setParamNeed(dto.getRequired() ? "Y" : "N");
+                paramsBean.setParamSample(dto.getNodeValue());
+                payloadParamsBeans.add(paramsBean);
+            }
+            svcMngDao.addServPayloadParam(payloadParamsBeans);
         }
+    }
     //返回解析的字段Map<name,value>集合，若va;ue=null，表示该name节点为父节点，不包含内容。
     public List<Map<String,String>>  resloveXML(String XMLDemo){
         String patternXml="<(.*?)>";
