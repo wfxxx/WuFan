@@ -1,10 +1,6 @@
 package com.definesys.dsgc.service.svcmng;
 
-import com.definesys.dsgc.service.svcmng.bean.DSGCUriParamsBean;
-import com.definesys.dsgc.service.svcmng.bean.DSGCUriParamsTmplBean;
-import com.definesys.dsgc.service.svcmng.bean.SVCCommonReqBean;
-import com.definesys.dsgc.service.svcmng.bean.DSGCService;
-import com.definesys.dsgc.service.svcmng.bean.DSGCServicesUri;
+import com.definesys.dsgc.service.svcmng.bean.*;
 import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.mpaas.query.MpaasQuery;
 import com.definesys.mpaas.query.MpaasQueryFactory;
@@ -131,5 +127,24 @@ public class SVCMngDao {
     }
     public void addServUriParamter(List<DSGCUriParamsBean> list){
         sw.buildQuery().doBatchInsert(list);
+    }
+    public DSGCService queryServByServNo(String servNo){
+        return sw.buildQuery().eq("servNo",servNo).doQueryFirst(DSGCService.class);
+    }
+    public void updateServDataCompletion(DSGCService dsgcService){
+        sw.buildQuery().eq("serv_no",dsgcService.getServNo()).update("info_full",dsgcService.getInfoFull()).doUpdate(DSGCService.class);
+    }
+
+    public List<DSGCPayloadParamsBean> queryServPayloadParam(SVCCommonReqBean param){
+        return sw.buildQuery()
+                .eq("res_code",param.getCon0())
+                .eq("req_or_res",param.getQueryType())
+                .doQuery(DSGCPayloadParamsBean.class);
+    }
+    public List<DSGCPayloadSampleBean> querySrvPaloadSample(SVCCommonReqBean param){
+        return sw.buildQuery()
+                .eq("res_code",param.getCon0())
+                .eq("req_or_res",param.getQueryType())
+                .doQuery(DSGCPayloadSampleBean.class);
     }
 }

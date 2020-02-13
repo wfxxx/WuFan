@@ -13,6 +13,7 @@ import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
 import com.definesys.dsgc.service.esbenv.bean.DSGCEnvInfoCfg;
 import com.definesys.dsgc.service.lkv.bean.FndLookupValue;
 import com.definesys.dsgc.service.esbenv.DSGCBusCfgDao;
+import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -389,6 +390,85 @@ public class SVCMngService {
         }
         return 1;
     }
+    public void updateServDataCompletion(String servNo){
+        int completion = 0;
+        DSGCService dsgcService = svcMngDao.queryServByServNo(servNo);
+        if(StringUtil.isNotBlank(dsgcService.getServNo())){
+            completion +=10;
+        }
+        if(StringUtil.isNotBlank(dsgcService.getServName())){
+            completion +=10;
+        }
+        if(StringUtil.isNotBlank(dsgcService.getSubordinateSystem())){
+            completion +=10;
+        }
+        if(StringUtil.isNotBlank(dsgcService.getShareType())){
+            completion +=10;
+        }
+        if(StringUtil.isNotBlank(dsgcService.getServDesc())){
+            completion +=10;
+        }
+        List<DSGCServicesUri> uris = svcMngDao.queryServUri(servNo);
+        if(uris != null){
+            List<String> uriTypeList = new ArrayList<>();
+            Iterator<DSGCServicesUri> iterator = uris.iterator();
+            while (iterator.hasNext()){
+                DSGCServicesUri dsgcServicesUri = iterator.next();
+                uriTypeList.add(dsgcServicesUri.getUriType());
+            }
+            if (uriTypeList.contains("REST")){
+                completion +=5;
+            }
+            if (uriTypeList.contains("SOAP")){
+                completion +=5;
+            }
+        }
+        DSGCService service = new DSGCService();
+        service.setInfoFull(completion);
+        service.setServNo(servNo);
+        svcMngDao.updateServDataCompletion(service);
+    }
 
+    public ReqParamBaseDataDTO queryReqParamBaseData(SVCCommonReqBean param){
+        ReqParamBaseDataDTO result = new ReqParamBaseDataDTO();
+        List<DSGCPayloadParamsBean> dsgcPayloadParams =svcMngDao.queryServPayloadParam(param);
+        List<PayloadParamDTO> paramDTOS = new ArrayList<>();
+        if(dsgcPayloadParams != null){
+            Iterator<DSGCPayloadParamsBean> iterator = dsgcPayloadParams.iterator();
+            while (iterator.hasNext()){
+                DSGCPayloadParamsBean temp = iterator.next();
+                PayloadParamDTO dto = new PayloadParamDTO();
+                dto.setParamCode(temp.getParamCode());
+                dto.setParamDesc(temp.getParamDesc());
+                dto.setParamNeed(temp.getParamNeed());
+                dto.setParamSample(temp.getParamSample());
+                dto.setParamType(temp.getParamType());
+                paramDTOS.add(dto);
+            }
+        }
+        result.setParamList(paramDTOS);
+        List<DSGCPayloadSampleBean> payloadSampleBeans = svcMngDao.querySrvPaloadSample(param);
+        Map<String,String> map = new HashMap<>();
+        map.put("REST","");
+        map.put("SOAP","");
+        if(dsgcPayloadParams != null){
+            Iterator<DSGCPayloadSampleBean> iterator = payloadSampleBeans.iterator();
+            while (iterator.hasNext()){
+                DSGCPayloadSampleBean temp = iterator.next();
+                PayloadSampleDTO payloadSampleDTO = new PayloadSampleDTO();
+                payloadSampleDTO.setResCode(temp.getResCode());
+                payloadSampleDTO.setPlSample(temp.getPlSample());
+                if ("REST".equals(temp.getUriType())){
+                    map.put("REST",payloadSampleDTO.getPlSample());
+                }
+                if ("SOAP".equals(temp.getUriType())){
+                    map.put("SOAP",payloadSampleDTO.getPlSample());
+                }
+            }
+
+        }
+        result.setSampleMap(map);
+        return result;
+    }
 
 }
