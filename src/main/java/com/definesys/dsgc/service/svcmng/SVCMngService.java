@@ -20,6 +20,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class SVCMngService {
@@ -472,7 +474,7 @@ public class SVCMngService {
         result.setSampleMap(map);
         return result;
     }
-
+    
     @Transactional(rollbackFor = Exception.class)
     public void saveParamData(SaveParamDataVO param){
         if(StringUtil.isBlank(param.getRestSample()) && StringUtil.isBlank(param.getSoapSample())){
@@ -546,6 +548,80 @@ public class SVCMngService {
                 }
                 svcMngDao.addServPayloadParam(payloadParamsBeans);
         }
+    //返回解析的字段Map<name,value>集合，若va;ue=null，表示该name节点为父节点，不包含内容。
+    public List<Map<String,String>>  resloveXML(String XMLDemo){
+        String patternXml="<(.*?)>";
+        // 创建 Pattern 对象
+        Pattern r = Pattern.compile(patternXml);
+        // 现在创建 matcher 对象
+        Matcher m = r.matcher(XMLDemo);
+        Map<String,String> value=new HashMap<String,String>();
+        while (m.find()) {
+            String node=m.group();
+            //<value></value>,匹配到结束字符返回
+            if(node.indexOf("</")>-1){
+                continue;
+            }
+            String nodetext=node.substring(1,node.length()-1);
+            //匹配<value>的文本
+            String patternXmlContext="<"+nodetext+">"+"(.*?)"+"</"+nodetext+">";
+            Pattern rr = Pattern.compile(patternXmlContext);
+            Matcher mm = rr.matcher(XMLDemo);
+            //<value>父节点没有内容为null
+            value.put(nodetext,null);
+            if(mm.find()){
+                String ContextResult=mm.group();
+                String Context=ContextResult.substring(ContextResult.indexOf(">")+1,(ContextResult.lastIndexOf("</")));
+                //不包含子节点，内容为该节点文本
+                if(Context.indexOf("<")<0){
+                    value.put(nodetext,Context);
+                }
+            }
+        }
+        List<Map<String,String>> result =new ArrayList<>();
+        value.keySet().stream().forEach(e->{
+            Map<String,String> node=new HashMap<String,String>();
+            node.put("name",e);
+            node.put("value",value.get(e));
+            result.add(node);
+        });
+        return result;
+    }
+
+    public List<Map<String,String>> resloveJson(String JSONDemo){
+        String patternJson="\"(.*?)\":";
+        Pattern r = Pattern.compile(patternJson);
+        Matcher m = r.matcher(JSONDemo);
+        Map<String,String> value=new HashMap<String,String>();
+        //匹配节点
+        while (m.find()) {
+            String node=m.group();
+            String nodetext=node.substring(1,node.length()-2);
+            String patternXmlContext=nodetext+"\":( *)\"(.*?)\"";
+            Pattern rr = Pattern.compile(patternXmlContext);
+            Matcher mm = rr.matcher(JSONDemo);
+            value.put(nodetext,null);
+            //匹配节点对应的内容
+            if(mm.find()){
+                String ContextResult=mm.group();
+                String Context=ContextResult.substring(ContextResult.indexOf("\":")+2,(ContextResult.lastIndexOf("\"")));
+                if(Context.indexOf("{")<0){
+                    //去除包含的"符号
+                    Context=Context.trim();
+                    Context=Context.substring(1,Context.length()-1);
+                    value.put(nodetext,Context);
+                }
+            }
+        }
+        List<Map<String,String>> result =new ArrayList<>();
+        value.keySet().stream().forEach(e->{
+            Map<String,String> node=new HashMap<String,String>();
+            node.put("name",e);
+            node.put("value",value.get(e));
+            result.add(node);
+        });
+        return result;
+
     }
 
 }
