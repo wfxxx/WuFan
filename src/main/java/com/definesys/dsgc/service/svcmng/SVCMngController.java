@@ -94,4 +94,9 @@ public class SVCMngController {
         }
 
     }
+    @RequestMapping(value = "/queryReqParamBaseData",method = RequestMethod.POST)
+    public Response queryReqParamBaseData(@RequestBody SVCCommonReqBean param){
+        ReqParamBaseDataDTO result =  svcMngService.queryReqParamBaseData(param);
+        return Response.ok().setData(result);
+    }
 }
