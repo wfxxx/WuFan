@@ -1,5 +1,7 @@
 package com.definesys.dsgc.service.svcmng;
 
+
+
 import com.definesys.dsgc.service.bpm.BpmDao;
 import com.definesys.dsgc.service.bpm.BpmService;
 import com.definesys.dsgc.service.bpm.bean.BpmCommonReqBean;
@@ -22,6 +24,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
 
 @Service
 public class SVCMngService {
@@ -168,10 +174,10 @@ public class SVCMngService {
         result.put("type","json");
         return result;
     }
-    public List<SVCMngIoParameterDTO> generateMsgParameter(SVCMngGenerateMsgVO param){
+    public List<SVCMngIoParameterDTO> generateMsgParameter(SVCMngGenerateMsgVO param) throws Exception{
 
         List<SVCMngIoParameterDTO> msgParameterList = new ArrayList<>();
-        if(!"".equals(param.getMsg()) && param.getMsg() != null){
+        if(StringUtil.isNotBlank(param.getMsg())){
             msgParameterList = msgAnalysis(param.getMsg());
         }
         List<SVCMngIoParameterDTO> parameterList = param.getParameterList();
@@ -180,19 +186,6 @@ public class SVCMngService {
 
     public List<SVCMngIoParameterDTO> paramterHandle(List<SVCMngIoParameterDTO> msgParameterList,List<SVCMngIoParameterDTO> parameterList){
         List<SVCMngIoParameterDTO>  customParameterList = new ArrayList<>();
-//        List<Integer> list = new ArrayList<>();
-//       List<Integer>  removeParameterList = new ArrayList<>();
-//        for (int i = 0; i <parameterList.size() ; i++) {
-//            for (int j = 0; j < msgParameterList.size(); j++) {
-//                if("generate".equals(parameterList.get(i).getNodeType())
-//                        || (parameterList.get(i).getNodeName().equals(msgParameterList.get(j).getNodeName())
-//                        && "".equals(parameterList.get(i).getNodeDesc()))) {
-//                    list.add(i);
-//                    break;
-//                }
-//            }
-//        }
-
         Iterator<SVCMngIoParameterDTO> iterator = parameterList.iterator();
         while (iterator.hasNext()) {
             SVCMngIoParameterDTO s = iterator.next();
@@ -215,20 +208,60 @@ public class SVCMngService {
         parameterList.addAll(msgParameterList);
         return parameterList;
     }
-    public List<SVCMngIoParameterDTO> msgAnalysis(String msg){
-        List<SVCMngIoParameterDTO> result = new ArrayList<>();
-        for (int i = 0;i<10;i++){
+    public List<SVCMngIoParameterDTO> msgAnalysis(String msg) throws Exception {
+        String type = getType(msg);
+        List<Map<String,String>> result = new ArrayList<>();
+        if("Json".equals(type)) {
+            result =  resloveJson(msg);
+        }
+        if ("xml".equals(type)){
+            result = resloveXML(msg);
+        }else{
+            throw new Exception("报文数据错误，解析失败");
+        }
+
+        List<SVCMngIoParameterDTO> list = new ArrayList<>();
+        Iterator<Map<String,String>> iterator = result.iterator();
+        while (iterator.hasNext()){
+            Map<String,String> tempMap = iterator.next();
             SVCMngIoParameterDTO svcMngIoParameterDTO = new SVCMngIoParameterDTO();
-            svcMngIoParameterDTO.setNodeDesc("testdddddddddd");
-            svcMngIoParameterDTO.setNodeName("xxxx");
+            svcMngIoParameterDTO.setNodeName(tempMap.get("name"));
+            svcMngIoParameterDTO.setNodeValue(tempMap.get("value"));
             svcMngIoParameterDTO.setNodeType("generate");
-            svcMngIoParameterDTO.setNodeValue("testtest");
             svcMngIoParameterDTO.setRequired(false);
             svcMngIoParameterDTO.setDataType("String");
-            result.add(svcMngIoParameterDTO);
+            svcMngIoParameterDTO.setNodeDesc("");
+            list.add(svcMngIoParameterDTO);
         }
-        return result;
+        return list;
 
+    }
+    public  String getType(String string) {
+        if (isJson(string))
+            return "Json";
+        else if (isXML(string))
+            return "xml";
+        else
+            return "String";
+    }
+
+    public  boolean isJson(String value) {
+        try {
+            new JSONObject(value);
+        } catch (JSONException e) {
+            return false;
+        }
+        return true;
+    }
+
+
+    public  boolean isXML(String value) {
+        try {
+            DocumentHelper.parseText(value);
+        } catch (DocumentException e) {
+            return false;
+        }
+        return true;
     }
 
     public Map<String ,Object> initSvcMngIoParameterData(String servNo){
@@ -287,6 +320,7 @@ public class SVCMngService {
         dsgcService.setShareType(svcServBasicInfo.getShareType());
         dsgcService.setServNo(svcServBasicInfo.getServNo());
         svcMngDao.saveServBasicInfo(dsgcService);
+        completionThread(dsgcService.getServNo());
     }
 
     public List<ServUriDTO> queryServUri(String servNo){
@@ -354,15 +388,15 @@ public class SVCMngService {
     }
     @Transactional(rollbackFor = Exception.class)
     public int saveServLocationData(SaveServLocationDataVO vo){
-        if(vo.getUriList() == null){
+        if(vo.getUriList() == null || vo.getUriList().size() == 0){
             return -1;
         }
         List<DSGCServicesUri> uris = svcMngDao.queryServUri(vo.getServNo());
         List<DSGCUriParamsBean> params = svcMngDao.queryServUriParamter(vo.getServNo());
-        if(uris != null){
+        if(uris != null && uris.size() > 0){
             svcMngDao.delServUri(vo.getServNo());
         }
-        if(params != null){
+        if(params != null && params.size() > 0){
             svcMngDao.delServUriParamter(vo.getServNo());
         }
         List<DSGCServicesUri> servicesUriList = new ArrayList<>();
@@ -376,7 +410,7 @@ public class SVCMngService {
             svcMngDao.addServUri(dsgcServicesUri);
           //  servicesUriList.add(dsgcServicesUri);
         }
-        if(vo.getParamterList() != null){
+        if(vo.getParamterList() != null && vo.getUriList().size() > 0){
             List<DSGCUriParamsBean> list = new ArrayList<>();
             Iterator<ServUriParamterDTO>  paramterDTOIterator = vo.getParamterList().iterator();
             while (paramterDTOIterator.hasNext()){
@@ -386,11 +420,24 @@ public class SVCMngService {
                 dsgcUriParamsBean.setParamCode(temp.getParamCode());
                 dsgcUriParamsBean.setParamSample(temp.getParamSample());
                 dsgcUriParamsBean.setParamDesc(temp.getParamDesc());
-                list.add(dsgcUriParamsBean);
+                dsgcUriParamsBean.setUriType("REST");
+                svcMngDao.addServUriParamter(dsgcUriParamsBean);
+               // list.add(dsgcUriParamsBean);
             }
-            svcMngDao.addServUriParamter(list);
+
         }
+        completionThread(vo.getServNo());
         return 1;
+    }
+
+    public void completionThread(String servNo){
+        Runnable myRunnable = new Runnable(){
+            public void run(){
+                updateServDataCompletion(servNo);
+            }
+        };
+        Thread thread = new Thread(myRunnable);
+        thread.start();
     }
     @Transactional(rollbackFor = Exception.class)
     public void updateServDataCompletion(String servNo){
@@ -412,7 +459,7 @@ public class SVCMngService {
             completion +=10;
         }
         List<DSGCServicesUri> uris = svcMngDao.queryServUri(servNo);
-        if(uris != null){
+        if(uris != null && uris.size() > 0){
             List<String> uriTypeList = new ArrayList<>();
             Iterator<DSGCServicesUri> iterator = uris.iterator();
             while (iterator.hasNext()){
@@ -420,19 +467,42 @@ public class SVCMngService {
                 uriTypeList.add(dsgcServicesUri.getUriType());
             }
             if (uriTypeList.contains("REST")){
-                completion +=5;
+                completion +=10;
             }
             if (uriTypeList.contains("SOAP")){
-                completion +=5;
+                completion +=10;
             }
         }
+        SVCCommonReqBean param = new SVCCommonReqBean();
+        param.setCon0(servNo);
+        param.setQueryType("REQ");
+        List<DSGCPayloadSampleBean> reqSampleBeans = svcMngDao.querySrvPaloadSample(param);
+        List<DSGCPayloadParamsBean> reqSampleParamBeans = svcMngDao.queryServPayloadParam(param);
+        param.setQueryType("RES");
+        List<DSGCPayloadSampleBean> resSampleBeans = svcMngDao.querySrvPaloadSample(param);
+        List<DSGCPayloadParamsBean> resSampleParamBeans = svcMngDao.queryServPayloadParam(param);
+        if(reqSampleBeans.size()>0){
+            completion += 10;
+        }
+        if(reqSampleParamBeans.size()>0){
+            completion +=5;
+
+        }
+        if (resSampleBeans.size() >0){
+            completion += 10;
+        }
+        if(resSampleParamBeans.size()>0){
+            completion +=5;
+
+        }
+
         DSGCService service = new DSGCService();
         service.setInfoFull(completion);
         service.setServNo(servNo);
         svcMngDao.updateServDataCompletion(service);
     }
 
-    public ReqParamBaseDataDTO queryReqParamBaseData(SVCCommonReqBean param){
+    public ReqParamBaseDataDTO queryParamBaseData(SVCCommonReqBean param){
         ReqParamBaseDataDTO result = new ReqParamBaseDataDTO();
         List<DSGCPayloadParamsBean> dsgcPayloadParams =svcMngDao.queryServPayloadParam(param);
         List<SVCMngIoParameterDTO> paramDTOS = new ArrayList<>();
@@ -444,7 +514,12 @@ public class SVCMngService {
                 SVCMngIoParameterDTO dto = new SVCMngIoParameterDTO();
                 dto.setNodeName(temp.getParamCode());
                 dto.setNodeDesc(temp.getParamDesc());
-                dto.setRequired(temp.getParamNeed()=="Y"?true:false);
+                if("Y".equals(temp.getParamNeed())){
+                    dto.setRequired(true);
+                }else {
+                    dto.setRequired(false);
+                }
+              //  dto.setRequired("Y".equals(temp.getParamNeed())?true:false);
                 dto.setNodeValue(temp.getParamSample());
                 dto.setDataType(temp.getParamType());
                 dto.setNodeType("custom");
@@ -488,8 +563,15 @@ public class SVCMngService {
             dsgcPayloadSampleBean.setUriType("REST");
             DSGCPayloadSampleBean payloadRestSampleBean = svcMngDao.querySrvPaloadSoapOrRestSample(dsgcPayloadSampleBean);
             if (payloadRestSampleBean != null) {
-                payloadRestSampleBean.setPlSample(param.getRestSample());
-                svcMngDao.updateServPayloadById(payloadRestSampleBean);
+                DSGCPayloadSampleBean tempSample = new DSGCPayloadSampleBean();
+                tempSample.setPlSample(param.getRestSample());
+                tempSample.setDpsamId(payloadRestSampleBean.getDpsamId());
+                try {
+                    svcMngDao.updateServPayloadById(tempSample);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
             } else {
                 DSGCPayloadSampleBean bean = new DSGCPayloadSampleBean();
                 bean.setResCode(param.getServNo());
@@ -543,11 +625,17 @@ public class SVCMngService {
                 paramsBean.setParamCode(dto.getNodeName());
                 paramsBean.setParamType(dto.getDataType());
                 paramsBean.setParamDesc(dto.getNodeDesc());
-                paramsBean.setParamNeed(dto.getRequired() ? "Y" : "N");
+                if(dto.getRequired()){
+                    paramsBean.setParamNeed("Y");
+                } else {
+                    paramsBean.setParamNeed("N");
+                }
                 paramsBean.setParamSample(dto.getNodeValue());
-                payloadParamsBeans.add(paramsBean);
+                svcMngDao.addServPayloadParam(paramsBean);
+
             }
-            svcMngDao.addServPayloadParam(payloadParamsBeans);
+            completionThread(param.getServNo());
+
         }
     }
     //返回解析的字段Map<name,value>集合，若va;ue=null，表示该name节点为父节点，不包含内容。
