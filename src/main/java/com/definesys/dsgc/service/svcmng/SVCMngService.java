@@ -591,7 +591,7 @@ public class SVCMngService {
     }
 
     public List<Map<String,String>> resloveJson(String JSONDemo){
-        String patternJson="\"(.*?)\":";
+        String patternJson="\"[^\"]{0,}\":";
         Pattern r = Pattern.compile(patternJson);
         Matcher m = r.matcher(JSONDemo);
         Map<String,String> value=new HashMap<String,String>();
@@ -610,7 +610,7 @@ public class SVCMngService {
                 if(Context.indexOf("{")<0){
                     //去除包含的"符号
                     Context=Context.trim();
-                    Context=Context.substring(1,Context.length()-1);
+                    Context=Context.substring(1,Context.length());
                     value.put(nodetext,Context);
                 }
             }
@@ -625,5 +625,14 @@ public class SVCMngService {
         return result;
 
     }
+
+    public static final void main(String[] args){
+        SVCMngService s=new SVCMngService();
+        String value="{\"test\":\"xxxxxx\",\"d\":\"f\",\"xxddasd\":\"daavvsd\"}";
+        List<Map<String,String>> v=s.resloveJson(value);
+        System.out.println(v);
+
+    }
+
 
 }
