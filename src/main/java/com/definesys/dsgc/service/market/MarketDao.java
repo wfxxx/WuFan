@@ -40,6 +40,10 @@ public class MarketDao {
 
     public PageQueryResult<MarketCateVO> getAllMarketCate(MarketQueryBean q, int pageSize, int pageIndex) {
         MpaasQuery query = sw.buildQuery().sql("select * from (select y.mc_id,y.cate_code,y.cate_name,y.cate_order,(select s.MEANING from FND_LOOKUP_VALUES s where y.PARENT_CATE = s.LOOKUP_CODE) PARENT_CATE from DSGC_MARKET_CATEGORY y)\n");
+        if(!"ALL".equals(q.getShareType().trim())){
+            String shareTypNoSpace = q.getShareType().trim();
+            query.and().eq("parentCate",shareTypNoSpace);
+        }
         if (q.getCon0() != null && q.getCon0().trim().length() > 0) {
             String[] conArray = q.getCon0().trim().split(" ");
             for (String con : conArray) {
@@ -65,7 +69,7 @@ public class MarketDao {
                         "       t.MARKET_STAT,\n" +
                         "       t.type,\n" +
                         "       y.CATE_NAME\n" +
-                        "from (select API_ID, API_NAME, API_DESC, APP_CODE, MARKET_CATEGORY, MARKET_STAT, 'API资源分类' type\n" +
+                        "from (select API_ID, API_NAME, API_DESC, APP_CODE, MARKET_CATEGORY, MARKET_STAT, 'API' type\n" +
                         "      from DSGC_APIS\n" +
                         "      UNION ALL\n" +
                         "      select SERV_ID            API_ID,\n" +
@@ -74,9 +78,13 @@ public class MarketDao {
                         "             SUBORDINATE_SYSTEM APP_CODE,\n" +
                         "             MARKET_CATEGORY,\n" +
                         "             MARKET_STAT,\n" +
-                        "             '服务资源分类'             type\n" +
+                        "             '集成服务'             type\n" +
                         "      from DSGC_SERVICES) t\n" +
                         "       left join DSGC_MARKET_CATEGORY y on t.MARKET_CATEGORY = y.CATE_CODE");
+        if(!"ALL".equals(q.getShareType().trim())){
+            String shareTypNoSpace = q.getShareType().trim();
+            query.and().eq("type",shareTypNoSpace);
+        }
         if (q.getCon0() != null && q.getCon0().trim().length() > 0) {
             String[] conArray = q.getCon0().trim().split(" ");
             for (String con : conArray) {
@@ -87,7 +95,8 @@ public class MarketDao {
                             .likeNocase("apiDesc", conNoSpace)
                             .likeNocase("type",conNoSpace)
                             .likeNocase("appCode", conNoSpace)
-                            .likeNocase("marketCategory", conNoSpace);
+                            .likeNocase("cateName", conNoSpace);
+
                 }
             }
         }
@@ -95,7 +104,7 @@ public class MarketDao {
     }
 
     public void updateMarketPub(MarketApiBean marketApiBean){
-        if ( "API资源分类".equals(marketApiBean.getType())){
+        if ( "API".equals(marketApiBean.getType())){
             sw.buildQuery()
                     .eq("apiId",marketApiBean.getApiId())
                     .doUpdate(marketApiBean);
