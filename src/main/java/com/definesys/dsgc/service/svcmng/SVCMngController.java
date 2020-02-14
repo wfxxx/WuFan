@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +32,14 @@ public class SVCMngController {
     }
     @RequestMapping(value = "/generateMsgParameter",method = RequestMethod.POST)
     public Response generateMsgParameter(@RequestBody SVCMngGenerateMsgVO param){
-        List<SVCMngIoParameterDTO> result =  svcMngService.generateMsgParameter(param);
+        List<SVCMngIoParameterDTO> result = new ArrayList<>();
+        try {
+         result =  svcMngService.generateMsgParameter(param);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
         return Response.ok().setData(result);
     }
     @RequestMapping(value = "/initSvcMngIoParameterData",method = RequestMethod.POST)
@@ -94,9 +102,9 @@ public class SVCMngController {
         }
 
     }
-    @RequestMapping(value = "/queryReqParamBaseData",method = RequestMethod.POST)
-    public Response queryReqParamBaseData(@RequestBody SVCCommonReqBean param){
-        ReqParamBaseDataDTO result =  svcMngService.queryReqParamBaseData(param);
+    @RequestMapping(value = "/queryParamBaseData",method = RequestMethod.POST)
+    public Response queryParamBaseData(@RequestBody SVCCommonReqBean param){
+        ReqParamBaseDataDTO result =  svcMngService.queryParamBaseData(param);
         return Response.ok().setData(result);
     }
     @RequestMapping(value = "/saveParamData",method = RequestMethod.POST)

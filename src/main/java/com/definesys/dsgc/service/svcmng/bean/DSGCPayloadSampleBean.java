@@ -14,10 +14,15 @@ import java.util.Date;
 public class DSGCPayloadSampleBean extends MpaasBasePojo implements Serializable {
     @RowID(type = RowIDType.UUID)
     private String dpsamId;
+    @Column(value = "res_code")
     private String resCode;
+    @Column(value = "uri_type")
     private String uriType;
+    @Column(value = "pl_type")
     private String plType;
+    @Column(value = "req_or_res")
     private String reqOrRes;
+    @Column(value = "pl_sample")
     private String plSample;
     @SystemColumn(SystemColumnType.CREATE_BY)
     @Column(value = "created_by")

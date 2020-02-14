@@ -120,13 +120,17 @@ public class SVCMngDao {
         sw.buildQuery().eq("res_code",servNo).doDelete(DSGCUriParamsBean.class);
     }
     public void addServUri(DSGCServicesUri servicesUri){
-        sw.buildQuery().sql("insert into dsgc_service_uri (serv_no,ib_uri,uri_type) value (#{servNo},#{ibUri},#{uriType}) ")
-                .setVar("servNo",servicesUri.getServNo())
-                .setVar("ibUri",servicesUri.getIbUri())
-                .setVar("uriType",servicesUri.getUriType());
+        sw.buildQuery()
+                .doInsert(servicesUri);
+//                .sql("insert into dsgc_service_uri (serv_no,ib_uri,uri_type) value (#{servNo},#{ibUri},#{uriType}) ")
+//                .setVar("servNo",servicesUri.getServNo())
+//                .setVar("ibUri",servicesUri.getIbUri())
+//                .setVar("uriType",servicesUri.getUriType())
+//                .doInsert();
+
     }
-    public void addServUriParamter(List<DSGCUriParamsBean> list){
-        sw.buildQuery().doBatchInsert(list);
+    public void addServUriParamter(DSGCUriParamsBean list){
+        sw.buildQuery().doInsert(list);
     }
     public DSGCService queryServByServNo(String servNo){
         return sw.buildQuery().eq("servNo",servNo).doQueryFirst(DSGCService.class);
@@ -158,10 +162,15 @@ public class SVCMngDao {
         sw.buildQuery().doInsert(bean);
     }
     public void updateServPayloadById(DSGCPayloadSampleBean bean){
+//        sw.buildQuery().sql("update DSGC_PAYLOAD_SAMPLE set pl_sample = #{plSample} where dpsam_id = #{dpsamId}")
+//                .setVar("plSample",bean.getPlSample()).setVar("dpsamId",bean.getDpsamId())
+//                .table("DSGC_PAYLOAD_SAMPLE")
+//                .doUpdate();
         sw.buildQuery()
-                .eq("dpsam_id",bean.getDpsamId())
+               // .update(new String[]{"pl_sample"})
                 .update("pl_sample",bean.getPlSample())
-                .doUpdate(DSGCPayloadSampleBean.class);
+                .eq("dpsam_id",bean.getDpsamId())
+                .doUpdate(bean);
     }
     public void delServPayloadParam(DSGCPayloadParamsBean dsgcPayloadParamsBean){
         sw.buildQuery()
@@ -170,9 +179,9 @@ public class SVCMngDao {
                 .doDelete(DSGCPayloadParamsBean.class);
     }
 
-    public void addServPayloadParam(List<DSGCPayloadParamsBean> payloadParamsBeans){
+    public void addServPayloadParam(DSGCPayloadParamsBean payloadParamsBeans){
         sw.buildQuery()
-                .doBatchInsert(payloadParamsBeans);
+                .doInsert(payloadParamsBeans);
     }
 //    public void addServSoapPayload(DSGCPayloadSampleBean bean){
 //        sw.buildQuery().doInsert(bean);

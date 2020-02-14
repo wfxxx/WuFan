@@ -213,8 +213,7 @@ public class SVCMngService {
         List<Map<String,String>> result = new ArrayList<>();
         if("Json".equals(type)) {
             result =  resloveJson(msg);
-        }
-        if ("xml".equals(type)){
+        } else if ("xml".equals(type)){
             result = resloveXML(msg);
         }else{
             throw new Exception("报文数据错误，解析失败");
@@ -630,7 +629,12 @@ public class SVCMngService {
                 } else {
                     paramsBean.setParamNeed("N");
                 }
-                paramsBean.setParamSample(dto.getNodeValue());
+                if(StringUtil.isBlank(dto.getNodeValue())){
+
+                    paramsBean.setParamSample("");
+                }else {
+                    paramsBean.setParamSample(dto.getNodeValue());
+                }
                 svcMngDao.addServPayloadParam(paramsBean);
 
             }
