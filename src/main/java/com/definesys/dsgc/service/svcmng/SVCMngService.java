@@ -7,17 +7,22 @@ import com.definesys.dsgc.service.bpm.bean.BpmInstanceBean;
 import com.definesys.dsgc.service.bpm.bean.BpmInstanceDTO;
 import com.definesys.dsgc.service.svcAuth.SVCAuthDao;
 import com.definesys.dsgc.service.svcAuth.SVCAuthService;
+import com.definesys.dsgc.service.svcmng.utils.WsdlResolvProxy;
 import com.definesys.dsgc.service.svclog.SVCLogDao;
 import com.definesys.dsgc.service.svcmng.bean.*;
+
 import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
 import com.definesys.dsgc.service.esbenv.bean.DSGCEnvInfoCfg;
 import com.definesys.dsgc.service.lkv.bean.FndLookupValue;
 import com.definesys.dsgc.service.esbenv.DSGCBusCfgDao;
 import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.mpaas.query.db.PageQueryResult;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -42,6 +47,8 @@ public class SVCMngService {
 
     @Autowired
     private SVCAuthService svcAuthService;
+
+
 
     @Autowired
     private DSGCBusCfgDao dsgcBusCfgDao;
@@ -626,13 +633,33 @@ public class SVCMngService {
 
     }
 
-    public static final void main(String[] args){
-        SVCMngService s=new SVCMngService();
-        String value="{\"test\":\"xxxxxx\",\"d\":\"f\",\"xxddasd\":\"daavvsd\"}";
-        List<Map<String,String>> v=s.resloveJson(value);
-        System.out.println(v);
 
+
+
+    /**
+     * 根据WsdlUrl获取服务请求实例报文
+     * @Prams   wsdl地址，方法名
+     * @return
+     */
+    public String getWsdlBodyReq(String wsdl,String methodName) {
+        //单元测试类已创建
+        WsdlResolvProxy wsdlResolv= WsdlResolvProxy.newInstance();
+        String result=wsdlResolv.getWsdlBodyReq(wsdl,methodName);
+        return result;
     }
+
+    /**
+     * 根据WsdlUrl获取服务响应实例报文
+     * @Prams   wsdl地址，方法名
+     * @return
+     */
+    public String getWsdlBodyRes(String wsdl,String methodName) {
+        //单元测试类已创建
+        WsdlResolvProxy wsdlResolv= WsdlResolvProxy.newInstance();
+        String result=wsdlResolv.getWsdlBodyRes(wsdl,methodName);
+        return result;
+    }
+
 
 
 }
