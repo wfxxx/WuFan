@@ -169,7 +169,10 @@ public class AppsService {
             dsgcSystemUser.setLastUpdatedBy(userId);
             userList.add(dsgcSystemUser);
         }
-        appsDao.delSytemUser(systemEntitireDTO.getSysCode());
-        appsDao.addSystemUser(userList);
+        if(userList != null && userList.size()>0){
+            appsDao.delSytemUser(systemEntitireDTO.getSysCode());
+            appsDao.addSystemUser(userList);
+        }
+
     }
 }
