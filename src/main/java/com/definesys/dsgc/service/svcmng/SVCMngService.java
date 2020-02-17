@@ -754,15 +754,15 @@ public class SVCMngService {
 
 
     /**
-     * 根据WsdlUrl获取完整的地址
-     * @Prams   wsdl地址
+     * 根据ServNo获取完整的地址
+     * @Prams   服务ServNo
      * @return
      */
     //TODO
-    public String getWsdlUrl(String url) {
+    public String getWsdlUrl(String ServNo) {
 
-
-        return url;
+        String wsdlUrl="";
+        return wsdlUrl;
     }
 
 
