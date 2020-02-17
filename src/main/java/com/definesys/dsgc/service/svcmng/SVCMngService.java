@@ -566,7 +566,7 @@ public class SVCMngService {
     public List<String> queryServWsdlFunction(SVCCommonReqBean param){
         List<String> functionList = new ArrayList<>();
         try {
-            String wsdl =getWsdlUrl(param.getCon0());
+            String wsdl =getWsdlUrl(param.getCon0(),null);
              functionList =resolveWsdlFunction(wsdl);
         } catch (Exception e) {
             e.printStackTrace();
