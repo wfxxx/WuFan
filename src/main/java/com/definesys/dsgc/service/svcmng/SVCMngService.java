@@ -753,5 +753,17 @@ public class SVCMngService {
     }
 
 
+    /**
+     * 根据WsdlUrl获取完整的地址
+     * @Prams   wsdl地址
+     * @return
+     */
+    public String getWsdlUrl(String url) {
+
+
+        return url;
+    }
+
+
 
 }
