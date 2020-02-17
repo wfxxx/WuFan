@@ -762,5 +762,18 @@ public class SVCMngService {
     }
 
 
+    /**
+     * 根据ServNo获取完整的地址
+     * @Prams   服务ServNo
+     * @return
+     */
+    //TODO
+    public String getWsdlUrl(String ServNo) {
+
+        String wsdlUrl="";
+        return wsdlUrl;
+    }
+
+
 
 }
