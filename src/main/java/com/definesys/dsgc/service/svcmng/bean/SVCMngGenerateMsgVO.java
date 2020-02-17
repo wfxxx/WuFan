@@ -7,7 +7,9 @@ import java.util.List;
 public class SVCMngGenerateMsgVO {
     private String servNo;
     private String msg;
+    private String wsdlFunction;
     private String type;
+    private String reqOrRes;
     private List<SVCMngIoParameterDTO> parameterList;
 
     public String getType() {
@@ -40,5 +42,21 @@ public class SVCMngGenerateMsgVO {
 
     public void setParameterList(List<SVCMngIoParameterDTO> parameterList) {
         this.parameterList = parameterList;
+    }
+
+    public String getWsdlFunction() {
+        return wsdlFunction;
+    }
+
+    public void setWsdlFunction(String wsdlFunction) {
+        this.wsdlFunction = wsdlFunction;
+    }
+
+    public String getReqOrRes() {
+        return reqOrRes;
+    }
+
+    public void setReqOrRes(String reqOrRes) {
+        this.reqOrRes = reqOrRes;
     }
 }

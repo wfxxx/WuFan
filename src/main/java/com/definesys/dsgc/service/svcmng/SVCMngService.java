@@ -143,43 +143,47 @@ public class SVCMngService {
         }
         return svcMngInfoListBean;
     }
-    public Map<String, Object> generateMsgExample(SVCMngGenerateMsgVO param){
+    public Map<String, Object> generateMsgExample(SVCMngGenerateMsgVO param) throws Exception{
         Map<String,Object> result = new HashMap<>();
-        String msg = "{\n" +
-                "  \"class\": {\n" +
-                "    \"name\": \"提高班\",\n" +
-                "    \"no\": \"1801\",\n" +
-                "    \"students\": {\n" +
-                "      \"student\": [\n" +
-                "        {\n" +
-                "          \"name\": \"宋海娇\",\n" +
-                "          \"sex\": \"女\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "          \"name\": \"毛伟伟\",\n" +
-                "          \"sex\": \"男\"\n" +
-                "        }\n" +
-                "      ]\n" +
-                "    }\n" +
-                "  }\n" +
-                "}";
-        result.put("msg",msg);
-        List<SVCMngIoParameterDTO> msgParameterList = new ArrayList<>();
-        List<SVCMngIoParameterDTO> parameterList = param.getParameterList();
-        List<SVCMngIoParameterDTO> handleResult =  paramterHandle(msgParameterList,parameterList);
-        List<SVCMngIoParameterDTO> list = new ArrayList<>();
-        for (int i = 0;i<10;i++){
-            SVCMngIoParameterDTO svcMngIoParameterDTO = new SVCMngIoParameterDTO();
-            svcMngIoParameterDTO.setNodeDesc("testdddddddddd");
-            svcMngIoParameterDTO.setNodeName("xxxx");
-            svcMngIoParameterDTO.setNodeType("generate");
-            svcMngIoParameterDTO.setNodeValue("testtest");
-            svcMngIoParameterDTO.setRequired(false);
-            svcMngIoParameterDTO.setDataType("String");
-            handleResult.add(svcMngIoParameterDTO);
+        if("SOAP".equals(param.getType())){
+          String wsdl = getWsdlUrl(param.getServNo());
+            String  msg ="";
+            if("REQ".equals(param.getReqOrRes())){
+              msg = getWsdlBodyReq(wsdl,param.getWsdlFunction());   //请求报文
+            }
+            if ("RES".equals(param.getReqOrRes())){
+                msg = getWsdlBodyRes(wsdl,param.getWsdlFunction());  //响应报文
+            }
+           String type = getType(msg);
+            List<Map<String,String>> paramResult = new ArrayList<>();
+            if("Json".equals(type)) {
+                paramResult =  resloveJson(msg);
+            } else if ("xml".equals(type)){
+                paramResult = resloveXML(msg);
+            }else{
+                throw new Exception("报文数据错误，解析失败");
+            }
+            result.put("msg",msg);
+            Iterator<Map<String,String>> iterator = paramResult.iterator();
+            List<SVCMngIoParameterDTO> parameterDTOS = new ArrayList<>();
+            while (iterator.hasNext()){
+                Map<String,String> temp = iterator.next();
+                SVCMngIoParameterDTO svcMngIoParameterDTO = new SVCMngIoParameterDTO();
+                svcMngIoParameterDTO.setNodeName(temp.get("name"));
+                svcMngIoParameterDTO.setNodeValue(temp.get("value"));
+                svcMngIoParameterDTO.setNodeType("generate");
+                svcMngIoParameterDTO.setRequired(false);
+                svcMngIoParameterDTO.setDataType("String");
+                parameterDTOS.add(svcMngIoParameterDTO);
+            }
+
+            List<SVCMngIoParameterDTO> handleResult =  paramterHandle(parameterDTOS,param.getParameterList());
+            result.put("parameters",handleResult);
+            result.put("type",type);
         }
-        result.put("parameters",handleResult);
-        result.put("type","json");
+        if("REST".equals(param.getType())){
+
+        }
         return result;
     }
     public List<SVCMngIoParameterDTO> generateMsgParameter(SVCMngGenerateMsgVO param) throws Exception{
