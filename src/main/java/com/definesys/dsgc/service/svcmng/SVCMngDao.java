@@ -193,9 +193,9 @@ public class SVCMngDao {
                 .setVar("servNo",servNo).doQuery();
     }
 
-    public List<Map<String,Object>> getEvnInfo(String envCode){
-        return sw.buildQuery().sql("select t.esb_ip,t.esb_port from DSGC_ENV_INFO_CFG t where t.env_code=#envCode")
-                .setVar("envCode",envCode).doQuery();
+    public List<Map<String,Object>> getEvnInfo(String envSeq){
+        return sw.buildQuery().sql("select t.esb_ip,t.esb_port from DSGC_ENV_INFO_CFG t where t.env_seq=#envSeq")
+                .setVar("envSeq",envSeq).doQuery();
     }
 
 }

@@ -773,12 +773,11 @@ public class SVCMngService {
      * @Prams   服务ServNo,环境code，默认DEV开发环境
      * @return
      */
-    public String getWsdlUrl(String servNo,String envCode) {
+    public String getWsdlUrl(String servNo,String envSeq) {
         String wsdlUrl="";
-        if(envCode==null||envCode==""){
-            envCode="DEV";
+        if(envSeq==null||envSeq==""){
+            envSeq="1";
         }
-        envCode=envCode.toUpperCase();
         List<Map<String,Object>> urlResult=this.svcMngDao.getUrlByServNo(servNo);
         if(urlResult.size()==0){
             System.err.println("不存在该编号");
@@ -788,7 +787,7 @@ public class SVCMngService {
         if(!url.startsWith("/")){
             url="/"+url;
         }
-        List<Map<String,Object>> envResult=this.svcMngDao.getEvnInfo(envCode);
+        List<Map<String,Object>> envResult=this.svcMngDao.getEvnInfo(envSeq);
         if(envResult.size()==0){
             System.err.println("不存在该环境");
             return null;
