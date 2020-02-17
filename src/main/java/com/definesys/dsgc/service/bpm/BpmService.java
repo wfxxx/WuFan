@@ -88,6 +88,7 @@ public class BpmService {
         bpmInstanceDTO.setInstStat(bpmInstanceBean.getInstStat());
         bpmInstanceDTO.setInstId(bpmInstanceBean.getInstId());
         bpmInstanceDTO.setInstTitle(bpmInstanceBean.getInstTitle());
+        bpmInstanceDTO.setApprover(bpmInstanceBean.getApprover());
         return bpmInstanceDTO;
     }
     public List<BpmHistoryDTO> getInstHistory(BpmCommonReqBean param){

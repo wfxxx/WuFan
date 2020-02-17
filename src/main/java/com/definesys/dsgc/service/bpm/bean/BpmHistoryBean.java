@@ -16,6 +16,7 @@ public class BpmHistoryBean extends MpaasBasePojo {
     @RowID(type= RowIDType.UUID)
     private String hisId;
     private String instId;
+    @Column(type = ColumnType.JAVA)
     private String nodeName;
     private String approver;
     private String approveOper;

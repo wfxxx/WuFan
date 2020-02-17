@@ -44,13 +44,28 @@ public class BpmDao {
 //                  .doPageQuery(pageIndex,pageSize,BpmInstanceBean.class);
     }
     public PageQueryResult<BpmInstanceBean> myApply(BpmCommonReqBean param, String userId, int pageSize, int pageIndex){
-        StringBuffer sqlStr = new StringBuffer("select * from dsgc_bpm_instance dbi" +
-                " where dbi.created_by = #userId");
+        StringBuffer sqlStr = new StringBuffer("select * from (select dbi.INST_ID,dbi.INST_TITLE,dbi.PROCESS_ID，dbi.CUR_NODE,dbi.CREATION_DATE,dbi.INST_STAT,dbt.APPROVER,dbp.PROCESS_NAME\n" +
+                "    from dsgc_bpm_instance dbi,DSGC_BPM_TASK dbt,DSGC_BPM_PROCESS dbp where dbi.INST_ID = dbt.INST_ID and dbi.PROCESS_ID = dbp.PROCESS_ID and dbi.CREATED_BY = #userId)");
         MpaasQuery mq = sw.buildQuery();
         mq.setVar("userId",userId);
-        if (StringUtil.isNotBlank(param.getCon0())) {
-            sqlStr.append(" and( upper(dbi.inst_title) like #con0 or upper(dbi.inst_stat) like #con0)");
-            mq.setVar("con0", "%" + param.getCon0().toUpperCase() + "%");
+        if(!"ALL".equals(param.getQueryType().trim())){
+//            sqlStr.append(" and dbi.process_id = #queryType ");
+//            mq.setVar("queryType",param.getQueryType());
+            String queryTypeNoSpace = param.getQueryType().trim();
+            mq.and().eq("processId",queryTypeNoSpace);
+        }
+        if (StringUtil.isNotBlank(param.getCon0().trim())) {
+//            sqlStr.append(" and( upper(dbi.inst_title) like #con0 or upper(dbi.inst_stat) like #con0)");
+//            mq.setVar("con0", "%" + param.getCon0().toUpperCase() + "%");
+            String[] conArray = param.getCon0().trim().split(" ");
+            for(String con : conArray){
+                if(StringUtil.isNotBlank(con)){
+                    String conNoSpace = con.trim();
+                    mq.conjuctionAnd().or()
+                            .likeNocase("instTitle",conNoSpace)
+                            .likeNocase("approver",conNoSpace);
+                }
+            }
         }
         mq.sql(sqlStr.toString());
         return mq.doPageQuery(pageIndex,pageSize,BpmInstanceBean.class);

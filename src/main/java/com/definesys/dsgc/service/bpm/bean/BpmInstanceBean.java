@@ -22,6 +22,9 @@ public class BpmInstanceBean extends MpaasBasePojo {
     @Column(value = "created_by")
     private String createdBy;
 
+    @Column(type = ColumnType.JAVA)
+    private String approver;
+
     @JsonSerialize(using = MpaasDateTimeSerializer.class)
     @JsonDeserialize(using = MpaasDateTimeDeserializer.class)
     @SystemColumn(SystemColumnType.CREATE_ON)
@@ -117,5 +120,13 @@ public class BpmInstanceBean extends MpaasBasePojo {
 
     public void setObjectVersionNumber(Integer objectVersionNumber) {
         this.objectVersionNumber = objectVersionNumber;
+    }
+
+    public String getApprover() {
+        return approver;
+    }
+
+    public void setApprover(String approver) {
+        this.approver = approver;
     }
 }
