@@ -3,6 +3,7 @@ package com.definesys.dsgc.service.market;
 import com.definesys.dsgc.service.market.bean.MarketApiBean;
 import com.definesys.dsgc.service.market.bean.MarketCateVO;
 import com.definesys.dsgc.service.market.bean.MarketQueryBean;
+import com.definesys.dsgc.service.market.bean.SrevDetailInfoDTO;
 import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -204,6 +205,17 @@ public class MarketController {
             return Response.error("参数错误");
         }
         return Response.ok().data(reslut);
+    }
+
+    /**
+     * 集成服务详情查看页面查询api
+     * @param param
+     * @return
+     */
+    @RequestMapping(value = "/queryServBaseInfo",method = RequestMethod.POST)
+    public Response queryServBaseInfo(@RequestBody MarketQueryBean param){
+        SrevDetailInfoDTO result = marketService.queryServBaseInfo(param.getCon0());
+    return Response.ok().setData(result);
     }
 
 }

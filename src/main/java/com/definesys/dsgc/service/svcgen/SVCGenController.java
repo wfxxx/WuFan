@@ -492,5 +492,17 @@ public class SVCGenController {
 
         return Response.ok();
     }
+    @RequestMapping(value = "/resolveWsdlFunction", method = RequestMethod.POST)
+    public Response resolveWsdlFunction(@RequestBody WSDLResolveBean wsdl,HttpServletRequest request) {
+        try {
+            if (wsdl.getWsdlUri() == null || wsdl.getWsdlUri().trim().length() == 0) {
+                return Response.error("WSDL地址不能为空！");
+            }
+            return Response.ok().setData(this.svc.resolveWsdlFunction(wsdl)) ;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.error("发生错误，请联系管理员处理！");
+        }
+    }
 
 }

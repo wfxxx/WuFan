@@ -557,6 +557,15 @@ public class SVCMngService {
         return result;
     }
 
+    /**
+     * 获取wsdl中的方法
+     * @param param
+     * @return
+     */
+    public List<String> queryServWsdlFunction(SVCCommonReqBean param){
+        return null;
+    }
+
     @Transactional(rollbackFor = Exception.class)
     public void saveParamData(SaveParamDataVO param) {
         if (StringUtil.isBlank(param.getRestSample()) && StringUtil.isBlank(param.getSoapSample())) {

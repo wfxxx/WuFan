@@ -721,4 +721,18 @@ public class SVCGenService {
     public List<SVCUriBean> resolveServIBUriList(String sgObjCode) throws Exception{
         return this.sgProxy.resolveServIBUriList(sgObjCode);
     }
+
+    /**
+     * 解析wsdl中的方法
+     * @param wsdl
+     * @return
+     * @throws Exception
+     */
+    public List<String > resolveWsdlFunction(WSDLResolveBean wsdl) throws Exception {
+        /**
+         * TODO
+         */
+    return new ArrayList<>();
+
+    }
 }
