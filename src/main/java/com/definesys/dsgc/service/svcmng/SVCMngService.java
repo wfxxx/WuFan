@@ -19,6 +19,7 @@ import com.definesys.dsgc.service.esbenv.bean.DSGCEnvInfoCfg;
 import com.definesys.dsgc.service.lkv.bean.FndLookupValue;
 import com.definesys.dsgc.service.esbenv.DSGCBusCfgDao;
 import com.definesys.dsgc.service.utils.StringUtil;
+import com.definesys.dsgc.service.utils.StringUtils;
 import com.definesys.mpaas.query.db.PageQueryResult;
 
 
@@ -146,7 +147,12 @@ public class SVCMngService {
     public Map<String, Object> generateMsgExample(SVCMngGenerateMsgVO param) throws Exception{
         Map<String,Object> result = new HashMap<>();
         if("SOAP".equals(param.getType())){
-          String wsdl = getWsdlUrl(param.getServNo());
+          DSGCService dsgcService =  svcMngDao.queryBasicInfoByServNo(param.getServNo());
+          String deployedNode = "1";
+          if (dsgcService != null && StringUtil.isNotBlank(dsgcService.getDeployedNode()) ){
+              deployedNode = dsgcService.getDeployedNode();
+          }
+          String wsdl = getWsdlUrl(param.getServNo(),deployedNode);
             String  msg ="";
             if("REQ".equals(param.getReqOrRes())){
               msg = getWsdlBodyReq(wsdl,param.getWsdlFunction());   //请求报文

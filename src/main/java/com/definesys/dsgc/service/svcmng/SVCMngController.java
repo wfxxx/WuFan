@@ -27,8 +27,13 @@ public class SVCMngController {
     }
     @RequestMapping(value = "/generateMsgExample",method = RequestMethod.POST)
     public Response generateMsgExample(@RequestBody SVCMngGenerateMsgVO param){
-        Map<String,Object> result = svcMngService.generateMsgExample(param);
-    return Response.ok().setData(result);
+        Map<String,Object> result = null;
+        try {
+            result = svcMngService.generateMsgExample(param);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Response.ok().setData(result);
     }
     @RequestMapping(value = "/generateMsgParameter",method = RequestMethod.POST)
     public Response generateMsgParameter(@RequestBody SVCMngGenerateMsgVO param){
