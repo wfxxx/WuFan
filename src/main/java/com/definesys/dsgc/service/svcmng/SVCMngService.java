@@ -9,6 +9,7 @@ import com.definesys.dsgc.service.bpm.bean.BpmInstanceBean;
 import com.definesys.dsgc.service.bpm.bean.BpmInstanceDTO;
 import com.definesys.dsgc.service.svcAuth.SVCAuthDao;
 import com.definesys.dsgc.service.svcAuth.SVCAuthService;
+import com.definesys.dsgc.service.svcgen.bean.WSDLResolveBean;
 import com.definesys.dsgc.service.svcmng.utils.WsdlResolvProxy;
 import com.definesys.dsgc.service.svclog.SVCLogDao;
 import com.definesys.dsgc.service.svcmng.bean.*;
@@ -563,7 +564,14 @@ public class SVCMngService {
      * @return
      */
     public List<String> queryServWsdlFunction(SVCCommonReqBean param){
-        return null;
+        List<String> functionList = new ArrayList<>();
+        try {
+            String wsdl =getWsdlUrl(param.getCon0());
+             functionList =resolveWsdlFunction(wsdl);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return functionList;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -774,6 +782,18 @@ public class SVCMngService {
         return wsdlUrl;
     }
 
+    /**
+     * 解析wsdl中的方法
+     * @param wsdl
+     * @return
+     * @throws Exception
+     */
+    public List<String > resolveWsdlFunction(String wsdl) throws Exception {
+        /**
+         * TODO
+         */
+        return new ArrayList<>();
 
+    }
 
 }
