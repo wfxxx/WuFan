@@ -16,6 +16,7 @@ public class BpmHistoryBean extends MpaasBasePojo {
     @RowID(type= RowIDType.UUID)
     private String hisId;
     private String instId;
+    private String nodeId;
     @Column(type = ColumnType.JAVA)
     private String nodeName;
     private String approver;
@@ -128,5 +129,13 @@ public class BpmHistoryBean extends MpaasBasePojo {
 
     public void setObjectVersionNumber(Integer objectVersionNumber) {
         this.objectVersionNumber = objectVersionNumber;
+    }
+
+    public String getNodeId() {
+        return nodeId;
+    }
+
+    public void setNodeId(String nodeId) {
+        this.nodeId = nodeId;
     }
 }

@@ -100,7 +100,7 @@ public class BpmService {
             bpmHistoryDTO.setCreatedBy(dsgcUserDao.findUserById(item.getCreatedBy()).getUserName());
             bpmHistoryDTO.setLastUpdatedBy(dsgcUserDao.findUserById(item.getLastUpdatedBy()).getUserName());
             bpmHistoryDTO.setInstTitle(bpmdao.findBpmInstanceById(item.getInstId()).get(0).getInstTitle());
-          //  bpmHistoryDTO.setNodeName(bpmdao.getBpmNodeById(item.getNodeId()).get(0).getNodeName());
+            bpmHistoryDTO.setNodeName(bpmdao.getBpmNodeById(item.getNodeId()).get(0).getNodeName());
             bpmHistoryBeanMapping(item,bpmHistoryDTO);
             bpmHistoryDTOList.add(bpmHistoryDTO);
         }
@@ -110,7 +110,7 @@ public class BpmService {
     public void bpmHistoryBeanMapping(BpmHistoryBean bpmHistoryBean,BpmHistoryDTO bpmHistoryDTO){
     bpmHistoryDTO.setHisId(bpmHistoryBean.getHisId());
     bpmHistoryDTO.setInstId(bpmHistoryBean.getInstId());
-    bpmHistoryDTO.setNodeName(bpmHistoryBean.getNodeName());
+//    bpmHistoryDTO.setNodeName(bpmHistoryBean.getNodeName());
     bpmHistoryDTO.setApproveOper(bpmHistoryBean.getApproveOper());
     bpmHistoryDTO.setApproveOpinion(bpmHistoryBean.getApproveOpinion());
     bpmHistoryDTO.setObjectVersionNumber(bpmHistoryBean.getObjectVersionNumber());
