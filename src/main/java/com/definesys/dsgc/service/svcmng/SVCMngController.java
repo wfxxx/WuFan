@@ -112,4 +112,8 @@ public class SVCMngController {
        svcMngService.saveParamData(param);
         return Response.ok();
     }
+    @RequestMapping(value = "/queryServWsdlFunction",method = RequestMethod.POST)
+    public Response queryServWsdlFunction(@RequestBody SVCCommonReqBean param){
+        return Response.ok().setData(svcMngService.queryServWsdlFunction(param));
+    }
 }

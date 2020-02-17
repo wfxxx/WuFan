@@ -1,5 +1,6 @@
 package com.definesys.dsgc.service.market;
 
+import com.definesys.dsgc.service.esbenv.bean.DSGCEnvInfoCfg;
 import com.definesys.dsgc.service.market.bean.MarketApiBean;
 import com.definesys.dsgc.service.market.bean.MarketCateVO;
 import com.definesys.dsgc.service.market.bean.MarketEntiy;
@@ -202,4 +203,5 @@ public class MarketDao {
         return sw.buildQuery().sql("select  count(1) total from dsgc_services t where t.market_stat='Y'")
                 .doQuery();
     }
+
 }

@@ -721,4 +721,5 @@ public class SVCGenService {
     public List<SVCUriBean> resolveServIBUriList(String sgObjCode) throws Exception{
         return this.sgProxy.resolveServIBUriList(sgObjCode);
     }
+
 }
