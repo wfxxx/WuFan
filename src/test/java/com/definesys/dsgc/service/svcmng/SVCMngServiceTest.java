@@ -31,4 +31,9 @@ public class SVCMngServiceTest {
         String result =svcMngService.getWsdlBodyRes(wsdlUrl,method);
         System.out.println(result);
     }
+
+    @Test
+    public void getWsdlUrl() {
+        System.err.println(this.svcMngService.getWsdlUrl("OA_001",""));
+    }
 }

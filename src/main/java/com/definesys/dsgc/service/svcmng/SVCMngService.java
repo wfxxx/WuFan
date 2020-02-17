@@ -570,7 +570,7 @@ public class SVCMngService {
     public List<String> queryServWsdlFunction(SVCCommonReqBean param){
         List<String> functionList = new ArrayList<>();
         try {
-            String wsdl =getWsdlUrl(param.getCon0());
+            String wsdl =getWsdlUrl(param.getCon0(),null);
              functionList =resolveWsdlFunction(wsdl);
         } catch (Exception e) {
             e.printStackTrace();
@@ -747,8 +747,6 @@ public class SVCMngService {
     }
 
 
-
-
     /**
      * 根据WsdlUrl获取服务请求实例报文
      * @Prams   wsdl地址，方法名
@@ -776,13 +774,31 @@ public class SVCMngService {
 
     /**
      * 根据ServNo获取完整的地址
-     * @Prams   服务ServNo
+     * @Prams   服务ServNo,环境code，默认DEV开发环境
      * @return
      */
-    //TODO
-    public String getWsdlUrl(String ServNo) {
-
+    public String getWsdlUrl(String servNo,String envSeq) {
         String wsdlUrl="";
+        if(envSeq==null||envSeq==""){
+            envSeq="1";
+        }
+        List<Map<String,Object>> urlResult=this.svcMngDao.getUrlByServNo(servNo);
+        if(urlResult.size()==0){
+            System.err.println("不存在该编号");
+            return null;
+        }
+       String url= (String) (urlResult.get(0).get("IB_URI"));
+        if(!url.startsWith("/")){
+            url="/"+url;
+        }
+        List<Map<String,Object>> envResult=this.svcMngDao.getEvnInfo(envSeq);
+        if(envResult.size()==0){
+            System.err.println("不存在该环境");
+            return null;
+        }
+        String port= (String) (envResult.get(0).get("ESB_PORT"));
+        String ip= (String) (envResult.get(0).get("ESB_IP"));
+        wsdlUrl="https://"+ip+":"+port+url+"?wsdl";
         return wsdlUrl;
     }
 

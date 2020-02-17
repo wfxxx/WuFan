@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class SVCMngDao {
@@ -186,4 +187,15 @@ public class SVCMngDao {
 //    public void addServSoapPayload(DSGCPayloadSampleBean bean){
 //        sw.buildQuery().doInsert(bean);
 //    }
+
+    public List<Map<String,Object>> getUrlByServNo(String servNo){
+        return sw.buildQuery().sql("select t.ib_uri from DSGC_SERVICES_URI t where t.serv_no=#servNo and t.uri_type='SOAP'")
+                .setVar("servNo",servNo).doQuery();
+    }
+
+    public List<Map<String,Object>> getEvnInfo(String envSeq){
+        return sw.buildQuery().sql("select t.esb_ip,t.esb_port from DSGC_ENV_INFO_CFG t where t.env_seq=#envSeq")
+                .setVar("envSeq",envSeq).doQuery();
+    }
+
 }
