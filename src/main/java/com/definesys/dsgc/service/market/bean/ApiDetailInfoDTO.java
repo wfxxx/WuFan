@@ -2,22 +2,21 @@ package com.definesys.dsgc.service.market.bean;
 
 import java.util.List;
 
-public class SrevDetailInfoDTO {
-    public ServDetailBaseDTO servBase;
+public class ApiDetailInfoDTO {
+    private ApiDetailBaseDTO apiBase;
     public List<ServLocation> locationList;
     public List<ServUriParamterDTO> paramterList;
     public List<PayloadParamDTO> reqPayloadParamList;
     public List<PayloadParamDTO> resPayloadParamList;
 
     public CallSampleDTO restCallSample;
-    public CallSampleDTO soapCallSample;
 
-    public ServDetailBaseDTO getServBase() {
-        return servBase;
+    public ApiDetailBaseDTO getApiBase() {
+        return apiBase;
     }
 
-    public void setServBase(ServDetailBaseDTO servBase) {
-        this.servBase = servBase;
+    public void setApiBase(ApiDetailBaseDTO apiBase) {
+        this.apiBase = apiBase;
     }
 
     public List<ServLocation> getLocationList() {
@@ -58,13 +57,5 @@ public class SrevDetailInfoDTO {
 
     public void setRestCallSample(CallSampleDTO restCallSample) {
         this.restCallSample = restCallSample;
-    }
-
-    public CallSampleDTO getSoapCallSample() {
-        return soapCallSample;
-    }
-
-    public void setSoapCallSample(CallSampleDTO soapCallSample) {
-        this.soapCallSample = soapCallSample;
     }
 }

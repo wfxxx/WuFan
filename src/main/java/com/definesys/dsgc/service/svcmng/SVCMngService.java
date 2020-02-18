@@ -341,30 +341,36 @@ public class SVCMngService {
     }
 
     public List<ServUriDTO> queryServUri(String servNo){
-       List<DSGCServicesUri> uris = svcMngDao.queryServUri(servNo);
         List<ServUriDTO> result = new ArrayList<>();
-       Iterator<DSGCServicesUri> iterator = uris.iterator();
-       while (iterator.hasNext()){
-           DSGCServicesUri temp = iterator.next();
-           ServUriDTO servUriDTO = new ServUriDTO();
-           servUriDTO.setIbUri(temp.getIbUri());
-           servUriDTO.setUriType(temp.getUriType());
-           result.add(servUriDTO);
+        if(StringUtil.isNotBlank(servNo)){
+            List<DSGCServicesUri> uris = svcMngDao.queryServUri(servNo);
+            Iterator<DSGCServicesUri> iterator = uris.iterator();
+            while (iterator.hasNext()){
+                DSGCServicesUri temp = iterator.next();
+                ServUriDTO servUriDTO = new ServUriDTO();
+                servUriDTO.setIbUri(temp.getIbUri());
+                servUriDTO.setUriType(temp.getUriType());
+                result.add(servUriDTO);
+
+        }
        }
        return result;
     }
     public List<ServUriParamterDTO> queryServUriParamter(String resCode){
-       List<DSGCUriParamsBean> dsgcUriParamsBeans = svcMngDao.queryServUriParamter(resCode);
-       List<ServUriParamterDTO> result = new ArrayList<>();
-       Iterator<DSGCUriParamsBean> iterator = dsgcUriParamsBeans.iterator();
-       while (iterator.hasNext()){
-           DSGCUriParamsBean temp = iterator.next();
-           ServUriParamterDTO dto = new ServUriParamterDTO();
-           dto.setParamCode(temp.getParamCode());
-           dto.setParamDesc(temp.getParamDesc());
-           dto.setParamSample(temp.getParamSample());
-           result.add(dto);
-       }
+        List<ServUriParamterDTO> result = new ArrayList<>();
+        if (StringUtil.isNotBlank(resCode)){
+            List<DSGCUriParamsBean> dsgcUriParamsBeans = svcMngDao.queryServUriParamter(resCode);
+            Iterator<DSGCUriParamsBean> iterator = dsgcUriParamsBeans.iterator();
+            while (iterator.hasNext()){
+                DSGCUriParamsBean temp = iterator.next();
+                ServUriParamterDTO dto = new ServUriParamterDTO();
+                dto.setParamCode(temp.getParamCode());
+                dto.setParamDesc(temp.getParamDesc());
+                dto.setParamSample(temp.getParamSample());
+                result.add(dto);
+            }
+        }
+
        return result;
     }
 

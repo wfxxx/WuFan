@@ -149,8 +149,23 @@ public class MarketService {
         return  servNoResult.toArray(new String[servNoResult.size()]);
     }
 
+    /**
+     * 集成服务详情查询api
+     * @param servNo
+     * @return
+     */
     public SrevDetailInfoDTO queryServBaseInfo(String servNo){
         SrevDetailInfoDTO result = new SrevDetailInfoDTO();
+        DSGCService dsgcService =svcMngDao.queryServByServNo(servNo);
+        if (dsgcService == null){
+            return null;
+        }else {
+            ServDetailBaseDTO servBaseDTO = new ServDetailBaseDTO();
+            servBaseDTO.setServNo(dsgcService.getServNo());
+            servBaseDTO.setServName(dsgcService.getServName());
+            servBaseDTO.setServDesc(dsgcService.getServDesc());
+            result.setServBase(servBaseDTO);
+        }
         List<DSGCEnvInfoCfg> envInfoCfgs = busCfgDao.queryEnvInfoCfgListPage();
         List<DSGCServicesUri> servicesUris = svcMngDao.queryServUri(servNo);
         StringBuilder restRequestSample = new StringBuilder("");
@@ -294,5 +309,152 @@ public class MarketService {
         result.setResPayloadParamList(resPayloadParamDTO);
         return result;
 
+    }
+
+    public List<ServLocation> generateLocationList(List<DSGCServicesUri> servicesUris,List<DSGCEnvInfoCfg> envInfoCfgs){
+        List<ServLocation> locationList = new ArrayList<>();
+        Iterator<DSGCServicesUri> iterator = servicesUris.iterator();
+        StringBuilder restRequestSample = new StringBuilder("");
+        while (iterator.hasNext()){
+            DSGCServicesUri dsgcServicesUri = iterator.next();
+            restRequestSample.append("http://ip:port/"+dsgcServicesUri.getIbUri());
+            if(envInfoCfgs != null && envInfoCfgs.size()>0){
+                Iterator<DSGCEnvInfoCfg> infoCfgIterator = envInfoCfgs.iterator();
+                while (infoCfgIterator.hasNext()){
+                    DSGCEnvInfoCfg dsgcEnvInfoCfg = infoCfgIterator.next();
+                    ServLocation servLocation = new ServLocation();
+                    servLocation.setUrlType(dsgcServicesUri.getUriType());
+                    servLocation.setEnvName(dsgcEnvInfoCfg.getEnvName());
+                    String url ="http://"+ dsgcEnvInfoCfg.getEsbIp()+":"+dsgcEnvInfoCfg.getEsbPort()+"/"+dsgcServicesUri.getIbUri();
+                    servLocation.setUrl(url);
+                    locationList.add(servLocation);
+                }
+            } else {
+                ServLocation servLocation = new ServLocation();
+                servLocation.setUrlType(dsgcServicesUri.getUriType());
+                servLocation.setUrl(dsgcServicesUri.getIbUri());
+                servLocation.setEnvName("");
+                locationList.add(servLocation);
+            }
+        }
+        return locationList;
+    }
+
+    public CallSampleDTO generatePayloadSample(String apiCode){
+        CallSampleDTO restCallSample = new CallSampleDTO();
+        DSGCPayloadSampleBean sampleRestBean = new DSGCPayloadSampleBean();
+        sampleRestBean.setResCode(apiCode);
+        sampleRestBean.setReqOrRes("REQ");
+        sampleRestBean.setUriType("REST");
+        DSGCPayloadSampleBean restReqSample = svcMngDao.querySrvPaloadSoapOrRestSample(sampleRestBean);
+        sampleRestBean.setReqOrRes("RES");
+        DSGCPayloadSampleBean restResSample = svcMngDao.querySrvPaloadSoapOrRestSample(sampleRestBean);
+        if (restReqSample != null){
+            restCallSample.setRequestMessage(restReqSample.getPlSample());
+        }else {
+            restCallSample.setRequestMessage("");
+        }
+        if (restResSample != null){
+            restCallSample.setResponseMessage(restResSample.getPlSample());
+        }else {
+            restCallSample.setResponseMessage("");
+        }
+        return restCallSample;
+    }
+    public StringBuilder generateRequestSample(List<DSGCServicesUri> servicesUris,List<DSGCUriParamsBean> paramsBeans){
+        StringBuilder restRequestSample = new StringBuilder("");
+        Iterator<DSGCServicesUri> iterator = servicesUris.iterator();
+        while (iterator.hasNext()) {
+            DSGCServicesUri dsgcServicesUri = iterator.next();
+            restRequestSample.append("http://ip:port/"+dsgcServicesUri.getIbUri());
+        }
+        if (paramsBeans != null && paramsBeans.size()>0){
+            String param = "";
+            for (int i = 0; i < paramsBeans.size(); i++) {
+                if (i == 0){
+                    String  temp = "?"+paramsBeans.get(i).getParamCode()+"="+paramsBeans.get(i).getParamSample();
+                    param += temp;
+                }else {
+                    String temp = "&"+paramsBeans.get(i).getParamCode()+"="+paramsBeans.get(i).getParamSample();
+                    param += temp;
+                }
+            }
+            restRequestSample.append(param);
+        }
+
+        return restRequestSample;
+    }
+    public List<ServUriParamterDTO> generateUriParam(List<DSGCUriParamsBean> paramsBeans ){
+        Iterator<DSGCUriParamsBean> iterator = paramsBeans.iterator();
+        List<ServUriParamterDTO> paramterDTOS = new ArrayList<>();
+        while (iterator.hasNext()){
+            DSGCUriParamsBean dsgcUriParamsBean = iterator.next();
+            ServUriParamterDTO servUriParamterDTO = new ServUriParamterDTO();
+            servUriParamterDTO.setParamCode(dsgcUriParamsBean.getParamCode());
+            servUriParamterDTO.setParamSample(dsgcUriParamsBean.getParamSample());
+            servUriParamterDTO.setParamDesc(dsgcUriParamsBean.getParamDesc());
+            paramterDTOS.add(servUriParamterDTO);
+        }
+        return paramterDTOS;
+    }
+
+    public List<PayloadParamDTO> generatePayloadParam(List<DSGCPayloadParamsBean> payLoadParam){
+            Iterator<DSGCPayloadParamsBean> iterator = payLoadParam.iterator();
+        List<PayloadParamDTO> payloadParamList = new ArrayList<>();
+            while (iterator.hasNext()){
+                DSGCPayloadParamsBean temp = iterator.next();
+                PayloadParamDTO payloadParamDTO = new PayloadParamDTO();
+                payloadParamDTO.setParamCode(temp.getParamCode());
+                payloadParamDTO.setParamDesc(temp.getParamDesc());
+                payloadParamDTO.setParamNeed(temp.getParamNeed());
+                payloadParamDTO.setParamSample(temp.getParamSample());
+                payloadParamDTO.setParamType(temp.getParamType());
+                payloadParamList.add(payloadParamDTO);
+            }
+        return payloadParamList;
+    }
+    public ApiDetailInfoDTO queryApiBaseInfo(String apiCode){
+        DSGCApisBean apisBean = marketDao.queryApiByApiCode(apiCode);
+        ApiDetailInfoDTO result = new ApiDetailInfoDTO();
+        if (apisBean == null){
+            return result;
+        }else {
+            ApiDetailBaseDTO apiDetailBaseDTO = new ApiDetailBaseDTO();
+            apiDetailBaseDTO.setApiCode(apisBean.getApiCode());
+            apiDetailBaseDTO.setApiName(apisBean.getApiName());
+            apiDetailBaseDTO.setApiDesc(apisBean.getApiDesc());
+            result.setApiBase(apiDetailBaseDTO);
+        }
+        List<DSGCEnvInfoCfg> envInfoCfgs = busCfgDao.queryEnvInfoCfgListPage();
+        List<DSGCServicesUri> servicesUris = svcMngDao.queryServUri(apiCode);
+
+        if (servicesUris != null && servicesUris.size()>0){
+            List<ServLocation> locationList = generateLocationList(servicesUris,envInfoCfgs);
+            result.setLocationList(locationList);
+        }
+        List<DSGCUriParamsBean> paramsBeans = svcMngDao.queryServUriParamter(apiCode);
+        if (paramsBeans != null && paramsBeans.size()>0){
+            List<ServUriParamterDTO> uriParamterDTOS = generateUriParam(paramsBeans);
+            result.setParamterList(uriParamterDTOS);
+        }
+        CallSampleDTO callSampleDTO =generatePayloadSample(apiCode);
+        StringBuilder requestSample = generateRequestSample(servicesUris,paramsBeans);
+        callSampleDTO.setRequestSample(requestSample);
+        result.setRestCallSample(callSampleDTO);
+        SVCCommonReqBean param = new SVCCommonReqBean();
+        param.setCon0(apiCode);
+        param.setQueryType("REQ");
+        List<DSGCPayloadParamsBean> reqPayLoadParam = svcMngDao.queryServPayloadParam(param);
+        param.setQueryType("RES");
+        List<DSGCPayloadParamsBean> resPayLoadParam = svcMngDao.queryServPayloadParam(param);
+        if (reqPayLoadParam != null && reqPayLoadParam.size() > 0){
+            List<PayloadParamDTO> reqPayLoadParamList = generatePayloadParam(reqPayLoadParam);
+            result.setReqPayloadParamList(reqPayLoadParamList);
+        }
+        if (resPayLoadParam != null && resPayLoadParam.size() > 0){
+            List<PayloadParamDTO> resPayLoadParamList = generatePayloadParam(resPayLoadParam);
+            result.setResPayloadParamList(resPayLoadParamList);
+        }
+        return result;
     }
 }

@@ -95,7 +95,7 @@ public class BpmController {
     }
 
     /**
-     * 发起审批测试接口
+     * 发起流程测试接口
      * @param
      * @return
      */
@@ -107,7 +107,7 @@ public class BpmController {
         bpmInstanceBean.setProcessId(bpmSubBean.getProcessId());
         bpmInstanceBean.setInstTitle(bpmSubBean.getInstTitle());
         bpmService.generateBpmInstance(bpmInstanceBean,bpmSubBean.getApprover(),userId);
-        return Response.ok();
+        return Response.ok().setData(bpmInstanceBean.getInstId());
     }
 
     /**

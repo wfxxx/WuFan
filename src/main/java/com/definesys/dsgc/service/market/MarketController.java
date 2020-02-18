@@ -1,9 +1,6 @@
 package com.definesys.dsgc.service.market;
 
-import com.definesys.dsgc.service.market.bean.MarketApiBean;
-import com.definesys.dsgc.service.market.bean.MarketCateVO;
-import com.definesys.dsgc.service.market.bean.MarketQueryBean;
-import com.definesys.dsgc.service.market.bean.SrevDetailInfoDTO;
+import com.definesys.dsgc.service.market.bean.*;
 import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -216,6 +213,17 @@ public class MarketController {
     public Response queryServBaseInfo(@RequestBody MarketQueryBean param){
         SrevDetailInfoDTO result = marketService.queryServBaseInfo(param.getCon0());
     return Response.ok().setData(result);
+    }
+
+    /**
+     * API详情查看页面查询api
+     * @param param
+     * @return
+     */
+    @RequestMapping(value = "/queryApiBaseInfo",method = RequestMethod.POST)
+    public Response queryApiBaseInfo(@RequestBody MarketQueryBean param){
+        ApiDetailInfoDTO result = marketService.queryApiBaseInfo(param.getCon0());
+        return Response.ok().setData(result);
     }
 
 }
