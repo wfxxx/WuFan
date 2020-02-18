@@ -1,4 +1,4 @@
-package com.definesys.dsgc.service.apiMng.bean;
+package com.definesys.dsgc.service.apiauth.bean;
 
 public class CommonReqBean {
     private String con0;
@@ -10,5 +10,5 @@ public class CommonReqBean {
     public void setCon0(String con0) {
         this.con0 = con0;
     }
-
+    
 }

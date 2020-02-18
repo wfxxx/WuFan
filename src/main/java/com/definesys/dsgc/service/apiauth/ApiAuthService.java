@@ -1,4 +1,4 @@
-package com.definesys.dsgc.service.apiAuth;
+package com.definesys.dsgc.service.apiauth;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
