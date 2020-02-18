@@ -270,6 +270,7 @@ public class BpmService {
         bpmHistoryBean.setNodeName("流程发起");
         bpmHistoryBean.setApprover(userId);
         bpmHistoryBean.setApproveOper("gree");
+        bpmHistoryBean.setNodeId(bpmInstanceBean.getCurNode());
         bpmHistoryBean.setApproveOpinion("申请人发起流程");
         bpmHistoryBean.setCreatedBy(userId);
         bpmHistoryBean.setLastUpdatedBy(userId);
@@ -293,4 +294,26 @@ public class BpmService {
     public List<BpmProcessBean> queryProcessTypeList(){
        return bpmdao.queryProcessTypeList();
     }
+
+    public List<BpmProcessBean> queryProcessTypeById(String id){
+        return bpmdao.queryProcessTypeById(id);
+    }
+
+    public BpmHistoryBean addhistory(BpmHistoryBean bpmHistoryBean){
+        return bpmdao.addhistory(bpmHistoryBean);
+
+    }
+
+    public List<BpmNodeBean> getBpmNodeByNodeId(String nodeId){
+        return bpmdao.getBpmNodeById(nodeId);
+
+    }
+
+    public List<BpmNodeBean> getBpmNodeByProcessId(String processId){
+        return bpmdao.getBpmNodeByProcessId(processId);
+
+    }
+
+
+
 }

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class ConsumersDao {
@@ -121,5 +122,10 @@ public class ConsumersDao {
     }
     public List<DSGCConsumerEntities> queryConsumersBaseInfoList(){
        return sw.buildQuery().doQuery(DSGCConsumerEntities.class);
+    }
+
+    public List<Map<String,Object>> queryConsumersListByUserId(String id){
+        return sw.buildQuery().sql("select e.csm_code as code,e.csm_name as name from DSGC_CONSUMER_USERS t,dsgc_consumer_entities e where t.csm_code=e.csm_code and t.user_id=#id")
+                .setVar("id",id).doQuery();
     }
 }

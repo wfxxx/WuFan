@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "dsgc/entitys/consumers")
@@ -82,5 +83,10 @@ public class ConsumersController {
     @RequestMapping(value = "queryConsumersBaseInfoList")
     public Response queryConsumersBaseInfoList(){
         return Response.ok().setData(consumersService.queryConsumersBaseInfoList());
+    }
+
+    @RequestMapping(value = "queryConsumersListByUserId")
+    public Response queryConsumersListByUserId(@RequestParam(value = "userId") String id){
+        return Response.ok().setData(consumersService.queryConsumersListByUserId(id));
     }
 }
