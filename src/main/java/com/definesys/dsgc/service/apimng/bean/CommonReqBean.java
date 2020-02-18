@@ -1,7 +1,9 @@
 package com.definesys.dsgc.service.apimng.bean;
 
 public class CommonReqBean {
-    private String con0;
+    private String con0;//通用查询条件
+    private String isComplete;
+    private String queryType;
 
     public String getCon0() {
         return con0;
@@ -9,6 +11,22 @@ public class CommonReqBean {
 
     public void setCon0(String con0) {
         this.con0 = con0;
+    }
+
+    public String getIsComplete() {
+        return isComplete;
+    }
+
+    public void setIsComplete(String isComplete) {
+        this.isComplete = isComplete;
+    }
+
+    public String getQueryType() {
+        return queryType;
+    }
+
+    public void setQueryType(String queryType) {
+        this.queryType = queryType;
     }
 
 }
