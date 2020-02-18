@@ -100,4 +100,19 @@ public class SVCAuthController {
     public Response queryLookupValue(@RequestParam String lookupType){
        return Response.ok().setData(svcAuthService.queryLookupValue(lookupType));
     }
+
+
+    /**
+     * @Description 申请权限流程
+     * @Author Xueyunlong
+     * @Date 2020-2-18 13:26
+     * @Version 1.0
+     **/
+    @RequestMapping(value = "/applyServAuthPro",method = RequestMethod.POST)
+    public Response applyServAuthPro(@RequestBody ApplyAuthProBean applyAuthProBean){
+
+        return Response.ok().setMessage( svcAuthService.applyServAuthPro(applyAuthProBean));
+    }
+
+
 }

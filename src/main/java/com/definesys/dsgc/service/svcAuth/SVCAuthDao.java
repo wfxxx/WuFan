@@ -1,10 +1,7 @@
 package com.definesys.dsgc.service.svcAuth;
 
 import com.definesys.dsgc.service.consumers.bean.DSGCConsumerEntities;
-import com.definesys.dsgc.service.svcAuth.bean.SVCAddAuthSystemReqBean;
-import com.definesys.dsgc.service.svcAuth.bean.SVCBaseInfoBean;
-import com.definesys.dsgc.service.svcAuth.bean.SVCCommonReqBean;
-import com.definesys.dsgc.service.svcAuth.bean.SVCHisBean;
+import com.definesys.dsgc.service.svcAuth.bean.*;
 import com.definesys.dsgc.service.system.bean.DSGCSystemAccess;
 import com.definesys.dsgc.service.system.bean.DSGCSystemEntities;
 import com.definesys.dsgc.service.svcmng.bean.DSGCService;
@@ -253,6 +250,11 @@ public class SVCAuthDao {
 
     public void addSvcHis(SVCHisBean svcHisBean){
         sw.buildQuery().doInsert(svcHisBean);
+    }
+
+
+    public void addApplyServAuthBus(ApplyAuthProBean applyAuthProBean){
+        sw.buildQuery().doInsert(applyAuthProBean);
     }
 
 

@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ConsumersService {
@@ -143,5 +144,10 @@ public class ConsumersService {
             consumerEntitieDTOS.add(consumerEntitieDTO);
         }
         return consumerEntitieDTOS;
+    }
+
+    public List<Map<String,Object>> queryConsumersListByUserId(String id){
+
+        return consumersDao.queryConsumersListByUserId(id);
     }
 }

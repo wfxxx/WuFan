@@ -139,6 +139,10 @@ public class BpmDao {
        return sw.buildQuery().eq("nodeId",nodeId).doQuery(BpmNodeBean.class);
     }
 
+    public List<BpmNodeBean> getBpmNodeByProcessId(String processId){
+        return sw.buildQuery().eq("processId",processId).doQuery(BpmNodeBean.class);
+    }
+
     public void createBpmInstance(BpmInstanceBean bpmInstanceBean){
         sw.buildQuery().doInsert(bpmInstanceBean);
     }
@@ -153,5 +157,15 @@ public class BpmDao {
 
     public List<BpmProcessBean> queryProcessTypeList(){
         return sw.buildQuery().eq("isEnable","Y").doQuery(BpmProcessBean.class);
+    }
+
+    public List<BpmProcessBean> queryProcessTypeById(String Id){
+        return sw.buildQuery().eq("isEnable","Y").eq("processId",Id).doQuery(BpmProcessBean.class);
+    }
+
+
+
+    public BpmHistoryBean addhistory(BpmHistoryBean bpmHistoryBean){
+        return (BpmHistoryBean) sw.buildQuery().doInsert(bpmHistoryBean);
     }
 }
