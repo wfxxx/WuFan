@@ -1,4 +1,4 @@
-package com.definesys.dsgc.service.apiMng;
+package com.definesys.dsgc.service.apimng;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
