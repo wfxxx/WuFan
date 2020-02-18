@@ -109,9 +109,8 @@ public class SVCAuthController {
      * @Version 1.0
      **/
     @RequestMapping(value = "/applyServAuthPro",method = RequestMethod.POST)
-    public Response applyServAuthPro(@RequestBody ApplyAuthProBean applyAuthProBean){
-
-        return Response.ok().setMessage( svcAuthService.applyServAuthPro(applyAuthProBean));
+    public Response applyServAuthPro(@RequestParam(value = "instanceId") String id,@RequestBody ApplyAuthProBean applyAuthProBean){
+        return Response.ok().setMessage( svcAuthService.applyServAuthPro(id,applyAuthProBean));
     }
 
 

@@ -19,7 +19,6 @@ public class BpmService {
     private DSGCUserDao dsgcUserDao;
 
     public String generateBpmInst(){
-
       BpmInstanceBean bpmInstanceBean = new BpmInstanceBean();
               bpmdao.generateBpmInst(bpmInstanceBean);
       return bpmInstanceBean.getInstId();
@@ -235,13 +234,13 @@ public class BpmService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void generateBpmInstance(BpmInstanceBean bpmInstanceBean,String approver,String userId){
+    public String generateBpmInstance(BpmInstanceBean bpmInstanceBean,String approver,String userId){
      BpmNodeBean bpmNodeBean = new BpmNodeBean();
      bpmNodeBean.setProcessId(bpmInstanceBean.getProcessId());
      bpmNodeBean.setNodePos("0");
      List<BpmNodeBean> nodeBeanList = bpmdao.getBpmNodes(bpmNodeBean);
      if(nodeBeanList.size() == 0){
-         return;
+         return null;
      }
     bpmInstanceBean.setCurNode(nodeBeanList.get(0).getNodeId());
      bpmInstanceBean.setInstStat("appr");
@@ -279,6 +278,7 @@ public class BpmService {
         bpmHistoryBean.setCreationDate(date);
         bpmHistoryBean.setLastUpdateDate(date);
         bpmdao.addHistory(bpmHistoryBean);
+        return bpmInstanceBean.getInstId();
     }
 
     public void addTask(BpmTaskBean bpmTaskBean){
@@ -295,9 +295,7 @@ public class BpmService {
        return bpmdao.queryProcessTypeList();
     }
 
-    public List<BpmProcessBean> queryProcessTypeById(String id){
-        return bpmdao.queryProcessTypeById(id);
-    }
+
 
     public BpmHistoryBean addhistory(BpmHistoryBean bpmHistoryBean){
         return bpmdao.addhistory(bpmHistoryBean);
@@ -309,10 +307,7 @@ public class BpmService {
 
     }
 
-    public List<BpmNodeBean> getBpmNodeByProcessId(String processId){
-        return bpmdao.getBpmNodeByProcessId(processId);
 
-    }
 
 
 

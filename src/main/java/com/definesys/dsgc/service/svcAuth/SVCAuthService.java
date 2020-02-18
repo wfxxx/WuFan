@@ -287,44 +287,8 @@ public class SVCAuthService {
 
     //发起申请服务流程
     @Transactional(rollbackFor = Exception.class)
-    public String applyServAuthPro(ApplyAuthProBean applyAuthProBean){
-        //获取流程类型
-        BpmProcessBean bpmProcessBean;
-        List<BpmProcessBean>  bpmProcessBeans=bpmService.queryProcessTypeById(applyAuthProBean.getProcessType());
-        if(bpmProcessBeans.size()>0){
-            bpmProcessBean=bpmProcessBeans.get(0);
-        }
-        else{
-            return "未找到流程类型";
-        }
-        //插入bpm实例.创建历史
-        BpmInstanceBean bpmInstanceBean=new BpmInstanceBean();
-        bpmInstanceBean.setInstTitle(bpmProcessBean.getProcessName()+":"+applyAuthProBean.getApplySerName());
-        bpmInstanceBean.setProcessId(applyAuthProBean.getProcessType());
-        bpmService.generateBpmInstance(bpmInstanceBean,null,applyAuthProBean.getApplicant());
-        System.out.println(bpmInstanceBean);
-        List<BpmNodeBean> nodes=bpmService.getBpmNodeByProcessId(bpmProcessBean.getProcessId());
-        if(nodes.size()<2){
-            //一个流程至少两个节点
-            return "未找到流程类型匹配的节点";
-        }
-        BpmNodeBean nodeFirst=nodes.get(0);
-        BpmNodeBean nodeSeconed=nodes.get(1);
-        //插入发起人bpm任务。
-        BpmTaskBean bpmTaskBean1=new BpmTaskBean();
-        bpmTaskBean1.setNodeId(nodeFirst.getNodeId());
-        bpmTaskBean1.setInstId(bpmInstanceBean.getInstId());
-        bpmTaskBean1.setApprover(nodeFirst.getApprCode());
-        bpmService.addTask(bpmTaskBean1);
-        //插入第一个审批人任务。
-        BpmTaskBean bpmTaskBean2=new BpmTaskBean();
-        bpmTaskBean2.setNodeId(nodeFirst.getNodeId());
-        bpmTaskBean2.setInstId(bpmInstanceBean.getInstId());
-        bpmTaskBean2.setApprover(nodeFirst.getApprCode());
-        bpmTaskBean2.setCreatedBy("-1");
-        bpmService.addTask(bpmTaskBean2);
-        //插入业务信息。
-        applyAuthProBean.setInstanceId(bpmInstanceBean.getInstId());
+    public String applyServAuthPro(String instanceId,ApplyAuthProBean applyAuthProBean){
+        applyAuthProBean.setInstanceId(instanceId);
         String[] consumer=applyAuthProBean.getConsumer();
         String consumerStr="";
         for(int i=0;i<consumer.length-1;i++){
