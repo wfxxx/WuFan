@@ -34,6 +34,6 @@ public class SVCMngServiceTest {
 
     @Test
     public void getWsdlUrl() {
-        System.err.println(this.svcMngService.getWsdlUrl("OA_001",""));
+        System.err.println(this.svcMngService.getWsdlUrl("OA_001","1"));
     }
 }

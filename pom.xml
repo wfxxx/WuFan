@@ -95,19 +95,48 @@
             <artifactId>json</artifactId>
             <version>20160810</version>
         </dependency>
+        <dependency>
+            <groupId>dsgc.common</groupId>
+            <artifactId>common</artifactId>
+            <scope>system</scope>
+            <version>20200217</version>
+            <systemPath>${project.basedir}/lib/com.definesys.dsgc.common.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>xml.xmlbeans</groupId>
+            <artifactId>xmlbeans</artifactId>
+            <scope>system</scope>
+            <version>20200217</version>
+            <systemPath>${project.basedir}/lib/com.bea.core.xml.xmlbeans.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>commons.io</groupId>
+            <artifactId>commons.io</artifactId>
+            <scope>system</scope>
+            <version>20200217</version>
+            <systemPath>${project.basedir}/lib/commons-io-2.4.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <scope>system</scope>
+            <version>20200217</version>
+            <systemPath>${project.basedir}/lib/log4j-1.2.17.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>wsdl4j</groupId>
+            <artifactId>wsdl4j</artifactId>
+            <scope>system</scope>
+            <version>20200217</version>
+            <systemPath>${project.basedir}/lib/wsdl4j.jar</systemPath>
+        </dependency>
+
 
 
     </dependencies>
 
     <build>
         <plugins>
-            <!--<plugin>-->
-                <!--<groupId>org.springframework.boot</groupId>-->
-                <!--<artifactId>spring-boot-maven-plugin</artifactId>-->
-                <!--<configuration>-->
-                    <!--<mainClass>com.definesys.dsgc.service.DsgcappservicesApplication</mainClass>-->
-                <!--</configuration>-->
-            <!--</plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
