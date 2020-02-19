@@ -128,4 +128,9 @@ public class ConsumersDao {
         return sw.buildQuery().sql("select e.csm_code as code,e.csm_name as name from DSGC_CONSUMER_USERS t,dsgc_consumer_entities e where t.csm_code=e.csm_code and t.user_id=#id")
                 .setVar("id",id).doQuery();
     }
+
+    public List<DSGCConsumerEntities> queryConsumersListByIds(List<String> codes){
+        return sw.buildQuery().in("csmCode",codes)
+                .doQuery(DSGCConsumerEntities.class);
+    }
 }

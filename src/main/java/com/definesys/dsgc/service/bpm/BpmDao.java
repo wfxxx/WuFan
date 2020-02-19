@@ -165,8 +165,6 @@ public class BpmDao {
 
 
 
-
-
     public BpmHistoryBean addhistory(BpmHistoryBean bpmHistoryBean){
         return (BpmHistoryBean) sw.buildQuery().doInsert(bpmHistoryBean);
     }

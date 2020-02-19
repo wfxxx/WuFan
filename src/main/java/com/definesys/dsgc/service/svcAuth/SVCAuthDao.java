@@ -257,5 +257,9 @@ public class SVCAuthDao {
         sw.buildQuery().doInsert(applyAuthProBean);
     }
 
+    public ApplyAuthProBean getProcessBusinessInfo(String instanceId){
+       return  sw.buildQuery().eq("instanceId",instanceId).doQueryFirst(ApplyAuthProBean.class);
+    }
+
 
 }
