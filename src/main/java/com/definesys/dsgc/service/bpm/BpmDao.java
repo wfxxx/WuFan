@@ -1,6 +1,7 @@
 package com.definesys.dsgc.service.bpm;
 
 import com.definesys.dsgc.service.bpm.bean.*;
+import com.definesys.dsgc.service.users.bean.DSGCUser;
 import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.mpaas.query.MpaasQuery;
 import com.definesys.mpaas.query.MpaasQueryFactory;
@@ -157,7 +158,10 @@ public class BpmDao {
         return sw.buildQuery().eq("isEnable","Y").doQuery(BpmProcessBean.class);
     }
 
-
+public List<DSGCUser> queryTaskUserByNodeId(String instId,String nodeId){
+        return sw.buildQuery().sql("select du.* from dsgc_bpm_task dpt,dsgc_user du where dpt.approver = du.user_id and dpt.inst_id = #instId and dpt.node_id = #nodeId")
+                .setVar("instId",instId).setVar("nodeId",nodeId).doQuery(DSGCUser.class);
+}
 
 
 

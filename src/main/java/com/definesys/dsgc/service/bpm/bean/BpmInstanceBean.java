@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.swagger.annotations.ApiModel;
 
 import java.util.Date;
+import java.util.List;
 
 @Table(value = "DSGC_BPM_INSTANCE")
 @ApiModel(value = "流程实例pojo", description = "流程实例pojo")
@@ -23,7 +24,7 @@ public class BpmInstanceBean extends MpaasBasePojo {
     private String createdBy;
 
     @Column(type = ColumnType.JAVA)
-    private String approver;
+    private List<String> approver;
 
     @JsonSerialize(using = MpaasDateTimeSerializer.class)
     @JsonDeserialize(using = MpaasDateTimeDeserializer.class)
@@ -122,11 +123,11 @@ public class BpmInstanceBean extends MpaasBasePojo {
         this.objectVersionNumber = objectVersionNumber;
     }
 
-    public String getApprover() {
+    public List<String> getApprover() {
         return approver;
     }
 
-    public void setApprover(String approver) {
+    public void setApprover(List<String> approver) {
         this.approver = approver;
     }
 }

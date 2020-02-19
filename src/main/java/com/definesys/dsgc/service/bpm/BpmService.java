@@ -76,7 +76,16 @@ public class BpmService {
     public BpmInstanceDTO instanceBeanMapping(BpmInstanceBean bpmInstanceBean){
         BpmInstanceDTO bpmInstanceDTO = new BpmInstanceDTO();
         if(bpmInstanceBean.getCurNode() != null && bpmInstanceBean.getCurNode() != ""){
-            bpmInstanceDTO.setCurNodeName(bpmdao.getBpmNodeById(bpmInstanceBean.getCurNode()).get(0).getNodeName());
+            List<BpmNodeBean> nodeBeans= bpmdao.getBpmNodeById(bpmInstanceBean.getCurNode());
+            bpmInstanceDTO.setCurNodeName(nodeBeans.get(0).getNodeName());
+            List<DSGCUser> users =bpmdao.queryTaskUserByNodeId(bpmInstanceBean.getInstId(),bpmInstanceBean.getCurNode());
+            List<String> userList = new ArrayList<>();
+            Iterator<DSGCUser> iterator = users.iterator();
+            while (iterator.hasNext()){
+                DSGCUser user = iterator.next();
+                userList.add(user.getUserName());
+            }
+            bpmInstanceDTO.setApprover(userList);
         }
         bpmInstanceDTO.setProcessName(bpmdao.findBpmProcessById(bpmInstanceBean.getProcessId()).get(0).getProcessName());
         bpmInstanceDTO.setCreatedBy(dsgcUserDao.findUserById(bpmInstanceBean.getCreatedBy()).getUserName());
@@ -88,7 +97,7 @@ public class BpmService {
         bpmInstanceDTO.setInstStat(bpmInstanceBean.getInstStat());
         bpmInstanceDTO.setInstId(bpmInstanceBean.getInstId());
         bpmInstanceDTO.setInstTitle(bpmInstanceBean.getInstTitle());
-        bpmInstanceDTO.setApprover(bpmInstanceBean.getApprover());
+        //bpmInstanceDTO.setApprover(bpmInstanceBean.getApprover());
         return bpmInstanceDTO;
     }
     public List<BpmHistoryDTO> getInstHistory(BpmCommonReqBean param){
