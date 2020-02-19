@@ -101,7 +101,11 @@ public class BpmService {
             bpmHistoryDTO.setCreatedBy(dsgcUserDao.findUserById(item.getCreatedBy()).getUserName());
             bpmHistoryDTO.setLastUpdatedBy(dsgcUserDao.findUserById(item.getLastUpdatedBy()).getUserName());
             bpmHistoryDTO.setInstTitle(bpmdao.findBpmInstanceById(item.getInstId()).get(0).getInstTitle());
-            bpmHistoryDTO.setNodeName(bpmdao.getBpmNodeById(item.getNodeId()).get(0).getNodeName());
+            if(!"-1".equals(item.getNodeId())){
+                bpmHistoryDTO.setNodeName(bpmdao.getBpmNodeById(item.getNodeId()).get(0).getNodeName());
+            }else {
+                bpmHistoryDTO.setNodeName("申请人发起节点");
+            }
             bpmHistoryBeanMapping(item,bpmHistoryDTO);
             bpmHistoryDTOList.add(bpmHistoryDTO);
         }
@@ -144,11 +148,10 @@ public class BpmService {
         BpmTaskBean bpmTaskBean = new BpmTaskBean();
         bpmTaskBean.setInstId(param.getInstId());
         List<String> userList = new ArrayList<>();                          //审批用户集合
-        if(!"spy".equals(nodeBeanList.get(0).getApprType()) && !"creator".equals(nodeBeanList.get(0).getApprType())){
+        if(!"spy".equals(nodeBeanList.get(0).getApprType())){
             List<String> roleUserList = getApprUserList(nodeBeanList.get(0));
             for (int i = 0;i<roleUserList.size();i++){
                 if (roleUserList.get(i).equals(userId)){
-                    userList.add(userId);
                     isAuthApply = true;
                     break;
                 }else {
@@ -159,7 +162,7 @@ public class BpmService {
                 throw new Exception("无权限审批");
             }
 
-        }
+         }
 
         if("1".equals(param.getPassOrReject())){   //审批通过
             bpmHistoryBean.setApproveOper("agree");
@@ -231,16 +234,16 @@ public class BpmService {
         String apprCode = bpmNodeBean.getApprCode();
         List<String> result = new ArrayList<>();
         switch (bpmNodeBean.getApprType()){
-            case "ole":          //角色编码
+            case "role":          //角色编码
                List<DSGCUser> userList = dsgcUserDao.getUserListByRole(apprCode);
                 for (DSGCUser item:userList) {
                     result.add(item.getUserId());
                 }
                 break;
-            case "ser":         //用户
+            case "user":         //用户
                 result.add(apprCode);
                 break;
-            case "serList":    //用户列表
+            case "userList":    //用户列表
                String[] users = apprCode.split(",");
                result = Arrays.asList(users);
                 break;
@@ -291,7 +294,7 @@ public class BpmService {
         bpmHistoryBean.setNodeName("流程发起");
         bpmHistoryBean.setApprover(userId);
         bpmHistoryBean.setApproveOper("agree");
-        bpmHistoryBean.setNodeId(bpmInstanceBean.getCurNode());
+        bpmHistoryBean.setNodeId("-1");
         bpmHistoryBean.setApproveOpinion("申请人发起流程");
         bpmHistoryBean.setCreatedBy(userId);
         bpmHistoryBean.setLastUpdatedBy(userId);
