@@ -1,9 +1,12 @@
 package com.definesys.dsgc.service.apimng.bean;
 
+import java.util.List;
+
 public class CommonReqBean {
     private String con0;//通用查询条件
     private String isComplete;
     private String queryType;
+    private List<String> selectSystemList;
 
     public String getCon0() {
         return con0;
@@ -29,4 +32,11 @@ public class CommonReqBean {
         this.queryType = queryType;
     }
 
+    public List<String> getSelectSystemList() {
+        return selectSystemList;
+    }
+
+    public void setSelectSystemList(List<String> selectSystemList) {
+        this.selectSystemList = selectSystemList;
+    }
 }
