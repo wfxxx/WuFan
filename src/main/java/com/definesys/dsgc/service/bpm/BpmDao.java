@@ -22,7 +22,7 @@ public class BpmDao {
 
     public PageQueryResult<BpmInstanceBean> getTaskList(BpmCommonReqBean param, String userId, int pageSize, int pageIndex){
         StringBuffer sqlStr = new StringBuffer("select dbi.* from dsgc_bpm_instance dbi,dsgc_bpm_task dbt " +
-                " where dbt.approver = #userId and dbt.node_id = dbi.cur_node ");
+                " where dbt.approver = #userId and dbt.node_id = dbi.cur_node and dbt.inst_id = dbi.inst_id ");
         MpaasQuery mq = sw.buildQuery();
         mq.setVar("userId",userId);
         if(!"ALL".equals(param.getQueryType())){

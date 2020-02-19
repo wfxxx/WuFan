@@ -106,7 +106,12 @@ public class BpmController {
         BpmInstanceBean bpmInstanceBean = new BpmInstanceBean();
         bpmInstanceBean.setProcessId(bpmSubBean.getProcessId());
         bpmInstanceBean.setInstTitle(bpmSubBean.getInstTitle());
-        bpmService.generateBpmInstance(bpmInstanceBean,bpmSubBean.getApprover(),userId);
+        try {
+            bpmService.generateBpmInstance(bpmInstanceBean,bpmSubBean.getApprover(),userId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.error(e.getMessage());
+        }
         return Response.ok().setData(bpmInstanceBean.getInstId());
     }
 

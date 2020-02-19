@@ -527,6 +527,9 @@ public class SVCMngService {
 
     public ReqParamBaseDataDTO queryParamBaseData(SVCCommonReqBean param){
         ReqParamBaseDataDTO result = new ReqParamBaseDataDTO();
+        if(StringUtil.isBlank(param.getCon0()) || StringUtil.isBlank(param.getQueryType())){
+            return result;
+        }
         List<DSGCPayloadParamsBean> dsgcPayloadParams =svcMngDao.queryServPayloadParam(param);
         List<SVCMngIoParameterDTO> paramDTOS = new ArrayList<>();
         if(dsgcPayloadParams != null){
