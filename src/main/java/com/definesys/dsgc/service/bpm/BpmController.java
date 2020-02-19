@@ -132,6 +132,22 @@ public class BpmController {
         return Response.ok().setData(bpmService.queryProcessTypeList());
     }
 
+    /**
+     * 查询指定流程id的node节点集
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/queryNodesByProcessId", method = RequestMethod.POST)
+    public Response queryNodesByProcessId(@RequestBody BpmCommonReqBean param,HttpServletRequest request){
+        String instanceId=param.getCon0();
+        if(instanceId!=null){
+            return Response.ok().setData(bpmService.queryNodesByInstanceId(instanceId));
+        }else{
+            return Response.error("参数不存在");
+        }
+
+    }
+
 
 
 }

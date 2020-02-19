@@ -157,6 +157,12 @@ public class BpmDao {
         return sw.buildQuery().eq("isEnable","Y").doQuery(BpmProcessBean.class);
     }
 
+    public List<BpmNodeBean> queryNodesByInstanceId(String instanceId){
+        return sw.buildQuery().sql("select n.* from dsgc_bpm_instance i,dsgc_bpm_nodes n where i.process_id=n.process_id and i.inst_id=#instanceId order by n.node_pos")
+                .setVar("instanceId",instanceId)
+                .doQuery(BpmNodeBean.class);
+    }
+
 
 
 

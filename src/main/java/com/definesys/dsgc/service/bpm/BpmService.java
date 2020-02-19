@@ -82,6 +82,7 @@ public class BpmService {
         bpmInstanceDTO.setLastUpdatedBy(dsgcUserDao.findUserById(bpmInstanceBean.getLastUpdatedBy()).getUserName());
         bpmInstanceDTO.setCreationDate(bpmInstanceBean.getCreationDate());
         bpmInstanceDTO.setCurNode(bpmInstanceBean.getCurNode());
+        bpmInstanceDTO.setProcessId(bpmInstanceBean.getProcessId());
         bpmInstanceDTO.setLastUpdateDate(bpmInstanceBean.getLastUpdateDate());
         bpmInstanceDTO.setObjectVersionNumber(bpmInstanceBean.getObjectVersionNumber());
         bpmInstanceDTO.setInstStat(bpmInstanceBean.getInstStat());
@@ -295,6 +296,9 @@ public class BpmService {
        return bpmdao.queryProcessTypeList();
     }
 
+    public List<BpmNodeBean> queryNodesByInstanceId(String id){
+        return bpmdao.queryNodesByInstanceId(id);
+    }
 
 
     public BpmHistoryBean addhistory(BpmHistoryBean bpmHistoryBean){
