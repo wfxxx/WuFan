@@ -164,6 +164,15 @@ public List<DSGCUser> queryTaskUserByNodeId(String instId,String nodeId){
 }
 
 
+    public List<BpmNodeBean> queryNodesByInstanceId(String instanceId){
+        return sw.buildQuery().sql("select n.* from dsgc_bpm_instance i,dsgc_bpm_nodes n where i.process_id=n.process_id and i.inst_id=#instanceId order by n.node_pos")
+                .setVar("instanceId",instanceId)
+                .doQuery(BpmNodeBean.class);
+    }
+
+    public BpmNodeBean queryNodeById(String id){
+        return  sw.buildQuery().eq("nodeId",id).doQueryFirst(BpmNodeBean.class);
+    }
 
     public BpmHistoryBean addhistory(BpmHistoryBean bpmHistoryBean){
         return (BpmHistoryBean) sw.buildQuery().doInsert(bpmHistoryBean);

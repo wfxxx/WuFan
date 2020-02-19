@@ -103,7 +103,7 @@ public class SVCAuthController {
 
 
     /**
-     * @Description 申请权限流程
+     * @Description 发起申请权限流程
      * @Author Xueyunlong
      * @Date 2020-2-18 13:26
      * @Version 1.0
@@ -112,6 +112,18 @@ public class SVCAuthController {
     public Response applyServAuthPro(@RequestParam(value = "instanceId") String id,@RequestBody ApplyAuthProBean applyAuthProBean){
         return Response.ok().setMessage( svcAuthService.applyServAuthPro(id,applyAuthProBean));
     }
+
+    /**
+     * @Description 获取申请权限流程业务信息
+     * @Author Xueyunlong
+     * @Date 2020-2-18 13:26
+     * @Version 1.0
+     **/
+    @RequestMapping(value = "/getProcessBusinessInfo",method = RequestMethod.GET)
+    public Response getProcessBusinessInfo(@RequestParam(value = "instanceId") String instanceId){
+        return Response.ok().setData( svcAuthService.getProcessBusinessInfo(instanceId));
+    }
+
 
 
 }

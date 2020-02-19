@@ -685,6 +685,18 @@ public class SVCMngService {
 
         }
     }
+
+
+    /**
+     * 根据serNo查找对应的系统负责人
+     * @param servNo
+     * @return
+     */
+    public List<Map<String,Object>> queryApprover(String servNo){
+        return svcMngDao.getSystemUserByServNo(servNo);
+
+    }
+
     //返回解析的字段Map<name,value>集合，若va;ue=null，表示该name节点为父节点，不包含内容。
     public List<Map<String,String>>  resloveXML(String XMLDemo){
         String patternXml="<(.*?)>";
@@ -830,5 +842,6 @@ public class SVCMngService {
         return new ArrayList<>();
 
     }
+
 
 }

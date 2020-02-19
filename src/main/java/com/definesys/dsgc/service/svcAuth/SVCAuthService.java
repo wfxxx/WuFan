@@ -2,6 +2,7 @@ package com.definesys.dsgc.service.svcAuth;
 
 import com.definesys.dsgc.service.bpm.BpmService;
 import com.definesys.dsgc.service.bpm.bean.*;
+import com.definesys.dsgc.service.consumers.ConsumersDao;
 import com.definesys.dsgc.service.consumers.bean.DSGCConsumerEntities;
 import com.definesys.dsgc.service.svcAuth.bean.*;
 import com.definesys.dsgc.service.svclog.SVCLogDao;
@@ -10,6 +11,9 @@ import com.definesys.dsgc.service.system.bean.DSGCSystemEntities;
 import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
 import com.definesys.dsgc.service.svcmng.bean.DSGCService;
 import com.definesys.dsgc.service.lkv.bean.FndLookupValue;
+import com.definesys.dsgc.service.users.DSGCUserDao;
+import com.definesys.dsgc.service.users.UsersDao;
+import com.definesys.dsgc.service.users.bean.DSGCUser;
 import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -29,7 +34,11 @@ public class SVCAuthService {
     private SVCLogDao sldao;
 
     @Autowired
-    private BpmService bpmService;
+    private ConsumersDao consumersDao;
+
+    @Autowired
+    private DSGCUserDao dsgcUserDao;
+
 
     public PageQueryResult<SVCHisBean> querySvcHis(SVCCommonReqBean param, int pageIndex, int pageSize){
         PageQueryResult<SVCHisBean> result = svcAuthDao.querySvcHis(param,pageIndex,pageSize);
@@ -298,6 +307,26 @@ public class SVCAuthService {
         applyAuthProBean.setConsumerStr(consumerStr);
         svcAuthDao.addApplyServAuthBus(applyAuthProBean);
         return "成功";
+    }
+
+    //获取申请服务流程业务信息
+    @Transactional(rollbackFor = Exception.class)
+    public ApplyAuthProBeanDTO getProcessBusinessInfo(String instanceId){
+        ApplyAuthProBeanDTO applyAuthProBeanDTO=new ApplyAuthProBeanDTO();
+        ApplyAuthProBean applyAuthProBean=svcAuthDao.getProcessBusinessInfo(instanceId);
+        DSGCUser dsgcUser= dsgcUserDao.findUserById(applyAuthProBean.getApplicant());
+        applyAuthProBeanDTO.setApplicantEmail(dsgcUser.getUserMail());
+        applyAuthProBeanDTO.setApplicantPhone(dsgcUser.getUserMail());
+        applyAuthProBeanDTO.setApplicantName(dsgcUser.getUserName());
+        applyAuthProBeanDTO.setApplyDesc(applyAuthProBean.getApplyDesc());
+        applyAuthProBeanDTO.setApplySerName(applyAuthProBean.getApplySerName());
+        applyAuthProBeanDTO.setApplySerType(applyAuthProBean.getApplySerType());
+        List<String> consCodes=  Arrays.asList(applyAuthProBean.getConsumerStr().split(","));
+        List<DSGCConsumerEntities> consCodesList=consumersDao.queryConsumersListByIds(consCodes);
+        applyAuthProBeanDTO .setConsumerList(consCodesList);
+        applyAuthProBeanDTO.setInstanceId(applyAuthProBean.getInstanceId());
+        applyAuthProBeanDTO.setProcessType(applyAuthProBean.getProcessType());
+        return applyAuthProBeanDTO;
     }
 
 

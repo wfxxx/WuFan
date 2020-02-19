@@ -121,4 +121,12 @@ public class SVCMngController {
     public Response queryServWsdlFunction(@RequestBody SVCCommonReqBean param){
         return Response.ok().setData(svcMngService.queryServWsdlFunction(param));
     }
+    /**
+     * 根据服务编号查找系统负责人;
+     * @return
+     */
+    @RequestMapping(value = "/queryApprover",method = RequestMethod.GET)
+    public Response queryApprover(@RequestParam(value = "servNo")String servNo){
+        return Response.ok().setData(svcMngService.queryApprover(servNo));
+    }
 }

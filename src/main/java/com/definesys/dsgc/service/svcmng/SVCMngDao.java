@@ -198,4 +198,16 @@ public class SVCMngDao {
                 .setVar("envSeq",envSeq).doQuery();
     }
 
+    /**
+     * 根据serNo查找对应的系统负责人
+     * @param servNo
+     * @return
+     */
+    public List<Map<String,Object>> getSystemUserByServNo(String servNo){
+        return sw.buildQuery().sql("select u.user_id code,u.user_name name from dsgc_user u,dsgc_system_user su,dsgc_services s \n" +
+                "where s.serv_no=#servNo  and s.subordinate_system=su.sys_code and u.user_id= su.user_id and u.user_role='SystemLeader'")
+                .setVar("servNo",servNo)
+                .doQuery();
+    }
+
 }
