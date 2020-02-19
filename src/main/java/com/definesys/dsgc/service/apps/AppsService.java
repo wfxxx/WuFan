@@ -77,6 +77,7 @@ public class AppsService {
         if("Tourist".equals(userRole)){
             return new PageQueryResult<>();
         }else {
+           commonReqBean.setCon0(StringUtil.filtration(commonReqBean.getCon0()));
              entitiesPageQueryResult = appsDao.queryAppsList(commonReqBean,pageSize,pageIndex,userName,userRole);
         }
         return entitiesPageQueryResult;

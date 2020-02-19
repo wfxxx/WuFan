@@ -3,6 +3,7 @@ package com.definesys.dsgc.service.bpm;
 import com.definesys.dsgc.service.bpm.bean.*;
 import com.definesys.dsgc.service.users.bean.DSGCUser;
 import com.definesys.dsgc.service.users.DSGCUserDao;
+import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -136,35 +137,50 @@ public class BpmService {
         bpmHistoryBean.setObjectVersionNumber(1);
         bpmHistoryBean.setInstId(param.getInstId());
         bpmHistoryBean.setNodeName(nodeBeanList.get(0).getNodeName());
+        bpmHistoryBean.setNodeId(nodeBeanList.get(0).getNodeId());
         BpmInstanceBean bpmInstanceBean = new BpmInstanceBean();
         bpmInstanceBean.setLastUpdatedBy(userId);
         bpmInstanceBean.setInstId(instanceBeanList.get(0).getInstId());
         BpmTaskBean bpmTaskBean = new BpmTaskBean();
         bpmTaskBean.setInstId(param.getInstId());
-        List<String> userList = null;                          //审批用户集合
-        List<String> roleUserList = getApprUserList(nodeBeanList.get(0));
-       for (int i = 0;i<roleUserList.size();i++){
-           if (roleUserList.get(i).equals(userId)){
-               isAuthApply = true;
-               break;
-           }else {
-               isAuthApply = false;
-           }
-       }
-       if(!isAuthApply){
-           throw new Exception("无权限审批");
-       }
+        List<String> userList = new ArrayList<>();                          //审批用户集合
+        if(!"spy".equals(nodeBeanList.get(0).getApprType()) && !"creator".equals(nodeBeanList.get(0).getApprType())){
+            List<String> roleUserList = getApprUserList(nodeBeanList.get(0));
+            for (int i = 0;i<roleUserList.size();i++){
+                if (roleUserList.get(i).equals(userId)){
+                    userList.add(userId);
+                    isAuthApply = true;
+                    break;
+                }else {
+                    isAuthApply = false;
+                }
+            }
+            if(!isAuthApply){
+                throw new Exception("无权限审批");
+            }
+
+        }
+
         if("1".equals(param.getPassOrReject())){   //审批通过
-            bpmHistoryBean.setApproveOper("gree");
+            bpmHistoryBean.setApproveOper("agree");
             if (!"1".equals(nodeBeanList.get(0).getNodePos())) {
                 bpmInstanceBean.setCurNode(nodeBeanList.get(0).getPassNode());
                 bpmInstanceBean.setInstStat("appr");
                 bpmTaskBean.setNodeId(nodeBeanList.get(0).getPassNode());
                 List<BpmNodeBean> passNodeList = bpmdao.findBpmNodeById(nodeBeanList.get(0).getPassNode());
-                if ("py".equals(passNodeList.get(0).getApprType())) {
-                    userList = new ArrayList<>();
-                    userList.add(param.getApprover());
-                } else {
+                if ("spy".equals(passNodeList.get(0).getApprType())) {
+                    if(StringUtil.isBlank(param.getApprover())){
+                        throw new Exception("当前流程需指定审批人");
+                    }
+                    String[] conArray = param.getApprover().trim().split(",");
+                    userList = Arrays.asList(conArray);
+                 //   userList.add(param.getApprover());
+                }
+                else if("creator".equals(passNodeList.get(0).getApprType())){
+                    List<BpmInstanceBean> instanceBeans = bpmdao.findBpmInstanceById(param.getInstId());
+                    userList.add(instanceBeans.get(0).getCreatedBy());
+                }
+                else {
                     userList = getApprUserList(passNodeList.get(0));
                 }
             }else {
@@ -177,7 +193,7 @@ public class BpmService {
                 bpmInstanceBean.setCurNode(nodeBeanList.get(0).getRejectNode());
                 bpmTaskBean.setNodeId(nodeBeanList.get(0).getRejectNode());
                 List<BpmNodeBean> rejectNodeList = bpmdao.findBpmNodeById(nodeBeanList.get(0).getRejectNode());
-                if("py".equals(rejectNodeList.get(0).getApprType())){
+                if("spy".equals(rejectNodeList.get(0).getApprType())){
                     userList = new ArrayList<>();
                     userList.add(param.getApprover());
 
@@ -198,7 +214,7 @@ public class BpmService {
         delTask.setInstId(param.getInstId());
         delTask.setNodeId(nodeId);
         bpmdao.delTask(delTask);
-        if(userList != null){
+        if(userList != null && userList.size()>0){
             for (String item:userList) {
                 BpmTaskBean taskBean = new BpmTaskBean();
                 taskBean.setInstId(bpmTaskBean.getInstId());
@@ -228,14 +244,14 @@ public class BpmService {
                String[] users = apprCode.split(",");
                result = Arrays.asList(users);
                 break;
-            case "py":          //前置审批人指定
+            case "spy":          //前置审批人指定
                 break;
         }
         return result;
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public String generateBpmInstance(BpmInstanceBean bpmInstanceBean,String approver,String userId){
+    public String generateBpmInstance(BpmInstanceBean bpmInstanceBean,String approver,String userId) throws Exception{
      BpmNodeBean bpmNodeBean = new BpmNodeBean();
      bpmNodeBean.setProcessId(bpmInstanceBean.getProcessId());
      bpmNodeBean.setNodePos("0");
@@ -251,9 +267,14 @@ public class BpmService {
      bpmInstanceBean.setObjectVersionNumber(1);
      bpmdao.createBpmInstance(bpmInstanceBean);
         List<String> userList = null;
-        if("py".equals(nodeBeanList.get(0).getApprType())){
+        if("spy".equals(nodeBeanList.get(0).getApprType())){
+            if(StringUtil.isBlank(approver)){
+                throw new Exception("当前流程需指定审批人");
+            }
             userList = new ArrayList<>();
-            userList.add(approver);
+            String[] conArray = approver.trim().split(",");
+            userList = Arrays.asList(conArray);
+           // userList.add(approver);
         }else {
             userList = getApprUserList(nodeBeanList.get(0));
         }
@@ -269,7 +290,7 @@ public class BpmService {
         bpmHistoryBean.setInstId(bpmInstanceBean.getInstId());
         bpmHistoryBean.setNodeName("流程发起");
         bpmHistoryBean.setApprover(userId);
-        bpmHistoryBean.setApproveOper("gree");
+        bpmHistoryBean.setApproveOper("agree");
         bpmHistoryBean.setNodeId(bpmInstanceBean.getCurNode());
         bpmHistoryBean.setApproveOpinion("申请人发起流程");
         bpmHistoryBean.setCreatedBy(userId);
