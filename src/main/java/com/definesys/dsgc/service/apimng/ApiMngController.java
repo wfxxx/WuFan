@@ -36,22 +36,6 @@ public class ApiMngController {
         return Response.ok().setData(apiMngService.queryApiMngList(param,pageIndex,pageSize,userId,userRole));
     }
 
-    /**
-     * API授权管理查询
-     * @param param
-     * @param pageSize
-     * @param pageIndex
-     * @param request
-     * @return
-     */
-    @RequestMapping(value = "/queryApiAuthList",method = RequestMethod.POST)
-    public Response queryApiAuthList(@RequestBody CommonReqBean param,
-                                    @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
-                                    @RequestParam(value = "pageIndex", required = false, defaultValue = "1") int pageIndex, HttpServletRequest request){
-        String userId = request.getHeader("uid");
-        String userRole= request.getHeader("userRole");
-        return Response.ok().setData(apiMngService.queryApiAuthList(param,pageIndex,pageSize,userId,userRole));
-    }
 
     @RequestMapping(value = "/saveApiBasicInfo",method = RequestMethod.POST)
     public Response saveApiBasicInfo(@RequestBody ApiBasicInfoDTO param){

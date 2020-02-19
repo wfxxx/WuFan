@@ -71,47 +71,4 @@ public class ApiMngDao {
         return sw.buildQuery().eq("api_code", apiCode).doQueryFirst(DSGCApisBean.class);
     }
 
-    public String queryAuthSystemCount(String apiCode) {
-        Map<String, Object> map = sw.buildQuery().sql("select count(*) count from (select daa.* from DSGC_APIS da,DSGC_APIS_ACCESS daa where da.API_CODE = daa.API_CODE and da.API_CODE = #apiCode)")
-                .setVar("apiCode", apiCode).doQueryFirst();
-        return map.get("COUNT").toString();
-
-    }
-
-    public PageQueryResult<DSGCApisBean> queryApiAuthList(CommonReqBean q, int pageIndex, int pageSize, String userId, String userRole, List<String> sysCodeList) {
-        MpaasQuery query = sw.buildQuery()
-                .sql("select * from (select da.API_CODE,da.API_NAME,dse.SYS_NAME APP_CODE,da.INFO_FULL,daa.CSM_CODE from DSGC_APIS da,DSGC_SYSTEM_ENTITIES dse,DSGC_APIS_ACCESS daa where da.APP_CODE = dse.SYS_CODE(+) and da.API_CODE=daa.API_CODE(+))\n");
-        if(q.getSelectSystemList().size() != 0){
-            if(q.getSelectSystemList().size()<=1){
-                query.and().eq("csmCode",q.getSelectSystemList().get(0));
-            }else {
-                query.and().in("csmCode",q.getSelectSystemList());
-            }
-        }
-        if ("SystemLeader".equals(userRole)) {
-            if (sysCodeList.size() != 0) {
-                if (sysCodeList.size() <= 1) {
-                    query.eq("appCode", sysCodeList.get(0));
-                } else {
-                    query.in("appCode", sysCodeList);
-                }
-            } else {
-                return new PageQueryResult<>();
-            }
-        }
-        if (q.getCon0() != null && q.getCon0().trim().length() > 0) {
-            String[] conArray = q.getCon0().trim().split(" ");
-            for (String con : conArray) {
-                if (con != null && con.trim().length() > 0) {
-                    String conNoSpace = con.trim();
-                    query.conjuctionAnd().or()
-                            .likeNocase("apiCode", conNoSpace)
-                            .likeNocase("apiName", conNoSpace)
-                            .likeNocase("appCode", conNoSpace);
-                }
-            }
-        }
-        PageQueryResult<DSGCApisBean> result = query.doPageQuery(pageIndex, pageSize, DSGCApisBean.class);
-        return result;
-    }
 }
