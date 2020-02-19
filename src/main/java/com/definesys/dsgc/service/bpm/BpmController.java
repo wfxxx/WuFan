@@ -153,6 +153,22 @@ public class BpmController {
 
     }
 
+    /**
+     * 查询指定nodeid的node节点
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/queryNodeById", method = RequestMethod.POST)
+    public Response queryNodeById(@RequestBody BpmCommonReqBean param,HttpServletRequest request){
+        String nodeId=param.getCon0();
+        if(nodeId!=null){
+            return Response.ok().setData(bpmService.queryNodeById(nodeId));
+        }else{
+            return Response.error("参数不存在");
+        }
+
+    }
+
 
 
 }

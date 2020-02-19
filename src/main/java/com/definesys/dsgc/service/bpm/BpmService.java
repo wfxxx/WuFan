@@ -321,6 +321,10 @@ public class BpmService {
         return bpmdao.queryNodesByInstanceId(id);
     }
 
+    public BpmNodeBean queryNodeById(String id){
+        return bpmdao.queryNodeById(id);
+    }
+
 
     public BpmHistoryBean addhistory(BpmHistoryBean bpmHistoryBean){
         return bpmdao.addhistory(bpmHistoryBean);

@@ -163,7 +163,9 @@ public class BpmDao {
                 .doQuery(BpmNodeBean.class);
     }
 
-
+    public BpmNodeBean queryNodeById(String id){
+        return  sw.buildQuery().eq("nodeId",id).doQueryFirst(BpmNodeBean.class);
+    }
 
     public BpmHistoryBean addhistory(BpmHistoryBean bpmHistoryBean){
         return (BpmHistoryBean) sw.buildQuery().doInsert(bpmHistoryBean);
