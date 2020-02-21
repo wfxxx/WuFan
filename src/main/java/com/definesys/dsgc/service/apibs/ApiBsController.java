@@ -1,6 +1,7 @@
 package com.definesys.dsgc.service.apibs;
 
 import com.definesys.dsgc.service.apibs.bean.CommonReqBean;
+import com.definesys.dsgc.service.apibs.bean.DagBsDtiBean;
 import com.definesys.dsgc.service.apibs.bean.DagBsbean;
 import com.definesys.mpaas.common.http.Response;
 import com.definesys.mpaas.query.db.PageQueryResult;
@@ -67,6 +68,43 @@ public class ApiBsController {
             return Response.error("删除服务发生错误");
         }
         return Response.ok();
+    }
+
+    @RequestMapping(value = "/queryDagBsDtiByVid",method = RequestMethod.GET)
+    public Response queryDagBsDtiByVid(@RequestParam(value = "vid") String id){
+        DagBsDtiBean result=null;
+        try {
+            result=apiBsService.queryDagBsDtiByVid(id);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("查找失败");
+        }
+        return Response.ok().setData(result);
+    }
+
+    @RequestMapping(value = "/updateDagBsDti",method = RequestMethod.POST)
+    public Response updateDagBsDti(@RequestBody DagBsDtiBean param){
+        DagBsDtiBean result=null;
+        try {
+             result=apiBsService.updateDagBsDti(param);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("更新失败");
+        }
+        return Response.ok().setData(result);
+    }
+
+    @RequestMapping(value = "/addDagBsDti",method = RequestMethod.POST)
+    public Response addDagBsDti(@RequestBody DagBsDtiBean param){
+        System.out.println(param);
+        DagBsDtiBean result=null;
+        try {
+            result=apiBsService.addDagBsDti(param);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("新增失败");
+        }
+        return Response.ok().setData(result);
     }
 
 }
