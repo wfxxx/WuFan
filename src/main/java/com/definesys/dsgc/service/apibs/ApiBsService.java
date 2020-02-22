@@ -1,9 +1,8 @@
 package com.definesys.dsgc.service.apibs;
 
-import com.definesys.dsgc.service.apibs.bean.CommonReqBean;
-import com.definesys.dsgc.service.apibs.bean.DagBsDtiBean;
-import com.definesys.dsgc.service.apibs.bean.DagBsListDTO;
-import com.definesys.dsgc.service.apibs.bean.DagBsbean;
+import ch.qos.logback.core.status.OnPrintStreamStatusListenerBase;
+import com.definesys.dsgc.service.apibs.bean.*;
+import com.definesys.dsgc.service.apiroute.bean.DagEnvInfoCfgBean;
 import com.definesys.dsgc.service.svclog.SVCLogDao;
 import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
 import com.definesys.mpaas.query.db.PageQueryResult;
@@ -11,10 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class ApiBsService {
@@ -63,6 +59,17 @@ public class ApiBsService {
     return result;
     }
 
+    public void updateDagBs(DagBsbean dagBsbean){
+          apiBsDao.updateDagBs(dagBsbean);
+    }
+
+    public DagBsbean queryApiBsByCode(String code){
+        DagBsbean result=apiBsDao.queryApiBsByCode(code);
+        Map<String,Object> appCode=apiBsDao.querySysNameByCode(result.getAppCode());
+        result.setAppName((String) appCode.get("SYS_NAME"));
+        return result;
+    }
+
     public void addApiBs(DagBsbean dagBsbean){
         apiBsDao.addApiBs(dagBsbean);
     }
@@ -89,8 +96,44 @@ public class ApiBsService {
         return apiBsDao.addDagBsDti(dagBsDtiBean);
     }
 
-    public List<Map<String,Object>> queryProtocalList(){
-        return null;
+    public List<DagCodeVersionBean> queryDagCodeVersionBySource(String sourceId){
+        List<DagCodeVersionBean> result=apiBsDao.queryDagCodeVersionBySource(sourceId);
+        for(DagCodeVersionBean item:result){
+            List<String> envList=queryEnv(item.getEnvTargets());
+            item.setEnvTargetsName(envList.toString());
+        }
+       return result;
     }
+
+    public DagCodeVersionBean queryDagCodeVersionByid(String id){
+        DagCodeVersionBean result=apiBsDao.queryDagCodeVersionByid(id);
+        List<String> envList=queryEnv(result.getEnvTargets());
+        result.setEnvTargetsName(envList.toString());
+        return result;
+    }
+
+
+    public void delDagCodeVersionByid(String id){
+         apiBsDao.delDagCodeVersionByid(id);
+    }
+
+    public DagCodeVersionBean updateDagCodeVersion(DagCodeVersionBean dagCodeVersionBean){
+        return apiBsDao.updateDagCodeVersion(dagCodeVersionBean);
+    }
+
+    public void addDagCodeVersion(DagCodeVersionBean dagCodeVersionBean){
+         apiBsDao.addDagCodeVersion(dagCodeVersionBean);
+    }
+
+    public List<String> queryEnv(String envListStr) {
+        List<String> envList= Arrays.asList(envListStr.split(","));
+        List<DagEnvInfoCfgBean> envValue=apiBsDao.queryEnv(envList);
+        List<String> result=new ArrayList<String>();
+        for(DagEnvInfoCfgBean item : envValue){
+            result.add(item.getEnvName());
+        }
+        return result;
+    }
+
 
 }

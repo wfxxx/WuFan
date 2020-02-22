@@ -3,6 +3,7 @@ package com.definesys.dsgc.service.apibs;
 import com.definesys.dsgc.service.apibs.bean.CommonReqBean;
 import com.definesys.dsgc.service.apibs.bean.DagBsDtiBean;
 import com.definesys.dsgc.service.apibs.bean.DagBsbean;
+import com.definesys.dsgc.service.apibs.bean.DagCodeVersionBean;
 import com.definesys.mpaas.common.http.Response;
 import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,8 +50,23 @@ public class ApiBsController {
 
         return Response.ok().setData(result);
     }
+
+    @RequestMapping(value = "/queryApiBsByCode",method = RequestMethod.GET)
+    public Response queryApiBsByCode(@RequestParam(value = "code") String code){
+        DagBsbean result =null;
+        try {
+            result = apiBsService.queryApiBsByCode(code);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("查询失败");
+        }
+
+        return Response.ok().setData(result);
+    }
+
     @RequestMapping(value = "/addApiBs",method = RequestMethod.POST)
     public Response addApiBs(@RequestBody DagBsbean dagBsbean){
+
         try {
             apiBsService.addApiBs(dagBsbean);
         }catch (Exception e){
@@ -59,6 +75,19 @@ public class ApiBsController {
         }
         return Response.ok();
     }
+
+    @RequestMapping(value = "/updateDagBs",method = RequestMethod.POST)
+    public Response updateDagBs(@RequestBody DagBsbean dagBsbean){
+
+        try {
+            apiBsService.updateDagBs(dagBsbean);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("更新服务发生错误");
+        }
+        return Response.ok();
+    }
+
     @RequestMapping(value = "/delApiBs",method = RequestMethod.POST)
     public Response delApiBs(@RequestBody CommonReqBean param){
         try {
@@ -105,6 +134,67 @@ public class ApiBsController {
             return Response.error("新增失败");
         }
         return Response.ok().setData(result);
+    }
+
+
+    @RequestMapping(value = "/queryDagCodeVersionBySource",method = RequestMethod.GET)
+    public Response queryDagCodeVersionBySource(@RequestParam(value = "sourceId") String sourceId){
+        List<DagCodeVersionBean> result=null;
+        try {
+            result=apiBsService.queryDagCodeVersionBySource(sourceId);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("查询失败");
+        }
+        return Response.ok().setData(result);
+    }
+
+    @RequestMapping(value = "/queryDagCodeVersionByid",method = RequestMethod.GET)
+    public Response queryDagCodeVersionByid(@RequestParam(value = "id") String id){
+        DagCodeVersionBean result=null;
+        try {
+            result=apiBsService.queryDagCodeVersionByid(id);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("查询失败");
+        }
+        return Response.ok().setData(result);
+    }
+
+
+    @RequestMapping(value = "/delDagCodeVersionByid",method = RequestMethod.POST)
+    public Response delDagCodeVersionByid(@RequestBody CommonReqBean commonReqBean){
+        try {
+            apiBsService.delDagCodeVersionByid(commonReqBean.getCon0());
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("删除失败");
+        }
+        return Response.ok();
+    }
+
+    @RequestMapping(value = "/updateDagCodeVersion",method = RequestMethod.POST)
+    public Response updateDagCodeVersion(@RequestBody DagCodeVersionBean dagCodeVersionBean){
+        DagCodeVersionBean result=null;
+        try {
+            result=apiBsService.updateDagCodeVersion(dagCodeVersionBean);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("更新失败");
+        }
+        return Response.ok();
+    }
+
+    @RequestMapping(value = "/addDagCodeVersion",method = RequestMethod.POST)
+    public Response addDagCodeVersion(@RequestBody DagCodeVersionBean dagCodeVersionBean){
+        DagCodeVersionBean result=null;
+        try {
+            apiBsService.addDagCodeVersion(dagCodeVersionBean);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("新增失败");
+        }
+        return Response.ok();
     }
 
 }

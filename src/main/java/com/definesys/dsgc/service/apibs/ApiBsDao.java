@@ -1,8 +1,7 @@
 package com.definesys.dsgc.service.apibs;
 
-import com.definesys.dsgc.service.apibs.bean.CommonReqBean;
-import com.definesys.dsgc.service.apibs.bean.DagBsDtiBean;
-import com.definesys.dsgc.service.apibs.bean.DagBsbean;
+import com.definesys.dsgc.service.apibs.bean.*;
+import com.definesys.dsgc.service.apiroute.bean.DagEnvInfoCfgBean;
 import com.definesys.dsgc.service.apiroute.bean.DagRoutesBean;
 import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.mpaas.query.MpaasQuery;
@@ -55,6 +54,16 @@ public class ApiBsDao {
     public List<DagBsbean> queryApiBsByCustomInput(CommonReqBean param){
       return sw.buildQuery().like("bs_code",param.getCon0()).doQuery(DagBsbean.class);
     }
+
+    public DagBsbean queryApiBsByCode(String code){
+        return sw.buildQuery().like("bs_code",code).doQueryFirst(DagBsbean.class);
+    }
+
+    public void updateDagBs(DagBsbean dagBsbean){
+        sw.buildQuery().rowid("bs_id",dagBsbean.getBsId()).doUpdate(dagBsbean);
+
+    }
+
     public void addApiBs(DagBsbean dagBsbean){
         sw.buildQuery().doInsert(dagBsbean);
     }
@@ -84,9 +93,58 @@ public class ApiBsDao {
     }
 
 
-    public List<Map<String,Object>> queryProtocalList(){
 
-        return null;
+
+
+
+    public void addPluginUsing(DagPlugUsingBean dagPlugUsingBean){
+        sw.buildQuery().doInsert(dagPlugUsingBean);
+    }
+
+    public void delPluginUsing(String id){
+        sw.buildQuery().rowid("dpu_id", id).doDelete(DagPlugUsingBean.class);
+    }
+
+    public List<DagPlugUsingBean> queryPluginUsing(String vid){
+        return sw.buildQuery().eq("vid",vid).doQuery(DagPlugUsingBean.class);
+    }
+
+    public List<DagPlugStoreBean> queryPluginStore(DagPlugStoreBean dagPlugStoreBean){
+        return sw.buildQuery().doQuery(DagPlugStoreBean.class);
+    }
+
+    public List<DagCodeVersionBean> queryDagCodeVersionBySource(String sourceId){
+        return sw.buildQuery().eq("sour_code",sourceId).doQuery(DagCodeVersionBean.class);
+    }
+
+    public DagCodeVersionBean queryDagCodeVersionByid(String id){
+        return sw.buildQuery().eq("vid",id).doQueryFirst(DagCodeVersionBean.class);
+    }
+
+
+    public void delDagCodeVersionByid(String id){
+         sw.buildQuery().rowid("vid",id).doDelete(DagCodeVersionBean.class);
+    }
+
+    public DagCodeVersionBean updateDagCodeVersion(DagCodeVersionBean dagCodeVersionBean){
+        sw.buildQuery().eq("vid",dagCodeVersionBean.getVid()).doUpdate(DagCodeVersionBean.class);
+        return queryDagCodeVersionByid(dagCodeVersionBean.getVid());
+    }
+
+    public void addDagCodeVersion(DagCodeVersionBean dagCodeVersionBean){
+        sw.buildQuery().doInsert(dagCodeVersionBean);
+
+    }
+
+
+
+    public Map<String,Object> querySysNameByCode(String code){
+        return  sw.buildQuery().sql("select e.sys_name from DSGC_SYSTEM_ENTITIES e where e.sys_code=#code")
+                .setVar("code",code).doQueryFirst();
+    }
+
+    public List<DagEnvInfoCfgBean> queryEnv(List<String> envCode){
+        return  sw.buildQuery().in("envCode",envCode).doQuery(DagEnvInfoCfgBean.class);
     }
 
 }
