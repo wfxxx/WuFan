@@ -20,13 +20,11 @@ import java.util.Date;
 public class DagPlugStoreBean extends MpaasBasePojo {
 
     @RowID(type = RowIDType.UUID)
-    private String dpuId;
-
-    private String vid;
-
+    private String dpsId;
     private String pluginCode;
-
-    private String isEnable;
+    private String pluginName;
+    private String pluginDesc;
+    private String pluginType;
 
 
     @SystemColumn(SystemColumnType.CREATE_BY)
@@ -50,20 +48,12 @@ public class DagPlugStoreBean extends MpaasBasePojo {
     private Integer objectVersionNumber;
 
 
-    public String getDpuId() {
-        return dpuId;
+    public String getDpsId() {
+        return dpsId;
     }
 
-    public void setDpuId(String dpuId) {
-        this.dpuId = dpuId;
-    }
-
-    public String getVid() {
-        return vid;
-    }
-
-    public void setVid(String vid) {
-        this.vid = vid;
+    public void setDpsId(String dpsId) {
+        this.dpsId = dpsId;
     }
 
     public String getPluginCode() {
@@ -74,12 +64,28 @@ public class DagPlugStoreBean extends MpaasBasePojo {
         this.pluginCode = pluginCode;
     }
 
-    public String getIsEnable() {
-        return isEnable;
+    public String getPluginName() {
+        return pluginName;
     }
 
-    public void setIsEnable(String isEnable) {
-        this.isEnable = isEnable;
+    public void setPluginName(String pluginName) {
+        this.pluginName = pluginName;
+    }
+
+    public String getPluginDesc() {
+        return pluginDesc;
+    }
+
+    public void setPluginDesc(String pluginDesc) {
+        this.pluginDesc = pluginDesc;
+    }
+
+    public String getPluginType() {
+        return pluginType;
+    }
+
+    public void setPluginType(String pluginType) {
+        this.pluginType = pluginType;
     }
 
     public String getCreatedBy() {

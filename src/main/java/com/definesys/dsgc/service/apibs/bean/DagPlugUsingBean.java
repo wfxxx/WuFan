@@ -1,6 +1,7 @@
 package com.definesys.dsgc.service.apibs.bean;
 
 import com.definesys.mpaas.query.annotation.*;
+import com.definesys.mpaas.query.json.MpaasDateSerializer;
 import com.definesys.mpaas.query.json.MpaasDateTimeDeserializer;
 import com.definesys.mpaas.query.json.MpaasDateTimeSerializer;
 import com.definesys.mpaas.query.model.MpaasBasePojo;
@@ -19,17 +20,21 @@ import java.util.Date;
 @Table(value = "DAG_PLUGIN_USING")
 public class DagPlugUsingBean extends MpaasBasePojo {
 
+
+
     @RowID(type = RowIDType.UUID)
-    private String dpsId;
+    private String dpuId;
+
+    private String vid;
+
     private String pluginCode;
-    private String pluginName;
-    private String pluginDesc;
-    private String pluginType;
+
+    private String isEnable;
 
     @SystemColumn(SystemColumnType.CREATE_BY)
     @Column(value = "created_by")
     private String createdBy;
-    @JsonSerialize(using = MpaasDateTimeSerializer.class)
+    @JsonSerialize(using = MpaasDateSerializer.class)
     @JsonDeserialize(using = MpaasDateTimeDeserializer.class)
     @SystemColumn(SystemColumnType.CREATE_ON)
     private Date creationDate;
@@ -46,12 +51,20 @@ public class DagPlugUsingBean extends MpaasBasePojo {
     @Column(value = "object_version_number")
     private Integer objectVersionNumber;
 
-    public String getDpsId() {
-        return dpsId;
+    public String getDpuId() {
+        return dpuId;
     }
 
-    public void setDpsId(String dpsId) {
-        this.dpsId = dpsId;
+    public void setDpuId(String dpuId) {
+        this.dpuId = dpuId;
+    }
+
+    public String getVid() {
+        return vid;
+    }
+
+    public void setVid(String vid) {
+        this.vid = vid;
     }
 
     public String getPluginCode() {
@@ -62,28 +75,12 @@ public class DagPlugUsingBean extends MpaasBasePojo {
         this.pluginCode = pluginCode;
     }
 
-    public String getPluginName() {
-        return pluginName;
+    public String getIsEnable() {
+        return isEnable;
     }
 
-    public void setPluginName(String pluginName) {
-        this.pluginName = pluginName;
-    }
-
-    public String getPluginDesc() {
-        return pluginDesc;
-    }
-
-    public void setPluginDesc(String pluginDesc) {
-        this.pluginDesc = pluginDesc;
-    }
-
-    public String getPluginType() {
-        return pluginType;
-    }
-
-    public void setPluginType(String pluginType) {
-        this.pluginType = pluginType;
+    public void setIsEnable(String isEnable) {
+        this.isEnable = isEnable;
     }
 
     public String getCreatedBy() {

@@ -82,8 +82,16 @@ public class DagCodeVersionBean extends MpaasBasePojo {
         return envTargets;
     }
 
-    public void setEnvTargets(String evnTargets) {
-        this.envTargets = evnTargets;
+    public void setEnvTargets(String envTargets) {
+        this.envTargets = envTargets;
+    }
+
+    public String getEnvTargetsName() {
+        return envTargetsName;
+    }
+
+    public void setEnvTargetsName(String envTargetsName) {
+        this.envTargetsName = envTargetsName;
     }
 
     public String getCreatedBy() {
@@ -124,13 +132,5 @@ public class DagCodeVersionBean extends MpaasBasePojo {
 
     public void setObjectVersionNumber(Integer objectVersionNumber) {
         this.objectVersionNumber = objectVersionNumber;
-    }
-
-    public String getEnvTargetsName() {
-        return envTargetsName;
-    }
-
-    public void setEnvTargetsName(String envTargetsName) {
-        this.envTargetsName = envTargetsName;
     }
 }
