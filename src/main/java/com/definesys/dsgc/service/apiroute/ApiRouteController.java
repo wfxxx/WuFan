@@ -97,8 +97,49 @@ public class ApiRouteController {
             apiRouteService.addRouteConfig(param);
         }catch (Exception e){
             e.printStackTrace();
-            return Response.error("查询配置信息失败");
+            return Response.error("新增路由配置失败");
         }
         return Response.ok();
+    }
+    @RequestMapping(value = "/updateRoutePathStrip",method = RequestMethod.POST)
+    public Response updateRoutePathStrip(@RequestBody DagRoutesBean param){
+        try {
+            apiRouteService.updateRoutePathStrip(param);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("更新数据失败！");
+        }
+        return Response.ok();
+    }
+    @RequestMapping(value = "/updateRouteDesc",method = RequestMethod.POST)
+    public Response updateRouteDesc(@RequestBody DagRoutesBean param){
+        try {
+            apiRouteService.updateRouteDesc(param);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("更新数据失败！");
+        }
+        return Response.ok();
+    }
+    @RequestMapping(value = "/delRouteConfig",method = RequestMethod.POST)
+    public Response delRouteConfig(@RequestBody CommonReqBean param) {
+        try {
+            apiRouteService.delRouteConfig(param);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.error("删除配置项失败！");
+        }
+        return Response.ok();
+    }
+    @RequestMapping(value = "/queryCodeVersionById",method = RequestMethod.POST)
+    public Response queryCodeVersionById(@RequestBody CommonReqBean param){
+        DagCodeVersionDTO dto =null;
+        try {
+            dto =  apiRouteService.queryCodeVersionById(param);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.error("查询配置项失败！");
+        }
+        return Response.ok().setData(dto);
     }
 }

@@ -6,7 +6,7 @@ public class AddRouteConfigVO {
     private String configName;
     private List<String> enabledEnv;
     private String courType;
-    private String drId;
+    private String routeCode;
 
     public String getConfigName() {
         return configName;
@@ -32,11 +32,11 @@ public class AddRouteConfigVO {
         this.courType = courType;
     }
 
-    public String getDrId() {
-        return drId;
+    public String getRouteCode() {
+        return routeCode;
     }
 
-    public void setDrId(String drId) {
-        this.drId = drId;
+    public void setRouteCode(String routeCode) {
+        this.routeCode = routeCode;
     }
 }

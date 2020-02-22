@@ -3,12 +3,14 @@ package com.definesys.dsgc.service.apiroute;
 import com.definesys.dsgc.service.apiroute.bean.*;
 import com.definesys.dsgc.service.svclog.SVCLogDao;
 import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
+import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.mpaas.query.db.PageQueryResult;
 import org.apache.tomcat.util.buf.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -71,36 +73,105 @@ public class ApiRouteService {
         while (iterator.hasNext()){
             DagCodeVersionBean dagCodeVersionBean = iterator.next();
             DagCodeVersionDTO dto = new DagCodeVersionDTO();
+//            if(dagCodeVersionBean.getEnvTargets().indexOf(",") != -1){
+//
+//
+//            }
             String[] envArr = dagCodeVersionBean.getEnvTargets().trim().split(",");
             dto.setEnvList(Arrays.asList(envArr));
             dto.setVid(dagCodeVersionBean.getVid());
+            dto.setvName(dagCodeVersionBean.getvName());
             dto.setSourType(dagCodeVersionBean.getSourType());
             dto.setSourCode(dagCodeVersionBean.getSourCode());
             result.add(dto);
         }
         return result;
     }
+
+    public DagCodeVersionDTO queryCodeVersionById(CommonReqBean param){
+        DagCodeVersionBean dagCodeVersionBean = apiRouteDao.queryCodeVersionById(param);
+        DagCodeVersionDTO dto = new DagCodeVersionDTO();
+        String[] envArr = dagCodeVersionBean.getEnvTargets().trim().split(",");
+        dto.setEnvList(Arrays.asList(envArr));
+        dto.setVid(dagCodeVersionBean.getVid());
+        dto.setvName(dagCodeVersionBean.getvName());
+        dto.setSourType(dagCodeVersionBean.getSourType());
+        dto.setSourCode(dagCodeVersionBean.getSourCode());
+        return dto;
+
+    }
 public List<RouteConfigDTO> queryRouteConfigList(CommonReqBean param){
     List<DagCodeVersionBean> list = apiRouteDao.queryRouteConfigListBySourCode(param);
+    List<DagEnvInfoCfgBean> envList = apiRouteDao.queryApiEnv();
     List<RouteConfigDTO> result = new ArrayList<>();
     Iterator<DagCodeVersionBean> iterator = list.iterator();
     while (iterator.hasNext()){
         DagCodeVersionBean dagCodeVersionBean = iterator.next();
         RouteConfigDTO dto = new RouteConfigDTO();
         dto.setVid(dagCodeVersionBean.getVid());
-        dto.setEnvTargets(dagCodeVersionBean.getEnvTargets());
-        dto.setCreationDate(dagCodeVersionBean.getCreationDate());
+      //  dto.setEnvTargets(dagCodeVersionBean.getEnvTargets());
+        if(StringUtil.isNotBlank(dagCodeVersionBean.getEnvTargets())){
+            String[] envArr = dagCodeVersionBean.getEnvTargets().trim().split(",");
+            StringBuilder envNameStr = new StringBuilder();
+            for (String temp:envArr){
+                for (int i = 0; i < envList.size(); i++) {
+                    if (temp.equals(envList.get(i).getEnvCode()) && i ==0){
+                        envNameStr.append(envList.get(i).getEnvName());
+                        break;
+                    }else {
+                        envNameStr.append("，"+envList.get(i).getEnvName());
+                        break;
+                    }
+                }
+            }
+            dto.setEnvTargets(envNameStr.toString());
+        }
+
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String str = format.format(dagCodeVersionBean.getCreationDate());
+        dto.setCreationDate(str);
         dto.setvName(dagCodeVersionBean.getvName());
         result.add(dto);
     }
     return result;
 }
+@Transactional(rollbackFor = Exception.class)
 public void addRouteConfig(AddRouteConfigVO param){
     if (param != null){
         DagCodeVersionBean dagCodeVersionBean = new DagCodeVersionBean();
-        dagCodeVersionBean.setSourCode(param.getDrId());
+        dagCodeVersionBean.setSourCode(param.getRouteCode());
         dagCodeVersionBean.setSourType(param.getCourType());
         dagCodeVersionBean.setvName(param.getConfigName());
+        if(param.getEnabledEnv() != null){
+            String join = String.join(",", param.getEnabledEnv());
+            dagCodeVersionBean.setEnvTargets(join);
+        }
+        apiRouteDao.addRouteConfig(dagCodeVersionBean);
     }
 }
+    @Transactional(rollbackFor = Exception.class)
+public void updateRoutePathStrip(DagRoutesBean param){
+    CommonReqBean commonReqBean = new CommonReqBean();
+    commonReqBean.setCon0(param.getRouteCode());
+    DagRoutesBean dagRoutesBean =  apiRouteDao.queryRouteDetail(commonReqBean);
+    if (dagRoutesBean != null){
+        apiRouteDao.updateRoutePathStrip(param);
+    }
+}
+@Transactional(rollbackFor = Exception.class)
+    public void updateRouteDesc(DagRoutesBean param){
+        CommonReqBean commonReqBean = new CommonReqBean();
+        commonReqBean.setCon0(param.getRouteCode());
+        DagRoutesBean dagRoutesBean =  apiRouteDao.queryRouteDetail(commonReqBean);
+        if (dagRoutesBean != null){
+            apiRouteDao.updateRouteDesc(param);
+        }
+    }
+    @Transactional(rollbackFor = Exception.class)
+    public void delRouteConfig(CommonReqBean param){
+        DagCodeVersionBean dagRoutesBean =  apiRouteDao.queryRouteConfigByid(param.getCon0());
+        if (dagRoutesBean != null){
+            apiRouteDao.delRouteConfig(param.getCon0());
+        }
+    }
 }

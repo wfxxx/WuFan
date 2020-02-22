@@ -4,10 +4,18 @@ import java.util.List;
 
 public class DagCodeVersionDTO {
     private String vid;
+    private String vName;
     private String sourCode;
     private String sourType;
     private List<String> envList;
 
+    public String getvName() {
+        return vName;
+    }
+
+    public void setvName(String vName) {
+        this.vName = vName;
+    }
 
     public String getVid() {
         return vid;

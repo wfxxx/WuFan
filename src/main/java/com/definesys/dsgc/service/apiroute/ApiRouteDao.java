@@ -73,7 +73,25 @@ public class ApiRouteDao {
     public List<DagCodeVersionBean> queryApiCodeVersion(CommonReqBean param){
         return sw.buildQuery().eq("sour_code",param.getCon0()).eq("sour_type",param.getQueryType()).doQuery(DagCodeVersionBean.class);
     }
+    public DagCodeVersionBean queryCodeVersionById(CommonReqBean param){
+        return sw.buildQuery().eq("vid",param.getCon0()).doQueryFirst(DagCodeVersionBean.class);
+    }
     public List<DagCodeVersionBean> queryRouteConfigListBySourCode(CommonReqBean param){
-        return sw.buildQuery().eq("sour_code",param.getCon0()).doQuery(DagCodeVersionBean.class);
+        return sw.buildQuery().eq("sour_code",param.getCon0()).eq("sour_type",param.getQueryType()).doQuery(DagCodeVersionBean.class);
+    }
+    public void addRouteConfig(DagCodeVersionBean dagCodeVersionBean){
+        sw.buildQuery().doInsert(dagCodeVersionBean);
+    }
+    public void updateRoutePathStrip(DagRoutesBean param){
+        sw.buildQuery().eq("route_code",param.getRouteCode()).update("strip_path",param.getStripPath()).doUpdate(DagRoutesBean.class);
+    }
+    public void updateRouteDesc(DagRoutesBean param){
+        sw.buildQuery().eq("route_code",param.getRouteCode()).update("route_desc",param.getRouteDesc()).doUpdate(DagRoutesBean.class);
+    }
+    public DagCodeVersionBean queryRouteConfigByid(String vid){
+        return sw.buildQuery().eq("vid",vid).doQueryFirst(DagCodeVersionBean.class);
+    }
+    public void delRouteConfig(String id){
+        sw.buildQuery().eq("vid",id).doDelete(DagCodeVersionBean.class);
     }
 }

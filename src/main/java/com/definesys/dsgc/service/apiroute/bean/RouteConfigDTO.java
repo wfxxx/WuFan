@@ -6,7 +6,8 @@ public class RouteConfigDTO {
     private String vid;
     private String vName;
     private String envTargets;
-    private Date creationDate;
+
+    private String creationDate;
 
     public String getVid() {
         return vid;
@@ -32,11 +33,11 @@ public class RouteConfigDTO {
         this.envTargets = envTargets;
     }
 
-    public Date getCreationDate() {
+    public String getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(Date creationDate) {
+    public void setCreationDate(String creationDate) {
         this.creationDate = creationDate;
     }
 }
