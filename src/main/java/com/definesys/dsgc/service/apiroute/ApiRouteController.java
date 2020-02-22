@@ -1,13 +1,13 @@
 package com.definesys.dsgc.service.apiroute;
 
-import com.definesys.dsgc.service.apiroute.bean.CommonReqBean;
-import com.definesys.dsgc.service.apiroute.bean.DagRoutesBean;
+import com.definesys.dsgc.service.apiroute.bean.*;
 import com.definesys.mpaas.common.http.Response;
 import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/dsgc/apiRoute")
@@ -44,6 +44,60 @@ public class ApiRouteController {
         }catch (Exception e){
             e.printStackTrace();
             return Response.error("删除路由发生错误");
+        }
+        return Response.ok();
+    }
+    @RequestMapping(value = "/queryRouteDetail",method = RequestMethod.POST)
+    public Response queryRouteDetail(@RequestBody CommonReqBean param){
+        DagRoutesBean dagRoutesBean = null;
+        try {
+            dagRoutesBean =  apiRouteService.queryRouteDetail(param);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("查询路由数据失败");
+        }
+        return Response.ok().setData(dagRoutesBean);
+    }
+    @RequestMapping(value = "/queryApiEnv",method = RequestMethod.GET)
+    public Response queryApiEnv(){
+        List<DagEnvInfoCfgDTO> result = null;
+        try {
+            result =  apiRouteService.queryApiEnv();
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("查询环境信息失败");
+        }
+        return Response.ok().setData(result);
+    }
+    @RequestMapping(value = "/queryApiCodeVersion",method = RequestMethod.POST)
+    public Response queryApiCodeVersion(@RequestBody CommonReqBean param){
+        List<DagCodeVersionDTO> result = null;
+        try {
+            result =  apiRouteService.queryApiCodeVersion(param);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("查询配置信息失败");
+        }
+        return Response.ok().setData(result);
+    }
+    @RequestMapping(value = "/queryRouteConfigList",method = RequestMethod.POST)
+    public Response queryRouteConfigList(@RequestBody CommonReqBean param){
+        List<RouteConfigDTO> result = null;
+        try {
+            result =  apiRouteService.queryRouteConfigList(param);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("查询配置信息失败");
+        }
+        return Response.ok().setData(result);
+    }
+    @RequestMapping(value = "/addRouteConfig",method = RequestMethod.POST)
+    public Response addRouteConfig(@RequestBody AddRouteConfigVO param){
+        try {
+            apiRouteService.addRouteConfig(param);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("查询配置信息失败");
         }
         return Response.ok();
     }

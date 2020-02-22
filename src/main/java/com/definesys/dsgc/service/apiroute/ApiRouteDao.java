@@ -1,6 +1,8 @@
 package com.definesys.dsgc.service.apiroute;
 
 import com.definesys.dsgc.service.apiroute.bean.CommonReqBean;
+import com.definesys.dsgc.service.apiroute.bean.DagCodeVersionBean;
+import com.definesys.dsgc.service.apiroute.bean.DagEnvInfoCfgBean;
 import com.definesys.dsgc.service.apiroute.bean.DagRoutesBean;
 import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.mpaas.query.MpaasQuery;
@@ -59,5 +61,19 @@ public class ApiRouteDao {
     }
     public void delApiRoute(CommonReqBean param){
         sw.buildQuery().eq("dr_id",param.getCon0()).doDelete(DagRoutesBean.class);
+    }
+    public DagRoutesBean queryRouteDetail(CommonReqBean param){
+        return  sw.buildQuery().sql("select dr.*,dse.sys_name appName from dag_routes dr,dsgc_system_entities dse where dr.app_code = dse.sys_code and dr.route_code = #routeCode")
+                .setVar("routeCode",param.getCon0())
+                .doQueryFirst(DagRoutesBean.class);
+    }
+    public List<DagEnvInfoCfgBean> queryApiEnv(){
+        return sw.buildQuery().doQuery(DagEnvInfoCfgBean.class);
+    }
+    public List<DagCodeVersionBean> queryApiCodeVersion(CommonReqBean param){
+        return sw.buildQuery().eq("sour_code",param.getCon0()).eq("sour_type",param.getQueryType()).doQuery(DagCodeVersionBean.class);
+    }
+    public List<DagCodeVersionBean> queryRouteConfigListBySourCode(CommonReqBean param){
+        return sw.buildQuery().eq("sour_code",param.getCon0()).doQuery(DagCodeVersionBean.class);
     }
 }
