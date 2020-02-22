@@ -101,6 +101,16 @@ public class ApiRouteController {
         }
         return Response.ok();
     }
+    @RequestMapping(value = "/updateRouteConfig",method = RequestMethod.POST)
+    public Response updateRouteConfig(@RequestBody AddRouteConfigVO param){
+        try {
+            apiRouteService.updateRouteConfig(param);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("新增路由配置失败");
+        }
+        return Response.ok();
+    }
     @RequestMapping(value = "/updateRoutePathStrip",method = RequestMethod.POST)
     public Response updateRoutePathStrip(@RequestBody DagRoutesBean param){
         try {

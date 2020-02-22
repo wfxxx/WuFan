@@ -150,6 +150,20 @@ public void addRouteConfig(AddRouteConfigVO param){
     }
 }
     @Transactional(rollbackFor = Exception.class)
+    public void updateRouteConfig(AddRouteConfigVO param){
+        if (param != null){
+            DagCodeVersionBean dagCodeVersionBean = new DagCodeVersionBean();
+            dagCodeVersionBean.setSourCode(param.getRouteCode());
+            dagCodeVersionBean.setSourType(param.getCourType());
+            dagCodeVersionBean.setvName(param.getConfigName());
+            if(param.getEnabledEnv() != null){
+                String join = String.join(",", param.getEnabledEnv());
+                dagCodeVersionBean.setEnvTargets(join);
+            }
+            apiRouteDao.updateRouteConfig(dagCodeVersionBean);
+        }
+    }
+    @Transactional(rollbackFor = Exception.class)
 public void updateRoutePathStrip(DagRoutesBean param){
     CommonReqBean commonReqBean = new CommonReqBean();
     commonReqBean.setCon0(param.getRouteCode());
