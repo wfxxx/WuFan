@@ -1,6 +1,7 @@
 package com.definesys.dsgc.service.apibs;
 
 import com.definesys.dsgc.service.apibs.bean.CommonReqBean;
+import com.definesys.dsgc.service.apibs.bean.DagBsDtiBean;
 import com.definesys.dsgc.service.apibs.bean.DagBsListDTO;
 import com.definesys.dsgc.service.apibs.bean.DagBsbean;
 import com.definesys.dsgc.service.svclog.SVCLogDao;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ApiBsService {
@@ -72,6 +74,23 @@ public class ApiBsService {
        }else {
            throw new Exception("服务不存在！");
        }
-
     }
+
+    public DagBsDtiBean queryDagBsDtiByVid(String vid){
+
+        return apiBsDao.queryDagBsDtiByVid(vid);
+    }
+
+    public DagBsDtiBean updateDagBsDti(DagBsDtiBean dagBsDtiBean) {
+        return apiBsDao.updateDagBsDti(dagBsDtiBean);
+    }
+
+    public DagBsDtiBean addDagBsDti(DagBsDtiBean dagBsDtiBean) {
+        return apiBsDao.addDagBsDti(dagBsDtiBean);
+    }
+
+    public List<Map<String,Object>> queryProtocalList(){
+        return null;
+    }
+
 }

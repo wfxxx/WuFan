@@ -1,6 +1,7 @@
 package com.definesys.dsgc.service.apibs;
 
 import com.definesys.dsgc.service.apibs.bean.CommonReqBean;
+import com.definesys.dsgc.service.apibs.bean.DagBsDtiBean;
 import com.definesys.dsgc.service.apibs.bean.DagBsbean;
 import com.definesys.dsgc.service.apiroute.bean.DagRoutesBean;
 import com.definesys.dsgc.service.utils.StringUtil;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class ApiBsDao {
@@ -62,4 +64,29 @@ public class ApiBsDao {
     public void delApiBs(CommonReqBean param){
          sw.buildQuery().eq("bs_id",param.getCon0()).doDelete(DagBsbean.class);
     }
+
+    public DagBsDtiBean queryDagBsDtiByVid(String params){
+        return sw.buildQuery().eq("vid",params).doQueryFirst(DagBsDtiBean.class);
+    }
+
+    public DagBsDtiBean queryDagBsDtiByid(String params){
+        return sw.buildQuery().eq("dbd_id",params).doQueryFirst(DagBsDtiBean.class);
+    }
+
+    public DagBsDtiBean updateDagBsDti(DagBsDtiBean dagBsDtiBean){
+        sw.buildQuery().eq("dbd_id",dagBsDtiBean.getDbdId()).doUpdate(dagBsDtiBean);
+        return queryDagBsDtiByid(dagBsDtiBean.getDbdId());
+    }
+
+    public DagBsDtiBean addDagBsDti(DagBsDtiBean dagBsDtiBean){
+         sw.buildQuery().doInsert(dagBsDtiBean);
+        return queryDagBsDtiByid(dagBsDtiBean.getDbdId());
+    }
+
+
+    public List<Map<String,Object>> queryProtocalList(){
+
+        return null;
+    }
+
 }
