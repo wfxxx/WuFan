@@ -82,6 +82,9 @@ public class ApiRouteDao {
     public void addRouteConfig(DagCodeVersionBean dagCodeVersionBean){
         sw.buildQuery().doInsert(dagCodeVersionBean);
     }
+    public void updateRouteConfig(DagCodeVersionBean dagCodeVersionBean){
+        sw.buildQuery().doInsert(dagCodeVersionBean);
+    }
     public void updateRoutePathStrip(DagRoutesBean param){
         sw.buildQuery().eq("route_code",param.getRouteCode()).update("strip_path",param.getStripPath()).doUpdate(DagRoutesBean.class);
     }

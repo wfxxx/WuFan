@@ -30,7 +30,7 @@ public class SVCAuthController {
         result = svcAuthService.querySvcAuth(param,pageIndex,pageSize,userId,userRole);
         return Response.ok().setData(result) ;
     }
-    @RequestMapping(value = "/",method = RequestMethod.GET)
+    @RequestMapping(value = "/querySvcSystem",method = RequestMethod.GET)
     public Response querySystem(){
         return Response.ok().setData(svcAuthService.querySystem()) ;
     }
