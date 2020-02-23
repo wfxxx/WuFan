@@ -7,6 +7,7 @@ public class AddLrConfigVO {
     private List<String> enabledEnv;
     private String courType;
     private String dlId;
+    private String vid;
 
     public String getConfigName() {
         return configName;
@@ -38,5 +39,13 @@ public class AddLrConfigVO {
 
     public void setDlId(String dlId) {
         this.dlId = dlId;
+    }
+
+    public String getVid() {
+        return vid;
+    }
+
+    public void setVid(String vid) {
+        this.vid = vid;
     }
 }

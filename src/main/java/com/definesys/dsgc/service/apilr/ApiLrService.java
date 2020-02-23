@@ -95,7 +95,7 @@ public class ApiLrService {
         return result;
     }
 
-    public void addLrConfig(AddLrConfigVO param){
+    public String addLrConfig(AddLrConfigVO param){
         DagCodeVersionBean dagCodeVersionBean = new DagCodeVersionBean();
         if (param != null){
             dagCodeVersionBean.setSourCode(param.getDlId());
@@ -106,6 +106,7 @@ public class ApiLrService {
             dagCodeVersionBean.setEnvTargets(str);
         }
         apiLrDao.addLrConfig(dagCodeVersionBean);
+        return dagCodeVersionBean.getVid();
     }
 
     public void deLrConfig(CommonReqBean param){
@@ -122,4 +123,38 @@ public class ApiLrService {
         }
     }
 
+    public void addLrTarget(DagLrTargetBean dagLrTargetBean){
+        apiLrDao.addLrTarget(dagLrTargetBean);
+    }
+
+    public List<DagLrTargetBean> queryLrTarget(String vid){
+        return apiLrDao.queryLrTarget(vid);
+    }
+    @Transactional(rollbackFor = Exception.class)
+    public void updateLrConfig(AddLrConfigVO param){
+        if (param != null){
+            DagCodeVersionBean dagCodeVersionBean = new DagCodeVersionBean();
+            dagCodeVersionBean.setVid(param.getVid());
+            dagCodeVersionBean.setSourCode(param.getDlId());
+            dagCodeVersionBean.setSourType(param.getCourType());
+            dagCodeVersionBean.setvName(param.getConfigName());
+            if(param.getEnabledEnv() != null){
+                String join = String.join(",", param.getEnabledEnv());
+                dagCodeVersionBean.setEnvTargets(join);
+            }
+            apiLrDao.updateLrConfig(dagCodeVersionBean);
+        }
+
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void copyLrTargetList(String selectVid,String insertVid) {
+        List<DagLrTargetBean> dagLrTargetBeans = apiLrDao.queryLrTarget(selectVid);
+        if (dagLrTargetBeans.size() != 0) {
+            for (DagLrTargetBean item : dagLrTargetBeans) {
+                item.setVid(insertVid);
+                apiLrDao.copyLrTargetList(item);
+            }
+        }
+    }
 }

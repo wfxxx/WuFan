@@ -1,9 +1,6 @@
 package com.definesys.dsgc.service.apilr;
 
-import com.definesys.dsgc.service.apilr.bean.CommonReqBean;
-import com.definesys.dsgc.service.apilr.bean.DagCodeVersionBean;
-import com.definesys.dsgc.service.apilr.bean.DagEnvInfoCfgBean;
-import com.definesys.dsgc.service.apilr.bean.DagLrbean;
+import com.definesys.dsgc.service.apilr.bean.*;
 import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
 import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.mpaas.query.MpaasQuery;
@@ -93,5 +90,19 @@ public class ApiLrDao {
         return sw.buildQuery().sql("select env_name from DAG_ENV_INFO_CFG ")
                 .in("envCode",envArr)
                 .doQuery(DagEnvInfoCfgBean.class);
+    }
+    public void addLrTarget(DagLrTargetBean dagLrTargetBean){
+        sw.buildQuery().doInsert(dagLrTargetBean);
+    }
+    public List<DagLrTargetBean> queryLrTarget(String vid){
+        return sw.buildQuery().eq("vid",vid).doQuery(DagLrTargetBean.class);
+    }
+
+    public void updateLrConfig(DagCodeVersionBean dagCodeVersionBean){
+        sw.buildQuery().rowid("vid",dagCodeVersionBean.getVid()).doUpdate(dagCodeVersionBean);
+    }
+
+    public void copyLrTargetList(DagLrTargetBean dagLrTargetBean){
+        sw.buildQuery().doInsert(dagLrTargetBean);
     }
 }
