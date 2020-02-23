@@ -1,4 +1,4 @@
-package com.definesys.dsgc.service.apibs.bean;
+package com.definesys.dsgc.service.apilr.bean;
 
 import com.definesys.mpaas.query.annotation.*;
 import com.definesys.mpaas.query.json.MpaasDateTimeDeserializer;
@@ -7,25 +7,20 @@ import com.definesys.mpaas.query.model.MpaasBasePojo;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import java.io.Serializable;
 import java.util.Date;
 
-/**
- * @ClassName DagCodeVersionBean
- * @Description TODO
- * @Author Xueyunlong
- * @Date 2020-2-22 11:58
- * @Version 1.0
- **/
 @Table(value = "DAG_CODE_VERSION")
-public class DagCodeVersionBean extends MpaasBasePojo {
+public class DagCodeVersionBean extends MpaasBasePojo implements Serializable {
     @RowID(type = RowIDType.UUID)
     private String vid;
     private String vName;
     private String sourCode;
     private String sourType;
     private String envTargets;
+
     @Column(type = ColumnType.JAVA)
-    private String envTargetsName;
+    private String appName;
     @SystemColumn(SystemColumnType.CREATE_BY)
     @Column(value = "created_by")
     private String createdBy;
@@ -46,20 +41,20 @@ public class DagCodeVersionBean extends MpaasBasePojo {
     @Column(value = "object_version_number")
     private Integer objectVersionNumber;
 
-    public String getVid() {
-        return vid;
-    }
-
-    public void setVid(String vid) {
-        this.vid = vid;
-    }
-
     public String getvName() {
         return vName;
     }
 
     public void setvName(String vName) {
         this.vName = vName;
+    }
+
+    public String getVid() {
+        return vid;
+    }
+
+    public void setVid(String vid) {
+        this.vid = vid;
     }
 
     public String getSourCode() {
@@ -86,12 +81,12 @@ public class DagCodeVersionBean extends MpaasBasePojo {
         this.envTargets = envTargets;
     }
 
-    public String getEnvTargetsName() {
-        return envTargetsName;
+    public String getAppName() {
+        return appName;
     }
 
-    public void setEnvTargetsName(String envTargetsName) {
-        this.envTargetsName = envTargetsName;
+    public void setAppName(String appName) {
+        this.appName = appName;
     }
 
     public String getCreatedBy() {

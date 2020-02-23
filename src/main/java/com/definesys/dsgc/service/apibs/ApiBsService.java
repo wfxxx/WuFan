@@ -136,4 +136,35 @@ public class ApiBsService {
     }
 
 
+    public void addPluginUsing(DagPlugUsingBean dagPlugUsingBean){
+        apiBsDao.addPluginUsing(dagPlugUsingBean);
+    }
+
+    public void delPluginUsing(String id){
+        apiBsDao.delPluginUsing(id);
+    }
+
+    public void updatePluginUsing(DagPlugUsingBean dagPlugUsingBean){
+        apiBsDao.updatePluginUsing(dagPlugUsingBean);
+    }
+
+    public List<DagPlugUsingBean> queryPluginUsing(String vid){
+        return apiBsDao.queryPluginUsing(vid);
+    }
+
+    public List<Map<String,Object>> queryPluginStore(){
+        List<Map<String,Object>> result=new ArrayList<Map<String,Object>>();
+        List<Map<String,Object>> typeList=apiBsDao.queryPluginStoreTypeTotal();
+        for(Map<String,Object> item: typeList){
+            Map<String,Object> itemResult=new HashMap<String,Object>();
+            String typeName=(String) item.get("PLUGIN_TYPE");
+            List<DagPlugStoreBean> dagPlugStoreBeanTypeList=apiBsDao.queryPluginStoreByType(typeName);
+            itemResult.put("typeName",typeName);
+            itemResult.put("value",dagPlugStoreBeanTypeList);
+            result.add(itemResult);
+        }
+        return result;
+    }
+
+
 }

@@ -1,6 +1,8 @@
 package com.definesys.dsgc.service.apilr;
 
 import com.definesys.dsgc.service.apilr.bean.CommonReqBean;
+import com.definesys.dsgc.service.apilr.bean.DagCodeVersionBean;
+import com.definesys.dsgc.service.apilr.bean.DagEnvInfoCfgBean;
 import com.definesys.dsgc.service.apilr.bean.DagLrbean;
 import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
 import com.definesys.dsgc.service.utils.StringUtil;
@@ -58,11 +60,38 @@ public class ApiLrDao {
         sw.buildQuery().doInsert(dagLrbean);
     }
 
-    public void delApiBs(CommonReqBean param){
+    public void delApiLr(CommonReqBean param){
         sw.buildQuery().eq("dl_id",param.getCon0()).doDelete(DagLrbean.class);
     }
 
     public DagLrbean queryApiLrById(CommonReqBean param){
         return sw.buildQuery().eq("dl_id",param.getCon0()).doQueryFirst(DagLrbean.class);
+    }
+
+    public DagLrbean queryLrDetail(CommonReqBean param){
+        return  sw.buildQuery().sql("select dr.*,dse.sys_name appName from DAG_LR dr,dsgc_system_entities dse where dr.APP_CODE = dse.sys_code and dr.LR_NAME = #lrName\n")
+                .setVar("lrName",param.getCon0())
+                .doQueryFirst(DagLrbean.class);
+    }
+
+    public List<DagCodeVersionBean> queryLrConfigListBySourCode(CommonReqBean param){
+        return sw.buildQuery().eq("sour_code",param.getCon0()).doQuery(DagCodeVersionBean.class);
+    }
+
+    public void addLrConfig(DagCodeVersionBean dagCodeVersionBean){
+        sw.buildQuery().doInsert(dagCodeVersionBean);
+    }
+
+    public void deLrConfig(CommonReqBean param){
+        sw.buildQuery().eq("vid",param.getCon0()).doDelete(DagCodeVersionBean.class);
+    }
+
+    public void updateLrDesc(DagLrbean param){
+        sw.buildQuery().eq("lr_name",param.getLrName()).update("lr_desc",param.getLrDesc()).doUpdate(DagLrbean.class);
+    }
+    public List<DagEnvInfoCfgBean> queryApiEnvName(String[] envArr){
+        return sw.buildQuery().sql("select env_name from DAG_ENV_INFO_CFG ")
+                .in("envCode",envArr)
+                .doQuery(DagEnvInfoCfgBean.class);
     }
 }

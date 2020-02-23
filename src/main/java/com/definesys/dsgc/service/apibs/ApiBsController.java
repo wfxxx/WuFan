@@ -1,9 +1,6 @@
 package com.definesys.dsgc.service.apibs;
 
-import com.definesys.dsgc.service.apibs.bean.CommonReqBean;
-import com.definesys.dsgc.service.apibs.bean.DagBsDtiBean;
-import com.definesys.dsgc.service.apibs.bean.DagBsbean;
-import com.definesys.dsgc.service.apibs.bean.DagCodeVersionBean;
+import com.definesys.dsgc.service.apibs.bean.*;
 import com.definesys.mpaas.common.http.Response;
 import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "dsgc/apibs")
@@ -195,6 +193,65 @@ public class ApiBsController {
             return Response.error("新增失败");
         }
         return Response.ok();
+    }
+
+    @RequestMapping(value = "/queryPluginUsing",method = RequestMethod.POST)
+    public Response queryPluginUsing(@RequestBody CommonReqBean commonReqBean){
+        List<DagPlugUsingBean> result=null;
+        try {
+            result=apiBsService.queryPluginUsing(commonReqBean.getCon0());
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("查询失败");
+        }
+        return Response.ok().setData(result);
+    }
+
+    @RequestMapping(value = "/addPluginUsing",method = RequestMethod.POST)
+    public Response addPluginUsing(@RequestBody DagPlugUsingBean dagPlugUsingBean){
+        try {
+            apiBsService.addPluginUsing(dagPlugUsingBean);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("新增失败");
+        }
+        return Response.ok();
+    }
+
+    @RequestMapping(value = "/updatePluginUsing",method = RequestMethod.POST)
+    public Response updatePluginUsing(@RequestBody DagPlugUsingBean dagPlugUsingBean){
+        try {
+            apiBsService.updatePluginUsing(dagPlugUsingBean);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("更新失败");
+        }
+        return Response.ok();
+    }
+
+    @RequestMapping(value = "/delPluginUsing",method = RequestMethod.POST)
+    public Response delPluginUsing(@RequestBody CommonReqBean commonReqBean){
+        DagCodeVersionBean result=null;
+        try {
+            apiBsService.delPluginUsing(commonReqBean.getCon0());
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("删除插件失败");
+        }
+        return Response.ok();
+    }
+
+
+    @RequestMapping(value = "/queryPluginStore",method = RequestMethod.POST)
+    public Response queryPluginStore(){
+        List<Map<String,Object>> result=null;
+        try {
+            result=apiBsService.queryPluginStore();
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("查询失败");
+        }
+        return Response.ok().setData(result);
     }
 
 }

@@ -1,4 +1,4 @@
-package com.definesys.dsgc.service.apibs.bean;
+package com.definesys.dsgc.service.apilr.bean;
 
 import com.definesys.mpaas.query.annotation.*;
 import com.definesys.mpaas.query.json.MpaasDateTimeDeserializer;
@@ -7,25 +7,20 @@ import com.definesys.mpaas.query.model.MpaasBasePojo;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import java.io.Serializable;
 import java.util.Date;
 
-/**
- * @ClassName DagCodeVersionBean
- * @Description TODO
- * @Author Xueyunlong
- * @Date 2020-2-22 11:58
- * @Version 1.0
- **/
-@Table(value = "DAG_CODE_VERSION")
-public class DagCodeVersionBean extends MpaasBasePojo {
+@Table(value = "DAG_ENV_INFO_CFG")
+public class DagEnvInfoCfgBean extends MpaasBasePojo implements Serializable {
     @RowID(type = RowIDType.UUID)
-    private String vid;
-    private String vName;
-    private String sourCode;
-    private String sourType;
-    private String envTargets;
+    private String deicId;
+    private String envCode;
+    private String envName;
+    private Integer envSeq;
+
+
     @Column(type = ColumnType.JAVA)
-    private String envTargetsName;
+    private String appName;
     @SystemColumn(SystemColumnType.CREATE_BY)
     @Column(value = "created_by")
     private String createdBy;
@@ -46,52 +41,44 @@ public class DagCodeVersionBean extends MpaasBasePojo {
     @Column(value = "object_version_number")
     private Integer objectVersionNumber;
 
-    public String getVid() {
-        return vid;
+    public String getDeicId() {
+        return deicId;
     }
 
-    public void setVid(String vid) {
-        this.vid = vid;
+    public void setDeicId(String deicId) {
+        this.deicId = deicId;
     }
 
-    public String getvName() {
-        return vName;
+    public String getEnvCode() {
+        return envCode;
     }
 
-    public void setvName(String vName) {
-        this.vName = vName;
+    public void setEnvCode(String envCode) {
+        this.envCode = envCode;
     }
 
-    public String getSourCode() {
-        return sourCode;
+    public String getEnvName() {
+        return envName;
     }
 
-    public void setSourCode(String sourCode) {
-        this.sourCode = sourCode;
+    public void setEnvName(String envName) {
+        this.envName = envName;
     }
 
-    public String getSourType() {
-        return sourType;
+    public Integer getEnvSeq() {
+        return envSeq;
     }
 
-    public void setSourType(String sourType) {
-        this.sourType = sourType;
+    public void setEnvSeq(Integer envSeq) {
+        this.envSeq = envSeq;
     }
 
-    public String getEnvTargets() {
-        return envTargets;
+    public String getAppName() {
+        return appName;
     }
 
-    public void setEnvTargets(String envTargets) {
-        this.envTargets = envTargets;
-    }
-
-    public String getEnvTargetsName() {
-        return envTargetsName;
-    }
-
-    public void setEnvTargetsName(String envTargetsName) {
-        this.envTargetsName = envTargetsName;
+    public void setAppName(String appName) {
+        this.appName = appName;
     }
 
     public String getCreatedBy() {
