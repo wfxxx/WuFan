@@ -147,17 +147,24 @@ public void addRouteConfig(AddRouteConfigVO param){
             dagCodeVersionBean.setEnvTargets(join);
         }
         apiRouteDao.addRouteConfig(dagCodeVersionBean);
+        DagPluginUsingBean dagPluginUsingBean = new DagPluginUsingBean();
+        dagPluginUsingBean.setVid(dagCodeVersionBean.getVid());
+        dagPluginUsingBean.setIsEnable("Y");
+        dagPluginUsingBean.setPluginCode("1");
+        apiRouteDao.addRoutePlugin(dagPluginUsingBean);
+        dagPluginUsingBean.setPluginCode("2");
+        apiRouteDao.addRoutePlugin(dagPluginUsingBean);
+
     }
 }
     @Transactional(rollbackFor = Exception.class)
-    public void updateRouteConfig(AddRouteConfigVO param){
+    public void updateRouteConfig(DagCodeVersionDTO param){
         if (param != null){
             DagCodeVersionBean dagCodeVersionBean = new DagCodeVersionBean();
-            dagCodeVersionBean.setSourCode(param.getRouteCode());
-            dagCodeVersionBean.setSourType(param.getCourType());
-            dagCodeVersionBean.setvName(param.getConfigName());
-            if(param.getEnabledEnv() != null){
-                String join = String.join(",", param.getEnabledEnv());
+            dagCodeVersionBean.setVid(param.getVid());
+            dagCodeVersionBean.setvName(param.getvName());
+            if(param.getEnvList() != null){
+                String join = String.join(",", param.getEnvList());
                 dagCodeVersionBean.setEnvTargets(join);
             }
             apiRouteDao.updateRouteConfig(dagCodeVersionBean);
@@ -183,9 +190,41 @@ public void updateRoutePathStrip(DagRoutesBean param){
     }
     @Transactional(rollbackFor = Exception.class)
     public void delRouteConfig(CommonReqBean param){
+//        PageQueryResult<DagPluginUsingBean> pluginrResult = apiRouteDao.queryRoutePlug(param.getCon0(),1,1);
+//        if(pluginrResult.getCount() > 0){
+//            apiRouteDao.delRoutePlugin(param.getCon0());
+//        }
         DagCodeVersionBean dagRoutesBean =  apiRouteDao.queryRouteConfigByid(param.getCon0());
         if (dagRoutesBean != null){
             apiRouteDao.delRouteConfig(param.getCon0());
         }
+
     }
+    public PageQueryResult<QueryRoutePlugDTO> queryRoutePlug(CommonReqBean param,int pageIndex,int pageSize){
+        PageQueryResult<DagPluginUsingBean> dagPluginUsingBeanList =  apiRouteDao.queryRoutePlug(param.getCon0(),pageIndex,pageSize);
+        PageQueryResult<QueryRoutePlugDTO> result = new PageQueryResult<>();
+        List<QueryRoutePlugDTO> queryRoutePlugDTOS = new ArrayList<>();
+        Iterator<DagPluginUsingBean> iterator = dagPluginUsingBeanList.getResult().iterator();
+        while (iterator.hasNext()){
+            DagPluginUsingBean dagPluginUsingBean = iterator.next();
+            QueryRoutePlugDTO queryRoutePlugDTO = new QueryRoutePlugDTO();
+            queryRoutePlugDTO.setDpuId(dagPluginUsingBean.getDpuId());
+            if("Y".equals(dagPluginUsingBean.getIsEnable())){
+                queryRoutePlugDTO.setEnable(true);
+            }else {
+                queryRoutePlugDTO.setEnable(false);
+            }
+
+            queryRoutePlugDTO.setPluginCode(dagPluginUsingBean.getPluginCode());
+            queryRoutePlugDTO.setPluginName(dagPluginUsingBean.getPluginName());
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String str = format.format(dagPluginUsingBean.getCreationDate());
+            queryRoutePlugDTO.setCreationDate(str);
+            queryRoutePlugDTOS.add(queryRoutePlugDTO);
+        }
+        result.setResult(queryRoutePlugDTOS);
+        result.setCount(dagPluginUsingBeanList.getCount());
+        return result;
+    }
+
 }

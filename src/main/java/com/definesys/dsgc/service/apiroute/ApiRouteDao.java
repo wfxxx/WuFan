@@ -1,9 +1,6 @@
 package com.definesys.dsgc.service.apiroute;
 
-import com.definesys.dsgc.service.apiroute.bean.CommonReqBean;
-import com.definesys.dsgc.service.apiroute.bean.DagCodeVersionBean;
-import com.definesys.dsgc.service.apiroute.bean.DagEnvInfoCfgBean;
-import com.definesys.dsgc.service.apiroute.bean.DagRoutesBean;
+import com.definesys.dsgc.service.apiroute.bean.*;
 import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.mpaas.query.MpaasQuery;
 import com.definesys.mpaas.query.MpaasQueryFactory;
@@ -83,7 +80,7 @@ public class ApiRouteDao {
         sw.buildQuery().doInsert(dagCodeVersionBean);
     }
     public void updateRouteConfig(DagCodeVersionBean dagCodeVersionBean){
-        sw.buildQuery().doInsert(dagCodeVersionBean);
+        sw.buildQuery().eq("vid",dagCodeVersionBean.getVid()).update("v_name",dagCodeVersionBean.getvName()).update("env_targets",dagCodeVersionBean.getEnvTargets()).doUpdate(DagCodeVersionBean.class);
     }
     public void updateRoutePathStrip(DagRoutesBean param){
         sw.buildQuery().eq("route_code",param.getRouteCode()).update("strip_path",param.getStripPath()).doUpdate(DagRoutesBean.class);
@@ -96,5 +93,16 @@ public class ApiRouteDao {
     }
     public void delRouteConfig(String id){
         sw.buildQuery().eq("vid",id).doDelete(DagCodeVersionBean.class);
+    }
+
+    public PageQueryResult<DagPluginUsingBean> queryRoutePlug(String vid,int pageIndex,int pageSize){
+        return sw.buildQuery().sql("select dpu.*,dps.plugin_name pluginName from dag_plugin_using dpu,dag_plugin_store dps where dpu.plugin_code = dps.plugin_code and dpu.vid = #vid")
+                .setVar("vid",vid).doPageQuery(pageIndex,pageSize,DagPluginUsingBean.class);
+    }
+    public void addRoutePlugin(DagPluginUsingBean pluginUsingBean){
+        sw.buildQuery().doInsert(pluginUsingBean);
+    }
+    public void delRoutePlugin(String vid){
+        sw.buildQuery().eq("vid",vid).doDelete(DagPluginUsingBean.class);
     }
 }

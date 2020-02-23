@@ -102,12 +102,12 @@ public class ApiRouteController {
         return Response.ok();
     }
     @RequestMapping(value = "/updateRouteConfig",method = RequestMethod.POST)
-    public Response updateRouteConfig(@RequestBody AddRouteConfigVO param){
+    public Response updateRouteConfig(@RequestBody DagCodeVersionDTO param){
         try {
             apiRouteService.updateRouteConfig(param);
         }catch (Exception e){
             e.printStackTrace();
-            return Response.error("新增路由配置失败");
+            return Response.error("更新路由配置失败");
         }
         return Response.ok();
     }
@@ -151,5 +151,18 @@ public class ApiRouteController {
             return Response.error("查询配置项失败！");
         }
         return Response.ok().setData(dto);
+    }
+    @RequestMapping(value = "/queryRoutePlug",method = RequestMethod.POST)
+    public Response queryRoutePlug(@RequestBody CommonReqBean param,
+                                      @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
+                                      @RequestParam(value = "pageIndex", required = false, defaultValue = "1") int pageIndex, HttpServletRequest request){
+        PageQueryResult<QueryRoutePlugDTO> pageQueryResult = null;
+        try {
+            pageQueryResult  = apiRouteService.queryRoutePlug(param,pageIndex,pageSize);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("查询插件失败");
+        }
+        return Response.ok().setData(pageQueryResult);
     }
 }
