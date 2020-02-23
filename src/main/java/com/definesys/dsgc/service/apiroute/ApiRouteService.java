@@ -118,7 +118,7 @@ public List<RouteConfigDTO> queryRouteConfigList(CommonReqBean param){
                     if (temp.equals(envList.get(i).getEnvCode()) && i ==0){
                         envNameStr.append(envList.get(i).getEnvName());
                         break;
-                    }else {
+                    }else if(temp.equals(envList.get(i).getEnvCode())){
                         envNameStr.append("，"+envList.get(i).getEnvName());
                         break;
                     }
@@ -226,5 +226,46 @@ public void updateRoutePathStrip(DagRoutesBean param){
         result.setCount(dagPluginUsingBeanList.getCount());
         return result;
     }
+    public List<QueryRouteHostnameDTO> queryRouteAnotherRule(CommonReqBean param){
+        List<QueryRouteHostnameDTO> result = new ArrayList<>();
+        List<DagRoutesHostnameBean> hostnameBeans = apiRouteDao.queryRouteAnotherRule(param);
+        Iterator<DagRoutesHostnameBean> iterator = hostnameBeans.iterator();
+        while (iterator.hasNext()){
+            DagRoutesHostnameBean dagRoutesHostnameBean = iterator.next();
+            QueryRouteHostnameDTO queryRouteHostnameDTO = new QueryRouteHostnameDTO();
+            queryRouteHostnameDTO.setDrhId(dagRoutesHostnameBean.getDrhId());
+            queryRouteHostnameDTO.setHostName(dagRoutesHostnameBean.getHostName());
+            result.add(queryRouteHostnameDTO);
+        }
+        return result;
+    }
+    @Transactional(rollbackFor = Exception.class)
+    public void deployRoute(DeployRouteVO param){
+        /**
+         * TODO
+         */
+    }
 
+    @Transactional(rollbackFor = Exception.class)
+    public void copyRouteConfig(CommonReqBean param){
+        DagCodeVersionBean dagRoutesBean =  apiRouteDao.queryRouteConfigByid(param.getCon0());
+        if(dagRoutesBean != null){
+            dagRoutesBean.setVid(null);
+            dagRoutesBean.setvName("副本-"+dagRoutesBean.getvName());
+            apiRouteDao.addRouteConfig(dagRoutesBean);
+            List<DagPluginUsingBean> dagPluginUsingBeanList = apiRouteDao.queryRoutePlugByVid(param.getCon0());
+            for (DagPluginUsingBean item:dagPluginUsingBeanList) {
+                item.setDpuId(null);
+                item.setVid(dagRoutesBean.getVid());
+                apiRouteDao.addRoutePlugin(item);
+            }
+            List<DagRoutesHostnameBean> hostnameBeans = apiRouteDao.queryRouteAnotherRule(param);
+            for (DagRoutesHostnameBean item:hostnameBeans) {
+                item.setDrhId(null);
+                item.setVid(dagRoutesBean.getVid());
+                apiRouteDao.addRouteAnotherRule(item);
+            }
+
+        }
+    }
 }

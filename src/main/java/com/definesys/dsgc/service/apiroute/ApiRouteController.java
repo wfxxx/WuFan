@@ -165,4 +165,34 @@ public class ApiRouteController {
         }
         return Response.ok().setData(pageQueryResult);
     }
+    @RequestMapping(value = "/queryRouteAnotherRule",method = RequestMethod.POST)
+    public Response queryRouteAnotherRule(@RequestBody CommonReqBean param){
+        List<QueryRouteHostnameDTO> result =null;
+        try {
+            result =  apiRouteService.queryRouteAnotherRule(param);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.error("查询路由其他规则失败！");
+        }
+        return Response.ok().setData(result);
+    }
+    @RequestMapping(value = "/deployRoute",method = RequestMethod.POST)
+    public Response deployRoute(@RequestBody DeployRouteVO param){
+        try { apiRouteService.deployRoute(param);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.error("部署失败！");
+        }
+        return Response.ok();
+    }
+    @RequestMapping(value = "/copyRouteConfig",method = RequestMethod.POST)
+    public Response copyRouteConfig(@RequestBody CommonReqBean param) {
+        try {
+            apiRouteService.copyRouteConfig(param);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.error("拷贝配置项失败！");
+        }
+        return Response.ok();
+    }
 }
