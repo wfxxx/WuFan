@@ -267,5 +267,25 @@ public void updateRoutePathStrip(DagRoutesBean param){
             }
 
         }
+
+    }
+    @Transactional(rollbackFor = Exception.class)
+    public void addRouteDomain(AddRouteDomainVO param){
+        if(param != null){
+            DagRoutesHostnameBean dagRoutesHostnameBean = new DagRoutesHostnameBean();
+            dagRoutesHostnameBean.setVid(param.getVid());
+            dagRoutesHostnameBean.setHostName(param.getLocation()+":"+param.getPort());
+            apiRouteDao.addRouteAnotherRule(dagRoutesHostnameBean);
+        }
+
+    }
+    @Transactional(rollbackFor = Exception.class)
+    public void delRouteDomain(CommonReqBean param){
+        if(param != null){
+            DagRoutesHostnameBean dagRoutesHostnameBean =  apiRouteDao.queryRouteDomainById(param.getCon0());
+            if(dagRoutesHostnameBean != null){
+                apiRouteDao.delRouteDomain(param.getCon0());
+            }
+        }
     }
 }

@@ -195,4 +195,24 @@ public class ApiRouteController {
         }
         return Response.ok();
     }
+    @RequestMapping(value = "/addRouteDomain",method = RequestMethod.POST)
+    public Response addRouteDomain(@RequestBody AddRouteDomainVO param) {
+        try {
+            apiRouteService.addRouteDomain(param);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.error("新增域名规则失败！");
+        }
+        return Response.ok();
+    }
+    @RequestMapping(value = "/delRouteDomain",method = RequestMethod.POST)
+    public Response delRouteDomain(@RequestBody CommonReqBean param) {
+        try {
+            apiRouteService.delRouteDomain(param);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.error("删除域名规则失败！");
+        }
+        return Response.ok();
+    }
 }

@@ -115,4 +115,10 @@ public class ApiRouteDao {
     public void addRouteAnotherRule(DagRoutesHostnameBean dagRoutesHostnameBean){
         sw.buildQuery().doInsert(dagRoutesHostnameBean);
     }
+    public DagRoutesHostnameBean queryRouteDomainById(String drhId){
+        return sw.buildQuery().eq("drh_id",drhId).doQueryFirst(DagRoutesHostnameBean.class);
+    }
+    public void delRouteDomain(String drhId){
+        sw.buildQuery().eq("drh_id",drhId).doDelete(DagRoutesHostnameBean.class);
+    }
 }
