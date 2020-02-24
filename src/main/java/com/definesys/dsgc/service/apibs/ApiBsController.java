@@ -195,6 +195,18 @@ public class ApiBsController {
         return Response.ok();
     }
 
+    @RequestMapping(value = "/copyDagCodeVersion",method = RequestMethod.POST)
+    public Response copyDagCodeVersion(@RequestBody DagCodeVersionBean dagCodeVersionBean){
+        DagCodeVersionBean result=null;
+        try {
+            apiBsService.copyDagCodeVersion(dagCodeVersionBean);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("复制失败");
+        }
+        return Response.ok();
+    }
+
     @RequestMapping(value = "/queryPluginUsing",method = RequestMethod.POST)
     public Response queryPluginUsing(@RequestBody CommonReqBean commonReqBean){
         List<DagPlugUsingBean> result=null;
@@ -230,10 +242,10 @@ public class ApiBsController {
     }
 
     @RequestMapping(value = "/delPluginUsing",method = RequestMethod.POST)
-    public Response delPluginUsing(@RequestBody CommonReqBean commonReqBean){
+    public Response delPluginUsing(@RequestBody DagPlugUsingBean dagPlugUsingBean){
         DagCodeVersionBean result=null;
         try {
-            apiBsService.delPluginUsing(commonReqBean.getCon0());
+            apiBsService.delPluginUsing(dagPlugUsingBean);
         }catch (Exception e){
             e.printStackTrace();
             return Response.error("删除插件失败");

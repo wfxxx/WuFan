@@ -50,4 +50,8 @@ public class ApiDeployLogService {
         result.setCount(list.getCount());
         return result;
     }
+
+    public void addDagDeployStat(DagDeployStatBean dagDeployStatBean){
+        apiDeployLogDao.addDagDeployStat(dagDeployStatBean);
+    }
 }

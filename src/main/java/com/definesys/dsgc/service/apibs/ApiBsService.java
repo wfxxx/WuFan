@@ -10,12 +10,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
 public class ApiBsService {
     @Autowired
     private ApiBsDao apiBsDao;
+    @Autowired
+    private PluginService pluginService;
 
     @Autowired
     private SVCLogDao sldao;
@@ -112,8 +115,13 @@ public class ApiBsService {
         return result;
     }
 
-
+    @Transactional(rollbackFor = Exception.class)
     public void delDagCodeVersionByid(String id){
+        //删除技术信息
+        apiBsDao.delDagBsDtiByVid(id);
+        //删除插件
+         delPluginUsingByVid(id);
+        //删除配置
          apiBsDao.delDagCodeVersionByid(id);
     }
 
@@ -124,6 +132,42 @@ public class ApiBsService {
     public void addDagCodeVersion(DagCodeVersionBean dagCodeVersionBean){
          apiBsDao.addDagCodeVersion(dagCodeVersionBean);
     }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void copyDagCodeVersion(DagCodeVersionBean dagCodeVersionBean){
+
+        Date date=new Date();
+        String str = "yyy-MM-dd HH:mm:ss";
+        SimpleDateFormat sdf = new SimpleDateFormat(str);
+        String vid=dagCodeVersionBean.getVid();
+        String name=dagCodeVersionBean.getvName();
+        dagCodeVersionBean.setVid(null);
+        int index=name.indexOf("-副本");
+        if(index>-1){
+            String newName=name.substring(0,index)+"-副本"+sdf.format(date);
+            dagCodeVersionBean.setvName(newName);
+        }else{
+            String newName=name+"-副本"+sdf.format(date);
+            dagCodeVersionBean.setvName(newName);
+        }
+        //添加配置
+        apiBsDao.addDagCodeVersion(dagCodeVersionBean);
+       //添加信息技术
+        DagBsDtiBean newDagBsDtiBean= apiBsDao.queryDagBsDtiByVid(vid);
+        if(newDagBsDtiBean!=null&&newDagBsDtiBean.getDbdId()!=null){
+            newDagBsDtiBean.setDbdId(null);
+            newDagBsDtiBean.setVid(dagCodeVersionBean.getVid());
+            apiBsDao.addDagBsDti(newDagBsDtiBean);
+        }
+        //添加插件
+        List<DagPlugUsingBean> newDagPlugUsingBean=apiBsDao.queryPluginUsing(vid);
+        for(DagPlugUsingBean  dagPlugUsingBean:newDagPlugUsingBean){
+            dagPlugUsingBean.setDpuId(null);
+            dagPlugUsingBean.setVid(dagCodeVersionBean.getVid());
+            addPluginUsing(dagPlugUsingBean);
+        }
+    }
+
 
     public List<String> queryEnv(String envListStr) {
         List<String> envList= Arrays.asList(envListStr.split(","));
@@ -137,11 +181,26 @@ public class ApiBsService {
 
 
     public void addPluginUsing(DagPlugUsingBean dagPlugUsingBean){
+        //添加插件，确保一个服务一种插件只能有一个
         apiBsDao.addPluginUsing(dagPlugUsingBean);
+        //添加插件内容，确保一个
+
     }
 
-    public void delPluginUsing(String id){
-        apiBsDao.delPluginUsing(id);
+    @Transactional(rollbackFor = Exception.class)
+    public void delPluginUsing(DagPlugUsingBean dagPlugUsingBean){
+        //删除插件内容，
+        pluginService.deletePluginContext(dagPlugUsingBean.getVid(),dagPlugUsingBean.getPluginCode());
+        //删除插件
+        apiBsDao.delPluginUsing(dagPlugUsingBean.getDpuId());
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void delPluginUsingByVid(String vid){
+        //删除插件内容，
+
+        //删除插件
+        apiBsDao.delPluginUsingByVid(vid);
     }
 
     public void updatePluginUsing(DagPlugUsingBean dagPlugUsingBean){
@@ -149,7 +208,13 @@ public class ApiBsService {
     }
 
     public List<DagPlugUsingBean> queryPluginUsing(String vid){
-        return apiBsDao.queryPluginUsing(vid);
+        List<DagPlugUsingBean> reuslt=apiBsDao.queryPluginUsing(vid);
+        for(DagPlugUsingBean item: reuslt){
+            DagPlugStoreBean dagPlugStoreBean=apiBsDao.queryPluginStoreByCode(item.getPluginCode());
+            item.setPluginName(dagPlugStoreBean.getPluginName());
+        }
+
+        return reuslt;
     }
 
     public List<Map<String,Object>> queryPluginStore(){

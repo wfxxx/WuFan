@@ -1,32 +1,32 @@
-package com.definesys.dsgc.service.apibs.bean;
+package com.definesys.dsgc.service.apibs.bean.pluginBean;
 
 import com.definesys.mpaas.query.annotation.*;
 import com.definesys.mpaas.query.json.MpaasDateTimeDeserializer;
 import com.definesys.mpaas.query.json.MpaasDateTimeSerializer;
-import com.definesys.mpaas.query.model.MpaasBasePojo;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.Date;
 
 /**
- * @ClassName DagPlugStoreBean
+ * @ClassName PlKeyAuthBean
  * @Description TODO
  * @Author Xueyunlong
- * @Date 2020-2-21 18:34
+ * @Date 2020-2-24 10:17
  * @Version 1.0
  **/
-@Table(value = "DAG_PLUGIN_STORE")
-public class DagPlugStoreBean extends MpaasBasePojo {
-
-    @RowID(type = RowIDType.UUID)
-    private String dpsId;
+@Table(value = "PLUGIN_KEY_AUTH")
+public class PlKeyAuthBean {
+    @RowID(type= RowIDType.UUID)
+    private String kaId;
+    private String vid;
     private String pluginCode;
-    private String pluginName;
-    private String pluginDesc;
-    private String pluginType;
-    private String pictureAddress;
-
+    private String keyName;
+    private String consumer;
+    private String  anonymous;
+    private String hideCdls;
+    private String keyInBd;
+    private String ruOnPf;
 
     @SystemColumn(SystemColumnType.CREATE_BY)
     @Column(value = "created_by")
@@ -48,20 +48,20 @@ public class DagPlugStoreBean extends MpaasBasePojo {
     @Column(value = "object_version_number")
     private Integer objectVersionNumber;
 
-    public String getPictureAddress() {
-        return pictureAddress;
+    public String getKaId() {
+        return kaId;
     }
 
-    public void setPictureAddress(String pictureAddress) {
-        this.pictureAddress = pictureAddress;
+    public void setKaId(String kaId) {
+        this.kaId = kaId;
     }
 
-    public String getDpsId() {
-        return dpsId;
+    public String getVid() {
+        return vid;
     }
 
-    public void setDpsId(String dpsId) {
-        this.dpsId = dpsId;
+    public void setVid(String vid) {
+        this.vid = vid;
     }
 
     public String getPluginCode() {
@@ -72,28 +72,52 @@ public class DagPlugStoreBean extends MpaasBasePojo {
         this.pluginCode = pluginCode;
     }
 
-    public String getPluginName() {
-        return pluginName;
+    public String getKeyName() {
+        return keyName;
     }
 
-    public void setPluginName(String pluginName) {
-        this.pluginName = pluginName;
+    public void setKeyName(String keyName) {
+        this.keyName = keyName;
     }
 
-    public String getPluginDesc() {
-        return pluginDesc;
+    public String getConsumer() {
+        return consumer;
     }
 
-    public void setPluginDesc(String pluginDesc) {
-        this.pluginDesc = pluginDesc;
+    public void setConsumer(String consumer) {
+        this.consumer = consumer;
     }
 
-    public String getPluginType() {
-        return pluginType;
+    public String getAnonymous() {
+        return anonymous;
     }
 
-    public void setPluginType(String pluginType) {
-        this.pluginType = pluginType;
+    public void setAnonymous(String anonymous) {
+        this.anonymous = anonymous;
+    }
+
+    public String getHideCdls() {
+        return hideCdls;
+    }
+
+    public void setHideCdls(String hideCdls) {
+        this.hideCdls = hideCdls;
+    }
+
+    public String getKeyInBd() {
+        return keyInBd;
+    }
+
+    public void setKeyInBd(String keyInBd) {
+        this.keyInBd = keyInBd;
+    }
+
+    public String getRuOnPf() {
+        return ruOnPf;
+    }
+
+    public void setRuOnPf(String ruOnPf) {
+        this.ruOnPf = ruOnPf;
     }
 
     public String getCreatedBy() {

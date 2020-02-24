@@ -1,32 +1,34 @@
-package com.definesys.dsgc.service.apibs.bean;
+package com.definesys.dsgc.service.apibs.bean.pluginBean;
 
 import com.definesys.mpaas.query.annotation.*;
 import com.definesys.mpaas.query.json.MpaasDateTimeDeserializer;
 import com.definesys.mpaas.query.json.MpaasDateTimeSerializer;
-import com.definesys.mpaas.query.model.MpaasBasePojo;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.Date;
 
 /**
- * @ClassName DagPlugStoreBean
+ * @ClassName PluginTcpLog
  * @Description TODO
  * @Author Xueyunlong
- * @Date 2020-2-21 18:34
+ * @Date 2020-2-24 10:31
  * @Version 1.0
  **/
-@Table(value = "DAG_PLUGIN_STORE")
-public class DagPlugStoreBean extends MpaasBasePojo {
+@Table(value = "table plugin_tcp_log")
+public class PluginTcpLog {
 
-    @RowID(type = RowIDType.UUID)
-    private String dpsId;
+    @RowID(type= RowIDType.UUID)
+    private String tlId;
     private String pluginCode;
-    private String pluginName;
-    private String pluginDesc;
-    private String pluginType;
-    private String pictureAddress;
-
+    private String vid;
+    private String consumer;
+    private String host;
+    private Integer  port;
+    private Integer timeout;
+    private Integer keepalive;
+    private String tls;
+    private String tlsSni;
 
     @SystemColumn(SystemColumnType.CREATE_BY)
     @Column(value = "created_by")
@@ -48,20 +50,12 @@ public class DagPlugStoreBean extends MpaasBasePojo {
     @Column(value = "object_version_number")
     private Integer objectVersionNumber;
 
-    public String getPictureAddress() {
-        return pictureAddress;
+    public String getTlId() {
+        return tlId;
     }
 
-    public void setPictureAddress(String pictureAddress) {
-        this.pictureAddress = pictureAddress;
-    }
-
-    public String getDpsId() {
-        return dpsId;
-    }
-
-    public void setDpsId(String dpsId) {
-        this.dpsId = dpsId;
+    public void setTlId(String tlId) {
+        this.tlId = tlId;
     }
 
     public String getPluginCode() {
@@ -72,28 +66,68 @@ public class DagPlugStoreBean extends MpaasBasePojo {
         this.pluginCode = pluginCode;
     }
 
-    public String getPluginName() {
-        return pluginName;
+    public String getVid() {
+        return vid;
     }
 
-    public void setPluginName(String pluginName) {
-        this.pluginName = pluginName;
+    public void setVid(String vid) {
+        this.vid = vid;
     }
 
-    public String getPluginDesc() {
-        return pluginDesc;
+    public String getConsumer() {
+        return consumer;
     }
 
-    public void setPluginDesc(String pluginDesc) {
-        this.pluginDesc = pluginDesc;
+    public void setConsumer(String consumer) {
+        this.consumer = consumer;
     }
 
-    public String getPluginType() {
-        return pluginType;
+    public String getHost() {
+        return host;
     }
 
-    public void setPluginType(String pluginType) {
-        this.pluginType = pluginType;
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public Integer getPort() {
+        return port;
+    }
+
+    public void setPort(Integer port) {
+        this.port = port;
+    }
+
+    public Integer getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(Integer timeout) {
+        this.timeout = timeout;
+    }
+
+    public Integer getKeepalive() {
+        return keepalive;
+    }
+
+    public void setKeepalive(Integer keepalive) {
+        this.keepalive = keepalive;
+    }
+
+    public String getTls() {
+        return tls;
+    }
+
+    public void setTls(String tls) {
+        this.tls = tls;
+    }
+
+    public String getTlsSni() {
+        return tlsSni;
+    }
+
+    public void setTlsSni(String tlsSni) {
+        this.tlsSni = tlsSni;
     }
 
     public String getCreatedBy() {
