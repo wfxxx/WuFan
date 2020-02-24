@@ -11,6 +11,7 @@ public class ConsumerEntitieDTO {
     private String csmDesc;
     private String owner;
     private List<UserResDTO> userResDTOS;
+    private String deployEnv;
 
     public String getDceId() {
         return dceId;
@@ -58,5 +59,13 @@ public class ConsumerEntitieDTO {
 
     public void setUserResDTOS(List<UserResDTO> userResDTOS) {
         this.userResDTOS = userResDTOS;
+    }
+
+    public String getDeployEnv() {
+        return deployEnv;
+    }
+
+    public void setDeployEnv(String deployEnv) {
+        this.deployEnv = deployEnv;
     }
 }

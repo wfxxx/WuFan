@@ -24,6 +24,7 @@ public class ConsumersDao {
                 "               cnt.csm_code," +
                 "               cnt.csm_name," +
                 "               cnt.csm_desc," +
+                "               cnt.deploy_env," +
                 "               t.user_name owner " +
                 "          from DSGC_CONSUMER_ENTITIES cnt," +
                 "               (select listagg(u.user_name, ',') within GROUP(order by cu.csm_code) user_name," +
@@ -45,6 +46,9 @@ public class ConsumersDao {
         if("SystemLeader".equals(userRole) || "Tourist".equals(userRole)){
             strSql.append(" and upper(owner) like #userName ");
             mq.setVar("userName",userName);
+        }
+        if(!"ALL".equals(commonReqBean.getQueryType())){
+            strSql.append(" and upper(deploy_env) like '%"+commonReqBean.getQueryType().toUpperCase()+"%' ");
         }
         mq.sql(strSql.toString());
         return mq.doPageQuery(pageIndex,pageSize,DSGCConsumerEntities.class);

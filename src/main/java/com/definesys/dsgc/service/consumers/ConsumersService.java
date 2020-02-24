@@ -28,6 +28,7 @@ public class ConsumersService {
 //            return new PageQueryResult<>();
 //        }else {
             entitiesPageQueryResult = consumersDao.queryconsumersList(commonReqBean,pageSize,pageIndex,userName,userRole);
+        List<DagEnvInfoCfgBean> envList = consumersDao.queryApiEnv();
             for (DSGCConsumerEntities item:entitiesPageQueryResult.getResult()) {
                 ConsumerEntitieDTO consumerEntitieDTO = new ConsumerEntitieDTO();
                 consumerEntitieDTO.setDceId(item.getDceId());
@@ -35,6 +36,25 @@ public class ConsumersService {
                 consumerEntitieDTO.setCsmCode(item.getCsmCode());
                 consumerEntitieDTO.setCsmDesc(item.getCsmDesc());
                 consumerEntitieDTO.setOwner(item.getOwner());
+                String envStr = item.getDeployEnv();
+                if(StringUtil.isNotBlank(envStr)){
+                    String[] envArr = envStr.trim().split(",");
+                    StringBuilder envNameStr = new StringBuilder();
+                    for (int j =0;j<envArr.length;j++){
+                        for (int i = 0; i < envList.size(); i++) {
+                            if (envArr[j].equals(envList.get(i).getEnvCode()) && j ==0){
+                                envNameStr.append(envList.get(i).getEnvName());
+                                break;
+                            }else if(envArr[j].equals(envList.get(i).getEnvCode())){
+                                envNameStr.append("，"+envList.get(i).getEnvName());
+                                break;
+                            }
+                        }
+                    }
+                    consumerEntitieDTO.setDeployEnv(envNameStr.toString());
+                }
+
+
                 resultList.add(consumerEntitieDTO);
             }
             result.setResult(resultList);
