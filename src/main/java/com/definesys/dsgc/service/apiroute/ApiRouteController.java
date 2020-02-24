@@ -133,13 +133,19 @@ public class ApiRouteController {
     }
     @RequestMapping(value = "/delRouteConfig",method = RequestMethod.POST)
     public Response delRouteConfig(@RequestBody CommonReqBean param) {
+        int result;
         try {
-            apiRouteService.delRouteConfig(param);
+            result =  apiRouteService.delRouteConfig(param);
         } catch (Exception e) {
             e.printStackTrace();
             return Response.error("删除配置项失败！");
         }
-        return Response.ok();
+        if(result == -1){
+            return Response.error("该配置已部署环境，不可删除！");
+        }else {
+            return Response.ok().setMessage("删除成功");
+        }
+
     }
     @RequestMapping(value = "/queryCodeVersionById",method = RequestMethod.POST)
     public Response queryCodeVersionById(@RequestBody CommonReqBean param){

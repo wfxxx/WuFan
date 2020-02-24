@@ -105,6 +105,18 @@ public class ApiRouteDao {
     public void delRoutePlugin(String vid){
         sw.buildQuery().eq("vid",vid).doDelete(DagPluginUsingBean.class);
     }
+    public void delRouteAnotherRuleById(String vid){
+        sw.buildQuery().eq("vid",vid).doDelete(DagRoutesHostnameBean.class);
+    }
+
+    public Boolean queryRouteConfigIsDeployed(String vid){
+       List<DagDeployStatBean>  result = sw.buildQuery().eq("vid",vid).doQuery(DagDeployStatBean.class);
+       if(result != null && result.size() > 0){
+           return true;
+       }else {
+           return false;
+       }
+    }
 
     public List<DagRoutesHostnameBean> queryRouteAnotherRule(CommonReqBean param){
         return sw.buildQuery().eq("vid",param.getCon0()).doQuery(DagRoutesHostnameBean.class);

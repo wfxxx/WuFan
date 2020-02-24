@@ -189,16 +189,24 @@ public void updateRoutePathStrip(DagRoutesBean param){
         }
     }
     @Transactional(rollbackFor = Exception.class)
-    public void delRouteConfig(CommonReqBean param){
-//        PageQueryResult<DagPluginUsingBean> pluginrResult = apiRouteDao.queryRoutePlug(param.getCon0(),1,1);
-//        if(pluginrResult.getCount() > 0){
-//            apiRouteDao.delRoutePlugin(param.getCon0());
-//        }
+    public int delRouteConfig(CommonReqBean param){
+       Boolean isDeploy = apiRouteDao.queryRouteConfigIsDeployed(param.getCon0());
+       if(isDeploy){
+           return -1;
+       }
+        PageQueryResult<DagPluginUsingBean> pluginrResult = apiRouteDao.queryRoutePlug(param.getCon0(),1,1);
+        if(pluginrResult.getCount() > 0){
+            apiRouteDao.delRoutePlugin(param.getCon0());
+        }
+        List<DagRoutesHostnameBean> hostnameBeans = apiRouteDao.queryRouteAnotherRule(param);
+        if(hostnameBeans !=null && hostnameBeans.size() > 0){
+            apiRouteDao.delRouteAnotherRuleById(param.getCon0());
+        }
         DagCodeVersionBean dagRoutesBean =  apiRouteDao.queryRouteConfigByid(param.getCon0());
         if (dagRoutesBean != null){
             apiRouteDao.delRouteConfig(param.getCon0());
         }
-
+    return 1;
     }
     public PageQueryResult<QueryRoutePlugDTO> queryRoutePlug(CommonReqBean param,int pageIndex,int pageSize){
         PageQueryResult<DagPluginUsingBean> dagPluginUsingBeanList =  apiRouteDao.queryRoutePlug(param.getCon0(),pageIndex,pageSize);
