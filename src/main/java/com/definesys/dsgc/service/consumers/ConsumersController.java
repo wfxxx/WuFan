@@ -1,9 +1,6 @@
 package com.definesys.dsgc.service.consumers;
 
-import com.definesys.dsgc.service.consumers.bean.CommonReqBean;
-import com.definesys.dsgc.service.consumers.bean.ConsumerBasicAuthUserDTO;
-import com.definesys.dsgc.service.consumers.bean.ConsumerEntitieDTO;
-import com.definesys.dsgc.service.consumers.bean.DSGCConsumerEntities;
+import com.definesys.dsgc.service.consumers.bean.*;
 import com.definesys.mpaas.common.http.Response;
 import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,8 +63,8 @@ public class ConsumersController {
         return Response.ok().setData(consumersService.queryConsumerBasicAuthData(dceId));
     }
     @RequestMapping(value = "updateConsumerBasicAuthPwd",method = RequestMethod.POST)
-    public Response updateConsumerBasicAuthPwd(@RequestBody() ConsumerBasicAuthUserDTO basicAuthUser){
-        consumersService.updateConsumerBasicAuthPwd(basicAuthUser);
+    public Response updateConsumerBasicAuthPwd(@RequestBody() UpdateBasicPwdVO updateBasicPwdVO){
+        consumersService.updateConsumerBasicAuthPwd(updateBasicPwdVO);
         return Response.ok();
     }
     @RequestMapping(value = "checkModifiable")
@@ -88,5 +85,26 @@ public class ConsumersController {
     @RequestMapping(value = "queryConsumersListByUserId")
     public Response queryConsumersListByUserId(@RequestParam(value = "userId") String id){
         return Response.ok().setData(consumersService.queryConsumersListByUserId(id));
+    }
+    @RequestMapping(value = "queryConsumerDeployData")
+    public Response queryConsumerDeployData(@RequestBody() CommonReqBean param){
+        List<ConsumerDeployDTO> result = null;
+        try {
+            result =  consumersService.queryConsumerDeployData(param);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("查询部署信息失败");
+        }
+        return Response.ok().setData(result);
+    }
+    @RequestMapping(value = "consumerDeploy")
+    public Response consumerDeploy(@RequestBody() ConsumerDeployChangeVO param){
+        try {
+        consumersService.consumerDeploy(param);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("部署或取消部署失败");
+        }
+        return Response.ok();
     }
 }

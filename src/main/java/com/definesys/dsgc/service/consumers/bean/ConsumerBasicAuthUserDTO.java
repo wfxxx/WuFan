@@ -1,17 +1,20 @@
 package com.definesys.dsgc.service.consumers.bean;
 
+import java.util.List;
+import java.util.Map;
+
 public class ConsumerBasicAuthUserDTO {
     private String csmCode;
 
-    private String pwd;
+    private List<Map<String,String>> pwdList;
 
 
-    public String getPwd() {
-        return pwd;
+    public List<Map<String, String>> getPwdList() {
+        return pwdList;
     }
 
-    public void setPwd(String pwd) {
-        this.pwd = pwd;
+    public void setPwdList(List<Map<String, String>> pwdList) {
+        this.pwdList = pwdList;
     }
 
     public String getCsmCode() {

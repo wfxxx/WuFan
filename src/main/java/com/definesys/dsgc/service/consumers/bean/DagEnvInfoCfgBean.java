@@ -9,30 +9,18 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.io.Serializable;
 import java.util.Date;
-@Table(value = "DSGC_CONSUMER_ENTITIES")
-public class DSGCConsumerEntities  extends MpaasBasePojo implements Serializable {
+
+@Table(value = "DAG_ENV_INFO_CFG")
+public class DagEnvInfoCfgBean extends MpaasBasePojo implements Serializable {
     @RowID(type = RowIDType.UUID)
-    private String dceId;
-    private String csmCode;
-    private String csmName;
-    private String csmDesc;
-    private String isEnable;
-    private String deployEnv;
+    private String deicId;
+    private String envCode;
+    private String envName;
+    private Integer envSeq;
+
 
     @Column(type = ColumnType.JAVA)
-    private String owner;
-
-    @Column(type = ColumnType.JAVA)
-    private String attribue1;
-
-    public String getDeployEnv() {
-        return deployEnv;
-    }
-
-    public void setDeployEnv(String deployEnv) {
-        this.deployEnv = deployEnv;
-    }
-
+    private String appName;
     @SystemColumn(SystemColumnType.CREATE_BY)
     @Column(value = "created_by")
     private String createdBy;
@@ -53,44 +41,44 @@ public class DSGCConsumerEntities  extends MpaasBasePojo implements Serializable
     @Column(value = "object_version_number")
     private Integer objectVersionNumber;
 
-    public String getDceId() {
-        return dceId;
+    public String getDeicId() {
+        return deicId;
     }
 
-    public void setDceId(String dceId) {
-        this.dceId = dceId;
+    public void setDeicId(String deicId) {
+        this.deicId = deicId;
     }
 
-    public String getCsmCode() {
-        return csmCode;
+    public String getEnvCode() {
+        return envCode;
     }
 
-    public void setCsmCode(String csmCode) {
-        this.csmCode = csmCode;
+    public void setEnvCode(String envCode) {
+        this.envCode = envCode;
     }
 
-    public String getCsmName() {
-        return csmName;
+    public String getEnvName() {
+        return envName;
     }
 
-    public void setCsmName(String csmName) {
-        this.csmName = csmName;
+    public void setEnvName(String envName) {
+        this.envName = envName;
     }
 
-    public String getCsmDesc() {
-        return csmDesc;
+    public Integer getEnvSeq() {
+        return envSeq;
     }
 
-    public void setCsmDesc(String csmDesc) {
-        this.csmDesc = csmDesc;
+    public void setEnvSeq(Integer envSeq) {
+        this.envSeq = envSeq;
     }
 
-    public String getIsEnable() {
-        return isEnable;
+    public String getAppName() {
+        return appName;
     }
 
-    public void setIsEnable(String isEnable) {
-        this.isEnable = isEnable;
+    public void setAppName(String appName) {
+        this.appName = appName;
     }
 
     public String getCreatedBy() {
@@ -131,21 +119,5 @@ public class DSGCConsumerEntities  extends MpaasBasePojo implements Serializable
 
     public void setObjectVersionNumber(Integer objectVersionNumber) {
         this.objectVersionNumber = objectVersionNumber;
-    }
-
-    public String getOwner() {
-        return owner;
-    }
-
-    public void setOwner(String owner) {
-        this.owner = owner;
-    }
-
-    public String getAttribue1() {
-        return attribue1;
-    }
-
-    public void setAttribue1(String attribue1) {
-        this.attribue1 = attribue1;
     }
 }
