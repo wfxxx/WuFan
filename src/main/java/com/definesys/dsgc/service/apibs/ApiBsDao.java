@@ -87,6 +87,10 @@ public class ApiBsDao {
         return queryDagBsDtiByid(dagBsDtiBean.getDbdId());
     }
 
+    public void delDagBsDtiByVid(String vid){
+        sw.buildQuery().eq("vid",vid).doDelete(DagBsDtiBean.class);
+    }
+
     public DagBsDtiBean addDagBsDti(DagBsDtiBean dagBsDtiBean){
          sw.buildQuery().doInsert(dagBsDtiBean);
         return queryDagBsDtiByid(dagBsDtiBean.getDbdId());
@@ -94,7 +98,6 @@ public class ApiBsDao {
 
 
     public void updatePluginUsing(DagPlugUsingBean dagPlugUsingBean){
-
         sw.buildQuery().eq("dpu_Id",dagPlugUsingBean.getDpuId()).doUpdate(dagPlugUsingBean);
     }
 
@@ -115,10 +118,12 @@ public class ApiBsDao {
         return sw.buildQuery().eq("vid",vid).doQuery(DagPlugUsingBean.class);
     }
 
-
-
     public List<DagPlugStoreBean> queryPluginStoreByType(String type){
         return sw.buildQuery().eq("plugin_type",type).doQuery(DagPlugStoreBean.class);
+    }
+
+    public DagPlugStoreBean queryPluginStoreByCode(String code){
+        return sw.buildQuery().eq("plugin_code",code).doQueryFirst(DagPlugStoreBean.class);
     }
 
     public List<Map<String,Object>> queryPluginStoreTypeTotal(){
@@ -145,7 +150,6 @@ public class ApiBsDao {
 
     public void addDagCodeVersion(DagCodeVersionBean dagCodeVersionBean){
         sw.buildQuery().doInsert(dagCodeVersionBean);
-
     }
 
 

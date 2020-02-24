@@ -33,4 +33,8 @@ public class ApiDeployLogDao {
     public DSGCUser queryUserNameById(String userId){
         return sw.buildQuery().eq("user_id",userId).doQueryFirst(DSGCUser.class);
     }
+
+    public void addDagDeployStat(DagDeployStatBean dagDeployStatBean){
+         sw.buildQuery().doInsert(dagDeployStatBean);
+    }
 }

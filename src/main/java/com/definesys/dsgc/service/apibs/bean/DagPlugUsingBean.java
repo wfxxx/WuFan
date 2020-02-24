@@ -28,6 +28,8 @@ public class DagPlugUsingBean extends MpaasBasePojo {
     private String vid;
 
     private String pluginCode;
+    @Column(type = ColumnType.JAVA)
+    private String pluginName;
 
     private String isEnable;
 
@@ -81,6 +83,14 @@ public class DagPlugUsingBean extends MpaasBasePojo {
 
     public void setIsEnable(String isEnable) {
         this.isEnable = isEnable;
+    }
+
+    public String getPluginName() {
+        return pluginName;
+    }
+
+    public void setPluginName(String pluginName) {
+        this.pluginName = pluginName;
     }
 
     public String getCreatedBy() {
