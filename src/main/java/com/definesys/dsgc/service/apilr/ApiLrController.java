@@ -93,13 +93,14 @@ public class ApiLrController {
 
     @RequestMapping(value = "/addLrConfig",method = RequestMethod.POST)
     public Response addLrConfig(@RequestBody AddLrConfigVO param){
+        String vid = "";
         try {
-            apiLrService.addLrConfig(param);
+            vid = apiLrService.addLrConfig(param);
         }catch (Exception e){
             e.printStackTrace();
             return Response.error("添加配置信息失败");
         }
-        return Response.ok();
+        return Response.ok().data(vid);
     }
 
     @RequestMapping(value = "/deLrConfig",method = RequestMethod.POST)
@@ -113,4 +114,48 @@ public class ApiLrController {
         return Response.ok();
     }
 
+    @RequestMapping(value = "/addLrTarget",method = RequestMethod.POST)
+    public Response addLrTarget(@RequestBody DagLrTargetBean param){
+        try {
+            apiLrService.addLrTarget(param);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("添加配置信息失败");
+        }
+        return Response.ok();
+    }
+
+    @RequestMapping(value = "/queryLrTarget",method = RequestMethod.POST)
+    public Response queryLrTarget(@RequestBody CommonReqBean param){
+        List<DagLrTargetBean> result = null;
+        try {
+            result =  apiLrService.queryLrTarget(param.getCon0());
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("查询配置信息失败");
+        }
+        return Response.ok().setData(result);
+    }
+
+    @RequestMapping(value = "/updateLrConfig",method = RequestMethod.POST)
+    public Response updateLrConfig(@RequestBody AddLrConfigVO addLrConfigVO){
+        try {
+            apiLrService.updateLrConfig(addLrConfigVO);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("更新失败");
+        }
+        return Response.ok();
+    }
+
+    @RequestMapping(value = "/copyLrTargetList",method = RequestMethod.POST)
+    public Response copyLrTargetList(@RequestBody CommonReqBean param){
+        try {
+            apiLrService.copyLrTargetList(param.getCon0(),param.getCon1());
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("查询配置信息失败");
+        }
+        return Response.ok();
+    }
 }

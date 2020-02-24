@@ -1,9 +1,6 @@
 package com.definesys.dsgc.service.apilr;
 
-import com.definesys.dsgc.service.apilr.bean.CommonReqBean;
-import com.definesys.dsgc.service.apilr.bean.DagCodeVersionBean;
-import com.definesys.dsgc.service.apilr.bean.DagEnvInfoCfgBean;
-import com.definesys.dsgc.service.apilr.bean.DagLrbean;
+import com.definesys.dsgc.service.apilr.bean.*;
 import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
 import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.mpaas.query.MpaasQuery;
@@ -75,7 +72,7 @@ public class ApiLrDao {
     }
 
     public List<DagCodeVersionBean> queryLrConfigListBySourCode(CommonReqBean param){
-        return sw.buildQuery().eq("sour_code",param.getCon0()).doQuery(DagCodeVersionBean.class);
+        return sw.buildQuery().eq("sour_code",param.getCon0()).eq("sour_type",param.getQueryType()).doQuery(DagCodeVersionBean.class);
     }
 
     public void addLrConfig(DagCodeVersionBean dagCodeVersionBean){
@@ -93,5 +90,22 @@ public class ApiLrDao {
         return sw.buildQuery().sql("select env_name from DAG_ENV_INFO_CFG ")
                 .in("envCode",envArr)
                 .doQuery(DagEnvInfoCfgBean.class);
+    }
+    public void addLrTarget(DagLrTargetBean dagLrTargetBean){
+        sw.buildQuery().doInsert(dagLrTargetBean);
+    }
+    public void delLrTarget(CommonReqBean param){
+        sw.buildQuery().eq("vid",param.getCon0()).doDelete(DagLrTargetBean.class);
+    }
+    public List<DagLrTargetBean> queryLrTarget(String vid){
+        return sw.buildQuery().eq("vid",vid).doQuery(DagLrTargetBean.class);
+    }
+
+    public void updateLrConfig(DagCodeVersionBean dagCodeVersionBean){
+        sw.buildQuery().rowid("vid",dagCodeVersionBean.getVid()).doUpdate(dagCodeVersionBean);
+    }
+
+    public void copyLrTargetList(DagLrTargetBean dagLrTargetBean){
+        sw.buildQuery().doInsert(dagLrTargetBean);
     }
 }

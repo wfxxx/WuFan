@@ -118,7 +118,7 @@ public List<RouteConfigDTO> queryRouteConfigList(CommonReqBean param){
                     if (temp.equals(envList.get(i).getEnvCode()) && i ==0){
                         envNameStr.append(envList.get(i).getEnvName());
                         break;
-                    }else {
+                    }else if(temp.equals(envList.get(i).getEnvCode())){
                         envNameStr.append("，"+envList.get(i).getEnvName());
                         break;
                     }
@@ -189,16 +189,24 @@ public void updateRoutePathStrip(DagRoutesBean param){
         }
     }
     @Transactional(rollbackFor = Exception.class)
-    public void delRouteConfig(CommonReqBean param){
-//        PageQueryResult<DagPluginUsingBean> pluginrResult = apiRouteDao.queryRoutePlug(param.getCon0(),1,1);
-//        if(pluginrResult.getCount() > 0){
-//            apiRouteDao.delRoutePlugin(param.getCon0());
-//        }
+    public int delRouteConfig(CommonReqBean param){
+       Boolean isDeploy = apiRouteDao.queryRouteConfigIsDeployed(param.getCon0());
+       if(isDeploy){
+           return -1;
+       }
+        PageQueryResult<DagPluginUsingBean> pluginrResult = apiRouteDao.queryRoutePlug(param.getCon0(),1,1);
+        if(pluginrResult.getCount() > 0){
+            apiRouteDao.delRoutePlugin(param.getCon0());
+        }
+        List<DagRoutesHostnameBean> hostnameBeans = apiRouteDao.queryRouteAnotherRule(param);
+        if(hostnameBeans !=null && hostnameBeans.size() > 0){
+            apiRouteDao.delRouteAnotherRuleById(param.getCon0());
+        }
         DagCodeVersionBean dagRoutesBean =  apiRouteDao.queryRouteConfigByid(param.getCon0());
         if (dagRoutesBean != null){
             apiRouteDao.delRouteConfig(param.getCon0());
         }
-
+    return 1;
     }
     public PageQueryResult<QueryRoutePlugDTO> queryRoutePlug(CommonReqBean param,int pageIndex,int pageSize){
         PageQueryResult<DagPluginUsingBean> dagPluginUsingBeanList =  apiRouteDao.queryRoutePlug(param.getCon0(),pageIndex,pageSize);
@@ -226,5 +234,66 @@ public void updateRoutePathStrip(DagRoutesBean param){
         result.setCount(dagPluginUsingBeanList.getCount());
         return result;
     }
+    public List<QueryRouteHostnameDTO> queryRouteAnotherRule(CommonReqBean param){
+        List<QueryRouteHostnameDTO> result = new ArrayList<>();
+        List<DagRoutesHostnameBean> hostnameBeans = apiRouteDao.queryRouteAnotherRule(param);
+        Iterator<DagRoutesHostnameBean> iterator = hostnameBeans.iterator();
+        while (iterator.hasNext()){
+            DagRoutesHostnameBean dagRoutesHostnameBean = iterator.next();
+            QueryRouteHostnameDTO queryRouteHostnameDTO = new QueryRouteHostnameDTO();
+            queryRouteHostnameDTO.setDrhId(dagRoutesHostnameBean.getDrhId());
+            queryRouteHostnameDTO.setHostName(dagRoutesHostnameBean.getHostName());
+            result.add(queryRouteHostnameDTO);
+        }
+        return result;
+    }
+    @Transactional(rollbackFor = Exception.class)
+    public void deployRoute(DeployRouteVO param){
+        /**
+         * TODO
+         */
+    }
 
+    @Transactional(rollbackFor = Exception.class)
+    public void copyRouteConfig(CommonReqBean param){
+        DagCodeVersionBean dagRoutesBean =  apiRouteDao.queryRouteConfigByid(param.getCon0());
+        if(dagRoutesBean != null){
+            dagRoutesBean.setVid(null);
+            dagRoutesBean.setvName("副本-"+dagRoutesBean.getvName());
+            apiRouteDao.addRouteConfig(dagRoutesBean);
+            List<DagPluginUsingBean> dagPluginUsingBeanList = apiRouteDao.queryRoutePlugByVid(param.getCon0());
+            for (DagPluginUsingBean item:dagPluginUsingBeanList) {
+                item.setDpuId(null);
+                item.setVid(dagRoutesBean.getVid());
+                apiRouteDao.addRoutePlugin(item);
+            }
+            List<DagRoutesHostnameBean> hostnameBeans = apiRouteDao.queryRouteAnotherRule(param);
+            for (DagRoutesHostnameBean item:hostnameBeans) {
+                item.setDrhId(null);
+                item.setVid(dagRoutesBean.getVid());
+                apiRouteDao.addRouteAnotherRule(item);
+            }
+
+        }
+
+    }
+    @Transactional(rollbackFor = Exception.class)
+    public void addRouteDomain(AddRouteDomainVO param){
+        if(param != null){
+            DagRoutesHostnameBean dagRoutesHostnameBean = new DagRoutesHostnameBean();
+            dagRoutesHostnameBean.setVid(param.getVid());
+            dagRoutesHostnameBean.setHostName(param.getLocation()+":"+param.getPort());
+            apiRouteDao.addRouteAnotherRule(dagRoutesHostnameBean);
+        }
+
+    }
+    @Transactional(rollbackFor = Exception.class)
+    public void delRouteDomain(CommonReqBean param){
+        if(param != null){
+            DagRoutesHostnameBean dagRoutesHostnameBean =  apiRouteDao.queryRouteDomainById(param.getCon0());
+            if(dagRoutesHostnameBean != null){
+                apiRouteDao.delRouteDomain(param.getCon0());
+            }
+        }
+    }
 }

@@ -105,4 +105,32 @@ public class ApiRouteDao {
     public void delRoutePlugin(String vid){
         sw.buildQuery().eq("vid",vid).doDelete(DagPluginUsingBean.class);
     }
+    public void delRouteAnotherRuleById(String vid){
+        sw.buildQuery().eq("vid",vid).doDelete(DagRoutesHostnameBean.class);
+    }
+
+    public Boolean queryRouteConfigIsDeployed(String vid){
+       List<DagDeployStatBean>  result = sw.buildQuery().eq("vid",vid).doQuery(DagDeployStatBean.class);
+       if(result != null && result.size() > 0){
+           return true;
+       }else {
+           return false;
+       }
+    }
+
+    public List<DagRoutesHostnameBean> queryRouteAnotherRule(CommonReqBean param){
+        return sw.buildQuery().eq("vid",param.getCon0()).doQuery(DagRoutesHostnameBean.class);
+    }
+    public List<DagPluginUsingBean> queryRoutePlugByVid(String vid){
+        return sw.buildQuery().eq("vid",vid).doQuery(DagPluginUsingBean.class);
+    }
+    public void addRouteAnotherRule(DagRoutesHostnameBean dagRoutesHostnameBean){
+        sw.buildQuery().doInsert(dagRoutesHostnameBean);
+    }
+    public DagRoutesHostnameBean queryRouteDomainById(String drhId){
+        return sw.buildQuery().eq("drh_id",drhId).doQueryFirst(DagRoutesHostnameBean.class);
+    }
+    public void delRouteDomain(String drhId){
+        sw.buildQuery().eq("drh_id",drhId).doDelete(DagRoutesHostnameBean.class);
+    }
 }

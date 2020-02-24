@@ -7,6 +7,7 @@ import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -40,6 +41,9 @@ public class ApiDeployLogService {
             QueryDeployLogDTO queryDeployLogDTO = new QueryDeployLogDTO();
             queryDeployLogDTO.setLogCnt(dagDeployLogBean.getLogCnt());
             queryDeployLogDTO.setEnvName(dagDeployLogBean.getEnvName());
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String str = format.format(dagDeployLogBean.getCreationDate());
+            queryDeployLogDTO.setDeployTime(str);
             if(StringUtil.isNotBlank(dagDeployLogBean.getCreatedBy())){
                 DSGCUser dsgcUser =apiDeployLogDao.queryUserNameById(dagDeployLogBean.getCreatedBy());
                 queryDeployLogDTO.setDeployor(dsgcUser.getUserName());
