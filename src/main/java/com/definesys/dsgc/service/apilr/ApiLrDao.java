@@ -72,7 +72,7 @@ public class ApiLrDao {
     }
 
     public List<DagCodeVersionBean> queryLrConfigListBySourCode(CommonReqBean param){
-        return sw.buildQuery().eq("sour_code",param.getCon0()).doQuery(DagCodeVersionBean.class);
+        return sw.buildQuery().eq("sour_code",param.getCon0()).eq("sour_type",param.getQueryType()).doQuery(DagCodeVersionBean.class);
     }
 
     public void addLrConfig(DagCodeVersionBean dagCodeVersionBean){
@@ -93,6 +93,9 @@ public class ApiLrDao {
     }
     public void addLrTarget(DagLrTargetBean dagLrTargetBean){
         sw.buildQuery().doInsert(dagLrTargetBean);
+    }
+    public void delLrTarget(CommonReqBean param){
+        sw.buildQuery().eq("vid",param.getCon0()).doDelete(DagLrTargetBean.class);
     }
     public List<DagLrTargetBean> queryLrTarget(String vid){
         return sw.buildQuery().eq("vid",vid).doQuery(DagLrTargetBean.class);

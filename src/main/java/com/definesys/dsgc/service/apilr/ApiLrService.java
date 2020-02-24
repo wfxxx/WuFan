@@ -98,7 +98,7 @@ public class ApiLrService {
     public String addLrConfig(AddLrConfigVO param){
         DagCodeVersionBean dagCodeVersionBean = new DagCodeVersionBean();
         if (param != null){
-            dagCodeVersionBean.setSourCode(param.getDlId());
+            dagCodeVersionBean.setSourCode(param.getLrName());
             dagCodeVersionBean.setSourType(param.getCourType());
             dagCodeVersionBean.setvName(param.getConfigName());
             List<String> envList = param.getEnabledEnv();
@@ -109,7 +109,12 @@ public class ApiLrService {
         return dagCodeVersionBean.getVid();
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void deLrConfig(CommonReqBean param){
+        List<DagLrTargetBean> dagLrTargetBeans = apiLrDao.queryLrTarget(param.getCon0());
+        if(dagLrTargetBeans.size()!=0){
+            apiLrDao.delLrTarget(param);
+        }
         apiLrDao.deLrConfig(param);
     }
 
@@ -135,7 +140,7 @@ public class ApiLrService {
         if (param != null){
             DagCodeVersionBean dagCodeVersionBean = new DagCodeVersionBean();
             dagCodeVersionBean.setVid(param.getVid());
-            dagCodeVersionBean.setSourCode(param.getDlId());
+            dagCodeVersionBean.setSourCode(param.getLrName());
             dagCodeVersionBean.setSourType(param.getCourType());
             dagCodeVersionBean.setvName(param.getConfigName());
             if(param.getEnabledEnv() != null){
