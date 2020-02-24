@@ -3,6 +3,7 @@ package com.definesys.dsgc.service.apilr.bean;
 public class CommonReqBean {
     private String con0;
     private String con1;
+    private String queryType;
 
     public String getCon0() {
         return con0;
@@ -18,5 +19,13 @@ public class CommonReqBean {
 
     public void setCon1(String con1) {
         this.con1 = con1;
+    }
+
+    public String getQueryType() {
+        return queryType;
+    }
+
+    public void setQueryType(String queryType) {
+        this.queryType = queryType;
     }
 }
