@@ -15,7 +15,7 @@ import java.util.Date;
  * @Date 2020-2-24 10:31
  * @Version 1.0
  **/
-@Table(value = "table plugin_tcp_log")
+@Table(value = "plugin_tcp_log")
 public class PluginTcpLog {
 
     @RowID(type= RowIDType.UUID)

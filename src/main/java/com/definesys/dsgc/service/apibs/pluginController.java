@@ -616,8 +616,8 @@ public class pluginController {
         return Response.ok();
     }
     //     PlUdpLog;  12
-    @RequestMapping(value = "/addPluginTcpLog",method = RequestMethod.POST)
-    public Response addPluginTcpLog(@RequestBody PlUdpLog plUdpLog){
+    @RequestMapping(value = "/addplUdpLog",method = RequestMethod.POST)
+    public Response addplUdpLog(@RequestBody PlUdpLog plUdpLog){
         try {
             String vid=plUdpLog.getVid();
             PlUdpLog value=pluginService.queryplUdpLogByVid(vid);

@@ -26,7 +26,7 @@ public class PlKeyAuthBean {
     private String  anonymous;
     private String hideCdls;
     private String keyInBd;
-    private String ruOnPf;
+    private String runOnPf;
 
     @SystemColumn(SystemColumnType.CREATE_BY)
     @Column(value = "created_by")
@@ -112,12 +112,12 @@ public class PlKeyAuthBean {
         this.keyInBd = keyInBd;
     }
 
-    public String getRuOnPf() {
-        return ruOnPf;
+    public String getRunOnPf() {
+        return runOnPf;
     }
 
-    public void setRuOnPf(String ruOnPf) {
-        this.ruOnPf = ruOnPf;
+    public void setRunOnPf(String runOnPf) {
+        this.runOnPf = runOnPf;
     }
 
     public String getCreatedBy() {

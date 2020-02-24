@@ -100,7 +100,7 @@ public class PluginService {
     public void updatePlIpRestriction(PlIpRestriction plIpRestriction){ pluginDao.updatePlIpRestriction(plIpRestriction); }
     //   PlRateLimiting; 6
 
-    public PlRateLimiting queryPlRateLimitingByVid(String vid){ return  queryPlRateLimitingByVid( vid); }
+    public PlRateLimiting queryPlRateLimitingByVid(String vid){ return  pluginDao.queryPlRateLimitingByVid( vid); }
     public void addPlRateLimiting(PlRateLimiting plRateLimiting){pluginDao.addPlRateLimiting( plRateLimiting); }
     public void delPlRateLimitingByVId(String vid){ pluginDao.delPlRateLimitingByVId( vid); }
     public void updatePlRateLimiting(PlRateLimiting plRateLimiting){ pluginDao.updatePlRateLimiting( plRateLimiting); }

@@ -25,7 +25,7 @@ public class PlAddAcl {
     private String consumer;
     private String whiteList;
     private String blackList;
-    private String hideGpHader;
+    private String hideGpHeader;
 
     @SystemColumn(SystemColumnType.CREATE_BY)
     @Column(value = "created_by")
@@ -95,12 +95,12 @@ public class PlAddAcl {
         this.blackList = blackList;
     }
 
-    public String getHideGpHader() {
-        return hideGpHader;
+    public String getHideGpHeader() {
+        return hideGpHeader;
     }
 
-    public void setHideGpHader(String hideGpHader) {
-        this.hideGpHader = hideGpHader;
+    public void setHideGpHeader(String hideGpHeader) {
+        this.hideGpHeader = hideGpHeader;
     }
 
     public String getCreatedBy() {

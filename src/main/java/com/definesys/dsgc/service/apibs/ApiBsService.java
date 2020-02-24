@@ -188,7 +188,7 @@ public class ApiBsService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void delPluginUsing(DagPlugUsingBean dagPlugUsingBean){
+    public void delPluginUsing(DagPlugUsingBean dagPlugUsingBean) throws Exception {
         //删除插件内容，
         pluginService.deletePluginContext(dagPlugUsingBean.getVid(),dagPlugUsingBean.getPluginCode());
         //删除插件
