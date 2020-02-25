@@ -113,12 +113,12 @@ public List<RouteConfigDTO> queryRouteConfigList(CommonReqBean param){
         if(StringUtil.isNotBlank(dagCodeVersionBean.getEnvTargets())){
             String[] envArr = dagCodeVersionBean.getEnvTargets().trim().split(",");
             StringBuilder envNameStr = new StringBuilder();
-            for (String temp:envArr){
+            for (int j= 0;j<envArr.length;j++){
                 for (int i = 0; i < envList.size(); i++) {
-                    if (temp.equals(envList.get(i).getEnvCode()) && i ==0){
+                    if (envArr[j].equals(envList.get(i).getEnvCode()) && j ==0){
                         envNameStr.append(envList.get(i).getEnvName());
                         break;
-                    }else if(temp.equals(envList.get(i).getEnvCode())){
+                    }else if(envArr[j].equals(envList.get(i).getEnvCode())){
                         envNameStr.append("，"+envList.get(i).getEnvName());
                         break;
                     }
