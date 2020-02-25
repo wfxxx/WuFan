@@ -1,9 +1,13 @@
 package com.definesys.dsgc.service.svcAuth.bean;
 
-import com.definesys.mpaas.query.annotation.Column;
-import com.definesys.mpaas.query.annotation.ColumnType;
-import com.definesys.mpaas.query.annotation.Table;
+import com.definesys.mpaas.query.annotation.*;
+import com.definesys.mpaas.query.json.MpaasDateDeserializer;
+import com.definesys.mpaas.query.json.MpaasDateSerializer;
 import com.definesys.mpaas.query.model.MpaasBasePojo;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import java.util.Date;
 
 /**
  * @ClassName ApplyAuthProBean
@@ -31,6 +35,24 @@ public class ApplyAuthProBean  extends MpaasBasePojo {
     private String[] consumer;
     @Column(value = "apply_desc")
     private String applyDesc;
+
+    @SystemColumn(SystemColumnType.OBJECT_VERSION)
+    @Column(value = "object_version_number")
+    private Integer objectVersionNumber;
+
+    @JsonSerialize(using = MpaasDateSerializer.class)
+    @JsonDeserialize(using = MpaasDateDeserializer.class)
+    @SystemColumn(SystemColumnType.CREATE_ON)
+    @Column(value = "creation_date")
+    private Date creationDate;
+    @SystemColumn(SystemColumnType.LASTUPDATE_BY)
+    @Column(value = "last_updated_by")
+    private String lastUpdatedBy;
+    @JsonSerialize(using = MpaasDateSerializer.class)
+    @JsonDeserialize(using = MpaasDateDeserializer.class)
+    @SystemColumn(SystemColumnType.LASTUPDATE_ON)
+    @Column(value = "last_update_date")
+    private Date lastUpdateDate;
 
     public String getInstanceId() {
         return instanceId;
@@ -94,5 +116,40 @@ public class ApplyAuthProBean  extends MpaasBasePojo {
 
     public void setApplyDesc(String applyDesc) {
         this.applyDesc = applyDesc;
+    }
+
+
+    public Integer getObjectVersionNumber() {
+        return objectVersionNumber;
+    }
+
+    public void setObjectVersionNumber(Integer objectVersionNumber) {
+        this.objectVersionNumber = objectVersionNumber;
+    }
+
+
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public String getLastUpdatedBy() {
+        return lastUpdatedBy;
+    }
+
+    public void setLastUpdatedBy(String lastUpdatedBy) {
+        this.lastUpdatedBy = lastUpdatedBy;
+    }
+
+    public Date getLastUpdateDate() {
+        return lastUpdateDate;
+    }
+
+    public void setLastUpdateDate(Date lastUpdateDate) {
+        this.lastUpdateDate = lastUpdateDate;
     }
 }
