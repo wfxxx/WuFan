@@ -39,12 +39,11 @@ public class PluginService {
             case"6":
                 pluginDao.delPlRateLimitingByVId(vid);
                 break;
-
             case"7":
                 pluginDao.delPlReqSizeLimitingByVId(vid);
                 break;
             case"8":
-                pluginDao.delPlReqSizeLimitingByVId(vid);
+                pluginDao.delPlReqTransByVId(vid);
                 break;
             case"9":
                 pluginDao.delPlResTransByVId(vid);
@@ -62,7 +61,7 @@ public class PluginService {
                 pluginDao.delPlHttpLogByVId(vid);
                 break;
             default:
-                throw new Exception("该插件code没有对应的插件表");
+                throw new Exception("插件"+pluginCode+"删除失败，没有对应的插件表");
 
         }
     }

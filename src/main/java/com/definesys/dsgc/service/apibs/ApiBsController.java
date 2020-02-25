@@ -162,6 +162,11 @@ public class ApiBsController {
 
     @RequestMapping(value = "/delDagCodeVersionByid",method = RequestMethod.POST)
     public Response delDagCodeVersionByid(@RequestBody CommonReqBean commonReqBean){
+
+        List<Map<String,Object>> value=apiBsService.queryDeployByVid(commonReqBean.getCon0());
+        if(value.size()>0){
+            return Response.error("该配置项使用中，无法删除");
+        }
         try {
             apiBsService.delDagCodeVersionByid(commonReqBean.getCon0());
         }catch (Exception e){

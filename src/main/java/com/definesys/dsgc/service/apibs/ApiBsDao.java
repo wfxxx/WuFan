@@ -64,6 +64,10 @@ public class ApiBsDao {
 
     }
 
+    public List<Map<String,Object>> queryDeployByVid(String vid){
+       return  sw.buildQuery().sql("select t.vid from DAG_DEPLOY_STAT t where t.vid=#vid").setVar("vid",vid).doQuery();
+    }
+
     public void addApiBs(DagBsbean dagBsbean){
         sw.buildQuery().doInsert(dagBsbean);
     }
