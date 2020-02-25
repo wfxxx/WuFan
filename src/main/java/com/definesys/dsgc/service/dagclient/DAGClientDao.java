@@ -14,7 +14,7 @@ public class DAGClientDao {
 
     public DAGCodeVersionBean getCVDtl(String vid){
 
-        return sw.buildQuery().eq(vid,vid).doQueryFirst(DAGCodeVersionBean.class);
+        return sw.buildQuery().eq("vid",vid).doQueryFirst(DAGCodeVersionBean.class);
 
     }
 

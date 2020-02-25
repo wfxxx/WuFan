@@ -5,7 +5,7 @@ import com.definesys.mpaas.query.model.MpaasBasePojo;
 
 import java.util.Date;
 
-@Table(value = "DAG_DEPLOY_LOG")
+@Table(value = "DAG_DEPLOY_STAT")
 public class DAGDeployStatBean extends MpaasBasePojo {
 
     @RowID(type = RowIDType.UUID)
