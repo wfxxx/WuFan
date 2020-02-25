@@ -21,7 +21,7 @@ public class ServiceDeployService {
     public String deployDAGService(String vid,String envCode,String deployDesc,String uid) {
 
         DAGEnvBean env = this.dagEnvDao.getDAGEnvInfoByEnvCode(envCode);
-        if (env.getAdminLocation() == null || env.getAdminLocation().trim().length() == 0) {
+        if (env  == null || env.getAdminLocation() == null || env.getAdminLocation().trim().length() == 0) {
             return "非法的环境信息！";
         }
 
@@ -41,7 +41,7 @@ public class ServiceDeployService {
         }
 
         req.path = bsInfo.getPaths();
-        req.port = bsInfo.getPort();
+        req.port = Integer.parseInt(bsInfo.getPort());
 
         req.protocol = bsInfo.getProtocal();
         if (bsInfo.getReadTimeout() != 0l) {

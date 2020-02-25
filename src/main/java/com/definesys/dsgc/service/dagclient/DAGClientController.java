@@ -22,7 +22,8 @@ public class DAGClientController {
     private DAGClientService dagClientService;
 
     @RequestMapping(value = "/deploy", method = RequestMethod.POST)
-    public Response updateMNRules(@RequestBody DAGDeployReqVO req,HttpServletRequest request) {
+    public Response deployDag(@RequestBody DAGDeployReqVO req,HttpServletRequest request) {
+        System.out.println("======>"+req.getVid());
         //获取用户id
         String userId = request.getHeader("uid");
         if (userId == null) {
