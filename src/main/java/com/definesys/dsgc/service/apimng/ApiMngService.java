@@ -1,11 +1,8 @@
 package com.definesys.dsgc.service.apimng;
 
-import com.definesys.dsgc.service.apimng.bean.APIInfoListBean;
-import com.definesys.dsgc.service.apimng.bean.CommonReqBean;
+import com.definesys.dsgc.service.apimng.bean.*;
 import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
 import com.definesys.mpaas.query.db.PageQueryResult;
-import com.definesys.dsgc.service.apimng.bean.ApiBasicInfoDTO;
-import com.definesys.dsgc.service.apimng.bean.DSGCApisBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,10 +63,35 @@ public class ApiMngService {
         APIInfoListBean apiInfoListBean = new APIInfoListBean();
         apiInfoListBean.setApiCode(dsgcApisBean.getApiCode());
         apiInfoListBean.setApiName(dsgcApisBean.getApiName());
+        apiInfoListBean.setApiDesc(dsgcApisBean.getApiDesc());
         apiInfoListBean.setAppCode(dsgcApisBean.getAppCode());
         apiInfoListBean.setInfoFull(dsgcApisBean.getInfoFull());
+        apiInfoListBean.setProvider(dsgcApisBean.getProvider());
+        apiInfoListBean.setHttpMethod(dsgcApisBean.getHttpMethod());
+        apiInfoListBean.setIbUri(dsgcApisBean.getIbUri());
         return apiInfoListBean;
     }
 
+    public PageQueryResult<DagRouteInfoBean> getRouteInfoList(CommonReqBean q, int pageIndex, int pageSize,  String userId, String userRole) {
+        if ("Tourist".equals(userRole)) {
+            return new PageQueryResult<>();
+        } else {
+            List<String> sysCodeList = new ArrayList<>();
+            if ("SystemLeader".equals(userRole)) {
+                List<DSGCSystemUser> dsgcSystemUsers = apiMngDao.findUserSystemByUserId(userId);
+                Iterator<DSGCSystemUser> iter = dsgcSystemUsers.iterator();
+                while (iter.hasNext()) {
+                    DSGCSystemUser s = (DSGCSystemUser) iter.next();
+                    sysCodeList.add(s.getSysCode());
+                }
+            }
+            return apiMngDao.getRouteInfoList(q, pageIndex, pageSize, userRole, sysCodeList);
+        }
+    }
 
+    @Transactional(rollbackFor = Exception.class)
+    public void addDsgcApi(DSGCApisBean dsgcApisBean, DSGCServicesUri dsgcServicesUri){
+        apiMngDao.addDsgcApi(dsgcApisBean);
+        apiMngDao.addDsgcUri(dsgcServicesUri);
+    }
 }

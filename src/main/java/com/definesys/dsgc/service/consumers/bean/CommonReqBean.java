@@ -3,6 +3,7 @@ package com.definesys.dsgc.service.consumers.bean;
 public class CommonReqBean {
     private String con0;
     private String userRole;
+    private String queryType;
 
     public String getCon0() {
         return con0;
@@ -18,5 +19,13 @@ public class CommonReqBean {
 
     public void setUserRole(String userRole) {
         this.userRole = userRole;
+    }
+
+    public String getQueryType() {
+        return queryType;
+    }
+
+    public void setQueryType(String queryType) {
+        this.queryType = queryType;
     }
 }

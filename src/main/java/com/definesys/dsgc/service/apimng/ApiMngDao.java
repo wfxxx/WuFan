@@ -1,6 +1,6 @@
 package com.definesys.dsgc.service.apimng;
 
-import com.definesys.dsgc.service.apimng.bean.CommonReqBean;
+import com.definesys.dsgc.service.apimng.bean.*;
 import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
 import com.definesys.mpaas.query.MpaasQuery;
 import com.definesys.mpaas.query.MpaasQueryFactory;
@@ -9,10 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Map;
 
-import com.definesys.dsgc.service.apimng.bean.ApiBasicInfoDTO;
-import com.definesys.dsgc.service.apimng.bean.DSGCApisBean;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class ApiMngDao {
@@ -21,7 +19,7 @@ public class ApiMngDao {
 
     public PageQueryResult<DSGCApisBean> queryApiMngList(CommonReqBean q, int pageIndex, int pageSize, String userId, String userRole, List<String> sysCodeList) {
         MpaasQuery query = sw.buildQuery()
-                .sql("select * from (select da.API_CODE,da.API_NAME,dse.SYS_NAME APP_CODE,da.INFO_FULL from DSGC_APIS da,DSGC_SYSTEM_ENTITIES dse where da.APP_CODE = dse.SYS_CODE(+))");
+                .sql("select * from (select da.API_CODE,da.API_NAME,da.API_DESC,dse.SYS_NAME APP_CODE,da.INFO_FULL,dsu.PROVIDER,dsu.HTTP_METHOD,dsu.IB_URI from DSGC_APIS da,DSGC_SYSTEM_ENTITIES dse,DSGC_SERVICES_URI dsu where da.APP_CODE = dse.SYS_CODE(+) and da.API_CODE = dsu.SERV_NO(+))\n");
         if ("Y".equals(q.getIsComplete())) {
             query.and()
                     .ne("infoFull", "100")
@@ -46,7 +44,10 @@ public class ApiMngDao {
                     query.conjuctionAnd().or()
                             .likeNocase("apiCode", conNoSpace)
                             .likeNocase("apiName", conNoSpace)
-                            .likeNocase("appCode", conNoSpace);
+                            .likeNocase("appCode", conNoSpace)
+                            .likeNocase("provider",conNoSpace)
+                            .likeNocase("httpMethod",conNoSpace)
+                            .likeNocase("ibUri",conNoSpace);
                 }
             }
         }
@@ -71,4 +72,44 @@ public class ApiMngDao {
         return sw.buildQuery().eq("api_code", apiCode).doQueryFirst(DSGCApisBean.class);
     }
 
+    public PageQueryResult<DagRouteInfoBean> getRouteInfoList(CommonReqBean q, int pageIndex, int pageSize, String userRole, List<String> sysCodeList) {
+        MpaasQuery query = sw.buildQuery().sql("select * from (select dr.DR_ID,dr.ROUTE_CODE,dr.ROUTE_PATH,dr.ROUTE_METHOD,dr.BS_CODE,(select SYS_NAME from DSGC_SYSTEM_ENTITIES dse where dse.SYS_CODE = dr.APP_CODE) APP_CODE,dr.APP_CODE SYS_CODE from DAG_ROUTES dr\n)");
+        if ("SystemLeader".equals(userRole)) {
+            if (sysCodeList.size() != 0) {
+                if (sysCodeList.size() <= 1) {
+                    query.eq("appCode", sysCodeList.get(0));
+                } else {
+                    query.in("appCode", sysCodeList);
+                }
+            } else {
+                return new PageQueryResult<>();
+            }
+        }
+        if (q.getCon0() != null && q.getCon0().trim().length() > 0) {
+            String[] conArray = q.getCon0().trim().split(" ");
+            for (String con : conArray) {
+                if (con != null && con.trim().length() > 0) {
+                    String conNoSpace = con.trim();
+                    query.conjuctionAnd().or()
+                            .likeNocase("routeCode", conNoSpace)
+                            .likeNocase("routePath", conNoSpace)
+                            .likeNocase("routeMethod", conNoSpace)
+                            .likeNocase("bsCode",conNoSpace)
+                            .likeNocase("appCode",conNoSpace);
+                }
+            }
+        }
+        PageQueryResult<DagRouteInfoBean> result = query.doPageQuery(pageIndex, pageSize, DagRouteInfoBean.class);
+        return result;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void addDsgcApi(DSGCApisBean dsgcApisBean){
+        sw.buildQuery().doInsert(dsgcApisBean);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void addDsgcUri(DSGCServicesUri dsgcServicesUri){
+        sw.buildQuery().doInsert(dsgcServicesUri);
+    }
 }

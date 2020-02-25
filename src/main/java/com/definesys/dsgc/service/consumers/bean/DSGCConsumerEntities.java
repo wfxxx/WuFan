@@ -17,12 +17,21 @@ public class DSGCConsumerEntities  extends MpaasBasePojo implements Serializable
     private String csmName;
     private String csmDesc;
     private String isEnable;
+    private String deployEnv;
 
     @Column(type = ColumnType.JAVA)
     private String owner;
 
     @Column(type = ColumnType.JAVA)
     private String attribue1;
+
+    public String getDeployEnv() {
+        return deployEnv;
+    }
+
+    public void setDeployEnv(String deployEnv) {
+        this.deployEnv = deployEnv;
+    }
 
     @SystemColumn(SystemColumnType.CREATE_BY)
     @Column(value = "created_by")

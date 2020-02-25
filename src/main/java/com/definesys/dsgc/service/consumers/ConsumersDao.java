@@ -9,6 +9,7 @@ import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.swing.event.ListDataEvent;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +24,7 @@ public class ConsumersDao {
                 "               cnt.csm_code," +
                 "               cnt.csm_name," +
                 "               cnt.csm_desc," +
+                "               cnt.deploy_env," +
                 "               t.user_name owner " +
                 "          from DSGC_CONSUMER_ENTITIES cnt," +
                 "               (select listagg(u.user_name, ',') within GROUP(order by cu.csm_code) user_name," +
@@ -44,6 +46,9 @@ public class ConsumersDao {
         if("SystemLeader".equals(userRole) || "Tourist".equals(userRole)){
             strSql.append(" and upper(owner) like #userName ");
             mq.setVar("userName",userName);
+        }
+        if(!"ALL".equals(commonReqBean.getQueryType())){
+            strSql.append(" and upper(deploy_env) like '%"+commonReqBean.getQueryType().toUpperCase()+"%' ");
         }
         mq.sql(strSql.toString());
         return mq.doPageQuery(pageIndex,pageSize,DSGCConsumerEntities.class);
@@ -105,16 +110,20 @@ public class ConsumersDao {
     public DSGCConsumerEntities queryConsumerEntById(String dceId){
         return sw.buildQuery().eq("dceId",dceId).doQueryFirst(DSGCConsumerEntities.class);
     }
-    public DSGCConsumerAuth queryConsumerAuthByCsmCode(String csmCode){
-        return sw.buildQuery().eq("csmCode",csmCode).doQueryFirst(DSGCConsumerAuth.class);
+    public List<DSGCConsumerAuth> queryConsumerAuthByCsmCode(String csmCode){
+        return sw.buildQuery().eq("csmCode",csmCode).doQuery(DSGCConsumerAuth.class);
     }
     public void updateConsumerBasicAuthPwd(DSGCConsumerAuth dsgcConsumerAuth){
-        DSGCConsumerAuth consumerAuth = sw.buildQuery().eq("csmCode",dsgcConsumerAuth.getCsmCode()).doQueryFirst(DSGCConsumerAuth.class);
+        DSGCConsumerAuth consumerAuth = sw.buildQuery()
+                .eq("csmCode",dsgcConsumerAuth.getCsmCode())
+                .eq("env_code",dsgcConsumerAuth.getEnvCode())
+                .doQueryFirst(DSGCConsumerAuth.class);
         System.out.println(consumerAuth);
         if(consumerAuth != null){
             sw.buildQuery()
                     .update("ca_attr1",dsgcConsumerAuth.getCaAttr1())
                     .eq("csm_code",dsgcConsumerAuth.getCsmCode())
+                    .eq("env_code",dsgcConsumerAuth.getEnvCode())
                     .doUpdate(DSGCConsumerAuth.class);
         }else {
             sw.buildQuery().doInsert(dsgcConsumerAuth);
@@ -132,5 +141,8 @@ public class ConsumersDao {
     public List<DSGCConsumerEntities> queryConsumersListByIds(List<String> codes){
         return sw.buildQuery().in("csmCode",codes)
                 .doQuery(DSGCConsumerEntities.class);
+    }
+    public List<DagEnvInfoCfgBean> queryApiEnv(){
+        return sw.buildQuery().doQuery(DagEnvInfoCfgBean.class);
     }
 }

@@ -23,6 +23,12 @@ public class DSGCApisBean  extends MpaasBasePojo implements Serializable {
     private String infoFull;
     @Column(type = ColumnType.JAVA)
     private String csmCode;
+    @Column(type = ColumnType.JAVA)
+    private String provider;
+    @Column(type = ColumnType.JAVA)
+    private String httpMethod;
+    @Column(type = ColumnType.JAVA)
+    private String ibUri;
     @SystemColumn(SystemColumnType.CREATE_BY)
     @Column(value = "created_by")
     private String createdBy;
@@ -153,5 +159,29 @@ public class DSGCApisBean  extends MpaasBasePojo implements Serializable {
 
     public void setCsmCode(String csmCode) {
         this.csmCode = csmCode;
+    }
+
+    public String getProvider() {
+        return provider;
+    }
+
+    public void setProvider(String provider) {
+        this.provider = provider;
+    }
+
+    public String getHttpMethod() {
+        return httpMethod;
+    }
+
+    public void setHttpMethod(String httpMethod) {
+        this.httpMethod = httpMethod;
+    }
+
+    public String getIbUri() {
+        return ibUri;
+    }
+
+    public void setIbUri(String ibUri) {
+        this.ibUri = ibUri;
     }
 }

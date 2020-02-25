@@ -21,6 +21,7 @@ public class DSGCConsumerAuth extends MpaasBasePojo implements Serializable {
     private String caAttr3;
     private String caAttr4;
     private String caAttr5;
+    private String envCode;
     @JsonSerialize(using = MpaasDateTimeSerializer.class)
     @JsonDeserialize(using = MpaasDateTimeDeserializer.class)
     @Column(value = "ca_date1")
@@ -215,5 +216,13 @@ public class DSGCConsumerAuth extends MpaasBasePojo implements Serializable {
 
     public void setObjectVersionNumber(Integer objectVersionNumber) {
         this.objectVersionNumber = objectVersionNumber;
+    }
+
+    public String getEnvCode() {
+        return envCode;
+    }
+
+    public void setEnvCode(String envCode) {
+        this.envCode = envCode;
     }
 }
