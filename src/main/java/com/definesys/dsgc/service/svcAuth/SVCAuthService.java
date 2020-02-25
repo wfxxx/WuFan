@@ -1,11 +1,17 @@
 package com.definesys.dsgc.service.svcAuth;
 
-import com.definesys.dsgc.service.bpm.BpmService;
-import com.definesys.dsgc.service.bpm.bean.*;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.definesys.dsgc.service.apiauth.ApiAuthDao;
+
+import com.definesys.dsgc.service.apiauth.ApiAuthService;
+import com.definesys.dsgc.service.apiauth.bean.CommonReqBean;
 import com.definesys.dsgc.service.consumers.ConsumersDao;
 import com.definesys.dsgc.service.consumers.bean.DSGCConsumerEntities;
 import com.definesys.dsgc.service.svcAuth.bean.*;
 import com.definesys.dsgc.service.svclog.SVCLogDao;
+import com.definesys.dsgc.service.system.DSGCSystemDao;
+import com.definesys.dsgc.service.system.DSGCSystemService;
 import com.definesys.dsgc.service.system.bean.DSGCSystemAccess;
 import com.definesys.dsgc.service.system.bean.DSGCSystemEntities;
 import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
@@ -38,6 +44,10 @@ public class SVCAuthService {
 
     @Autowired
     private DSGCUserDao dsgcUserDao;
+    @Autowired
+    private ApiAuthService apiAuthService;
+    @Autowired
+    private DSGCSystemDao systemDao;
 
 
     public PageQueryResult<SVCHisBean> querySvcHis(SVCCommonReqBean param, int pageIndex, int pageSize){
@@ -329,5 +339,36 @@ public class SVCAuthService {
         return applyAuthProBeanDTO;
     }
 
+        public void delProcessBusinessInfo(String instanceId){
+            svcAuthDao.delProcessBusinessInfo(instanceId);
+        }
+
+
+    //流程结束，赋予权限
+    public void authSevPro(String instanceId) {
+        //根据instanceId获取业务信息
+        ApplyAuthProBean applyAuthProBean = svcAuthDao.getProcessBusinessInfo(instanceId);
+        //根据服务类型注册
+        String servType = applyAuthProBean.getApplySerType();
+        String consumerStr = applyAuthProBean.getConsumerStr();
+        String[] consumerlist = consumerStr.split(",");
+        //api注册
+        if (servType.equals("apiSource")) {
+            for (String item : consumerlist) {
+                CommonReqBean commonReqBean = new CommonReqBean();
+                commonReqBean.setApiCode(applyAuthProBean.getApplySerName());
+                commonReqBean.setSysCode(item);
+                apiAuthService.addApiAuthConsumer(commonReqBean, applyAuthProBean.getApplicant());
+            }
+        }
+        if (servType.equals("servSource")) {
+            for (String item : consumerlist) {
+                DSGCSystemAccess access = new DSGCSystemAccess();
+                access.setServNo(applyAuthProBean.getApplySerName());
+                access.setSysCode(item);
+                this.systemDao.addDSGCSystemAccess(access);
+            }
+        }
+    }
 
 }

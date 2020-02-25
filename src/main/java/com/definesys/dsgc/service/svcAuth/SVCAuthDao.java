@@ -261,5 +261,11 @@ public class SVCAuthDao {
        return  sw.buildQuery().eq("instanceId",instanceId).doQueryFirst(ApplyAuthProBean.class);
     }
 
+    public void delProcessBusinessInfo(String instanceId){
+          sw.buildQuery().eq("instanceId",instanceId).doDelete();
+    }
+
+
+
 
 }
