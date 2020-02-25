@@ -9,7 +9,25 @@ public class ConsumerDeployService {
     @Autowired
     private ConsumerDeployDao consumerDeployDao;
 
-    @Autowired
-    private DAGDeployLogDao dagDeployLogDao;
+
+
+    public boolean deployConsumer(String consumerCode,String envCode){
+        String envType = this.consumerDeployDao.getEnvType(envCode);
+
+        if("dag".equals(envType)){
+
+        }
+
+
+
+        return true;
+
+    }
+
+    public boolean updateBasicAuth(String consumerCode,String newPd,String envCode){
+        return true;
+    }
+
+
 
 }

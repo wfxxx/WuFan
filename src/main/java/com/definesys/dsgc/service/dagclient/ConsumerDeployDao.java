@@ -8,4 +8,8 @@ import org.springframework.stereotype.Repository;
 public class ConsumerDeployDao {
     @Autowired
     private MpaasQueryFactory sw;
+
+    public String getEnvType(String envCode){
+        return "dag";
+    }
 }
