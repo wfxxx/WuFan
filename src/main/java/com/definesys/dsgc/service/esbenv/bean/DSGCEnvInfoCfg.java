@@ -66,6 +66,15 @@ public class DSGCEnvInfoCfg extends MpaasBasePojo {
     @ApiModelProperty(value = "环境描述")
     private String envDesc;
 
+    @ApiModelProperty(value = "环境类型")
+    private String envType;
+    @ApiModelProperty(value = "技术类型")
+    private String techType;
+    @ApiModelProperty(value = "请求地址")
+    private String reqLocation;
+    @ApiModelProperty(value = "管理地址")
+    private String adminLocation;
+
     @ApiModelProperty(value = "服务器个数")
     @Column(type = ColumnType.JAVA)
     private Integer serverCount;
@@ -262,6 +271,38 @@ public class DSGCEnvInfoCfg extends MpaasBasePojo {
 
     public void setEsbSslPort(String esbSslPort) {
         this.esbSslPort = esbSslPort;
+    }
+
+    public String getEnvType() {
+        return envType;
+    }
+
+    public void setEnvType(String envType) {
+        this.envType = envType;
+    }
+
+    public String getTechType() {
+        return techType;
+    }
+
+    public void setTechType(String techType) {
+        this.techType = techType;
+    }
+
+    public String getReqLocation() {
+        return reqLocation;
+    }
+
+    public void setReqLocation(String reqLocation) {
+        this.reqLocation = reqLocation;
+    }
+
+    public String getAdminLocation() {
+        return adminLocation;
+    }
+
+    public void setAdminLocation(String adminLocation) {
+        this.adminLocation = adminLocation;
     }
 
     @Override

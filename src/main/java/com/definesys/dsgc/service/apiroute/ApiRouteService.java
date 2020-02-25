@@ -3,6 +3,7 @@ package com.definesys.dsgc.service.apiroute;
 import com.definesys.dsgc.service.apiroute.bean.*;
 import com.definesys.dsgc.service.dagclient.DAGClientService;
 import com.definesys.dsgc.service.dagclient.bean.DAGDeployReqVO;
+import com.definesys.dsgc.service.esbenv.bean.DSGCEnvInfoCfg;
 import com.definesys.dsgc.service.svclog.SVCLogDao;
 import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
 import com.definesys.dsgc.service.utils.StringUtil;
@@ -57,14 +58,14 @@ public class ApiRouteService {
       return  apiRouteDao.queryRouteDetail(param);
     }
     public List<DagEnvInfoCfgDTO> queryApiEnv(){
-       List<DagEnvInfoCfgBean> list = apiRouteDao.queryApiEnv();
+       List<DSGCEnvInfoCfg> list = apiRouteDao.queryApiEnv();
         List<DagEnvInfoCfgDTO> result = new ArrayList<>();
-        Iterator<DagEnvInfoCfgBean> infoCfgBeanIterator = list.iterator();
+        Iterator<DSGCEnvInfoCfg> infoCfgBeanIterator = list.iterator();
         while (infoCfgBeanIterator.hasNext()){
-            DagEnvInfoCfgBean dagEnvInfoCfgBean = infoCfgBeanIterator.next();
+            DSGCEnvInfoCfg dsgcEnvInfoCfg = infoCfgBeanIterator.next();
             DagEnvInfoCfgDTO dagEnvInfoCfgDTO = new DagEnvInfoCfgDTO();
-            dagEnvInfoCfgDTO.setEnvCode(dagEnvInfoCfgBean.getEnvCode());
-            dagEnvInfoCfgDTO.setEnvName(dagEnvInfoCfgBean.getEnvName());
+            dagEnvInfoCfgDTO.setEnvCode(dsgcEnvInfoCfg.getEnvCode());
+            dagEnvInfoCfgDTO.setEnvName(dsgcEnvInfoCfg.getEnvName());
             result.add(dagEnvInfoCfgDTO);
         }
         return result;
@@ -105,7 +106,7 @@ public class ApiRouteService {
     }
 public List<RouteConfigDTO> queryRouteConfigList(CommonReqBean param){
     List<DagCodeVersionBean> list = apiRouteDao.queryRouteConfigListBySourCode(param);
-    List<DagEnvInfoCfgBean> envList = apiRouteDao.queryApiEnv();
+    List<DSGCEnvInfoCfg> envList = apiRouteDao.queryApiEnv();
     List<RouteConfigDTO> result = new ArrayList<>();
     Iterator<DagCodeVersionBean> iterator = list.iterator();
     while (iterator.hasNext()){
