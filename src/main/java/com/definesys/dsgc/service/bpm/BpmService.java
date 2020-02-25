@@ -196,7 +196,7 @@ public class BpmService {
                     userList = getApprUserList(passNodeList.get(0));
                 }
             }else {
-                bpmInstanceBean.setInstStat("ompleted");
+                bpmInstanceBean.setInstStat("completed");
             }
         }else if ("2".equals(param.getPassOrReject())){   //审批驳回
             bpmHistoryBean.setApproveOper("eject");
@@ -217,7 +217,9 @@ public class BpmService {
             }
 
         }else {
-            bpmHistoryBean.setApproveOper("ancel");
+            bpmInstanceBean.setCurNode("");
+            bpmInstanceBean.setInstStat("canceled");
+            bpmHistoryBean.setApproveOper("cancel");
         }
 
         bpmdao.addHistory(bpmHistoryBean);
