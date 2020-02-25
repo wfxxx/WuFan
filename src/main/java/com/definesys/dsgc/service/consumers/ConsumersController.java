@@ -64,7 +64,12 @@ public class ConsumersController {
     }
     @RequestMapping(value = "updateConsumerBasicAuthPwd",method = RequestMethod.POST)
     public Response updateConsumerBasicAuthPwd(@RequestBody() UpdateBasicPwdVO updateBasicPwdVO){
-        consumersService.updateConsumerBasicAuthPwd(updateBasicPwdVO);
+        try {
+            consumersService.updateConsumerBasicAuthPwd(updateBasicPwdVO);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.error("新增或更新basic认证密码失败！");
+        }
         return Response.ok();
     }
     @RequestMapping(value = "checkModifiable")

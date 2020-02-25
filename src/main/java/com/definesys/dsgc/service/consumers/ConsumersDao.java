@@ -91,6 +91,11 @@ public class ConsumersDao {
                 .eq("dce_id",dsgcConsumerEntities.getDceId())
                 .doUpdate(DSGCConsumerEntities.class);
     }
+    public void updateConsumerDeployEnv(DSGCConsumerEntities dsgcConsumerEntities){
+        sw.buildQuery().update("deploy_env",dsgcConsumerEntities.getDeployEnv())
+                .eq("dce_id",dsgcConsumerEntities.getDceId())
+                .doUpdate(DSGCConsumerEntities.class);
+    }
     public void addConsumerUser(List<DSGCConsumerUsers> consumerUsers){
         for (DSGCConsumerUsers item:consumerUsers) {
             sw.buildQuery()

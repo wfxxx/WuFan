@@ -2,6 +2,7 @@ package com.definesys.dsgc.service.consumers;
 
 import com.definesys.dsgc.service.apps.bean.UserResDTO;
 import com.definesys.dsgc.service.consumers.bean.*;
+import com.definesys.dsgc.service.dagclient.ConsumerDeployService;
 import com.definesys.dsgc.service.esbenv.bean.DSGCEnvInfoCfg;
 import com.definesys.dsgc.service.svcAuth.SVCAuthDao;
 import com.definesys.dsgc.service.users.bean.DSGCUser;
@@ -21,6 +22,9 @@ public class ConsumersService {
     private ConsumersDao consumersDao;
     @Autowired
     private SVCAuthDao svcAuthDao;
+
+    @Autowired
+    private ConsumerDeployService consumerDeployService;
     public PageQueryResult<ConsumerEntitieDTO> queryconsumersList(CommonReqBean commonReqBean, int pageSize, int pageIndex, String userName, String userRole){
         PageQueryResult<DSGCConsumerEntities> entitiesPageQueryResult = new PageQueryResult<>();
         PageQueryResult<ConsumerEntitieDTO> result = new PageQueryResult<>();
@@ -29,7 +33,7 @@ public class ConsumersService {
 //            return new PageQueryResult<>();
 //        }else {
             entitiesPageQueryResult = consumersDao.queryconsumersList(commonReqBean,pageSize,pageIndex,userName,userRole);
-        List<DagEnvInfoCfgBean> envList = consumersDao.queryApiEnv();
+        List<DSGCEnvInfoCfg> envList = consumersDao.queryApiEnv();
             for (DSGCConsumerEntities item:entitiesPageQueryResult.getResult()) {
                 ConsumerEntitieDTO consumerEntitieDTO = new ConsumerEntitieDTO();
                 consumerEntitieDTO.setDceId(item.getDceId());
@@ -166,10 +170,13 @@ public class ConsumersService {
         return result;
     }
     @Transactional(rollbackFor = Exception.class)
-    public void updateConsumerBasicAuthPwd(UpdateBasicPwdVO updateBasicPwdVO){
+    public void updateConsumerBasicAuthPwd(UpdateBasicPwdVO updateBasicPwdVO) throws Exception{
         DSGCConsumerEntities dsgcConsumerEntities = consumersDao.queryConsumerEntByCsmCode(updateBasicPwdVO.getCsmCode());
       //  DSGCConsumerAuth auth = consumersDao.queryConsumerBasicDataByEnvCode(updateBasicPwdVO);
-
+       Boolean res = consumerDeployService.updateBasicAuth(dsgcConsumerEntities.getCsmCode(),updateBasicPwdVO.getPwd(),updateBasicPwdVO.getEnvCode());
+       if(!res){
+           throw new Exception("新增或更新basic认证密码失败！");
+       }
         DSGCConsumerAuth dsgcConsumerAuth = new DSGCConsumerAuth();
         dsgcConsumerAuth.setCaAttr1(updateBasicPwdVO.getPwd());
         dsgcConsumerAuth.setCsmCode(updateBasicPwdVO.getCsmCode());
@@ -222,9 +229,42 @@ public class ConsumersService {
         return result;
     }
     @Transactional(rollbackFor = Exception.class)
-    public void consumerDeploy(ConsumerDeployChangeVO param){
-        /**
-         * TODO  部署或者取消部署
-         */
+    public void consumerDeploy(ConsumerDeployChangeVO param)throws Exception{
+        if(StringUtil.isNotBlank(param.getDceId()) && StringUtil.isNotBlank(param.getEnvCode())){
+            DSGCConsumerEntities dsgcConsumerEntities = consumersDao.queryConsumerEntById(param.getDceId());
+            String deployEnv = dsgcConsumerEntities.getDeployEnv();
+            Boolean res;
+          if (param.getDeployment()){
+             res = consumerDeployService.deployConsumer(dsgcConsumerEntities.getCsmCode(),param.getEnvCode());
+             if(!res){
+                 throw new Exception("部署失败！");
+             }
+             if(StringUtil.isNotBlank(deployEnv)){
+                 deployEnv =  deployEnv +","+param.getEnvCode();
+             }else {
+                 deployEnv = param.getEnvCode();
+             }
+              dsgcConsumerEntities.setDeployEnv(deployEnv);
+             consumersDao.updateConsumerDeployEnv(dsgcConsumerEntities);
+          }else {
+             res = consumerDeployService.undeployConsumer(dsgcConsumerEntities.getCsmCode(),param.getEnvCode());
+              if(!res){
+                  throw new Exception("取消部署失败！");
+              }
+              if(StringUtil.isNotBlank(deployEnv)){
+                  List<String>  env =new ArrayList<String>(Arrays.asList(deployEnv.trim().split(",")));
+                  Iterator<String> iterator = env.iterator();
+                  while (iterator.hasNext()){
+                      String item = iterator.next();
+                      if(item.equals(param.getEnvCode())){
+                          iterator.remove();
+                      }
+                  }
+                String envStr = String.join(",",env);
+                  dsgcConsumerEntities.setDeployEnv(envStr);
+                  consumersDao.updateConsumerDeployEnv(dsgcConsumerEntities);
+              }
+          }
+        }
     }
 }
