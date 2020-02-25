@@ -2,6 +2,7 @@ package com.definesys.dsgc.service.consumers;
 
 import com.definesys.dsgc.service.apps.bean.UserResDTO;
 import com.definesys.dsgc.service.consumers.bean.*;
+import com.definesys.dsgc.service.esbenv.bean.DSGCEnvInfoCfg;
 import com.definesys.dsgc.service.svcAuth.SVCAuthDao;
 import com.definesys.dsgc.service.users.bean.DSGCUser;
 import com.definesys.dsgc.service.lkv.bean.FndLookupValue;
@@ -127,18 +128,18 @@ public class ConsumersService {
     }
     public ConsumerBasicAuthUserDTO queryConsumerBasicAuthData(String dceId){
         DSGCConsumerEntities dsgcConsumerEntities = consumersDao.queryConsumerEntById(dceId);
-        List<DagEnvInfoCfgBean> envList = consumersDao.queryApiEnv();
+        List<DSGCEnvInfoCfg> envList = consumersDao.queryApiEnv();
         List<DSGCConsumerAuth> dsgcConsumerAuthList = consumersDao.queryConsumerAuthByCsmCode(dsgcConsumerEntities.getCsmCode());
-        Iterator<DagEnvInfoCfgBean> iterable = envList.iterator();
+        Iterator<DSGCEnvInfoCfg> iterable = envList.iterator();
         List<Map<String,String>> pwdList = new ArrayList<>();
         while (iterable.hasNext()){
-            DagEnvInfoCfgBean dagEnvInfoCfgBean = iterable.next();
+            DSGCEnvInfoCfg dsgcEnvInfoCfg = iterable.next();
             Map<String,String> map = new HashMap<>();
-            map.put("envCode",dagEnvInfoCfgBean.getEnvCode());
-            map.put("envName",dagEnvInfoCfgBean.getEnvName());
+            map.put("envCode",dsgcEnvInfoCfg.getEnvCode());
+            map.put("envName",dsgcEnvInfoCfg.getEnvName());
             map.put("pwd","");
             for (int i = 0; i <dsgcConsumerAuthList.size() ; i++) {
-                if(dagEnvInfoCfgBean.getEnvCode().equals(dsgcConsumerAuthList.get(i).getEnvCode())){
+                if(dsgcEnvInfoCfg.getEnvCode().equals(dsgcConsumerAuthList.get(i).getEnvCode())){
                     map.put("pwd",dsgcConsumerAuthList.get(i).getCaAttr1());
                     break;
                 }
@@ -196,22 +197,22 @@ public class ConsumersService {
     }
     public List<ConsumerDeployDTO> queryConsumerDeployData(CommonReqBean param){
         List<ConsumerDeployDTO> result = new ArrayList<>();
-       List<DagEnvInfoCfgBean> envList = consumersDao.queryApiEnv();
+       List<DSGCEnvInfoCfg> envList = consumersDao.queryApiEnv();
        DSGCConsumerEntities dsgcConsumerEntities = consumersDao.queryConsumerEntById(param.getCon0());
        String envStr = dsgcConsumerEntities.getDeployEnv();
         List<String> env = new ArrayList<>();
        if(StringUtil.isNotBlank(envStr)){
            env = Arrays.asList(envStr.trim().split(","));
        }
-        Iterator<DagEnvInfoCfgBean> iterable = envList.iterator();
+        Iterator<DSGCEnvInfoCfg> iterable = envList.iterator();
         while (iterable.hasNext()){
-            DagEnvInfoCfgBean dagEnvInfoCfgBean = iterable.next();
+            DSGCEnvInfoCfg dsgcEnvInfoCfg = iterable.next();
             ConsumerDeployDTO consumerDeployDTO = new ConsumerDeployDTO();
-            consumerDeployDTO.setEnvName(dagEnvInfoCfgBean.getEnvName());
-            consumerDeployDTO.setEnvCode(dagEnvInfoCfgBean.getEnvCode());
+            consumerDeployDTO.setEnvName(dsgcEnvInfoCfg.getEnvName());
+            consumerDeployDTO.setEnvCode(dsgcEnvInfoCfg.getEnvCode());
             consumerDeployDTO.setDeployment(false);
             for (int i = 0; i <env.size() ; i++) {
-                if(dagEnvInfoCfgBean.getEnvCode().equals(env.get(i))){
+                if(dsgcEnvInfoCfg.getEnvCode().equals(env.get(i))){
                     consumerDeployDTO.setDeployment(true);
                     break;
                 }
