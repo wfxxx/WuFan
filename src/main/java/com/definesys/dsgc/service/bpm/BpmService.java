@@ -199,8 +199,8 @@ public class BpmService {
                 bpmInstanceBean.setInstStat("completed");
             }
         }else if ("2".equals(param.getPassOrReject())){   //审批驳回
-            bpmHistoryBean.setApproveOper("eject");
-            bpmInstanceBean.setInstStat("ejected");
+            bpmHistoryBean.setApproveOper("reject");
+            bpmInstanceBean.setInstStat("rejected");
             if(nodeBeanList.get(0).getRejectNode() != null){
                 bpmInstanceBean.setCurNode(nodeBeanList.get(0).getRejectNode());
                 bpmTaskBean.setNodeId(nodeBeanList.get(0).getRejectNode());
