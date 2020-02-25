@@ -22,7 +22,7 @@ public class ConsumerProxy extends DAGProxy {
      * @return
      * @throws Exception
      */
-    public boolean add(String consumerId,String[] tags) throws Exception {
+    public boolean add(String consumerId,String[] tags) {
         ConsumerAddVO addReq = new ConsumerAddVO();
         addReq.username = consumerId;
         addReq.custom_id = consumerId;
@@ -39,7 +39,7 @@ public class ConsumerProxy extends DAGProxy {
      * @return
      * @throws Exception
      */
-    public boolean setBasicAuth(String pd) throws Exception {
+    public boolean setBasicAuth(String pd) {
 
         String reqJson = "{\"username\":\"" + this.consumer.custom_id + "\",\"password\":\"" + pd + "\"}";
 
