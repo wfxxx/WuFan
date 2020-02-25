@@ -81,6 +81,7 @@ public class BpmDao {
     public List<BpmHistoryBean> getInstHistory(BpmCommonReqBean param){
         return sw.buildQuery()
                 .eq("instId",param.getCon0())
+                .orderBy("creation_date", "asc")
                 .doQuery(BpmHistoryBean.class);
     }
 

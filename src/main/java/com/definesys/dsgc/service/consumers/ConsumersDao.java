@@ -1,6 +1,7 @@
 package com.definesys.dsgc.service.consumers;
 
 import com.definesys.dsgc.service.consumers.bean.*;
+import com.definesys.dsgc.service.esbenv.bean.DSGCEnvInfoCfg;
 import com.definesys.dsgc.service.users.bean.DSGCUser;
 import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.mpaas.query.MpaasQuery;
@@ -142,7 +143,7 @@ public class ConsumersDao {
         return sw.buildQuery().in("csmCode",codes)
                 .doQuery(DSGCConsumerEntities.class);
     }
-    public List<DagEnvInfoCfgBean> queryApiEnv(){
-        return sw.buildQuery().doQuery(DagEnvInfoCfgBean.class);
+    public List<DSGCEnvInfoCfg> queryApiEnv(){
+        return sw.buildQuery().eq("env_type","DAG").doQuery(DSGCEnvInfoCfg.class);
     }
 }

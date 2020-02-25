@@ -1,6 +1,7 @@
 package com.definesys.dsgc.service.apiroute;
 
 import com.definesys.dsgc.service.apiroute.bean.*;
+import com.definesys.dsgc.service.esbenv.bean.DSGCEnvInfoCfg;
 import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.mpaas.query.MpaasQuery;
 import com.definesys.mpaas.query.MpaasQueryFactory;
@@ -64,8 +65,8 @@ public class ApiRouteDao {
                 .setVar("routeCode",param.getCon0())
                 .doQueryFirst(DagRoutesBean.class);
     }
-    public List<DagEnvInfoCfgBean> queryApiEnv(){
-        return sw.buildQuery().doQuery(DagEnvInfoCfgBean.class);
+    public List<DSGCEnvInfoCfg> queryApiEnv(){
+        return sw.buildQuery().eq("env_type","DAG").doQuery(DSGCEnvInfoCfg.class);
     }
     public List<DagCodeVersionBean> queryApiCodeVersion(CommonReqBean param){
         return sw.buildQuery().eq("sour_code",param.getCon0()).eq("sour_type",param.getQueryType()).doQuery(DagCodeVersionBean.class);
