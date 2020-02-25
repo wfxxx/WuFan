@@ -20,7 +20,10 @@ public class DagDeployStatBean  extends MpaasBasePojo implements Serializable {
     private String envName;
     @Column(type = ColumnType.JAVA)
     private String vName;
-    private String deployTime;
+
+    @JsonSerialize(using = MpaasDateTimeSerializer.class)
+    @JsonDeserialize(using = MpaasDateTimeDeserializer.class)
+    private Date deployTime;
 
     @SystemColumn(SystemColumnType.CREATE_BY)
     @Column(value = "created_by")
@@ -82,11 +85,11 @@ public class DagDeployStatBean  extends MpaasBasePojo implements Serializable {
         this.envCode = envCode;
     }
 
-    public String getDeployTime() {
+    public Date getDeployTime() {
         return deployTime;
     }
 
-    public void setDeployTime(String deployTime) {
+    public void setDeployTime(Date deployTime) {
         this.deployTime = deployTime;
     }
 
