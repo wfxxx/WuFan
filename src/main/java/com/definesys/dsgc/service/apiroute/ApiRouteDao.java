@@ -133,4 +133,10 @@ public class ApiRouteDao {
     public void delRouteDomain(String drhId){
         sw.buildQuery().eq("drh_id",drhId).doDelete(DagRoutesHostnameBean.class);
     }
+    public void addDagDeployStat(DagDeployStatBean dagDeployStatBean){
+        sw.buildQuery().doInsert(dagDeployStatBean);
+    }
+    public void addDagDeployLog(DagDeployLogBean dagDeployLogBean){
+        sw.buildQuery().doInsert(dagDeployLogBean);
+    }
 }

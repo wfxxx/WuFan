@@ -20,7 +20,7 @@ import com.definesys.mpaas.query.model.MpaasBasePojo;
                 "  from dag_code_version v, dag_bs b, dag_bs_dtl d\n" +
                 " where v.sour_code = b.bs_code\n" +
                 "   and v.vid = d.vid\n" +
-                "   and v.vid = #vid")
+                "   and v.vid = #vidVar")
 })
 public class DAGServiceInfoBean extends MpaasBasePojo {
 
@@ -33,7 +33,7 @@ public class DAGServiceInfoBean extends MpaasBasePojo {
     @Column(value = "host_name", type = ColumnType.DB)
     private String hostName;
     @Column(value = "port", type = ColumnType.DB)
-    private int port;
+    private String port;
     @Column(value = "paths", type = ColumnType.DB)
     private String paths;
     @Column(value = "rty_count", type = ColumnType.DB)
@@ -77,11 +77,11 @@ public class DAGServiceInfoBean extends MpaasBasePojo {
         this.hostName = hostName;
     }
 
-    public int getPort() {
+    public String getPort() {
         return port;
     }
 
-    public void setPort(int port) {
+    public void setPort(String port) {
         this.port = port;
     }
 

@@ -183,8 +183,13 @@ public class ApiRouteController {
         return Response.ok().setData(result);
     }
     @RequestMapping(value = "/deployRoute",method = RequestMethod.POST)
-    public Response deployRoute(@RequestBody DeployRouteVO param){
-        try { apiRouteService.deployRoute(param);
+    public Response deployRoute(@RequestBody DeployRouteVO param,HttpServletRequest request){
+        //获取用户id
+        String userId = request.getHeader("uid");
+        if (userId == null) {
+            return Response.error("无效的用户！");
+        }
+        try { apiRouteService.deployRoute(param,userId);
         } catch (Exception e) {
             e.printStackTrace();
             return Response.error("部署失败！");
