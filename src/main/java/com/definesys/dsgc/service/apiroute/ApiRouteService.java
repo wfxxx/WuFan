@@ -1,9 +1,12 @@
 package com.definesys.dsgc.service.apiroute;
 
 import com.definesys.dsgc.service.apiroute.bean.*;
+import com.definesys.dsgc.service.dagclient.DAGClientService;
+import com.definesys.dsgc.service.dagclient.bean.DAGDeployReqVO;
 import com.definesys.dsgc.service.svclog.SVCLogDao;
 import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
 import com.definesys.dsgc.service.utils.StringUtil;
+import com.definesys.mpaas.common.http.Response;
 import com.definesys.mpaas.query.db.PageQueryResult;
 import org.apache.tomcat.util.buf.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class ApiRouteService {
@@ -22,6 +22,9 @@ public class ApiRouteService {
     private ApiRouteDao apiRouteDao;
     @Autowired
     private SVCLogDao sldao;
+
+    @Autowired
+    private DAGClientService dagClientService;
 
     public PageQueryResult queryApiRouteList(CommonReqBean param, String userId, String userRole, int pageSize, int pageIndex ){
         List<String> sysCodeList = new ArrayList<>();
@@ -248,10 +251,30 @@ public void updateRoutePathStrip(DagRoutesBean param){
         return result;
     }
     @Transactional(rollbackFor = Exception.class)
-    public void deployRoute(DeployRouteVO param){
+    public void deployRoute(DeployRouteVO param,String userId) throws Exception{
         /**
          * TODO
          */
+        DAGDeployReqVO dagDeployReqVO = new DAGDeployReqVO();
+        dagDeployReqVO.setVid(param.getVid());
+        dagDeployReqVO.setEnvCode(param.getDeployEnv());
+        dagDeployReqVO.setDeployDesc(param.getDeployDesc());
+        String res = dagClientService.deploy(dagDeployReqVO,userId);
+        if ("S".equals(res)) {
+            DagDeployStatBean dagDeployStatBean = new DagDeployStatBean();
+            dagDeployStatBean.setDeployTime(new Date());
+            dagDeployStatBean.setEnvCode(param.getDeployEnv());
+            dagDeployStatBean.setVid(param.getVid());
+            apiRouteDao.addDagDeployStat(dagDeployStatBean);
+            DagDeployLogBean dagDeployLogBean = new DagDeployLogBean();
+            dagDeployLogBean.setEnvCode(param.getDeployEnv());
+            dagDeployLogBean.setLogCnt(param.getDeployDesc());
+            dagDeployLogBean.setVid(param.getVid());
+            apiRouteDao.addDagDeployLog(dagDeployLogBean);
+        } else {
+            throw new Exception(res);
+        }
+
     }
 
     @Transactional(rollbackFor = Exception.class)

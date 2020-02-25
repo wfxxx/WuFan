@@ -99,6 +99,11 @@ public class ApiBsService {
         return apiBsDao.addDagBsDti(dagBsDtiBean);
     }
 
+
+    public List<Map<String,Object>> queryDeployByVid(String vid){
+        return  apiBsDao.queryDeployByVid(vid);
+    }
+
     public List<DagCodeVersionBean> queryDagCodeVersionBySource(String sourceId){
         List<DagCodeVersionBean> result=apiBsDao.queryDagCodeVersionBySource(sourceId);
         for(DagCodeVersionBean item:result){
@@ -116,10 +121,16 @@ public class ApiBsService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void delDagCodeVersionByid(String id){
+    public void delDagCodeVersionByid(String id) throws Exception {
         //删除技术信息
         apiBsDao.delDagBsDtiByVid(id);
         //删除插件
+            //删除插件具体参数
+        List<DagPlugUsingBean> value= queryPluginUsing(id);
+        for(DagPlugUsingBean item:value){
+            pluginService.deletePluginContext(item.getVid(),item.getPluginCode());
+        }
+            //删除插件使用表
          delPluginUsingByVid(id);
         //删除配置
          apiBsDao.delDagCodeVersionByid(id);
@@ -195,11 +206,7 @@ public class ApiBsService {
         apiBsDao.delPluginUsing(dagPlugUsingBean.getDpuId());
     }
 
-    @Transactional(rollbackFor = Exception.class)
     public void delPluginUsingByVid(String vid){
-        //删除插件内容，
-
-        //删除插件
         apiBsDao.delPluginUsingByVid(vid);
     }
 
@@ -213,7 +220,6 @@ public class ApiBsService {
             DagPlugStoreBean dagPlugStoreBean=apiBsDao.queryPluginStoreByCode(item.getPluginCode());
             item.setPluginName(dagPlugStoreBean.getPluginName());
         }
-
         return reuslt;
     }
 
