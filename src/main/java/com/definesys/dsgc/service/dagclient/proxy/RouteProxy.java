@@ -53,14 +53,14 @@ public class RouteProxy extends DAGProxy{
     public static class RouteSetVO{
         public ServiceRef service;
         public String[] paths;
-        public String[] protocols;
+        public String[] protocols = new String[]{"http","https"};
         public String[] methods;
         public String name;
-        public boolean strip_path;
-        public boolean preserve_host;
-        public int regex_priority;
+        public boolean strip_path = true;
+        public boolean preserve_host = false;
+        public int regex_priority = 0;
         public String[] hosts;
-        public int https_redirect_status_code;
+        public int https_redirect_status_code = 426;
         public String[] tags;
     }
 
