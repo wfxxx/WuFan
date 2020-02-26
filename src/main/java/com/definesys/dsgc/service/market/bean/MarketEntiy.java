@@ -1,6 +1,13 @@
 package com.definesys.dsgc.service.market.bean;
 
 import com.definesys.mpaas.query.annotation.Column;
+import com.definesys.mpaas.query.annotation.SystemColumn;
+import com.definesys.mpaas.query.annotation.SystemColumnType;
+import com.definesys.mpaas.query.json.MpaasDateSerializer;
+import com.definesys.mpaas.query.json.MpaasDateTimeDeserializer;
+import com.definesys.mpaas.query.json.MpaasDateTimeSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.Date;
 
@@ -28,6 +35,9 @@ public class MarketEntiy {
     private String marketCategory;
    @Column(value = "totalTimes")
     private String totalTimes;
+    @JsonSerialize(using = MpaasDateSerializer.class)
+    @JsonDeserialize(using = MpaasDateTimeDeserializer.class)
+    @SystemColumn(SystemColumnType.CREATE_ON)
     @Column(value = "creationDate")
     private Date creationDate;
 
