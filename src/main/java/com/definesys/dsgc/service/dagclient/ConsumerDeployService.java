@@ -40,7 +40,9 @@ public class ConsumerDeployService {
 
             if (res) {
                 String basicAuthPd = this.consumerDeployDao.getConsumerBasicAuth(consumerCode,envCode);
-                res = cp.setBasicAuth(basicAuthPd);
+                if(basicAuthPd != null && basicAuthPd.trim().length() > 0) {
+                    res = cp.setBasicAuth(basicAuthPd);
+                }
             }
 
         } else if ("ESB".equals(env.getEnvType()) && "OSB".equals(env.getTechType())) {
@@ -92,6 +94,10 @@ public class ConsumerDeployService {
         DAGEnvBean env = this.dagEnvDao.getDAGEnvInfoByEnvCode(envCode);
 
         if (env == null || env.getAdminLocation() == null) {
+            return false;
+        }
+
+        if (newPd == null || newPd.trim().length() == 0) {
             return false;
         }
 
