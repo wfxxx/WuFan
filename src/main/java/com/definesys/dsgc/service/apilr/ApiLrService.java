@@ -4,7 +4,6 @@ import com.definesys.dsgc.service.apilr.bean.*;
 import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
 import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.mpaas.query.db.PageQueryResult;
-import com.sun.deploy.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -83,7 +82,7 @@ public class ApiLrService {
                 for(int i = 0; i < dsgcEnvInfoCfgBeans.size(); i++){
                     envName.add(dsgcEnvInfoCfgBeans.get(i).getEnvName());
                 }
-                String envNameStr = StringUtils.join(envName, ",");
+                String envNameStr = String.join(",",envName);
                 dto.setEnvTargets(envNameStr);
             }
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -102,7 +101,7 @@ public class ApiLrService {
             dagCodeVersionBean.setSourType(param.getCourType());
             dagCodeVersionBean.setvName(param.getConfigName());
             List<String> envList = param.getEnabledEnv();
-            String str = StringUtils.join(envList, ",");
+            String str = String.join(",",envList);
             dagCodeVersionBean.setEnvTargets(str);
         }
         apiLrDao.addLrConfig(dagCodeVersionBean);

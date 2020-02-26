@@ -87,7 +87,7 @@ public class ApiLrDao {
         sw.buildQuery().eq("lr_name",param.getLrName()).update("lr_desc",param.getLrDesc()).doUpdate(DagLrbean.class);
     }
     public List<DsgcEnvInfoCfgBean> queryApiEnvName(String[] envArr){
-        return sw.buildQuery().sql("select env_name from DAG_ENV_INFO_CFG ")
+        return sw.buildQuery().sql("select env_name from DSGC_ENV_INFO_CFG ")
                 .in("envCode",envArr)
                 .doQuery(DsgcEnvInfoCfgBean.class);
     }
