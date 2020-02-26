@@ -1,21 +1,19 @@
 package com.definesys.dsgc.service.envinfo;
 
-import com.definesys.dsgc.service.envinfo.bean.CommonReqBean;
-import com.definesys.dsgc.service.envinfo.bean.DagEnvNodeDTO;
-import com.definesys.dsgc.service.envinfo.bean.DsgcEnvInfoCfgBean;
-import com.definesys.dsgc.service.envinfo.bean.DagEnvInfoDTO;
+import com.definesys.dsgc.service.envinfo.bean.*;
 import com.definesys.mpaas.common.http.Response;
+import com.definesys.mpaas.log.SWordLogger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping(value = "/dsgc/envinfo")
 public class EnvInfoController {
+    @Autowired
+    private SWordLogger logger;
     @Autowired
     private EnvInfoService envInfoService;
 
@@ -86,5 +84,39 @@ public class EnvInfoController {
             return Response.error("查询环境信息失败");
         }
         return Response.ok().data(result);
+    }
+
+    @RequestMapping(value="/addOrUpdateEnvInfoCfg",method = RequestMethod.POST)
+    public Response addOrUpdateEnvInfoCfg(@RequestBody DsgcEnvInfoCfgBean envInfoCfg){
+        try{
+            envInfoService.addOrUpdateEnvInfoCfg(envInfoCfg);
+        }catch (Exception e) {
+            e.printStackTrace();
+            return Response.error("保存总线配置信息失败！").setMessage("保存总线配置信息失败！");
+        }
+
+        return Response.ok().setMessage("保存总线配置信息成功！");
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @RequestMapping(value="/updateEnvCfg",method = RequestMethod.POST)
+    public Response updateEnvCfg(@RequestBody CommonReqBean params){
+        try{
+            envInfoService.addOrUpdateEnvMachineCfg(params);
+            envInfoService.addOrUpdateEnvServerCfg(params);
+            envInfoService.addOrUpdateSvcgenDeployControl(params);
+        }catch (Exception ex) {
+            logger.error("%s", ex.getMessage());
+            return Response.error("保存配置信息失败！").setMessage("保存配置信息失败！");
+        }
+
+        return Response.ok().setMessage("保存配置信息成功！");
+    }
+
+
+    @RequestMapping(value="/queryEsbCfgDetails",method = RequestMethod.GET)
+    public Response queryEsbCfgDetails(@RequestParam(name = "deicId") String deicId){
+        DSGCBusCfgVO busCfgVO = envInfoService.queryEsbCfgDetails(deicId);
+        return Response.ok().data(busCfgVO);
     }
 }

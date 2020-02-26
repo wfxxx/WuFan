@@ -1,8 +1,8 @@
 package com.definesys.dsgc.service.envinfo;
 
-import com.definesys.dsgc.service.envinfo.bean.CommonReqBean;
-import com.definesys.dsgc.service.envinfo.bean.DsgcEnvInfoCfgBean;
-import com.definesys.dsgc.service.envinfo.bean.DagEnvInfoNodeBean;
+import com.definesys.dsgc.service.envinfo.bean.*;
+import com.definesys.dsgc.service.utils.StringUtil;
+import com.definesys.mpaas.query.MpaasQuery;
 import com.definesys.mpaas.query.MpaasQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -22,9 +22,9 @@ public class EnvInfoDao {
         sw.buildQuery().doInsert(dagEnvInfoNodeBean);
     }
 
-    public DsgcEnvInfoCfgBean queryApiEnvCfg(CommonReqBean q){
+    public DsgcEnvInfoCfgBean queryApiEnvCfg(String deicId){
         return sw.buildQuery()
-                .eq("deicId",q.getCon0())
+                .eq("deicId",deicId)
                 .doQueryFirst(DsgcEnvInfoCfgBean.class);
     }
 
@@ -44,9 +44,68 @@ public class EnvInfoDao {
 
     public List<DsgcEnvInfoCfgBean> queryApiEnvCfgList(){
       return sw.buildQuery()
-              .select("DEIC_ID,ENV_NAME,ENV_CODE,ENV_SEQ,ENV_TYPE")
-              .groupBy("ENV_CODE,DEIC_ID,ENV_NAME,ENV_SEQ,ENV_TYPE")
-              .orderBy("ENV_SEQ","asc")
+              .sql("select de.*,row_number() over(partition by de.ENV_TYPE order by de.ENV_SEQ asc)  row_number from DSGC_ENV_INFO_CFG de ")
               .doQuery(DsgcEnvInfoCfgBean.class);
+    }
+
+    public void addOrUpdateEnvInfoCfg(DsgcEnvInfoCfgBean envInfoCfg) {
+        MpaasQuery mq = sw.buildQuery();
+
+        String deicId = envInfoCfg.getDeicId();
+        if(StringUtil.isBlank(deicId)){
+            mq.doInsert(envInfoCfg);
+        }else{
+            mq.eq("deic_id",envInfoCfg.getDeicId())
+                    .doUpdate(envInfoCfg);
+        }
+    }
+
+
+    public void delEnvMachineCfg(String envCode) {
+        sw.buildQuery()
+                .eq("env_code",envCode)
+                .doDelete(DSGCEnvMachineCfg.class);
+    }
+
+    public List<DSGCEnvMachineCfg> getEnvMachineCfgByEnvCode(String envCode){
+      return sw.buildQuery()
+              .eq("env_code",envCode)
+              .doQuery(DSGCEnvMachineCfg.class);
+    }
+
+    public void addEnvMachineCfg(DSGCEnvMachineCfg dsgcEnvMachineCfg){
+      sw.buildQuery().doInsert(dsgcEnvMachineCfg);
+    }
+
+    public void delEnvServCfg(String envCode) {
+        sw.buildQuery()
+                .eq("env_code",envCode)
+                .doDelete(DSGCEnvServerCfg.class);
+    }
+
+    public List<DSGCEnvServerCfg> getEnvServCfgByEnvCode(String envCode){
+        return sw.buildQuery()
+                .eq("env_code",envCode)
+                .doQuery(DSGCEnvServerCfg.class);
+    }
+
+    public void addEnvServCfg(DSGCEnvServerCfg dsgcEnvServerCfg){
+        sw.buildQuery().doInsert(dsgcEnvServerCfg);
+    }
+
+    public void delEnvDeployCfg(String envCode) {
+        sw.buildQuery()
+                .eq("env_code",envCode)
+                .doDelete(SvcgenDeployControl.class);
+    }
+
+    public List<SvcgenDeployControl> getEnvDeployCfgByEnvCode(String envCode){
+        return sw.buildQuery()
+                .eq("env_code",envCode)
+                .doQuery(SvcgenDeployControl.class);
+    }
+
+    public void addEnvDeployCfg(SvcgenDeployControl svcgenDeployControl){
+        sw.buildQuery().doInsert(svcgenDeployControl);
     }
 }
