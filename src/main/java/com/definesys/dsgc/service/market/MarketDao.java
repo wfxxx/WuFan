@@ -118,9 +118,17 @@ public class MarketDao {
 
     public PageQueryResult<MarketEntiy> queryEsb(Map<String,Object> mapVlue, int pageSize, int pageIndex) {
 
-        MpaasQuery query=sw.buildQuery().sql("select * from (select t.serv_id servId,t.serv_no servNo,t.serv_name servName,t.serv_desc servDesc,t.subordinate_system fromSys,\n" +
-                "t.market_stat marketStat ,t.market_category  marketCategory,t.creation_date creationDate,(case when r.total_times >1 then r.total_times  else 0 end ) totalTimes \n" +
-                "from DSGC_SERVICES t left join rp_serv_total r on t.serv_no=r.serv_no )");
+        MpaasQuery query=sw.buildQuery().sql("select * from (\n" +
+                "select t.serv_id servId,t.serv_no servNo,t.serv_name servName,t.serv_desc servDesc,e.sys_name fromSys,\n" +
+                "                t.market_stat marketStat ,t.market_category  marketCategory,t.creation_date creationDate,(case when r.total_times >1 then r.total_times  else 0 end ) totalTimes \n" +
+                "                from DSGC_SERVICES t \n" +
+                "                left join rp_serv_total r on t.serv_no=r.serv_no \n" +
+                "                 left join dsgc_system_entities e on t.subordinate_system=e.sys_code )");
+
+        if(mapVlue.get("searchValue")!=null) {
+            String searchValue = (String) mapVlue.get("searchValue");
+            query.or().like("servNo", searchValue.toUpperCase()).like("servName", searchValue.toUpperCase()).conjuctionAnd();
+        }
         if(mapVlue.get("apply")!=null){
             String[] applyServNo= (String[]) mapVlue.get("apply");
             if(applyServNo.length==0){
@@ -131,10 +139,6 @@ public class MarketDao {
         if(mapVlue.get("classConditions")!=null){
             String classConditions= (String) mapVlue.get("classConditions");
             query.and().eq("marketCategory",classConditions);
-        }
-        if(mapVlue.get("searchValue")!=null) {
-            String searchValue = (String) mapVlue.get("searchValue");
-            query.or().like("servNo", searchValue.toUpperCase()).like("servName", searchValue.toUpperCase()).conjuctionAnd();
         }
         query.and().eq("marketStat","Y");
         return query.doPageQuery(pageIndex,pageSize,MarketEntiy.class);
@@ -142,9 +146,16 @@ public class MarketDao {
 
     public PageQueryResult<MarketEntiy> queryApi(Map<String,Object> mapVlue, int pageSize, int pageIndex) {
 
-        MpaasQuery query=sw.buildQuery().sql("select * from (select t.api_id servId,t.api_code servNo,t.api_name servName,t.app_code fromSys,t.api_desc servDesc,\n" +
-                "                                t.market_category marketCategory,t.market_stat marketStat,t.creation_date creationDate ,(case when r.total_times >1 then r.total_times  else 0 end ) totalTimes from DSGC_APIS t left join rp_serv_total r\n" +
-                "                                on t.api_code=r.serv_no)");
+        MpaasQuery query=sw.buildQuery().sql("select * from (select t.api_id servId,t.api_code servNo,t.api_name servName,e.sys_name fromSys,t.api_desc servDesc,\n" +
+                "t.market_category marketCategory,t.market_stat marketStat,t.creation_date creationDate ,(case when r.total_times >1 then r.total_times  else 0 end )\n" +
+                "totalTimes from DSGC_APIS t \n" +
+                "left join rp_serv_total r   on t.api_code=r.serv_no\n" +
+                " left join dsgc_system_entities e   on t.app_code=e.sys_code)");
+
+        if(mapVlue.get("searchValue")!=null){
+            String searchValue= (String) mapVlue.get("searchValue");
+            query.or().like("servNo",searchValue.toUpperCase()).like("servName",searchValue.toUpperCase()).conjuctionAnd();
+        }
         if(mapVlue.get("apply")!=null){
             String[] applyServNo= (String[]) mapVlue.get("apply");
             if(applyServNo.length==0){
@@ -155,10 +166,6 @@ public class MarketDao {
         if(mapVlue.get("classConditions")!=null){
             String classConditions= (String) mapVlue.get("classConditions");
             query.and().eq("marketCategory",classConditions);
-        }
-        if(mapVlue.get("searchValue")!=null){
-            String searchValue= (String) mapVlue.get("searchValue");
-            query.or().like("servNo",searchValue.toUpperCase()).like("servName",searchValue.toUpperCase()).conjuctionAnd();
         }
         query .eq("marketStat","Y");
         return query.doPageQuery(pageIndex,pageSize,MarketEntiy.class);
