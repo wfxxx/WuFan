@@ -119,13 +119,17 @@ public List<RouteConfigDTO> queryRouteConfigList(CommonReqBean param){
             StringBuilder envNameStr = new StringBuilder();
             for (int j= 0;j<envArr.length;j++){
                 for (int i = 0; i < envList.size(); i++) {
-                    if (envArr[j].equals(envList.get(i).getEnvCode()) && j ==0){
+                    if (envArr[j].equals(envList.get(i).getEnvCode())){
+                        if(j >0){
+                            envNameStr.append(",");
+                        }
                         envNameStr.append(envList.get(i).getEnvName());
                         break;
-                    }else if(envArr[j].equals(envList.get(i).getEnvCode())){
-                        envNameStr.append("，"+envList.get(i).getEnvName());
-                        break;
                     }
+//                      else if(envArr[j].equals(envList.get(i).getEnvCode())){
+//                        envNameStr.append("，"+envList.get(i).getEnvName());
+//                        break;
+//                    }
                 }
             }
             dto.setEnvTargets(envNameStr.toString());

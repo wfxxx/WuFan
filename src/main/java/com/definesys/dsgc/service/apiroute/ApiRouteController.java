@@ -192,7 +192,7 @@ public class ApiRouteController {
         try { apiRouteService.deployRoute(param,userId);
         } catch (Exception e) {
             e.printStackTrace();
-            return Response.error("部署失败！");
+            return Response.error(e.getMessage());
         }
         return Response.ok();
     }
