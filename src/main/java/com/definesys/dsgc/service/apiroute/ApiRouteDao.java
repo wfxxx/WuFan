@@ -137,6 +137,21 @@ public class ApiRouteDao {
     public void addDagDeployStat(DagDeployStatBean dagDeployStatBean){
         sw.buildQuery().doInsert(dagDeployStatBean);
     }
+    public Boolean queryDagDeployStatIsExist(DagDeployStatBean dagDeployStatBean){
+      DagDeployStatBean dagDeployStatBean1 =  sw.buildQuery()
+              .eq("vid",dagDeployStatBean.getVid())
+              .eq("env_code",dagDeployStatBean.getEnvCode())
+              .doQueryFirst(DagDeployStatBean.class);
+      if(dagDeployStatBean1 != null){
+          return true;
+      }else {
+          return false;
+      }
+    }
+
+    public void delDagDeployStat(DagDeployStatBean dagDeployStatBean){
+        sw.buildQuery().eq("vid",dagDeployStatBean.getVid()).eq("env_code",dagDeployStatBean.getEnvCode()).doDelete(DagDeployStatBean.class);
+    }
     public void addDagDeployLog(DagDeployLogBean dagDeployLogBean){
         sw.buildQuery().doInsert(dagDeployLogBean);
     }

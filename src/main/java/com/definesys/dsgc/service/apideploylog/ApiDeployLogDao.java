@@ -24,7 +24,7 @@ public class ApiDeployLogDao {
     }
     public PageQueryResult<DagDeployLogBean> queryDeployHis(CommonReqBean param, int pageIndex, int pageSize){
         return sw.buildQuery().sql(" select t.*,deic.env_name envName from (select del.* from dag_deploy_log del,dag_code_version dcv " +
-                "  where dcv.sour_type =#queryType and dcv.vid = del.vid and dcv.sour_code = #sourCode) t,dsgc_env_info_cfg deic where t.env_code = deic.env_code and deic.env_type = 'DAG'")
+                "  where dcv.sour_type =#queryType and dcv.vid = del.vid and dcv.sour_code = #sourCode) t,dsgc_env_info_cfg deic where t.env_code = deic.env_code and deic.env_type = 'DAG' order by t.creation_date desc")
                 .setVar("queryType",param.getQueryType())
                 .setVar("sourCode",param.getCon0())
                 .doPageQuery(pageIndex,pageSize,DagDeployLogBean.class);
