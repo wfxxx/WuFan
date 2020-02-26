@@ -78,10 +78,10 @@ public class ApiLrService {
             dto.setEnvTargets(dagCodeVersionBean.getEnvTargets());
             if(StringUtil.isNotBlank(dagCodeVersionBean.getEnvTargets())){
                 String[] envArr = dagCodeVersionBean.getEnvTargets().trim().split(",");
-                List<DagEnvInfoCfgBean> dagEnvInfoCfgBeans = apiLrDao.queryApiEnvName(envArr);
+                List<DsgcEnvInfoCfgBean> dsgcEnvInfoCfgBeans = apiLrDao.queryApiEnvName(envArr);
                 List<String> envName = new ArrayList<>();
-                for(int i = 0; i < dagEnvInfoCfgBeans.size(); i++){
-                    envName.add(dagEnvInfoCfgBeans.get(i).getEnvName());
+                for(int i = 0; i < dsgcEnvInfoCfgBeans.size(); i++){
+                    envName.add(dsgcEnvInfoCfgBeans.get(i).getEnvName());
                 }
                 String envNameStr = StringUtils.join(envName, ",");
                 dto.setEnvTargets(envNameStr);

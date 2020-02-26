@@ -86,10 +86,10 @@ public class ApiLrDao {
     public void updateLrDesc(DagLrbean param){
         sw.buildQuery().eq("lr_name",param.getLrName()).update("lr_desc",param.getLrDesc()).doUpdate(DagLrbean.class);
     }
-    public List<DagEnvInfoCfgBean> queryApiEnvName(String[] envArr){
+    public List<DsgcEnvInfoCfgBean> queryApiEnvName(String[] envArr){
         return sw.buildQuery().sql("select env_name from DAG_ENV_INFO_CFG ")
                 .in("envCode",envArr)
-                .doQuery(DagEnvInfoCfgBean.class);
+                .doQuery(DsgcEnvInfoCfgBean.class);
     }
     public void addLrTarget(DagLrTargetBean dagLrTargetBean){
         sw.buildQuery().doInsert(dagLrTargetBean);
