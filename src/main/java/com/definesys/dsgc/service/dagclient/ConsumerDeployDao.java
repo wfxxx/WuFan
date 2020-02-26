@@ -13,7 +13,7 @@ public class ConsumerDeployDao {
 
 
     public String getConsumerBasicAuth(String consumerCode,String envCode) {
-        Map<String,Object> res = sw.buildQuery().sql("select ca_attr1 BA_PD dsgc_consumer_auth where csm_code = #consumerCode and env_code = #envCode")
+        Map<String,Object> res = sw.buildQuery().sql("select ca_attr1 BA_PD from dsgc_consumer_auth where csm_code = #consumerCode and env_code = #envCode")
                 .setVar("consumerCode",consumerCode)
                 .setVar("envCode",envCode)
                 .doQueryFirst();
