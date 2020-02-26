@@ -6,8 +6,6 @@ import java.util.List;
 
 public class ConsumerProxy extends DAGProxy {
 
-    private ConsumerEntity consumer;
-
 
     public ConsumerProxy(String adminUrl,String consumerId) {
         super(adminUrl,consumerId);
@@ -27,7 +25,7 @@ public class ConsumerProxy extends DAGProxy {
         addReq.username = consumerId;
         addReq.custom_id = consumerId;
         addReq.tags = tags;
-        this.consumer = HttpReqUtil.postObject(this.adminUrl + "/consumers",addReq,ConsumerEntity.class);
+        this.entityProxy = HttpReqUtil.postObject(this.adminUrl + "/consumers",addReq,ConsumerEntity.class);
         return true;
     }
 
@@ -40,18 +38,19 @@ public class ConsumerProxy extends DAGProxy {
      * @throws Exception
      */
     public boolean setBasicAuth(String pd) {
+        ConsumerEntity ce = (ConsumerEntity)this.entityProxy;
 
-        String reqJson = "{\"username\":\"" + this.consumer.custom_id + "\",\"password\":\"" + pd + "\"}";
+        String reqJson = "{\"username\":\"" + ce.custom_id + "\",\"password\":\"" + pd + "\"}";
 
-        ConsumerBasicAuthList basicAuth = HttpReqUtil.getObject(this.adminUrl + "/consumers/" + this.consumer.id + "/basic-auth",ConsumerBasicAuthList.class);
+        ConsumerBasicAuthList basicAuth = HttpReqUtil.getObject(this.adminUrl + "/consumers/" + this.getId() + "/basic-auth",ConsumerBasicAuthList.class);
 
         if (basicAuth.data.size() == 0) {
             //没有证书，直接新建
-            HttpReqUtil.postJsonText(this.adminUrl + "/consumers/" + this.consumer.id + "/basic-auth",reqJson,String.class);
+            HttpReqUtil.postJsonText(this.adminUrl + "/consumers/" + this.getId() + "/basic-auth",reqJson,String.class);
 
         } else {
             //已经存在，直接更新
-            HttpReqUtil.putJsonText(this.adminUrl + "/consumers/" + this.consumer.id + "/basic-auth/" + basicAuth.data.get(0).id,reqJson);
+            HttpReqUtil.putJsonText(this.adminUrl + "/consumers/" + this.getId() + "/basic-auth/" + basicAuth.data.get(0).id,reqJson);
         }
         return true;
     }
@@ -59,12 +58,12 @@ public class ConsumerProxy extends DAGProxy {
 
     @Override
     protected void retrieve(String uid) {
-        this.consumer = HttpReqUtil.getObject(this.adminUrl + "/consumers" + "/" + uid,ConsumerEntity.class);
+        this.entityProxy = HttpReqUtil.getObject(this.adminUrl + "/consumers" + "/" + uid,ConsumerEntity.class);
     }
 
     @Override
     public void delete() {
-        HttpReqUtil.delete(this.adminUrl + "/consumers" + "/" + this.consumer.id);
+        HttpReqUtil.delete(this.adminUrl + "/consumers" + "/" + this.getId());
     }
 
 
