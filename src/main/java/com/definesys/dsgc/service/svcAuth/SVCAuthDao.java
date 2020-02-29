@@ -1,6 +1,8 @@
 package com.definesys.dsgc.service.svcAuth;
 
 import com.definesys.dsgc.service.consumers.bean.DSGCConsumerEntities;
+import com.definesys.dsgc.service.market.bean.MarketApiBean;
+import com.definesys.dsgc.service.market.bean.MarketEntiy;
 import com.definesys.dsgc.service.svcAuth.bean.*;
 import com.definesys.dsgc.service.system.bean.DSGCSystemAccess;
 import com.definesys.dsgc.service.system.bean.DSGCSystemEntities;
@@ -265,7 +267,16 @@ public class SVCAuthDao {
           sw.buildQuery().eq("instanceId",instanceId).doDelete();
     }
 
-
-
-
+    public MarketEntiy queryApi(String servCode){
+        return sw.buildQuery().sql("select t.api_code servNo,t.api_name servName,t.api_desc servDesc,e.sys_name fromSys, t.creation_date creationDate\n" +
+                "from dsgc_apis t \n" +
+                "left join dsgc_system_entities e on t.app_code=e.sys_code\n" +
+                "where t.api_code=#servCode").setVar("servCode",servCode).doQueryFirst(MarketEntiy.class);
+    }
+    public MarketEntiy queryServ(String servCode){
+        return sw.buildQuery().sql("select t.serv_no servNo,t.serv_name servName,t.serv_desc servDesc,e.sys_name fromSys, t.creation_date creationDate\n" +
+                "                from DSGC_SERVICES t \n" +
+                "                left join dsgc_system_entities e on t.subordinate_system=e.sys_code\n" +
+                "                where t.serv_no=#servCode").setVar("servCode",servCode).doQueryFirst(MarketEntiy.class);
+    }
 }

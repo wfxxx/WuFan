@@ -1,5 +1,7 @@
 package com.definesys.dsgc.service.envinfo.bean;
 
+import java.util.List;
+
 public class DagEnvInfoDTO {
 
     private String deicId;
@@ -11,6 +13,7 @@ public class DagEnvInfoDTO {
     private String envType;
     private String adminUser;
     private String adminPd;
+    private List<DagEnvInfoNodeBean> nodeList;
 
 
     public String getEnvName() {
@@ -84,5 +87,13 @@ public class DagEnvInfoDTO {
 
     public void setAdminPd(String adminPd) {
         this.adminPd = adminPd;
+    }
+
+    public List<DagEnvInfoNodeBean> getNodeList() {
+        return nodeList;
+    }
+
+    public void setNodeList(List<DagEnvInfoNodeBean> nodeList) {
+        this.nodeList = nodeList;
     }
 }

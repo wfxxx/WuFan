@@ -25,6 +25,8 @@ public class DsgcEnvInfoCfgBean extends MpaasBasePojo implements Serializable {
     private String adminPd;
     private String adminIp;
     private String adminPort;
+    private String esbIp;
+    private String esbPort;
 
     @SystemColumn(SystemColumnType.CREATE_BY)
     @Column(value = "created_by")
@@ -180,5 +182,21 @@ public class DsgcEnvInfoCfgBean extends MpaasBasePojo implements Serializable {
 
     public void setAdminPort(String adminPort) {
         this.adminPort = adminPort;
+    }
+
+    public String getEsbIp() {
+        return esbIp;
+    }
+
+    public void setEsbIp(String esbIp) {
+        this.esbIp = esbIp;
+    }
+
+    public String getEsbPort() {
+        return esbPort;
+    }
+
+    public void setEsbPort(String esbPort) {
+        this.esbPort = esbPort;
     }
 }

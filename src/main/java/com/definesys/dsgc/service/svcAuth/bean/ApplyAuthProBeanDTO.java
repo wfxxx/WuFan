@@ -2,6 +2,8 @@ package com.definesys.dsgc.service.svcAuth.bean;
 
 import com.definesys.dsgc.service.consumers.bean.ConsumerEntitieDTO;
 import com.definesys.dsgc.service.consumers.bean.DSGCConsumerEntities;
+import com.definesys.dsgc.service.market.bean.MarketApiBean;
+import com.definesys.dsgc.service.market.bean.MarketEntiy;
 import com.definesys.dsgc.service.users.UsersDao;
 import com.definesys.dsgc.service.users.bean.UserInfoBean;
 import com.definesys.mpaas.query.annotation.Column;
@@ -33,6 +35,8 @@ public class ApplyAuthProBeanDTO {
     private String applySerType;//服务类型，服务来源
 
     private String processType;
+
+    private MarketEntiy appliSer;
 
     private List<DSGCConsumerEntities> consumerList;
 
@@ -108,5 +112,13 @@ public class ApplyAuthProBeanDTO {
 
     public void setApplyDesc(String applyDesc) {
         this.applyDesc = applyDesc;
+    }
+
+    public MarketEntiy getAppliSer() {
+        return appliSer;
+    }
+
+    public void setAppliSer(MarketEntiy appliSer) {
+        this.appliSer = appliSer;
     }
 }

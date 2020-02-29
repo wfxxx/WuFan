@@ -324,18 +324,28 @@ public class SVCAuthService {
     public ApplyAuthProBeanDTO getProcessBusinessInfo(String instanceId){
         ApplyAuthProBeanDTO applyAuthProBeanDTO=new ApplyAuthProBeanDTO();
         ApplyAuthProBean applyAuthProBean=svcAuthDao.getProcessBusinessInfo(instanceId);
+        //补充用户信息
         DSGCUser dsgcUser= dsgcUserDao.findUserById(applyAuthProBean.getApplicant());
         applyAuthProBeanDTO.setApplicantEmail(dsgcUser.getUserMail());
         applyAuthProBeanDTO.setApplicantPhone(dsgcUser.getUserMail());
         applyAuthProBeanDTO.setApplicantName(dsgcUser.getUserName());
+        //补充基础信息
         applyAuthProBeanDTO.setApplyDesc(applyAuthProBean.getApplyDesc());
         applyAuthProBeanDTO.setApplySerName(applyAuthProBean.getApplySerName());
         applyAuthProBeanDTO.setApplySerType(applyAuthProBean.getApplySerType());
+        //补充消费者信息
         List<String> consCodes=  Arrays.asList(applyAuthProBean.getConsumerStr().split(","));
         List<DSGCConsumerEntities> consCodesList=consumersDao.queryConsumersListByIds(consCodes);
-        applyAuthProBeanDTO .setConsumerList(consCodesList);
+        applyAuthProBeanDTO.setConsumerList(consCodesList);
         applyAuthProBeanDTO.setInstanceId(applyAuthProBean.getInstanceId());
         applyAuthProBeanDTO.setProcessType(applyAuthProBean.getProcessType());
+        //补充服务信息
+        if(applyAuthProBeanDTO.getApplySerType().equals("apiSource")){
+            applyAuthProBeanDTO.setAppliSer(svcAuthDao.queryApi(applyAuthProBeanDTO.getApplySerName()));
+        }
+        if(applyAuthProBeanDTO.getApplySerType().equals("servSource")){
+            applyAuthProBeanDTO.setAppliSer(svcAuthDao.queryServ(applyAuthProBeanDTO.getApplySerName()));
+        }
         return applyAuthProBeanDTO;
     }
 
