@@ -45,8 +45,8 @@ public class BpmDao {
 //                  .doPageQuery(pageIndex,pageSize,BpmInstanceBean.class);
     }
     public PageQueryResult<BpmInstanceBean> myApply(BpmCommonReqBean param, String userId, int pageSize, int pageIndex){
-        StringBuffer sqlStr = new StringBuffer("select * from (select distinct dbi.INST_ID,dbi.INST_TITLE,dbi.PROCESS_ID，dbi.CUR_NODE,dbi.CREATION_DATE,dbi.INST_STAT,(select du.USER_NAME from DSGC_USER du where du.USER_ID = dbt.APPROVER) APPROVER,dbp.PROCESS_NAME\n" +
-                "from dsgc_bpm_instance dbi,DSGC_BPM_TASK dbt,DSGC_BPM_PROCESS dbp where dbi.INST_ID = dbt.INST_ID(+) and dbi.PROCESS_ID = dbp.PROCESS_ID(+) and dbi.CREATED_BY = #userId)");
+        StringBuffer sqlStr = new StringBuffer("select * from (select distinct dbi.INST_ID,dbi.INST_TITLE,dbi.PROCESS_ID,dbi.CUR_NODE,dbi.CREATION_DATE,dbi.INST_STAT,(select du.USER_NAME from DSGC_USER du where du.USER_ID = dbt.APPROVER) APPROVER,dbp.PROCESS_NAME\n" +
+                "from dsgc_bpm_instance dbi,DSGC_BPM_TASK dbt,DSGC_BPM_PROCESS dbp where dbi.INST_ID = dbt.INST_ID(+) and dbi.PROCESS_ID = dbp.PROCESS_ID(+) and dbi.CREATED_BY = #userId) order by  CREATION_DATE desc\n");
         MpaasQuery mq = sw.buildQuery();
         mq.setVar("userId",userId);
         if(!"ALL".equals(param.getQueryType().trim())){

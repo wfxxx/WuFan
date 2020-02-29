@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.definesys.dsgc.service.envinfo.bean.*;
 import com.definesys.dsgc.service.utils.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class EnvInfoService {
@@ -52,22 +55,24 @@ public class EnvInfoService {
                     envInfoDao.addApiInfoNode(dagEnvInfoNodeBean);
                 }
             }
-        }else {
+        } else {
             envInfoDao.delApiInfoNode(envCode);
         }
     }
 
     public DagEnvInfoDTO queryApiEnvCfg(CommonReqBean q) {
-        DsgcEnvInfoCfgBean dsgcEnvInfoCfgBean = envInfoDao.queryApiEnvCfg(q);
+        DsgcEnvInfoCfgBean dsgcEnvInfoCfgBean = envInfoDao.queryApiEnvCfg(q.getCon0());
         DagEnvInfoDTO dto = new DagEnvInfoDTO();
-        dto.setEnvCode(dsgcEnvInfoCfgBean.getEnvCode());
-        dto.setEnvName(dsgcEnvInfoCfgBean.getEnvName());
-        dto.setEnvSeq(dsgcEnvInfoCfgBean.getEnvSeq());
-        dto.setReqLocation(dsgcEnvInfoCfgBean.getReqLocation());
-        dto.setAdminLocation(dsgcEnvInfoCfgBean.getAdminLocation());
-        dto.setAdminUser(dsgcEnvInfoCfgBean.getAdminUser());
-        dto.setAdminPd(dsgcEnvInfoCfgBean.getAdminPd());
-        return dto;
+        if (null != dsgcEnvInfoCfgBean) {
+            BeanUtils.copyProperties(dsgcEnvInfoCfgBean, dto);
+            String envCode = dsgcEnvInfoCfgBean.getEnvCode();
+            //查询子表By - envCode
+            List<DagEnvInfoNodeBean> dagEnvInfoNodeBeans = envInfoDao.queryApiEnvNode(envCode);
+            dto.setNodeList(dagEnvInfoNodeBeans);
+            return dto;
+        } else {
+            return null;
+        }
     }
 
     public List<DagEnvNodeDTO> queryApiEnvNode(CommonReqBean q) {
@@ -113,6 +118,142 @@ public class EnvInfoService {
             result.add(dto);
         }
         return result;
+
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void addOrUpdateEnvInfoCfg(DsgcEnvInfoCfgBean envInfoCfg) {
+        String adminLocation = envInfoCfg.getAdminLocation();
+        String reqLocation = envInfoCfg.getReqLocation();
+
+        envInfoCfg.setAdminIp(this.getIpFromUrl(adminLocation));
+        envInfoCfg.setAdminPort(this.getPortFromUrl(adminLocation));
+
+        envInfoCfg.setEsbIp(this.getIpFromUrl(reqLocation));
+        envInfoCfg.setEsbPort(this.getPortFromUrl(reqLocation));
+
+        envInfoDao.addOrUpdateEnvInfoCfg(envInfoCfg);
+    }
+
+    /**
+     * 从url中分析出 IP
+     */
+    public String getIpFromUrl(String url) {
+        String host = "";
+        Pattern p = Pattern.compile("(?<=//|)((\\w)+\\.)+\\w+");
+        Matcher matcher = p.matcher(url);
+        if (matcher.find()) {
+            host = matcher.group();
+        }
+        return host;
+    }
+
+    /**
+     * 从url中分析出 PORT
+     */
+    public String getPortFromUrl(String url) {
+        String host = "";
+        Pattern p = Pattern.compile("(?<=//|)((\\w)+\\.)+\\w+(:\\d{0,5})?");
+        Matcher matcher = p.matcher(url);
+        if (matcher.find()) {
+            host = matcher.group();
+        }
+        return host.substring(host.indexOf(":") + 1, host.length());
+    }
+
+
+    @Transactional(rollbackFor = Exception.class)
+    public void addOrUpdateEnvMachineCfg(CommonReqBean params) {
+        String envCode = params.getCon0();
+        List<DSGCEnvMachineCfg> machineAddList = params.getMachineList();
+        if (machineAddList != null && !machineAddList.isEmpty()) {
+            List<DSGCEnvMachineCfg> machineGetList = envInfoDao.getEnvMachineCfgByEnvCode(envCode);
+            if (machineGetList == null && machineGetList.isEmpty()) {
+                for (int i = 0; i < machineAddList.size(); i++) {
+                    DSGCEnvMachineCfg machineCfg = machineAddList.get(i);
+                    envInfoDao.addEnvMachineCfg(machineCfg);
+                }
+            } else {
+                envInfoDao.delEnvMachineCfg(envCode);
+                for (int i = 0; i < machineAddList.size(); i++) {
+                    DSGCEnvMachineCfg machineCfg = machineAddList.get(i);
+                    envInfoDao.addEnvMachineCfg(machineCfg);
+                }
+            }
+        } else {
+            envInfoDao.delEnvMachineCfg(envCode);
+        }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void addOrUpdateEnvServerCfg(CommonReqBean params) {
+        String envCode = params.getCon0();
+        List<DSGCEnvServerCfg> servAddList = params.getServList();
+        if (servAddList != null && !servAddList.isEmpty()) {
+            List<DSGCEnvServerCfg> servGetList = envInfoDao.getEnvServCfgByEnvCode(envCode);
+            if (servGetList == null && servGetList.isEmpty()) {
+                for (int i = 0; i < servAddList.size(); i++) {
+                    DSGCEnvServerCfg dsgcEnvServerCfg = servAddList.get(i);
+                    envInfoDao.addEnvServCfg(dsgcEnvServerCfg);
+                }
+            } else {
+                envInfoDao.delEnvServCfg(envCode);
+                for (int i = 0; i < servAddList.size(); i++) {
+                    DSGCEnvServerCfg dsgcEnvServerCfg = servAddList.get(i);
+                    envInfoDao.addEnvServCfg(dsgcEnvServerCfg);
+                }
+            }
+        } else {
+            envInfoDao.delEnvServCfg(envCode);
+        }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void addOrUpdateSvcgenDeployControl(CommonReqBean params) {
+        String envCode = params.getCon0();
+        List<SvcgenDeployControl> deployAddList = params.getDeployList();
+        if (deployAddList != null && !deployAddList.isEmpty()) {
+            List<SvcgenDeployControl> deployGetList = envInfoDao.getEnvDeployCfgByEnvCode(envCode);
+            if (deployGetList == null && deployGetList.isEmpty()) {
+                for (int i = 0; i < deployAddList.size(); i++) {
+                    SvcgenDeployControl svcgenDeployControl = deployAddList.get(i);
+                    envInfoDao.addEnvDeployCfg(svcgenDeployControl);
+                }
+            } else {
+                envInfoDao.delEnvDeployCfg(envCode);
+                for (int i = 0; i < deployAddList.size(); i++) {
+                    SvcgenDeployControl svcgenDeployControl = deployAddList.get(i);
+                    envInfoDao.addEnvDeployCfg(svcgenDeployControl);
+                }
+            }
+        } else {
+            envInfoDao.delEnvDeployCfg(envCode);
+        }
+    }
+
+    public DSGCBusCfgVO queryEsbCfgDetails(String deicId) {
+        DSGCBusCfgVO busCfgVO = new DSGCBusCfgVO();
+        DsgcEnvInfoCfgBean envInfoCfg = envInfoDao.queryApiEnvCfg(deicId);
+        if (null != envInfoCfg) {
+            BeanUtils.copyProperties(envInfoCfg, busCfgVO);
+            String envCode = envInfoCfg.getEnvCode();
+            //查询子表By - envCode
+            List<DSGCEnvMachineCfg> envMachineCfgs = envInfoDao.getEnvMachineCfgByEnvCode(envCode);
+            List<DSGCEnvServerCfg> envServerCfgs = envInfoDao.getEnvServCfgByEnvCode(envCode);
+            List<SvcgenDeployControl> deployControls = envInfoDao.getEnvDeployCfgByEnvCode(envCode);
+
+            //设置服务器和节点的个数
+            busCfgVO.setServerCount(envMachineCfgs.size());
+            busCfgVO.setNodeCount(envServerCfgs.size());
+
+            busCfgVO.setEnvMachineCfgs(envMachineCfgs);
+            busCfgVO.setEnvServerCfgs(envServerCfgs);
+            busCfgVO.setDeployControls(deployControls);
+
+            return busCfgVO;
+        } else {
+            return null;
+        }
 
     }
 }
