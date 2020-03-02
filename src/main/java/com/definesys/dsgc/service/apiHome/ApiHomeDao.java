@@ -4,6 +4,7 @@ import com.definesys.dsgc.service.apiHome.bean.ApiHomeHisto;
 import com.definesys.dsgc.service.market.bean.MarketEntiy;
 import com.definesys.mpaas.query.MpaasQuery;
 import com.definesys.mpaas.query.MpaasQueryFactory;
+import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -41,10 +42,10 @@ public class ApiHomeDao {
         return sw.buildQuery().sql("SELECT COUNT(1) as value FROM dsgc_apis t WHERE TO_CHAR(t.creation_date,'YYYY-MM-DD')=TO_CHAR(SYSDATE-1,'YYYY-MM-DD')").doQueryFirst(ApiHomeHisto.class);
         }
         public ApiHomeHisto getLastWeekTotalA(){
-        return sw.buildQuery().sql("  SELECT COUNT(1) as value FROM dsgc_apis  t WHERE t.creation_date>=TRUNC(NEXT_DAY(SYSDATE-7,1)+1) and  t.creation_date<=TRUNC(NEXT_DAY(SYSDATE-7,1)+7)").doQueryFirst(ApiHomeHisto.class);
+        return sw.buildQuery().sql("  SELECT COUNT(1) as value FROM dsgc_apis  t WHERE t.creation_date>=TRUNC(NEXT_DAY(SYSDATE-7,1)-6) and  t.creation_date<=TRUNC(NEXT_DAY(SYSDATE-7,1))").doQueryFirst(ApiHomeHisto.class);
         }
         public ApiHomeHisto getNowWeekTotalA(){
-        return sw.buildQuery().sql("  SELECT COUNT(1) as value FROM dsgc_apis t WHERE t.creation_date>=TRUNC(NEXT_DAY(SYSDATE,1)+1) and  t.creation_date<=TRUNC(NEXT_DAY(SYSDATE,1)+7)").doQueryFirst(ApiHomeHisto.class);
+        return sw.buildQuery().sql("  SELECT COUNT(1) as value FROM dsgc_apis t WHERE t.creation_date>=TRUNC(NEXT_DAY(SYSDATE,1)-6) and  t.creation_date<=TRUNC(NEXT_DAY(SYSDATE,1))").doQueryFirst(ApiHomeHisto.class);
         }
 
 
@@ -59,11 +60,11 @@ public class ApiHomeDao {
         return sw.buildQuery().sql("SELECT COUNT(1) as value FROM dsgc_system_entities t WHERE TO_CHAR(t.creation_date,'YYYY-MM-DD')=TO_CHAR(SYSDATE-1,'YYYY-MM-DD')").doQueryFirst(ApiHomeHisto.class);
     }
     public ApiHomeHisto getLastWeekTotalE(){
-        return sw.buildQuery().sql("  SELECT COUNT(1) as value FROM dsgc_system_entities  t WHERE t.creation_date>=TRUNC(NEXT_DAY(SYSDATE-7,1)+1) and  t.creation_date<=TRUNC(NEXT_DAY(SYSDATE-7,1)+7)").doQueryFirst(ApiHomeHisto.class);
+        return sw.buildQuery().sql("  SELECT COUNT(1) as value FROM dsgc_system_entities  t WHERE t.creation_date>=TRUNC(NEXT_DAY(SYSDATE-7,1)-6) and  t.creation_date<=TRUNC(NEXT_DAY(SYSDATE-7,1))").doQueryFirst(ApiHomeHisto.class);
 
     }
     public ApiHomeHisto getNowWeekTotalE(){
-        return sw.buildQuery().sql("  SELECT COUNT(1) as value FROM dsgc_system_entities  t WHERE t.creation_date>=TRUNC(NEXT_DAY(SYSDATE,1)+1) and  t.creation_date<=TRUNC(NEXT_DAY(SYSDATE,1)+7)").doQueryFirst(ApiHomeHisto.class);
+        return sw.buildQuery().sql("  SELECT COUNT(1) as value FROM dsgc_system_entities  t WHERE t.creation_date>=TRUNC(NEXT_DAY(SYSDATE,1)-6) and  t.creation_date<=TRUNC(NEXT_DAY(SYSDATE,1))").doQueryFirst(ApiHomeHisto.class);
 
     }
 
@@ -78,11 +79,30 @@ public class ApiHomeDao {
         return sw.buildQuery().sql("SELECT COUNT(1) as value FROM dsgc_user t WHERE TO_CHAR(t.creation_date,'YYYY-MM-DD')=TO_CHAR(SYSDATE-1,'YYYY-MM-DD')").doQueryFirst(ApiHomeHisto.class);
     }
     public ApiHomeHisto getLastWeekTotalU(){
-        return sw.buildQuery().sql("  SELECT COUNT(1) as value FROM dsgc_user  t WHERE t.creation_date>=TRUNC(NEXT_DAY(SYSDATE-7,1)+1) and  t.creation_date<=TRUNC(NEXT_DAY(SYSDATE-7,1)+7)").doQueryFirst(ApiHomeHisto.class);
+        return sw.buildQuery().sql("  SELECT COUNT(1) as value FROM dsgc_user  t WHERE t.creation_date>=TRUNC(NEXT_DAY(SYSDATE-7,1)-6) and  t.creation_date<=TRUNC(NEXT_DAY(SYSDATE-7,1))").doQueryFirst(ApiHomeHisto.class);
 
     }
     public ApiHomeHisto getNowWeekTotalU(){
-        return sw.buildQuery().sql("  SELECT COUNT(1) as value FROM dsgc_user  t WHERE t.creation_date>=TRUNC(NEXT_DAY(SYSDATE,1)+1) and  t.creation_date<=TRUNC(NEXT_DAY(SYSDATE,1)+7)").doQueryFirst(ApiHomeHisto.class);
+        return sw.buildQuery().sql("  SELECT COUNT(1) as value FROM dsgc_user  t WHERE t.creation_date>=TRUNC(NEXT_DAY(SYSDATE,1)-6) and  t.creation_date<=TRUNC(NEXT_DAY(SYSDATE,1))").doQueryFirst(ApiHomeHisto.class);
+
+    }
+
+    //查找访问量
+    public ApiHomeHisto getTotalV(){
+        return sw.buildQuery().sql("SELECT SUM(T.TOTAL_TIMES) as value FROM rp_api_year t ").doQueryFirst(ApiHomeHisto.class);
+    }
+    public ApiHomeHisto getTodyTotalV(){
+        return sw.buildQuery().sql("SELECT SUM(T.TOTAL_TIMES) as value FROM rp_api_day t where to_char(t.creation_date,'yyyy-mm-dd')=to_char(sysdate,'yyyy-mm-dd')").doQueryFirst(ApiHomeHisto.class);
+    }
+    public ApiHomeHisto getYestodayTotalV(){
+        return sw.buildQuery().sql("SELECT SUM(T.TOTAL_TIMES) as value FROM rp_api_day t WHERE TO_CHAR(t.creation_date,'YYYY-MM-DD')=TO_CHAR(SYSDATE-1,'YYYY-MM-DD')").doQueryFirst(ApiHomeHisto.class);
+    }
+    public ApiHomeHisto getLastWeekTotalV(){
+        return sw.buildQuery().sql("  SELECT SUM(T.TOTAL_TIMES) as value FROM rp_api_day  t WHERE t.creation_date>=TRUNC(NEXT_DAY(SYSDATE-7,1)-6) and  t.creation_date<=TRUNC(NEXT_DAY(SYSDATE-7,1))").doQueryFirst(ApiHomeHisto.class);
+
+    }
+    public ApiHomeHisto getNowWeekTotalV(){
+        return sw.buildQuery().sql("  SELECT SUM(T.TOTAL_TIMES) as value FROM rp_api_day  t WHERE t.creation_date>=TRUNC(NEXT_DAY(SYSDATE,1)-6) and  t.creation_date<=TRUNC(NEXT_DAY(SYSDATE,1))").doQueryFirst(ApiHomeHisto.class);
 
     }
 
@@ -152,5 +172,113 @@ public class ApiHomeDao {
                 "  group by t.cate_name,t.cate_code").doQuery(ApiHomeHisto.class);
     }
 
+
+
+    //获取Api访问排序柱状图数据
+    //TODO
+    public PageQueryResult<ApiHomeHisto> querySortVist(String startTime,String endTime,String limitTime){
+        List<ApiHomeHisto> result=new ArrayList<ApiHomeHisto>();
+        MpaasQuery resulSql =sw.buildQuery();
+        if(startTime!=null&&endTime!=null) {
+            resulSql.sql("select t.api_code as name ,sum(t.total_times)  over(partition by t.api_code) as value from rp_api_day t " +
+                    "where t.creation_date<=to_date(#endTime,'yyyy-mm-dd') and t.creation_date>to_date(#startTime,'yyyy-mm-dd') order by value desc")
+                    .setVar("endTime",endTime).setVar("startTime",startTime);
+        }
+        else if(limitTime.equals("year")){
+            resulSql .sql("select t.api_code as name ,sum(t.total_times)  over(partition by t.api_code) as value from rp_api_year t\n" +
+                    " where to_char(t.creation_date,'yyyy')=to_char(sysdate,'yyyy') order by value desc");
+        }else if(limitTime.equals("month")){
+            resulSql .sql("select t.api_code as name ,sum(t.total_times)  over(partition by t.api_code) as value from rp_api_month t\n" +
+                    " where to_char(t.creation_date,'yyyy-mm')=to_char(sysdate,'yyyy-mm') order by value desc");
+        }else if(limitTime.equals("week")){
+            resulSql.sql("select t.api_code as name ,sum(t.total_times)  over(partition by t.api_code) as value from rp_api_day t\n" +
+                    "  where to_char(t.creation_date,'iw')=to_char(sysdate,'iw') and to_char(t.creation_date,'yy')=to_char(sysdate,'yyyy') order by value desc ");
+        }else if(limitTime.equals("day")){
+            resulSql .sql("select t.api_code as name ,sum(t.total_times)  over(partition by t.api_code) as value from rp_api_day t\n" +
+                    " where to_char(t.creation_date,'yyyy-mm-dd')=to_char(sysdate,'yyyy-mm-dd') order by value desc");
+        }
+        return resulSql.doPageQuery(1,10,ApiHomeHisto.class);
+    }
+
+    //获取Api并发排序柱状图数据
+    //TODO
+    public PageQueryResult<ApiHomeHisto> querySortConcurrent(String startTime,String endTime,String limitTime){
+
+        List<ApiHomeHisto> result=new ArrayList<ApiHomeHisto>();
+        MpaasQuery resulSql =sw.buildQuery();
+        if(startTime!=null&&endTime!=null) {
+            resulSql.sql("select t.api_code as name,max(t.total_times) over(partition by t.api_code )  as value from rp_api_day t " +
+                    "where t.creation_date<=to_date(#endTime,'yyyy-mm-dd') and t.creation_date>to_date(#startTime,'yyyy-mm-dd') order by value desc")
+                    .setVar("endTime",endTime).setVar("startTime",startTime);
+        }
+        else if(limitTime.equals("year")){
+            resulSql .sql("select t.api_code as name,max(t.total_times) over(partition by t.api_code )  as value from rp_api_day t\n" +
+                    " where to_char(t.creation_date,'yyyy')=to_char(sysdate,'yyyy') order by value desc");
+        }else if(limitTime.equals("month")){
+            resulSql .sql("select t.api_code as name,max(t.total_times) over(partition by t.api_code )  as value from rp_api_day t \n" +
+                    " where to_char(t.creation_date,'yyyy-mm')=to_char(sysdate,'yyyy-mm') order by value desc");
+        }else if(limitTime.equals("week")){
+            resulSql.sql("select t.api_code as name,max(t.total_times) over(partition by t.api_code )  as value from rp_api_day t \n" +
+                    "  where to_char(t.creation_date,'iw')=to_char(sysdate,'iw') and to_char(t.creation_date,'yy')=to_char(sysdate,'yyyy') order by value desc");
+        }else if(limitTime.equals("day")){
+            resulSql .sql("select t.api_code as name,max(t.total_times) over(partition by t.api_code )  as value from rp_api_day t \n" +
+                    " where to_char(t.creation_date,'yyyy-mm-dd')=to_char(sysdate,'yyyy-mm-dd') order by value desc");
+        }
+        return resulSql.doPageQuery(1,10,ApiHomeHisto.class);
+
+
+    }
+
+    //获取Api等待排序柱状图数据
+    public PageQueryResult<ApiHomeHisto> querySortWait(String startTime, String endTime, String limitTime){
+        List<ApiHomeHisto> result=new ArrayList<ApiHomeHisto>();
+        MpaasQuery resulSql =sw.buildQuery();
+        if(startTime!=null&&endTime!=null) {
+            resulSql.sql("select t.api_code as name ,avg(t.avg_cost)  over(partition by t.api_code) as value from rp_api_day t  " +
+                    "where  t.creation_date<=to_date(#endTime,'yyyy-mm-dd') and t.creation_date>to_date(#startTime,'yyyy-mm-dd') order by value desc")
+                    .setVar("endTime",endTime).setVar("startTime",startTime);
+
+        }
+        else if(limitTime.equals("year")){
+            resulSql .sql("select t.api_code as name ,avg(t.avg_cost)  over(partition by t.api_code) as value from rp_api_year t\n" +
+                    " where to_char(t.creation_date,'yyyy')=to_char(sysdate,'yyyy') order by value desc");
+        }else if(limitTime.equals("month")){
+            resulSql .sql("select t.api_code as name ,avg(t.avg_cost)  over(partition by t.api_code) as value from rp_api_month t\n" +
+                    " where to_char(t.creation_date,'yyyy-mm')=to_char(sysdate,'yyyy-mm') order by value desc");
+        }else if(limitTime.equals("week")){
+            resulSql.sql("select t.api_code as name ,avg(t.avg_cost)  over(partition by t.api_code) as value from rp_api_day t\n" +
+                    "  where to_char(t.creation_date,'iw')=to_char(sysdate,'iw') and to_char(t.creation_date,'yy')=to_char(sysdate,'yyyy') order by value desc");
+        }else if(limitTime.equals("day")){
+            resulSql .sql("select t.api_code as name ,avg(t.avg_cost)  over(partition by t.api_code) as value from rp_api_day t\n" +
+                    " where to_char(t.creation_date,'yyyy-mm-dd')=to_char(sysdate,'yyyy-mm-dd') order by value desc");
+        }
+
+        return resulSql.doPageQuery(1,10,ApiHomeHisto.class);
+    }
+
+
+    //查询当天运行次数流量
+    public List<ApiHomeHisto> queryTrafficRuntimes(){
+       return sw.buildQuery().sql("select to_char(t.creation_date,'hh24:mi') as name ,sum(t.total_times)  over(partition by t.creation_date) as value from rp_api_hour t \n" +
+                "where to_char(t.creation_date,'yyyy-mm-dd')=to_char(sysdate,'yyyy-mm-dd') order by t.creation_date  ")
+                .doQuery(ApiHomeHisto.class);
+    }
+
+
+
+    //查询当天平均响应时间
+    public List<ApiHomeHisto> queryTrafficCost(){
+        return  sw.buildQuery().sql("select to_char(t.creation_date,'hh24:mi') as name ,avg(t.avg_cost)  over(partition by t.creation_date) as value from rp_api_hour t \n" +
+                "where to_char(t.creation_date,'yyyy-mm-dd')=to_char(sysdate,'yyyy-mm-dd') order by t.creation_date ")
+                .doQuery(ApiHomeHisto.class);
+    }
+
+
+    //查询当天错误次数流量
+     public List<ApiHomeHisto> queryTrafficError(){
+         return   sw.buildQuery().sql("select to_char(t.creation_date,'hh24:mi') as name ,sum(t.total_1xx+t.total_2xx+t.total_3xx+t.total_4xx+t.total_5xx)  over(partition by t.creation_date) as value from rp_api_hour t \n" +
+                 "where to_char(t.creation_date,'yyyy-mm-dd')=to_char(sysdate,'yyyy-mm-dd') order by t.creation_date ")
+                 .doQuery(ApiHomeHisto.class);
+     }
 
 }
