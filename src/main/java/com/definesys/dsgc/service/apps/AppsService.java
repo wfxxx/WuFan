@@ -50,6 +50,8 @@ public class AppsService {
         userResDTO.setUserName(dsgcUsers.get(i).getUserName());
         userResDTO.setUserRole(dsgcUsers.get(i).getUserRole());
         userResDTO.setUserDescription(dsgcUsers.get(i).getUserDescription());
+        userResDTO.setUserMail(dsgcUsers.get(i).getUserMail());
+        userResDTO.setUserPhone(dsgcUsers.get(i).getUserPhone());
         for (int j = 0;j<lookupValueList.size();j++){
             if (userResDTO.getUserRole().equals(lookupValueList.get(j).getLookupCode())){
                 userResDTO.setUserRoleName(lookupValueList.get(j).getMeaning());

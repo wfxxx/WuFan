@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.Date;
 
 @SQLQuery(value = {
-        @SQL(view = "Q_BY_USERID", sql = "select t.see_id,t.rule_id,t.re_name,t.re_expr,t.error_fail,t.biz_fail,t.is_enable,t.object_version_number,t.created_by,t.creation_date,t.last_updated_by,t.last_update_date,(select count(1) from dsgc_mn_services b where b.expr_ref_id = t.see_id) serv_count from DSGC_MN_SERVEXCPT_RULEEXPR t, DSGC_MN_SUBCRIBES s where t.rule_id = s.mn_rule and s.scb_user = #userId")
+        @SQL(view = "Q_BY_USERID", sql = "select t.see_id,t.rule_id,t.re_name,t.re_expr,t.error_fail,t.biz_fail,t.is_enable,t.object_version_number,t.created_by,t.creation_date,t.last_updated_by,t.last_update_date,(select count(1) from dsgc_mn_services b where b.expr_ref_id = t.see_id) serv_count,(select count(1) from dsgc_mn_user b where b.rule_id = t.see_id) user_count from DSGC_MN_SERVEXCPT_RULEEXPR t, DSGC_MN_SUBCRIBES s where t.rule_id = s.mn_rule and s.scb_user = #userId")
 })
 @Table(value = "DSGC_MN_SERVEXCPT_RULEEXPR")
 public class ServExcptSubRulesBean extends MpaasBasePojo {
@@ -42,6 +42,9 @@ public class ServExcptSubRulesBean extends MpaasBasePojo {
     private boolean isEnableBL;
     @Column(value = "serv_count", type = ColumnType.CALCULATE)
     private Integer servCount;
+
+    @Column(value = "user_count", type = ColumnType.CALCULATE)
+    private Integer userCount;
 
     @SystemColumn(SystemColumnType.OBJECT_VERSION)
     @Column(value = "object_version_number", type = ColumnType.DB)
@@ -204,5 +207,29 @@ public class ServExcptSubRulesBean extends MpaasBasePojo {
 
     public void setIsEnableBL(boolean isEnableBL) {
         this.isEnableBL = isEnableBL;
+    }
+
+    public boolean isErrorFailBL() {
+        return errorFailBL;
+    }
+
+    public boolean isBizFailBL() {
+        return bizFailBL;
+    }
+
+    public boolean isEnableBL() {
+        return isEnableBL;
+    }
+
+    public void setEnableBL(boolean enableBL) {
+        isEnableBL = enableBL;
+    }
+
+    public Integer getUserCount() {
+        return userCount;
+    }
+
+    public void setUserCount(Integer userCount) {
+        this.userCount = userCount;
     }
 }
