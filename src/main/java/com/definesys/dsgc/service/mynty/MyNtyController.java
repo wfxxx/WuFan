@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -21,11 +22,34 @@ public class MyNtyController {
     @Autowired
     private MyNtyService mns;
 
+
+    @RequestMapping(value="/queryMNRules",method = RequestMethod.POST)
+    public Response queryMNRules(@RequestBody MyNtyQueryParamVO reqParam,HttpServletRequest request){
+
+        List<MyNtyQueryListBean> t = new ArrayList<MyNtyQueryListBean>();
+        MyNtyQueryListBean s = new MyNtyQueryListBean();
+        s.setReadonly(true);
+        s.setCreator("DSGC");
+        s.setAlertCount(1);
+        s.setAppCodeMeaning("测试系统");
+        s.setRuleExprDesc("(最小响应时间=sss 与 最大响应时间=sss)");
+        s.setRuleTitle("sssss");
+        s.setRuleId("6834322cf1cc4f3f9f1988322813ee86");
+        s.setRuleType("SLA");
+        s.setRuleTypeMeaning("服务预警");
+        s.setSubscriber(true);
+
+        t.add(s);
+
+        return Response.ok().setData(t);
+    }
+
     /**
      * 获取规则列表
      * @param ruleType
      * @param request
      * @return
+     * @deprecated
      */
     @RequestMapping(value="/getMNRules",method = RequestMethod.GET)
     public Response getMNRules(@RequestParam String ruleType,HttpServletRequest request){
@@ -177,4 +201,6 @@ public class MyNtyController {
         }
         return Response.ok().setData(mns.saveMNSubUser(sltReq));
     }
+
+
 }

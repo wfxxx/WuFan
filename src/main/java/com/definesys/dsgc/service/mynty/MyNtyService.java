@@ -1,5 +1,6 @@
 package com.definesys.dsgc.service.mynty;
 
+import com.definesys.dsgc.service.lov.LovDao;
 import com.definesys.dsgc.service.mynty.bean.*;
 import com.definesys.dsgc.service.users.bean.DSGCUser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +16,30 @@ public class MyNtyService {
     private MyNtyDao mndao;
 
 
+    @Autowired
+    private LovDao lovDao;
+
+    public List<MyNtyQueryListBean> queryMNRules(String uid,MyNtyQueryParamVO reqParam){
+
+//        if("ALL".equals(reqParam.getRuleType())){
+//
+//        } else if(){
+//
+//        } else if(){
+//
+//        }
+
+        return null;
+
+
+    }
+
     /**
      * 获取我的通知订阅规则
      * @param userId
      * @param ruleType
      * @return
+     * @deprecated
      */
     public List<MyNtyRulesBean> getMNRules(String userId,String ruleType){
         List<MyNtyRulesBean> res = mndao.getMNRules(userId,ruleType);
