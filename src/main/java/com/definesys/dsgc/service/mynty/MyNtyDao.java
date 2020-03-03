@@ -88,7 +88,7 @@ public class MyNtyDao {
     public void saveMNSubcributeServ(String ruleType,String ruleId,String[] unSlt,String[] newSlted) {
         if ("SE".equals(ruleType)) {
             this.saveMNSESubServ(ruleId,unSlt,newSlted);
-        } else if ("SLA".equals(ruleType)) {
+        } else {
             this.saveMNSLASubServ(ruleId,unSlt,newSlted);
         }
     }
@@ -207,24 +207,40 @@ public class MyNtyDao {
         }
 
         StringBuilder sqlBuilder = new StringBuilder();
-        sqlBuilder.append("select t.serv_no,t.serv_name,(select sys_name from dsgc_system_entities where sys_code = t.subordinate_system) serv_system,(select ss.creation_date from dsgc_mn_services ss where");
+        if("API".equals(ruleType)){
+            sqlBuilder.append("select t.api_code serv_no,t.api_name serv_name,(select sys_name from dsgc_system_entities where sys_code = t.app_code) serv_system,(select ss.creation_date from dsgc_mn_services ss where");
+        }else {
+            sqlBuilder.append("select t.serv_no,t.serv_name,(select sys_name from dsgc_system_entities where sys_code = t.subordinate_system) serv_system,(select ss.creation_date from dsgc_mn_services ss where");
+        }
         if ("SE".equals(ruleType)) {
             sqlBuilder.append(" ss.expr_ref_id ='" + ruleId);
         } else {
             sqlBuilder.append(" ss.rule_id ='" + ruleId);
         }
-        sqlBuilder.append("' and ss.serv_no = t.serv_no ) creation_date from dsgc_services t");
+        if("API".equals(ruleType)){
+            sqlBuilder.append("' and ss.serv_no = t.api_code ) creation_date from dsgc_apis t");
+        }else {
+            sqlBuilder.append("' and ss.serv_no = t.serv_no ) creation_date from dsgc_services t");
+        }
 
         String newSltedInStr = this.covertArrayToInStr(newSlted);
         if (newSltedInStr != null) {
-            sqlBuilder.append(" where (t.serv_no in (" + newSltedInStr + ") or t.serv_no in (select s.serv_no from dsgc_mn_services s");
+            if("API".equals(ruleType)){
+                sqlBuilder.append(" where (t.api_code in (" + newSltedInStr + ") or t.api_code in (select s.serv_no from dsgc_mn_services s");
+            }else {
+                sqlBuilder.append(" where (t.serv_no in (" + newSltedInStr + ") or t.serv_no in (select s.serv_no from dsgc_mn_services s");
+            }
             if ("SE".equals(ruleType)) {
                 sqlBuilder.append(" where s.expr_ref_id = '" + ruleId + "'))");
             } else {
                 sqlBuilder.append(" where s.rule_id = '" + ruleId + "'))");
             }
         } else {
-            sqlBuilder.append(" where t.serv_no in (select s.serv_no from dsgc_mn_services s");
+            if("API".equals(ruleType)){
+                sqlBuilder.append(" where t.api_code in (select s.serv_no from dsgc_mn_services s");
+            }else {
+                sqlBuilder.append(" where t.serv_no in (select s.serv_no from dsgc_mn_services s");
+            }
             if ("SE".equals(ruleType)) {
                 sqlBuilder.append(" where s.expr_ref_id = '" + ruleId + "')");
             } else {
@@ -234,19 +250,35 @@ public class MyNtyDao {
 
         String unSltInStr = this.covertArrayToInStr(unSlt);
         if (unSltInStr != null) {
-            sqlBuilder.append("and t.serv_no not in (" + unSltInStr + ")");
+            if("API".equals(ruleType)){
+                sqlBuilder.append("and t.api_code not in (" + unSltInStr + ")");
+            }else {
+                sqlBuilder.append("and t.serv_no not in (" + unSltInStr + ")");
+            }
         }
 
         if (filterServNo != null && filterServNo.trim().length() > 0) {
-            sqlBuilder.append(" and t.serv_no like '%" + filterServNo + "%'");
+            if("API".equals(ruleType)){
+                sqlBuilder.append(" and t.api_code like '%" + filterServNo + "%'");
+            }else {
+                sqlBuilder.append(" and t.serv_no like '%" + filterServNo + "%'");
+            }
         }
 
         if (filterServName != null && filterServName.trim().length() > 0) {
-            sqlBuilder.append(" and t.serv_name like  '%" + filterServName + "%'");
+            if("API".equals(ruleType)){
+                sqlBuilder.append(" and t.api_name like  '%" + filterServName + "%'");
+            }else {
+                sqlBuilder.append(" and t.serv_name like  '%" + filterServName + "%'");
+            }
         }
 
         if (filterSystem != null && filterSystem.trim().length() > 0) {
-            sqlBuilder.append(" and t.subordinate_system = '" + filterSystem + "'");
+            if("API".equals(ruleType)){
+                sqlBuilder.append(" and t.app_code = '" + filterSystem + "'");
+            }else {
+                sqlBuilder.append(" and t.subordinate_system = '" + filterSystem + "'");
+            }
         }
 
         return sw.buildQuery().sql(sqlBuilder.toString()).doQuery(MyNtyServSltInfoBean.class);
@@ -529,4 +561,129 @@ public class MyNtyDao {
     }
 
 
+    public List<MyNtyUserSltInfoBean> getMNSubUser(String ruleType, String ruleId, String filterUserName, String filterUserDesc,  String[] unSlt, String[] newSlted){
+        List<MyNtyUserSltInfoBean> res = new ArrayList<MyNtyUserSltInfoBean>();
+        if (ruleId == null || ruleId.trim().length() == 0) {
+            return res;
+        }
+        StringBuilder sql = new StringBuilder();
+
+        sql.append("select du.user_id,du.user_name,du.user_role,du.user_mail,du.user_phone,du.user_description,(select dmu.creation_date from dsgc_mn_user dmu where dmu.rule_id = '"+ ruleId+"' and du.user_id = dmu.user_id ) creation_date from dsgc_user du");
+
+        String newSltedInStr = this.covertArrayToInStr(newSlted);
+        if (newSltedInStr != null) {
+            sql.append(" where (du.user_id in (" + newSltedInStr + ") or du.user_id in (select u.user_id from dsgc_mn_user u where u.rule_id = '" + ruleId + "'))");
+        }else {
+            sql.append(" where du.user_id in (select u.user_id from dsgc_mn_user u where u.rule_id = '" + ruleId + "')");
+        }
+
+        String unSltInStr = this.covertArrayToInStr(unSlt);
+        if (unSltInStr != null) {
+            sql.append("and du.user_id not in (" + unSltInStr + ")");
+        }
+
+
+        if (filterUserName != null && filterUserName.trim().length() > 0) {
+            sql.append(" and du.user_name like '%" + filterUserName + "%'");
+        }
+
+        if (filterUserDesc != null && filterUserDesc.trim().length() > 0) {
+            sql.append(" and du.user_description like  '%" + filterUserDesc + "%'");
+        }
+
+        return sw.buildQuery().sql(sql.toString()).doQuery(MyNtyUserSltInfoBean.class);
+    }
+
+
+    /**
+     * 保存服务预警规则订阅服务
+     *
+     * @param ruleId
+     * @param unSlt
+     * @param newSlted
+     */
+    public void saveMNSubUser(String ruleType,String ruleId,String[] unSlt,String[] newSlted) {
+        if ("SE".equals(ruleType)) {
+            this.saveMNSESubUser(ruleId,unSlt,newSlted);
+        } else {
+            this.saveMNSASubUser(ruleId,unSlt,newSlted);
+        }
+    }
+
+
+    public void saveMNSASubUser(String ruleId,String[] unSlt,String[] newSlted) {
+        if (ruleId != null || ruleId.trim().length() > 0) {
+
+            //删除取消订阅的服务
+            if (unSlt != null && unSlt.length > 0) {
+                sw.buildQuery().in("user_id",unSlt).eq("RULE_ID",ruleId).table("DSGC_MN_USER").doDelete();
+            }
+
+            //添加新增订阅的服务
+            if (newSlted != null && newSlted.length > 0) {
+                List<MyNtyRulesBean> ruleExprList = sw.buildQuery().eq("ruleId",ruleId).doQuery(MyNtyRulesBean.class);
+                if (ruleExprList != null && ruleExprList.size() > 0) {
+                    String ruleExpr = ruleExprList.get(0).getRuleExpr();
+                    //更新已经存在的
+                    List<MyNtyUserBean> existedSubServList = sw.buildQuery().in("user_id",newSlted).eq("RULE_ID",ruleId).doQuery(MyNtyUserBean.class);
+                    Set<String> existFlag = new HashSet<String>();
+                    Iterator<MyNtyUserBean> existIter = existedSubServList.iterator();
+                    while (existIter.hasNext()) {
+                        MyNtyUserBean ssb = existIter.next();
+                        existFlag.add(ssb.getUserId());//标记已经存在
+                        sw.buildQuery().rowid("dmuId",ssb.getDmuId()).doUpdate(ssb);
+                    }
+                    //插入不存在的
+                    for (int i = 0; i < newSlted.length; i++) {
+                        String userId = newSlted[i];
+                        if (userId != null && userId.trim().length() > 0 && !existFlag.contains(userId)) {
+                            MyNtyUserBean newSsb = new MyNtyUserBean();
+                            newSsb.setUserId(userId);
+                            newSsb.setRuleId(ruleId);
+                            sw.buildQuery().doInsert(newSsb);
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+
+    public void saveMNSESubUser(String ruleId,String[] unSlt,String[] newSlted) {
+        if (ruleId != null || ruleId.trim().length() > 0) {
+
+            //删除取消订阅的服务
+            if (unSlt != null && unSlt.length > 0) {
+                sw.buildQuery().in("user_id",unSlt).eq("RULE_ID",ruleId).table("DSGC_MN_USER").doDelete();
+            }
+
+            //添加新增订阅的服务
+            if (newSlted != null && newSlted.length > 0) {
+                List<ServExcptSubRulesBean> ruleExprList = sw.buildQuery().eq("seeId",ruleId).doQuery(ServExcptSubRulesBean.class);
+                if (ruleExprList != null && ruleExprList.size() > 0) {
+                    String ruleExpr = ruleExprList.get(0).getReExpr();
+                    //更新已经存在的
+                    List<MyNtyUserBean> existedSubServList = sw.buildQuery().in("user_id",newSlted).eq("RULE_ID",ruleId).doQuery(MyNtyUserBean.class);
+                    Set<String> existFlag = new HashSet<String>();
+                    Iterator<MyNtyUserBean> existIter = existedSubServList.iterator();
+                    while (existIter.hasNext()) {
+                        MyNtyUserBean ssb = existIter.next();
+                        existFlag.add(ssb.getUserId());//标记已经存在
+                        sw.buildQuery().rowid("dmuId",ssb.getDmuId()).doUpdate(ssb);
+                    }
+                    //插入不存在的
+                    for (int i = 0; i < newSlted.length; i++) {
+                        String userId = newSlted[i];
+                        if (userId != null && userId.trim().length() > 0 && !existFlag.contains(userId)) {
+                            MyNtyUserBean newSsb = new MyNtyUserBean();
+                            newSsb.setUserId(userId);
+                            newSsb.setRuleId(ruleId);
+                            sw.buildQuery().doInsert(newSsb);
+                        }
+                    }
+
+                }
+            }
+        }
+    }
 }

@@ -1,10 +1,7 @@
 package com.definesys.dsgc.service.mynty;
 
 //import com.definesys.dsgc.aspect.annotation.AuthAspect;
-import com.definesys.dsgc.service.mynty.bean.DSGCMnNotices;
-import com.definesys.dsgc.service.mynty.bean.MyNtyRulesBean;
-import com.definesys.dsgc.service.mynty.bean.MyNtyServSltBean;
-import com.definesys.dsgc.service.mynty.bean.ServExcptSubRulesBean;
+import com.definesys.dsgc.service.mynty.bean.*;
 import com.definesys.dsgc.service.users.bean.DSGCUser;
 import com.definesys.mpaas.common.http.Response;
 import io.swagger.annotations.Api;
@@ -161,4 +158,23 @@ public class MyNtyController {
     }
 
 
+    @RequestMapping(value="/getMNSubUser",method = RequestMethod.POST)
+    public Response getMNSubUser(@RequestBody MyNtyUserSltBean sltReq, HttpServletRequest request){
+        //获取用户id
+        String userId = request.getHeader("uid");
+        if(userId == null){
+            return Response.error("无效的用户！");
+        }
+        return Response.ok().setData(mns.getMNSubUser(sltReq));
+    }
+
+    @RequestMapping(value="/saveMNSubUser",method = RequestMethod.POST)
+    public Response saveMNSubUser(@RequestBody MyNtyUserSltBean sltReq,HttpServletRequest request){
+        //获取用户id
+        String userId = request.getHeader("uid");
+        if(userId == null){
+            return Response.error("无效的用户！");
+        }
+        return Response.ok().setData(mns.saveMNSubUser(sltReq));
+    }
 }

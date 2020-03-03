@@ -1,9 +1,6 @@
 package com.definesys.dsgc.service.mynty;
 
-import com.definesys.dsgc.service.mynty.bean.DSGCMnNotices;
-import com.definesys.dsgc.service.mynty.bean.MyNtyRulesBean;
-import com.definesys.dsgc.service.mynty.bean.MyNtyServSltBean;
-import com.definesys.dsgc.service.mynty.bean.ServExcptSubRulesBean;
+import com.definesys.dsgc.service.mynty.bean.*;
 import com.definesys.dsgc.service.users.bean.DSGCUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -253,4 +250,84 @@ public class MyNtyService {
         this.mndao.updateDSGCMnNotices(mnNotices);
     }
 
+
+    public MyNtyUserSltBean getMNSubUser(MyNtyUserSltBean sltReq) {
+
+
+        sltReq = this.refreshMNUserSltBean(sltReq);
+        sltReq.setSltUsers(mndao.getMNSubUser(sltReq.getRuleType(),sltReq.getRuleId(),sltReq.getFilterUserName(),sltReq.getFilterUserDesc(),sltReq.getOldDel(),sltReq.getOldAdd()));
+
+        return sltReq;
+    }
+
+    private MyNtyUserSltBean refreshMNUserSltBean(MyNtyUserSltBean sltReq) {
+        Set<String> oldAdd = new HashSet<String>();
+        if (sltReq.getOldAdd() != null) {
+            for (String userId : sltReq.getOldAdd()) {
+                if (!oldAdd.contains(userId)) {
+                    oldAdd.add(userId);
+                }
+            }
+        }
+
+        Set<String> oldDel = new HashSet<String>();
+        if (sltReq.getOldDel() != null) {
+            for (String userId : sltReq.getOldDel()) {
+                if (!oldDel.contains(userId)) {
+                    oldDel.add(userId);
+                }
+            }
+        }
+
+        if (sltReq.getCurChgs() != null && sltReq.getCurChgs().length > 0) {
+            for (int i = 0; i < sltReq.getCurChgs().length; i++) {
+                String userId = sltReq.getCurChgs()[i];
+                if (userId != null && userId.trim().length() > 0) {
+                    if ("A".equals(sltReq.getCurOper())) {
+                        if (oldDel.contains(userId)) {
+                            oldDel.remove(userId);
+                        } else {
+                            if (!oldAdd.contains(userId)) {
+                                oldAdd.add(userId);
+                            }
+                        }
+
+                    } else if ("D".equals(sltReq.getCurOper())) {
+                        if (oldAdd.contains(userId)) {
+                            oldAdd.remove(userId);
+                        } else {
+                            if (!oldDel.contains(userId)) {
+                                oldDel.add(userId);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        sltReq.setCurOper(null);
+        sltReq.setCurChgs(null);
+
+        String[] newOldAdd = new String[oldAdd.size()];
+        sltReq.setOldAdd(oldAdd.toArray(newOldAdd));
+
+        String[] newOldDel = new String[oldDel.size()];
+        sltReq.setOldDel(oldDel.toArray(newOldDel));
+
+        return sltReq;
+    }
+
+    public MyNtyUserSltBean saveMNSubUser(MyNtyUserSltBean sltReq) {
+        sltReq = this.refreshMNUserSltBean(sltReq);
+        //更新数据库
+        mndao.saveMNSubUser(sltReq.getRuleType(),sltReq.getRuleId(),sltReq.getOldDel(),sltReq.getOldAdd());
+
+        //刷新查询结果
+        sltReq.setSltUsers(mndao.getMNSubUser(sltReq.getRuleType(),sltReq.getRuleId(),sltReq.getFilterUserName(),sltReq.getFilterUserDesc(),sltReq.getOldDel(),sltReq.getOldAdd()));
+
+        //保存后，重制用户的操作记录
+        sltReq.setOldDel(null);
+        sltReq.setOldAdd(null);
+        return sltReq;
+    }
 }

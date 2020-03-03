@@ -6,6 +6,8 @@ public class UserResDTO {
     private String userDescription;
     private String userRole;
     private String userRoleName;
+    private String userPhone;
+    private String userMail;
 
     public String getUserId() {
         return userId;
@@ -45,5 +47,21 @@ public class UserResDTO {
 
     public void setUserRoleName(String userRoleName) {
         this.userRoleName = userRoleName;
+    }
+
+    public String getUserPhone() {
+        return userPhone;
+    }
+
+    public void setUserPhone(String userPhone) {
+        this.userPhone = userPhone;
+    }
+
+    public String getUserMail() {
+        return userMail;
+    }
+
+    public void setUserMail(String userMail) {
+        this.userMail = userMail;
     }
 }
