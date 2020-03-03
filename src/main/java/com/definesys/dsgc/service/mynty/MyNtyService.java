@@ -127,17 +127,14 @@ public class MyNtyService {
         reqParam.setRuleId(this.mndao.updateMNRule(rule));
 
         //更新选择的服务
-        if(reqParam.getServSlt().getRuleId() == null || reqParam.getServSlt().getRuleId().trim().length() == 0){
-            reqParam.getServSlt().setRuleId(reqParam.getRuleId());
-            reqParam.getServSlt().setRuleType(reqParam.getRuleType());
-        }
+        reqParam.getServSlt().setRuleId(reqParam.getRuleId());
+        reqParam.getServSlt().setRuleType(reqParam.getRuleType());
         reqParam.setServSlt(this.saveMNSubcributeServList(reqParam.getServSlt()));
 
         //更新选择的用户
-        if(reqParam.getUserSlt().getRuleId() == null || reqParam.getUserSlt().getRuleId().trim().length() == 0){
-            reqParam.getUserSlt().setRuleId(reqParam.getRuleId());
-            reqParam.getUserSlt().setRuleType(reqParam.getRuleType());
-        }
+        reqParam.getUserSlt().setRuleId(reqParam.getRuleId());
+        reqParam.getUserSlt().setRuleType(reqParam.getRuleType());
+
         reqParam.setUserSlt(this.saveMNSubUser(reqParam.getUserSlt()));
         return reqParam;
     }
