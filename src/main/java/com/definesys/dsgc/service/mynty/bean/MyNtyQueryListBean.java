@@ -8,6 +8,8 @@ public class MyNtyQueryListBean {
 
     private String subStat;
 
+    private String isEnable;
+
     private String ruleId;
 
     private String ruleTitle;
@@ -18,12 +20,21 @@ public class MyNtyQueryListBean {
 
     private String ruleExprDesc;
 
+    private String appCode;
     private String appCodeMeaning;
 
+    private String createdBy;
     private String creator;
 
-    private int alertCount = 0;
+    private Integer alertCount = 0;
 
+    public String getIsEnable() {
+        return isEnable;
+    }
+
+    public void setIsEnable(String isEnable) {
+        this.isEnable = isEnable;
+    }
 
     public boolean isReadonly() {
         return isReadonly;
@@ -81,12 +92,28 @@ public class MyNtyQueryListBean {
         this.ruleExprDesc = ruleExprDesc;
     }
 
+    public String getAppCode() {
+        return appCode;
+    }
+
+    public void setAppCode(String appCode) {
+        this.appCode = appCode;
+    }
+
     public String getAppCodeMeaning() {
         return appCodeMeaning;
     }
 
     public void setAppCodeMeaning(String appCodeMeaning) {
         this.appCodeMeaning = appCodeMeaning;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
     }
 
     public String getCreator() {

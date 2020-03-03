@@ -1,6 +1,7 @@
 package com.definesys.dsgc.service.mynty;
 
 //import com.definesys.dsgc.aspect.annotation.AuthAspect;
+
 import com.definesys.dsgc.service.mynty.bean.*;
 import com.definesys.dsgc.service.users.bean.DSGCUser;
 import com.definesys.mpaas.common.http.Response;
@@ -14,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 //@AuthAspect(menuCode = "MyNotification",menuName = "我的通知")
-@Api(description = "我的通知模块api",tags = "我的通知")
+@Api(description = "我的通知模块api", tags = "我的通知")
 @RequestMapping(value = "/dsgc/mynty")
 @RestController
 public class MyNtyController {
@@ -23,44 +24,32 @@ public class MyNtyController {
     private MyNtyService mns;
 
 
-    @RequestMapping(value="/queryMNRules",method = RequestMethod.POST)
-    public Response queryMNRules(@RequestBody MyNtyQueryParamVO reqParam,HttpServletRequest request){
-
-        List<MyNtyQueryListBean> t = new ArrayList<MyNtyQueryListBean>();
-        MyNtyQueryListBean s = new MyNtyQueryListBean();
-        s.setReadonly(true);
-        s.setCreator("DSGC");
-        s.setAlertCount(1);
-        s.setAppCodeMeaning("测试系统");
-        s.setRuleExprDesc("(最小响应时间=sss 与 最大响应时间=sss)");
-        s.setRuleTitle("sssss");
-        s.setRuleId("6834322cf1cc4f3f9f1988322813ee86");
-        s.setRuleType("SLA");
-        s.setRuleTypeMeaning("服务预警");
-        s.setSubStat("Y");
-
-        t.add(s);
-
-        return Response.ok().setData(t);
+    @RequestMapping(value = "/queryMNRules", method = RequestMethod.POST)
+    public Response queryMNRules(@RequestBody MyNtyQueryParamVO reqParam,HttpServletRequest request,
+                                 @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
+                                 @RequestParam(value = "pageIndex", required = false, defaultValue = "1") int pageIndex) {
+        String uId = request.getHeader("uid");
+        return Response.ok().setData(this.mns.queryMNRules(uId,reqParam,pageSize,pageIndex));
     }
 
     /**
      * 获取规则列表
+     *
      * @param ruleType
      * @param request
      * @return
      * @deprecated
      */
-    @RequestMapping(value="/getMNRules",method = RequestMethod.GET)
-    public Response getMNRules(@RequestParam String ruleType,HttpServletRequest request){
+    @RequestMapping(value = "/getMNRules", method = RequestMethod.GET)
+    public Response getMNRules(@RequestParam String ruleType,HttpServletRequest request) {
         //获取用户id
         String userId = request.getHeader("uid");
-        if(userId == null){
+        if (userId == null) {
             return Response.error("无效的用户！");
         }
 
         //验证ruleType
-        if(ruleType == null || ruleType.trim().length() == 0){
+        if (ruleType == null || ruleType.trim().length() == 0) {
             return Response.error("无效的订阅规则类型！");
         }
 
@@ -71,14 +60,15 @@ public class MyNtyController {
 
     /**
      * 更新我的通知订阅规则
+     *
      * @param chgs
      * @param request
      */
-    @RequestMapping(value="/updMNRules",method = RequestMethod.POST)
-    public Response updateMNRules(@RequestBody List<MyNtyRulesBean> chgs, HttpServletRequest request){
+    @RequestMapping(value = "/updMNRules", method = RequestMethod.POST)
+    public Response updateMNRules(@RequestBody List<MyNtyRulesBean> chgs,HttpServletRequest request) {
         //获取用户id
         String userId = request.getHeader("uid");
-        if(userId == null){
+        if (userId == null) {
             return Response.error("无效的用户！");
         }
         mns.updateMNRules(userId,chgs);
@@ -87,13 +77,14 @@ public class MyNtyController {
 
     /**
      * 获取用户服务异常通知规则
+     *
      * @return
      */
-    @RequestMapping(value="/getServExcptSubRules",method = RequestMethod.GET)
-    public Response getServExceptionSubRules(HttpServletRequest request){
+    @RequestMapping(value = "/getServExcptSubRules", method = RequestMethod.GET)
+    public Response getServExceptionSubRules(HttpServletRequest request) {
         //获取用户id
         String userId = request.getHeader("uid");
-        if(userId == null){
+        if (userId == null) {
             return Response.error("无效的用户！");
         }
         //根据用户id获取服务错误订阅规则列表
@@ -103,15 +94,16 @@ public class MyNtyController {
 
     /**
      * 更新服务异常通知订阅规则
+     *
      * @param chgs
      * @param request
      * @return
      */
-    @RequestMapping(value="/updServExcptSubRules",method = RequestMethod.POST)
-    public Response updateServExceptionSubRules(@RequestBody List<ServExcptSubRulesBean> chgs,HttpServletRequest request){
+    @RequestMapping(value = "/updServExcptSubRules", method = RequestMethod.POST)
+    public Response updateServExceptionSubRules(@RequestBody List<ServExcptSubRulesBean> chgs,HttpServletRequest request) {
         //获取用户id
         String userId = request.getHeader("uid");
-        if(userId == null){
+        if (userId == null) {
             return Response.error("无效的用户！");
         }
         mns.updateServExcptSubRules(userId,chgs);
@@ -120,15 +112,16 @@ public class MyNtyController {
 
     /**
      * 获取规则订阅的服务
+     *
      * @param sltReq
      * @param request
      * @return
      */
-    @RequestMapping(value="/getMNSubcributeServices",method = RequestMethod.POST)
-    public Response getMNSubcributeServices(@RequestBody MyNtyServSltBean sltReq,HttpServletRequest request){
+    @RequestMapping(value = "/getMNSubcributeServices", method = RequestMethod.POST)
+    public Response getMNSubcributeServices(@RequestBody MyNtyServSltBean sltReq,HttpServletRequest request) {
         //获取用户id
         String userId = request.getHeader("uid");
-        if(userId == null){
+        if (userId == null) {
             return Response.error("无效的用户！");
         }
         return Response.ok().setData(mns.getMNSubscributedServList(sltReq));
@@ -136,20 +129,20 @@ public class MyNtyController {
 
     /**
      * 保存用户指定的规则订阅服务
+     *
      * @param sltReq
      * @param request
      * @return
      */
-    @RequestMapping(value="/saveMNSubcributeServices",method = RequestMethod.POST)
-    public Response saveMNSubcributeServices(@RequestBody MyNtyServSltBean sltReq,HttpServletRequest request){
+    @RequestMapping(value = "/saveMNSubcributeServices", method = RequestMethod.POST)
+    public Response saveMNSubcributeServices(@RequestBody MyNtyServSltBean sltReq,HttpServletRequest request) {
         //获取用户id
         String userId = request.getHeader("uid");
-        if(userId == null){
+        if (userId == null) {
             return Response.error("无效的用户！");
         }
         return Response.ok().setData(mns.saveMNSubcributeServList(sltReq));
     }
-
 
 
     @RequestMapping(value = "/findDSGCMnNotices", method = RequestMethod.POST)
@@ -159,13 +152,13 @@ public class MyNtyController {
     }
 
     @RequestMapping(value = "getServByUser", method = RequestMethod.POST)
-    public Response getServByUser(@RequestBody DSGCUser dsgcUser){
-        List<Map<String, Object>> servByUser = mns.getServByUser(dsgcUser);
+    public Response getServByUser(@RequestBody DSGCUser dsgcUser) {
+        List<Map<String,Object>> servByUser = mns.getServByUser(dsgcUser);
         return Response.ok().setData(servByUser);
     }
 
     @RequestMapping(value = "updateDSGCMnNoticesById", method = RequestMethod.POST)
-    public Response updateDSGCMnNoticesById(@RequestBody DSGCMnNotices dsgcMnNotices){
+    public Response updateDSGCMnNoticesById(@RequestBody DSGCMnNotices dsgcMnNotices) {
         mns.updateDSGCMnNoticesById(dsgcMnNotices);
         return Response.ok();
     }
@@ -175,28 +168,29 @@ public class MyNtyController {
         this.mns.updateDSGCMnNotices(mnNotices);
         return Response.ok();
     }
+
     @RequestMapping(value = "/findDSGCMnNoticesByMnTitle", method = RequestMethod.POST)
-    public Response findDSGCMnNoticesByMnTitle(@RequestBody DSGCMnNotices dsgcMnNotices){
+    public Response findDSGCMnNoticesByMnTitle(@RequestBody DSGCMnNotices dsgcMnNotices) {
         List<DSGCMnNotices> dsgcMnNoticesList = this.mns.findDSGCMnNoticesByMnTitle(dsgcMnNotices);
         return Response.ok().data(dsgcMnNoticesList);
     }
 
 
-    @RequestMapping(value="/getMNSubUser",method = RequestMethod.POST)
-    public Response getMNSubUser(@RequestBody MyNtyUserSltBean sltReq, HttpServletRequest request){
+    @RequestMapping(value = "/getMNSubUser", method = RequestMethod.POST)
+    public Response getMNSubUser(@RequestBody MyNtyUserSltBean sltReq,HttpServletRequest request) {
         //获取用户id
         String userId = request.getHeader("uid");
-        if(userId == null){
+        if (userId == null) {
             return Response.error("无效的用户！");
         }
         return Response.ok().setData(mns.getMNSubUser(sltReq));
     }
 
-    @RequestMapping(value="/saveMNSubUser",method = RequestMethod.POST)
-    public Response saveMNSubUser(@RequestBody MyNtyUserSltBean sltReq,HttpServletRequest request){
+    @RequestMapping(value = "/saveMNSubUser", method = RequestMethod.POST)
+    public Response saveMNSubUser(@RequestBody MyNtyUserSltBean sltReq,HttpServletRequest request) {
         //获取用户id
         String userId = request.getHeader("uid");
-        if(userId == null){
+        if (userId == null) {
             return Response.error("无效的用户！");
         }
         return Response.ok().setData(mns.saveMNSubUser(sltReq));

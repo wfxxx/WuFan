@@ -3,6 +3,8 @@ package com.definesys.dsgc.service.mynty.bean;
 public class MyNtyQueryParamVO {
 
     private String ruleType;
+    private String isEnable;
+    private String subStat;
     private String con0;
 
     public String getRuleType() {
@@ -19,5 +21,21 @@ public class MyNtyQueryParamVO {
 
     public void setCon0(String con0) {
         this.con0 = con0;
+    }
+
+    public String getIsEnable() {
+        return isEnable;
+    }
+
+    public void setIsEnable(String isEnable) {
+        this.isEnable = isEnable;
+    }
+
+    public String getSubStat() {
+        return subStat;
+    }
+
+    public void setSubStat(String subStat) {
+        this.subStat = subStat;
     }
 }

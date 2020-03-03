@@ -3,6 +3,8 @@ package com.definesys.dsgc.service.mynty;
 import com.definesys.dsgc.service.lov.LovDao;
 import com.definesys.dsgc.service.mynty.bean.*;
 import com.definesys.dsgc.service.users.bean.DSGCUser;
+import com.definesys.dsgc.service.utils.UserHelper;
+import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,40 +21,52 @@ public class MyNtyService {
     @Autowired
     private LovDao lovDao;
 
-    public List<MyNtyQueryListBean> queryMNRules(String uid,MyNtyQueryParamVO reqParam){
+    @Autowired
+    private UserHelper userHelper;
 
-//        if("ALL".equals(reqParam.getRuleType())){
-//
-//        } else if(){
-//
-//        } else if(){
-//
-//        }
+    public PageQueryResult<MyNtyQueryListBean> queryMNRules(String uid,MyNtyQueryParamVO reqParam,int pageSize,int pageIndex) {
 
-        return null;
+        UserHelper uh = this.userHelper.user(uid);
 
+        PageQueryResult<MyNtyQueryListBean> res = this.mndao.queryMNRules(uid,uh,reqParam,pageSize,pageIndex);
 
+        List<MyNtyQueryListBean> resLst = res.getResult();
+        if (resLst != null) {
+            Iterator<MyNtyQueryListBean> resIter = resLst.iterator();
+            while (resIter.hasNext()) {
+                MyNtyQueryListBean ob = resIter.next();
+                if (uid != null && uid.equals(ob.getCreatedBy()) || uh.isSuperAdministrator() || uh.isAdmin()) {
+                    ob.setReadonly(false);
+                } else if (uh.isSystemMaintainer() && uh.isSpecifySystemMaintainer(ob.getAppCode())) {
+                    ob.setReadonly(false);
+                } else {
+                    ob.setReadonly(true);
+                }
+            }
+        }
+        return res;
     }
 
     /**
      * 获取我的通知订阅规则
+     *
      * @param userId
      * @param ruleType
      * @return
      * @deprecated
      */
-    public List<MyNtyRulesBean> getMNRules(String userId,String ruleType){
+    public List<MyNtyRulesBean> getMNRules(String userId,String ruleType) {
         List<MyNtyRulesBean> res = mndao.getMNRules(userId,ruleType);
-        if(res != null){
+        if (res != null) {
             Iterator<MyNtyRulesBean> mnrbIter = res.iterator();
-            while(mnrbIter.hasNext()){
+            while (mnrbIter.hasNext()) {
                 MyNtyRulesBean mnrb = mnrbIter.next();
-                if("Y".equals(mnrb.getIsEnable())){
+                if ("Y".equals(mnrb.getIsEnable())) {
                     mnrb.setIsEnableBL(true);
-                }else{
+                } else {
                     mnrb.setIsEnableBL(false);
                 }
-                mnrb.setRunInterval(mnrb.getRunInterval()/60/60/1000);
+                mnrb.setRunInterval(mnrb.getRunInterval() / 60 / 60 / 1000);
                 mnrb.setRuleExpr(mnrb.getRuleExprDesc());
             }
         }
@@ -61,24 +75,25 @@ public class MyNtyService {
 
     /**
      * 更新我的通知订阅规则
+     *
      * @param userId
      * @param chgs
      */
-    public void updateMNRules(String userId,List<MyNtyRulesBean> chgs){
-        if(chgs != null){
+    public void updateMNRules(String userId,List<MyNtyRulesBean> chgs) {
+        if (chgs != null) {
             Iterator<MyNtyRulesBean> mnrbIter = chgs.iterator();
             Map<String,Map<String,String>> lkvStore = new HashMap<String,Map<String,String>>();
-            while(mnrbIter.hasNext()){
+            while (mnrbIter.hasNext()) {
                 MyNtyRulesBean mnrb = mnrbIter.next();
-                if(mnrb.getIsEnableBL()){
+                if (mnrb.getIsEnableBL()) {
                     mnrb.setIsEnable("Y");
-                }else{
+                } else {
                     mnrb.setIsEnable("N");
                 }
-                mnrb.setRunInterval(mnrb.getRunInterval()*60*60*1000);
+                mnrb.setRunInterval(mnrb.getRunInterval() * 60 * 60 * 1000);
                 mnrb.setRuleExprDesc(mnrb.getRuleExpr());
                 Map<String,String> lkv = lkvStore.get(mnrb.getRuleType());
-                if(lkv == null){
+                if (lkv == null) {
                     lkv = mndao.getRuleExprDescLKV(mnrb.getRuleType());
                     lkvStore.put(mnrb.getRuleType(),lkv);
                 }
@@ -90,6 +105,7 @@ public class MyNtyService {
 
     /**
      * 保存我的通知订阅规则选择的服务
+     *
      * @param sltReq
      * @return
      */
@@ -257,11 +273,11 @@ public class MyNtyService {
         return this.mndao.findDSGCMnNoticesByMnTitle(dsgcMnNotices);
     }
 
-    public List<Map<String, Object>> getServByUser(DSGCUser dsgcUser){
+    public List<Map<String,Object>> getServByUser(DSGCUser dsgcUser) {
         return mndao.getServByUser(dsgcUser);
     }
 
-    public void updateDSGCMnNoticesById(DSGCMnNotices dsgcMnNotices){
+    public void updateDSGCMnNoticesById(DSGCMnNotices dsgcMnNotices) {
         mndao.updateDSGCMnNoticesById(dsgcMnNotices);
     }
 
