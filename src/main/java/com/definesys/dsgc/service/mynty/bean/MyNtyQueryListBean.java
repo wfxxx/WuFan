@@ -1,11 +1,12 @@
 package com.definesys.dsgc.service.mynty.bean;
 
+
 public class MyNtyQueryListBean {
 
 
     private boolean isReadonly = false;
 
-    private boolean isSubscriber = false;
+    private String subStat;
 
     private String ruleId;
 
@@ -32,12 +33,12 @@ public class MyNtyQueryListBean {
         isReadonly = readonly;
     }
 
-    public boolean isSubscriber() {
-        return isSubscriber;
+    public String getSubStat() {
+        return subStat;
     }
 
-    public void setSubscriber(boolean subscriber) {
-        isSubscriber = subscriber;
+    public void setSubStat(String subStat) {
+        this.subStat = subStat;
     }
 
     public String getRuleId() {

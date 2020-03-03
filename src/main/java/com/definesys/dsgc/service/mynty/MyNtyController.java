@@ -37,7 +37,7 @@ public class MyNtyController {
         s.setRuleId("6834322cf1cc4f3f9f1988322813ee86");
         s.setRuleType("SLA");
         s.setRuleTypeMeaning("服务预警");
-        s.setSubscriber(true);
+        s.setSubStat("Y");
 
         t.add(s);
 
