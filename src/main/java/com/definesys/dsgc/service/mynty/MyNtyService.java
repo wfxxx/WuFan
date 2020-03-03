@@ -67,8 +67,21 @@ public class MyNtyService {
         return "S";
     }
 
-    public void delMNRule(String uid,String ruleId) {
-
+    public void delMNRule(String uid,String ruleId) throws Exception{
+        if(ruleId != null && ruleId.trim().length() > 0){
+            MyNtyRulesBean rule = this.mndao.getMyNtyRuleDtl(ruleId);
+            //执行更新操作要先判断权限
+            UserHelper uh = this.userHelper.user(uid);
+            //执行更新操作，要判断权限
+            rule = this.mndao.getMyNtyRuleDtl(ruleId);
+            if (!(uh.isSuperAdministrator()
+                    || uh.isAdmin()
+                    || uh.isSystemMaintainer() && uh.isSpecifySystemMaintainer(rule.getAppCode())
+                    || uid.equals(rule.getCreatedBy()))) {
+                throw new Exception("无效的操作权限！");
+            }
+            this.mndao.deleteMyNtyRule(ruleId);
+        }
 
     }
 

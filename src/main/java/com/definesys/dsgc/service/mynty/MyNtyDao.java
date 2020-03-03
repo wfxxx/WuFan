@@ -118,6 +118,18 @@ public class MyNtyDao {
        return  sw.buildQuery().eq("ruleId",ruleId).doQueryFirst(MyNtyRulesBean.class);
     }
 
+
+    public void deleteMyNtyRule(String ruleId){
+
+        //删除用户订阅
+        sw.buildQuery().eq("mnRule",ruleId).doDelete(MyNtySubcribesBean.class);
+        //删除订阅规则选择的服务
+        sw.buildQuery().eq("ruleId",ruleId).doDelete(MyNtySubServBean.class);
+        //删除订阅规则
+        sw.buildQuery().rowid("ruleId",ruleId).doDelete(MyNtyRulesBean.class);
+
+
+    }
     /**
      * 根据用户id和订阅规则类型，获取用户订阅规则
      *
