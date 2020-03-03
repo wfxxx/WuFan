@@ -92,17 +92,17 @@ public class ApiHomeDao {
         return sw.buildQuery().sql("SELECT SUM(T.TOTAL_TIMES) as value FROM rp_api_year t ").doQueryFirst(ApiHomeHisto.class);
     }
     public ApiHomeHisto getTodyTotalV(){
-        return sw.buildQuery().sql("SELECT SUM(T.TOTAL_TIMES) as value FROM rp_api_day t where to_char(t.creation_date,'yyyy-mm-dd')=to_char(sysdate,'yyyy-mm-dd')").doQueryFirst(ApiHomeHisto.class);
+        return sw.buildQuery().sql("SELECT SUM(T.TOTAL_TIMES) as value FROM rp_api_day t where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd')").doQueryFirst(ApiHomeHisto.class);
     }
     public ApiHomeHisto getYestodayTotalV(){
-        return sw.buildQuery().sql("SELECT SUM(T.TOTAL_TIMES) as value FROM rp_api_day t WHERE TO_CHAR(t.creation_date,'YYYY-MM-DD')=TO_CHAR(SYSDATE-1,'YYYY-MM-DD')").doQueryFirst(ApiHomeHisto.class);
+        return sw.buildQuery().sql("SELECT SUM(T.TOTAL_TIMES) as value FROM rp_api_day t WHERE  to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate-1,'yyyy-mm-dd'),'yyyy-mm-dd')").doQueryFirst(ApiHomeHisto.class);
     }
     public ApiHomeHisto getLastWeekTotalV(){
-        return sw.buildQuery().sql("  SELECT SUM(T.TOTAL_TIMES) as value FROM rp_api_day  t WHERE t.creation_date>=TRUNC(NEXT_DAY(SYSDATE-7,1)-6) and  t.creation_date<=TRUNC(NEXT_DAY(SYSDATE-7,1))").doQueryFirst(ApiHomeHisto.class);
+        return sw.buildQuery().sql("  SELECT SUM(T.TOTAL_TIMES) as value FROM rp_api_day  t WHERE to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')>=TRUNC(NEXT_DAY(SYSDATE-7,1)-6) and  to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')<=TRUNC(NEXT_DAY(SYSDATE-7,1))").doQueryFirst(ApiHomeHisto.class);
 
     }
     public ApiHomeHisto getNowWeekTotalV(){
-        return sw.buildQuery().sql("  SELECT SUM(T.TOTAL_TIMES) as value FROM rp_api_day  t WHERE t.creation_date>=TRUNC(NEXT_DAY(SYSDATE,1)-6) and  t.creation_date<=TRUNC(NEXT_DAY(SYSDATE,1))").doQueryFirst(ApiHomeHisto.class);
+        return sw.buildQuery().sql("  SELECT SUM(T.TOTAL_TIMES) as value FROM rp_api_day  t WHERE to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')>=TRUNC(NEXT_DAY(SYSDATE,1)-6) and  to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')<=TRUNC(NEXT_DAY(SYSDATE,1))").doQueryFirst(ApiHomeHisto.class);
 
     }
 
@@ -180,22 +180,22 @@ public class ApiHomeDao {
         List<ApiHomeHisto> result=new ArrayList<ApiHomeHisto>();
         MpaasQuery resulSql =sw.buildQuery();
         if(startTime!=null&&endTime!=null) {
-            resulSql.sql("select t.api_code as name ,sum(t.total_times)  over(partition by t.api_code) as value from rp_api_day t " +
-                    "where t.creation_date<=to_date(#endTime,'yyyy-mm-dd') and t.creation_date>to_date(#startTime,'yyyy-mm-dd') order by value desc")
+            resulSql.sql("select t.serv_no as name ,sum(t.total_times)  over(partition by t.serv_no) as value from rp_api_day t \n" +
+                    "                    where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')<=to_date(#endTime,'yyyy-mm-dd') and to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')>to_date(#startTime,'yyyy-mm-dd') order by value desc")
                     .setVar("endTime",endTime).setVar("startTime",startTime);
         }
         else if(limitTime.equals("year")){
-            resulSql .sql("select t.api_code as name ,sum(t.total_times)  over(partition by t.api_code) as value from rp_api_year t\n" +
-                    " where to_char(t.creation_date,'yyyy')=to_char(sysdate,'yyyy') order by value desc");
+            resulSql .sql("select t.serv_no as name ,sum(t.total_times)  over(partition by t.serv_no) as value from rp_api_year t\n" +
+                    " where to_date(t.year,'yyyy')=to_date(to_char(sysdate,'yyyy'),'yyyy') order by value desc");
         }else if(limitTime.equals("month")){
-            resulSql .sql("select t.api_code as name ,sum(t.total_times)  over(partition by t.api_code) as value from rp_api_month t\n" +
-                    " where to_char(t.creation_date,'yyyy-mm')=to_char(sysdate,'yyyy-mm') order by value desc");
+            resulSql .sql("select t.serv_no as name ,sum(t.total_times)  over(partition by t.serv_no) as value from rp_api_month t\n" +
+                    " where to_date(t.year||'-'||t.month,'yyyy-mm')=to_date(to_char(sysdate,'yyyy-mm'),'yyyy-mm') order by value desc");
         }else if(limitTime.equals("week")){
-            resulSql.sql("select t.api_code as name ,sum(t.total_times)  over(partition by t.api_code) as value from rp_api_day t\n" +
-                    "  where to_char(t.creation_date,'iw')=to_char(sysdate,'iw') and to_char(t.creation_date,'yy')=to_char(sysdate,'yyyy') order by value desc ");
+            resulSql.sql("select t.serv_no as name ,sum(t.total_times)  over(partition by t.serv_no) as value from rp_api_day t\n" +
+                    "  where to_char(to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd'),'iw')=to_char(sysdate,'iw') and t.year=to_char(sysdate,'yyyy') order by value desc ");
         }else if(limitTime.equals("day")){
-            resulSql .sql("select t.api_code as name ,sum(t.total_times)  over(partition by t.api_code) as value from rp_api_day t\n" +
-                    " where to_char(t.creation_date,'yyyy-mm-dd')=to_char(sysdate,'yyyy-mm-dd') order by value desc");
+            resulSql .sql("select t.serv_no as name ,sum(t.total_times)  over(partition by t.serv_no) as value from rp_api_day t\n" +
+                    " where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') order by value desc");
         }
         return resulSql.doPageQuery(1,10,ApiHomeHisto.class);
     }
@@ -207,22 +207,22 @@ public class ApiHomeDao {
         List<ApiHomeHisto> result=new ArrayList<ApiHomeHisto>();
         MpaasQuery resulSql =sw.buildQuery();
         if(startTime!=null&&endTime!=null) {
-            resulSql.sql("select t.api_code as name,max(t.total_times) over(partition by t.api_code )  as value from rp_api_day t " +
-                    "where t.creation_date<=to_date(#endTime,'yyyy-mm-dd') and t.creation_date>to_date(#startTime,'yyyy-mm-dd') order by value desc")
+            resulSql.sql("select t.serv_no as name ,sum(t.total_times)  over(partition by t.serv_no) as value from rp_api_day t \n" +
+                    "                    where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')<=to_date(#endTime,'yyyy-mm-dd') and to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')>to_date(#startTime,'yyyy-mm-dd') order by value desc")
                     .setVar("endTime",endTime).setVar("startTime",startTime);
         }
         else if(limitTime.equals("year")){
-            resulSql .sql("select t.api_code as name,max(t.total_times) over(partition by t.api_code )  as value from rp_api_day t\n" +
-                    " where to_char(t.creation_date,'yyyy')=to_char(sysdate,'yyyy') order by value desc");
+            resulSql .sql("select t.serv_no as name,max(t.total_times) over(partition by t.serv_no )  as value from rp_api_day t\n" +
+                    " where to_date(t.year,'yyyy')=to_date(to_char(sysdate,'yyyy'),'yyyy') order by value desc");
         }else if(limitTime.equals("month")){
-            resulSql .sql("select t.api_code as name,max(t.total_times) over(partition by t.api_code )  as value from rp_api_day t \n" +
-                    " where to_char(t.creation_date,'yyyy-mm')=to_char(sysdate,'yyyy-mm') order by value desc");
+            resulSql .sql("select t.serv_no as name,max(t.total_times) over(partition by t.serv_no )  as value from rp_api_day t \n" +
+                    " where to_date(t.year||'-'||t.month,'yyyy-mm')=to_date(to_char(sysdate,'yyyy-mm'),'yyyy-mm') order by value desc");
         }else if(limitTime.equals("week")){
-            resulSql.sql("select t.api_code as name,max(t.total_times) over(partition by t.api_code )  as value from rp_api_day t \n" +
-                    "  where to_char(t.creation_date,'iw')=to_char(sysdate,'iw') and to_char(t.creation_date,'yy')=to_char(sysdate,'yyyy') order by value desc");
+            resulSql.sql("select t.serv_no as name,max(t.total_times) over(partition by t.serv_no )  as value from rp_api_day t \n" +
+                    "  where to_char(to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd'),'iw')=to_char(sysdate,'iw') and t.year=to_char(sysdate,'yyyy') order by value desc");
         }else if(limitTime.equals("day")){
-            resulSql .sql("select t.api_code as name,max(t.total_times) over(partition by t.api_code )  as value from rp_api_day t \n" +
-                    " where to_char(t.creation_date,'yyyy-mm-dd')=to_char(sysdate,'yyyy-mm-dd') order by value desc");
+            resulSql .sql("select t.serv_no as name,max(t.total_times) over(partition by t.serv_no )  as value from rp_api_day t \n" +
+                    " where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') order by value desc");
         }
         return resulSql.doPageQuery(1,10,ApiHomeHisto.class);
 
@@ -234,23 +234,23 @@ public class ApiHomeDao {
         List<ApiHomeHisto> result=new ArrayList<ApiHomeHisto>();
         MpaasQuery resulSql =sw.buildQuery();
         if(startTime!=null&&endTime!=null) {
-            resulSql.sql("select t.api_code as name ,avg(t.avg_cost)  over(partition by t.api_code) as value from rp_api_day t  " +
-                    "where  t.creation_date<=to_date(#endTime,'yyyy-mm-dd') and t.creation_date>to_date(#startTime,'yyyy-mm-dd') order by value desc")
+            resulSql.sql("select t.serv_no as name ,sum(t.total_times)  over(partition by t.serv_no) as value from rp_api_day t \n" +
+                    "                    where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')<=to_date(#endTime,'yyyy-mm-dd') and to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')>to_date(#startTime,'yyyy-mm-dd') order by value desc")
                     .setVar("endTime",endTime).setVar("startTime",startTime);
 
         }
         else if(limitTime.equals("year")){
-            resulSql .sql("select t.api_code as name ,avg(t.avg_cost)  over(partition by t.api_code) as value from rp_api_year t\n" +
-                    " where to_char(t.creation_date,'yyyy')=to_char(sysdate,'yyyy') order by value desc");
+            resulSql .sql("select t.serv_no as name ,avg(t.avg_cost)  over(partition by t.serv_no) as value from rp_api_year t\n" +
+                    "                     where to_date(t.year,'yyyy')=to_date(to_char(sysdate,'yyyy'),'yyyy') order by value desc");
         }else if(limitTime.equals("month")){
-            resulSql .sql("select t.api_code as name ,avg(t.avg_cost)  over(partition by t.api_code) as value from rp_api_month t\n" +
-                    " where to_char(t.creation_date,'yyyy-mm')=to_char(sysdate,'yyyy-mm') order by value desc");
+            resulSql .sql("select t.serv_no as name ,avg(t.avg_cost)  over(partition by t.serv_no) as value from rp_api_month t\n" +
+                    " where to_date(t.year||'-'||t.month,'yyyy-mm')=to_date(to_char(sysdate,'yyyy-mm'),'yyyy-mm')  order by value desc");
         }else if(limitTime.equals("week")){
-            resulSql.sql("select t.api_code as name ,avg(t.avg_cost)  over(partition by t.api_code) as value from rp_api_day t\n" +
-                    "  where to_char(t.creation_date,'iw')=to_char(sysdate,'iw') and to_char(t.creation_date,'yy')=to_char(sysdate,'yyyy') order by value desc");
+            resulSql.sql("select t.serv_no as name ,avg(t.avg_cost)  over(partition by t.serv_no) as value from rp_api_day t\n" +
+                    "  where to_char(to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd'),'iw')=to_char(sysdate,'iw') and t.year=to_char(sysdate,'yyyy') order by value desc");
         }else if(limitTime.equals("day")){
-            resulSql .sql("select t.api_code as name ,avg(t.avg_cost)  over(partition by t.api_code) as value from rp_api_day t\n" +
-                    " where to_char(t.creation_date,'yyyy-mm-dd')=to_char(sysdate,'yyyy-mm-dd') order by value desc");
+            resulSql .sql("select t.serv_no as name ,avg(t.avg_cost)  over(partition by t.serv_no) as value from rp_api_day t\n" +
+                    " where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') order by value desc");
         }
 
         return resulSql.doPageQuery(1,10,ApiHomeHisto.class);
@@ -259,26 +259,44 @@ public class ApiHomeDao {
 
     //查询当天运行次数流量
     public List<ApiHomeHisto> queryTrafficRuntimes(){
-       return sw.buildQuery().sql("select to_char(t.creation_date,'hh24:mi') as name ,sum(t.total_times)  over(partition by t.creation_date) as value from rp_api_hour t \n" +
-                "where to_char(t.creation_date,'yyyy-mm-dd')=to_char(sysdate,'yyyy-mm-dd') order by t.creation_date  ")
+       return sw.buildQuery().sql("select to_char(t.creation_date,'hh24:mi') as name ,sum(t.total_times)  over(partition by t.hour) as value from rp_api_hour t \n" +
+               "                where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') order by t.creation_date   ")
                 .doQuery(ApiHomeHisto.class);
     }
-
-
 
     //查询当天平均响应时间
     public List<ApiHomeHisto> queryTrafficCost(){
-        return  sw.buildQuery().sql("select to_char(t.creation_date,'hh24:mi') as name ,avg(t.avg_cost)  over(partition by t.creation_date) as value from rp_api_hour t \n" +
-                "where to_char(t.creation_date,'yyyy-mm-dd')=to_char(sysdate,'yyyy-mm-dd') order by t.creation_date ")
+        return  sw.buildQuery().sql("        select to_char(t.creation_date,'hh24:mi') as name ,avg(t.avg_cost)   over(partition by t.hour) as value from rp_api_hour t\n" +
+                "        where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') order by t.creation_date")
+
                 .doQuery(ApiHomeHisto.class);
     }
 
-
     //查询当天错误次数流量
      public List<ApiHomeHisto> queryTrafficError(){
-         return   sw.buildQuery().sql("select to_char(t.creation_date,'hh24:mi') as name ,sum(t.total_1xx+t.total_2xx+t.total_3xx+t.total_4xx+t.total_5xx)  over(partition by t.creation_date) as value from rp_api_hour t \n" +
-                 "where to_char(t.creation_date,'yyyy-mm-dd')=to_char(sysdate,'yyyy-mm-dd') order by t.creation_date ")
+         return   sw.buildQuery().sql("select to_char(t.creation_date,'hh24:mi') as name,sum(t.total_1xx+t.total_2xx+t.total_3xx+t.total_4xx+t.total_5xx)  over(partition by t.hour) as value from rp_api_hour t \n" +
+                 "                where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') order by t.creation_date")
                  .doQuery(ApiHomeHisto.class);
      }
+
+
+    //查询近一小时运行次数流量
+    public ApiHomeHisto queryTrafficRuntimesNow(){
+        return sw.buildQuery().sql("select count(1)   as value from dsgc_log_instance t \n" +
+                "where sysdate>to_date(to_char(sysdate,'yyyy-mm-dd hh24'),'yyyy-mm-dd hh24') order by t.creation_date   ")
+                .doQueryFirst(ApiHomeHisto.class);
+    }
+
+    //查询近一小时平均响应时间
+//    public ApiHomeHisto queryTrafficCostNow(){
+//
+//    }
+
+    //查询近一小时错误次数流量
+    public ApiHomeHisto queryTrafficErrorNow(){
+        return   sw.buildQuery().sql("select count(1)   as value from dsgc_log_instance t \n" +
+                "                where sysdate>to_date(to_char(sysdate,'yyyy-mm-dd hh24'),'yyyy-mm-dd hh24') and t.inst_status='0' order by t.creation_date  ")
+                .doQueryFirst(ApiHomeHisto.class);
+    }
 
 }

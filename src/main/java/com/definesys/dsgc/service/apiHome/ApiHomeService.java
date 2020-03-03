@@ -12,10 +12,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @ClassName ApiHomeService
@@ -70,10 +67,15 @@ public class ApiHomeService {
         //TODO
         ApiHomeCard apiVisitTotal=new ApiHomeCard();
         ApiHomeHisto lastWeekV=apiHomeDao.getLastWeekTotalV();
+        lastWeekV=lastWeekV==null?new ApiHomeHisto():lastWeekV;
         ApiHomeHisto nowWeekV=apiHomeDao.getNowWeekTotalV();
+        nowWeekV=nowWeekV==null?new ApiHomeHisto():nowWeekV;
         ApiHomeHisto todayV=apiHomeDao.getTodyTotalV();
+        todayV=todayV==null?new ApiHomeHisto():todayV;
         ApiHomeHisto yestodayV=apiHomeDao.getYestodayTotalV();
+        yestodayV=yestodayV==null?new ApiHomeHisto():yestodayV;
         ApiHomeHisto totalV=apiHomeDao.getTotalV();
+        totalV=totalV==null?new ApiHomeHisto():totalV;
         apiVisitTotal.setDataAdd(todayV.getValue());
         apiVisitTotal.setDayRate(rate(todayV.getValue(),yestodayV.getValue()));
         apiVisitTotal.setTotal(totalV.getValue());
@@ -146,15 +148,31 @@ public class ApiHomeService {
     //获取流量分析数据
     public  Map<String,Object> queryTrafficAnalysis (){
         Map<String,Object> result=new HashMap<String,Object>();
-        result.put("runTimes",apiHomeDao.queryTrafficRuntimes());
+
+        Calendar instance = Calendar.getInstance();
+        String hour = instance.get(instance.HOUR_OF_DAY)+"";
+        String minute = instance.get(instance.MINUTE)+"";
+
+        ApiHomeHisto errNow=apiHomeDao.queryTrafficErrorNow();
+        errNow.setName(hour+":"+minute);
+        ApiHomeHisto runTimesNow=apiHomeDao.queryTrafficRuntimesNow();
+        runTimesNow.setName(hour+":"+minute);
+        result.put("runTimes",apiHomeDao.queryTrafficRuntimes().add(runTimesNow));
         result.put("avgCost",apiHomeDao.queryTrafficCost());
-        result.put("errorTimes",apiHomeDao.queryTrafficError());
+        result.put("errorTimes",apiHomeDao.queryTrafficError().add(errNow));
         return result;
     }
 
 
     //计算比率
     public Integer rate(Integer num1,Integer num2){
+        if(num1==null){
+            num1=0;
+        }
+        if(num2==null){
+            num2=0;
+        }
+
         Integer dayRate=0;
         if(num2!=0){
             dayRate=num1/num2*100;
