@@ -1,5 +1,10 @@
 package com.definesys.dsgc.service.mynty.bean;
 
+import com.definesys.mpaas.query.json.MpaasDateTimeDeserializer;
+import com.definesys.mpaas.query.json.MpaasDateTimeSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import java.util.Date;
 
 public class MyNtyRuleDetailVO {
@@ -7,9 +12,12 @@ public class MyNtyRuleDetailVO {
     private String ruleId;
     private String ruleType;
     private Integer mnLevel;
+    private String appCode;
     private long runInterval;
     private String ruleExpr;
     private String ruleTitle;
+    @JsonSerialize(using = MpaasDateTimeSerializer.class)
+    @JsonDeserialize(using = MpaasDateTimeDeserializer.class)
     private Date disableTime;
     private MyNtyServSltBean servSlt;
     private MyNtyUserSltBean userSlt;
@@ -84,5 +92,13 @@ public class MyNtyRuleDetailVO {
 
     public void setUserSlt(MyNtyUserSltBean userSlt) {
         this.userSlt = userSlt;
+    }
+
+    public String getAppCode() {
+        return appCode;
+    }
+
+    public void setAppCode(String appCode) {
+        this.appCode = appCode;
     }
 }

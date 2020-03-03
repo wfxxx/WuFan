@@ -62,7 +62,12 @@ public class MyNtyController {
 
     @RequestMapping(value = "/updateMNRuleDetail", method = RequestMethod.POST)
     public Response updateMNRuleDetail(@RequestBody MyNtyRuleDetailVO reqParam,HttpServletRequest request){
-        return null;
+        String uId = request.getHeader("uid");
+        try {
+            return Response.ok().setData(this.mns.updateMNRuleDetail(uId,reqParam));
+        }catch (Exception e){
+            return Response.error(e.getMessage());
+        }
     }
 
 

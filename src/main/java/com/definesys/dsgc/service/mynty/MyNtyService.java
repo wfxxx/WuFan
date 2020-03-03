@@ -99,8 +99,47 @@ public class MyNtyService {
         return res;
     }
 
-    public MyNtyRuleDetailVO updateMNRuleDetail(String uid,MyNtyRuleDetailVO reqParam) {
-        return null;
+    public MyNtyRuleDetailVO updateMNRuleDetail(String uid,MyNtyRuleDetailVO reqParam) throws Exception {
+        MyNtyRulesBean rule = new MyNtyRulesBean();
+        if (reqParam.getRuleId() != null) {
+            //执行更新操作要先判断权限
+            UserHelper uh = this.userHelper.user(uid);
+            //执行更新操作，要判断权限
+            rule = this.mndao.getMyNtyRuleDtl(reqParam.getRuleId());
+            if (!(uh.isSuperAdministrator()
+                    || uh.isAdmin()
+                    || uh.isSystemMaintainer() && uh.isSpecifySystemMaintainer(rule.getAppCode())
+                    || uid.equals(rule.getCreatedBy()))) {
+                throw new Exception("无效的操作权限！");
+            }
+        }
+
+        rule.setRunInterval(reqParam.getRunInterval() * 60 * 60 * 1000);
+        rule.setRuleExprDesc(reqParam.getRuleExpr());
+        Map<String,String> lkv = mndao.getRuleExprDescLKV(reqParam.getRuleType());
+        rule.setRuleExpr(mndao.covertDescToRealExpress(reqParam.getRuleExpr(),lkv));
+
+        rule.setDisableTime(reqParam.getDisableTime());
+        rule.setMnLevel(reqParam.getMnLevel());
+        rule.setRuleTitle(reqParam.getRuleTitle());
+        rule.setAppCode(reqParam.getAppCode());
+
+        reqParam.setRuleId(this.mndao.updateMNRule(rule));
+
+        //更新选择的服务
+        if(reqParam.getServSlt().getRuleId() == null || reqParam.getServSlt().getRuleId().trim().length() == 0){
+            reqParam.getServSlt().setRuleId(reqParam.getRuleId());
+            reqParam.getServSlt().setRuleType(reqParam.getRuleType());
+        }
+        reqParam.setServSlt(this.saveMNSubcributeServList(reqParam.getServSlt()));
+
+        //更新选择的用户
+        if(reqParam.getUserSlt().getRuleId() == null || reqParam.getUserSlt().getRuleId().trim().length() == 0){
+            reqParam.getUserSlt().setRuleId(reqParam.getRuleId());
+            reqParam.getUserSlt().setRuleType(reqParam.getRuleType());
+        }
+        reqParam.setUserSlt(this.saveMNSubUser(reqParam.getUserSlt()));
+        return reqParam;
     }
 
     /**
