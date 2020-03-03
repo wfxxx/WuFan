@@ -1,6 +1,8 @@
 package com.definesys.dsgc.service.mynty.bean;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class MyNtyQueryListBean {
 
 
@@ -20,9 +22,11 @@ public class MyNtyQueryListBean {
 
     private String ruleExprDesc;
 
+    @JsonIgnore
     private String appCode;
     private String appCodeMeaning;
 
+    @JsonIgnore
     private String createdBy;
     private String creator;
 

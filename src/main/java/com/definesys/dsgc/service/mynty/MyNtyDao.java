@@ -53,7 +53,7 @@ public class MyNtyDao {
             queryAnd += " and is_enable = '" + reqParam.getIsEnable() + "'";
         }
 
-        if (reqParam.getSubStat() != null && !"ALL".equals(reqParam.getIsEnable())) {
+        if (reqParam.getSubStat() != null && !"ALL".equals(reqParam.getSubStat())) {
             queryAnd += " and sub_stat = '" + reqParam.getSubStat() + "'";
         }
 
@@ -98,6 +98,7 @@ public class MyNtyDao {
         conAnd += " or UPPER(rule_expr_desc) like '%" + conUpper + "%'";
         conAnd += " or UPPER(creator) like '%" + conUpper + "%'";
         conAnd += " or UPPER(app_code_meaning) like '%" + conUpper + "%'";
+        conAnd +=")";
         return conAnd;
     }
 
