@@ -303,68 +303,6 @@ public class MyNtyDao {
         }
     }
 
-    /**
-     * 根据用户查询条件检索订阅的服务
-     *
-     * @param ruleId
-     * @param filterServNo
-     * @param filterServName
-     * @param filterSystem
-     * @param unSlt
-     * @param newSlted
-     * @return
-     */
-    public List<MyNtyServSltInfoBean> getMNSubcributedServ1(String ruleType, String ruleId, String filterServNo, String filterServName, String filterSystem, String[] unSlt, String[] newSlted) {
-        List<MyNtyServSltInfoBean> res = new ArrayList<MyNtyServSltInfoBean>();
-        if (ruleId == null || ruleId.trim().length() == 0) {
-            return res;
-        }
-
-        StringBuilder sqlBuilder = new StringBuilder();
-        sqlBuilder.append("select t.serv_no,t.serv_name,(select sys_name from dsgc_system_entities where sys_code = t.subordinate_system) serv_system,(select ss.creation_date from dsgc_mn_services ss where");
-        if ("SE".equals(ruleType)) {
-            sqlBuilder.append(" ss.expr_ref_id ='" + ruleId);
-        } else {
-            sqlBuilder.append(" ss.rule_id ='" + ruleId);
-        }
-        sqlBuilder.append("' and ss.serv_no = t.serv_no ) creation_date from dsgc_services t");
-
-        String newSltedInStr = this.covertArrayToInStr(newSlted);
-        if (newSltedInStr != null) {
-            sqlBuilder.append(" where (t.serv_no in (" + newSltedInStr + ") or t.serv_no in (select s.serv_no from dsgc_mn_services s");
-            if ("SE".equals(ruleType)) {
-                sqlBuilder.append(" where s.expr_ref_id = '" + ruleId + "'))");
-            } else {
-                sqlBuilder.append(" where s.rule_id = '" + ruleId + "'))");
-            }
-        } else {
-            sqlBuilder.append(" where t.serv_no in (select s.serv_no from dsgc_mn_services s");
-            if ("SE".equals(ruleType)) {
-                sqlBuilder.append(" where s.expr_ref_id = '" + ruleId + "')");
-            } else {
-                sqlBuilder.append(" where s.rule_id = '" + ruleId + "')");
-            }
-        }
-
-        String unSltInStr = this.covertArrayToInStr(unSlt);
-        if (unSltInStr != null) {
-            sqlBuilder.append("and t.serv_no not in (" + unSltInStr + ")");
-        }
-
-        if (filterServNo != null && filterServNo.trim().length() > 0) {
-            sqlBuilder.append(" and t.serv_no like '%" + filterServNo + "%'");
-        }
-
-        if (filterServName != null && filterServName.trim().length() > 0) {
-            sqlBuilder.append(" and t.serv_name like  '%" + filterServName + "%'");
-        }
-
-        if (filterSystem != null && filterSystem.trim().length() > 0) {
-            sqlBuilder.append(" and t.subordinate_system = '" + filterSystem + "'");
-        }
-
-        return sw.buildQuery().sql(sqlBuilder.toString()).doQuery(MyNtyServSltInfoBean.class);
-    }
 
     /**
      * 根据用户查询条件检索订阅的服务
