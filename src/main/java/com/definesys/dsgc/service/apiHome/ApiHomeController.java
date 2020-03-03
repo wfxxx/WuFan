@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -186,9 +187,16 @@ public class ApiHomeController {
 
 
     //获取流量分析数据
+    @PostMapping("/queryTrafficAnalysis")
     public Response queryTrafficAnalysis (HttpServletRequest request){
-
-        return Response.ok();
+        Map<String,Object> result=null;
+        try{
+            result=apiHomeService.queryTrafficAnalysis();
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error(e.getMessage());
+        }
+        return Response.ok().setData(result);
     }
 
 

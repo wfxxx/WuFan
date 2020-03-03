@@ -48,7 +48,7 @@ public class ApiHomeService {
         ApiHomeCard sysTotal=new ApiHomeCard();
         ApiHomeHisto lastWeekE=apiHomeDao.getLastWeekTotalE();
         ApiHomeHisto nowWeekE=apiHomeDao.getNowWeekTotalE();
-        ApiHomeHisto todayE=apiHomeDao.getTotalE();
+        ApiHomeHisto todayE=apiHomeDao.getTodyTotalE();
         ApiHomeHisto yestodayE=apiHomeDao.getYestodayTotalE();
         ApiHomeHisto totalE=apiHomeDao.getTotalE();
         sysTotal.setDataAdd(todayE.getValue());
@@ -69,52 +69,32 @@ public class ApiHomeService {
         result.put("userTotal",userTotal);
         //TODO
         ApiHomeCard apiVisitTotal=new ApiHomeCard();
-        apiVisitTotal.setDataAdd(77);
-        apiVisitTotal.setDayRate(55);
-        apiVisitTotal.setTotal(33);
-        apiVisitTotal.setWeekRate(2);
+        ApiHomeHisto lastWeekV=apiHomeDao.getLastWeekTotalV();
+        ApiHomeHisto nowWeekV=apiHomeDao.getNowWeekTotalV();
+        ApiHomeHisto todayV=apiHomeDao.getTodyTotalV();
+        ApiHomeHisto yestodayV=apiHomeDao.getYestodayTotalV();
+        ApiHomeHisto totalV=apiHomeDao.getTotalV();
+        apiVisitTotal.setDataAdd(todayV.getValue());
+        apiVisitTotal.setDayRate(rate(todayV.getValue(),yestodayV.getValue()));
+        apiVisitTotal.setTotal(totalV.getValue());
+        apiVisitTotal.setWeekRate(rate(nowWeekV.getValue(),lastWeekV.getValue()));
         result.put("apiVisitTotal",apiVisitTotal);
         return result;
     }
 
     //获取Api访问排序柱状图数据
-    //TODO
     public List<ApiHomeHisto> querySortVist(String startTime,String endTime,String limitTime){
-        List<ApiHomeHisto> result=new ArrayList<ApiHomeHisto>();
-        for(int i=0;i<10;i++){
-            ApiHomeHisto item=new ApiHomeHisto();
-            item.setName("VservNo"+i);
-            item.setValue(i);
-            result.add(item);
-        }
-       return  result;
+        return  apiHomeDao.querySortVist(startTime,endTime,limitTime).getResult();
     }
 
     //获取Api并发排序柱状图数据
-    //TODO
     public List<ApiHomeHisto> querySortConcurrent(String startTime,String endTime,String limitTime){
-
-        List<ApiHomeHisto> result=new ArrayList<ApiHomeHisto>();
-        for(int i=0;i<10;i++){
-            ApiHomeHisto item=new ApiHomeHisto();
-            item.setName("CservNo"+i);
-            item.setValue(i);
-            result.add(item);
-        }
-        return  result;
+        return  apiHomeDao.querySortConcurrent(startTime,endTime,limitTime).getResult();
     }
 
     //获取Api等待排序柱状图数据
-    //TODO
     public List<ApiHomeHisto> querySortWait(String startTime,String endTime,String limitTime){
-        List<ApiHomeHisto> result=new ArrayList<ApiHomeHisto>();
-        for(int i=0;i<10;i++){
-            ApiHomeHisto item=new ApiHomeHisto();
-            item.setName("WservNo"+i);
-            item.setValue(i);
-            result.add(item);
-        }
-        return  result;
+        return  apiHomeDao.querySortWait(startTime,endTime,limitTime).getResult();
     }
 
     //获取本月新增Api详细数据
@@ -164,10 +144,12 @@ public class ApiHomeService {
     }
 
     //获取流量分析数据
-    //TODO
-    public Response queryTrafficAnalysis (){
-
-        return Response.ok();
+    public  Map<String,Object> queryTrafficAnalysis (){
+        Map<String,Object> result=new HashMap<String,Object>();
+        result.put("runTimes",apiHomeDao.queryTrafficRuntimes());
+        result.put("avgCost",apiHomeDao.queryTrafficCost());
+        result.put("errorTimes",apiHomeDao.queryTrafficError());
+        return result;
     }
 
 
@@ -175,7 +157,7 @@ public class ApiHomeService {
     public Integer rate(Integer num1,Integer num2){
         Integer dayRate=0;
         if(num2!=0){
-            dayRate=(num1-num2)/num2*100;
+            dayRate=num1/num2*100;
         }else{
             dayRate=num1*100;
         }

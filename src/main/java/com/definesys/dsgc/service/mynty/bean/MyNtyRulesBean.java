@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.Date;
 
 @SQLQuery(value={
-        @SQL(view="V_GET_MN_RULES",sql="select r.*,s.is_enable,(select count(1) from dsgc_mn_services b where b.rule_id = r.rule_id) serv_count from dsgc_mn_rules r,dsgc_mn_subcribes s where s.mn_rule = r.rule_id and s.scb_user = #userId and r.rule_type = #ruleType")
+        @SQL(view="V_GET_MN_RULES",sql="select r.*,(select count(1) from dsgc_mn_services b where b.rule_id = r.rule_id) serv_count,(select count(1) from dsgc_mn_user b where b.rule_id = r.rule_id) user_count from dsgc_mn_rules r,dsgc_mn_subcribes s where s.mn_rule = r.rule_id and s.scb_user = #userId and r.rule_type = #ruleType")
 })
 @Table(value = "DSGC_MN_RULES")
 public class MyNtyRulesBean {
@@ -60,6 +60,9 @@ public class MyNtyRulesBean {
     @Column(value = "EXTRA_ATTR3", type = ColumnType.DB)
     private String extraAttr3;
 
+    @Column(value = "APP_CODE", type = ColumnType.DB)
+    private String appCode;
+
     @SystemColumn(SystemColumnType.OBJECT_VERSION)
     @Column(value = "object_version_number", type = ColumnType.DB)
     private Integer objectVersionNumber;
@@ -96,6 +99,9 @@ public class MyNtyRulesBean {
 
     @Column(value = "serv_count", type = ColumnType.CALCULATE)
     private Integer servCount;
+
+    @Column(value = "user_count", type = ColumnType.CALCULATE)
+    private Integer userCount;
 
     public String getRuleId() {
         return ruleId;
@@ -271,5 +277,30 @@ public class MyNtyRulesBean {
 
     public void setServCount(Integer servCount) {
         this.servCount = servCount;
+    }
+
+    public boolean isEnableBL() {
+        return isEnableBL;
+    }
+
+    public void setEnableBL(boolean enableBL) {
+        isEnableBL = enableBL;
+    }
+
+    public Integer getUserCount() {
+        return userCount;
+    }
+
+    public void setUserCount(Integer userCount) {
+        this.userCount = userCount;
+    }
+
+
+    public String getAppCode() {
+        return appCode;
+    }
+
+    public void setAppCode(String appCode) {
+        this.appCode = appCode;
     }
 }
