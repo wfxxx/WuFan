@@ -70,4 +70,13 @@ public class AppsController {
         appsService.saveAppData(systemEntitireDTO,userId);
         return Response.ok();
     }
+    @RequestMapping(value = "checkSystemCodeIsExist")
+    public Response checkSystemCodeIsExist(@RequestBody() CommonReqBean param){
+        try {
+            return Response.ok().setData(appsService.checkSystemCodeIsExist(param));
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("检测应用是否存在失败！");
+        }
+    }
 }

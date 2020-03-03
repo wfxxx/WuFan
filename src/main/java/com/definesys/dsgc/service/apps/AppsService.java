@@ -176,4 +176,8 @@ public class AppsService {
         }
 
     }
+    public Boolean checkSystemCodeIsExist(CommonReqBean param){
+        Boolean isExsit =  appsDao.checkSystemCodeIsExist(param.getCon0());
+        return isExsit;
+    }
 }

@@ -8,7 +8,7 @@ public class TempQueryLogCondition {
 
     //http请求url，此url配置在值列表，多个url对应不同的环境
     private String httpReqUrl;
-
+    private String env;
     private String userName;
 
     public DSGCLogInstance getLogInstance() {
@@ -41,6 +41,14 @@ public class TempQueryLogCondition {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getEnv() {
+        return env;
+    }
+
+    public void setEnv(String env) {
+        this.env = env;
     }
 
     @Override
