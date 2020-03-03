@@ -101,7 +101,7 @@ public class MyNtyService {
 
     public MyNtyRuleDetailVO updateMNRuleDetail(String uid,MyNtyRuleDetailVO reqParam) throws Exception {
         MyNtyRulesBean rule = new MyNtyRulesBean();
-        if (reqParam.getRuleId() != null) {
+        if (reqParam.getRuleId() != null && reqParam.getRuleId().trim().length() >0) {
             //执行更新操作要先判断权限
             UserHelper uh = this.userHelper.user(uid);
             //执行更新操作，要判断权限
@@ -123,8 +123,9 @@ public class MyNtyService {
         rule.setMnLevel(reqParam.getMnLevel());
         rule.setRuleTitle(reqParam.getRuleTitle());
         rule.setAppCode(reqParam.getAppCode());
-
-        reqParam.setRuleId(this.mndao.updateMNRule(rule));
+        rule.setRuleType(reqParam.getRuleType());
+        this.mndao.updateMNRule(rule);
+        reqParam.setRuleId(rule.getRuleId());
 
         //更新选择的服务
         reqParam.getServSlt().setRuleId(reqParam.getRuleId());

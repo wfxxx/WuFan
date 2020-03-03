@@ -136,13 +136,11 @@ public class MyNtyDao {
      * @param rule
      * @return
      */
-    public String updateMNRule(MyNtyRulesBean rule){
-        if(rule.getRuleId() == null){
+    public void updateMNRule(MyNtyRulesBean rule){
+        if(rule.getRuleId() == null || rule.getRuleId().trim().length() == 0){
            Object key = sw.buildQuery().doInsert(rule);
-           return key.toString();
         } else{
             sw.buildQuery().rowid("ruleId",rule.getRuleId()).doUpdate(rule);
-            return rule.getRuleId();
         }
     }
 
@@ -607,6 +605,8 @@ public class MyNtyDao {
             lkv = this.lkvDao.getlookupValues("MN_SE_EXPR_FILEDS");
         } else if ("SLA".equals(ruleType)) {
             lkv = this.lkvDao.getlookupValues("MN_SLA_EXPR_FILEDS");
+        } else if ("ALA".equals(ruleType)) {
+            lkv = this.lkvDao.getlookupValues("MN_ALA_EXPR_FILEDS");
         }
         return lkv;
     }
