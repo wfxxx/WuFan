@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +30,26 @@ public class MyNtyController {
         String uId = request.getHeader("uid");
         return Response.ok().setData(this.mns.queryMNRules(uId,reqParam,pageSize,pageIndex));
     }
+
+
+    @RequestMapping(value = "/cancelSubscribe", method = RequestMethod.POST)
+    public Response cancelSubscribe(@RequestBody RuleStatSetVO reqParam,HttpServletRequest request) {
+        String uId = request.getHeader("uid");
+        this.mns.cancelSubscribe(uId,reqParam);
+        return Response.ok();
+    }
+
+    @RequestMapping(value = "/setRuleStat", method = RequestMethod.POST)
+    public Response setRuleStat(@RequestBody RuleStatSetVO reqParam,HttpServletRequest request) {
+        String uId = request.getHeader("uid");
+        String res = this.mns.setRuleStat(uId,reqParam);
+        if ("S".equals(res)) {
+            return Response.ok();
+        } else {
+            return Response.error(res);
+        }
+    }
+
 
     /**
      * 获取规则列表

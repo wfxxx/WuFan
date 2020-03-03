@@ -102,6 +102,22 @@ public class MyNtyDao {
     }
 
 
+    public void cancelSubscribe(String uid,RuleStatSetVO reqParam) {
+        if ("Y".equals(reqParam.getIsEnable()) || "N".equals(reqParam.getIsEnable())) {
+            sw.buildQuery().update("IS_ENABLE",reqParam.getIsEnable()).eq("scbUser",uid).eq("mnRule",reqParam.getRuleId()).doUpdate(MyNtySubcribesBean.class);
+        }
+    }
+
+    public void setRuleStat(RuleStatSetVO reqParam){
+        if ("Y".equals(reqParam.getIsEnable()) || "N".equals(reqParam.getIsEnable())) {
+            sw.buildQuery().update("IS_ENABLE",reqParam.getIsEnable()).eq("ruleId",reqParam.getRuleId()).doUpdate(MyNtyRulesBean.class);
+        }
+    }
+
+    public MyNtyRulesBean getMyNtyRuleDtl(String ruleId){
+       return  sw.buildQuery().eq("ruleId",ruleId).doQueryFirst(MyNtyRulesBean.class);
+    }
+
     /**
      * 根据用户id和订阅规则类型，获取用户订阅规则
      *

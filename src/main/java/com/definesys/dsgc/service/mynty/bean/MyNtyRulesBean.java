@@ -60,6 +60,9 @@ public class MyNtyRulesBean {
     @Column(value = "EXTRA_ATTR3", type = ColumnType.DB)
     private String extraAttr3;
 
+    @Column(value = "APP_CODE", type = ColumnType.DB)
+    private String appCode;
+
     @SystemColumn(SystemColumnType.OBJECT_VERSION)
     @Column(value = "object_version_number", type = ColumnType.DB)
     private Integer objectVersionNumber;
@@ -290,5 +293,14 @@ public class MyNtyRulesBean {
 
     public void setUserCount(Integer userCount) {
         this.userCount = userCount;
+    }
+
+
+    public String getAppCode() {
+        return appCode;
+    }
+
+    public void setAppCode(String appCode) {
+        this.appCode = appCode;
     }
 }

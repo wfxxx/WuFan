@@ -5,6 +5,7 @@ import com.definesys.dsgc.service.mynty.bean.*;
 import com.definesys.dsgc.service.users.bean.DSGCUser;
 import com.definesys.dsgc.service.utils.UserHelper;
 import com.definesys.mpaas.query.db.PageQueryResult;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +46,26 @@ public class MyNtyService {
             }
         }
         return res;
+    }
+
+    public void cancelSubscribe(String uid,RuleStatSetVO reqParam) {
+        this.mndao.cancelSubscribe(uid,reqParam);
+    }
+
+    public String setRuleStat(String uid,RuleStatSetVO reqParam) {
+        MyNtyRulesBean rule = this.mndao.getMyNtyRuleDtl(reqParam.getRuleId());
+        if (rule != null) {
+            UserHelper uh = this.userHelper.user(uid);
+            if (!(uh.isSuperAdministrator()
+                    || uh.isAdmin()
+                    || uh.isSystemMaintainer() && uh.isSpecifySystemMaintainer(rule.getAppCode())
+                    || uid.equals(rule.getCreatedBy()))) {
+                return "无效的操作权限！";
+            }
+
+            this.mndao.setRuleStat(reqParam);
+        }
+        return "S";
     }
 
     /**
