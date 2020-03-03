@@ -299,4 +299,9 @@ public class ApiHomeDao {
                 .doQueryFirst(ApiHomeHisto.class);
     }
 
+    public  ApiHomeHisto queryAdminLocaltion(String code){
+        return sw.buildQuery().sql("select t.admin_location as name from  dsgc_env_info_cfg t where t.env_code=#code").
+                setVar("code",code).doQueryFirst(ApiHomeHisto.class);
+    }
+
 }

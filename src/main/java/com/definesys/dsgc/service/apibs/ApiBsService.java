@@ -234,6 +234,7 @@ public class ApiBsService {
             itemResult.put("value",dagPlugStoreBeanTypeList);
             result.add(itemResult);
         }
+        Collections.reverse(result);
         return result;
     }
 

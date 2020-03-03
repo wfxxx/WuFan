@@ -127,7 +127,7 @@ public class MarketDao {
 
         if(mapVlue.get("searchValue")!=null) {
             String searchValue = (String) mapVlue.get("searchValue");
-            query.or().like("servNo", searchValue.toUpperCase()).like("servName", searchValue.toUpperCase()).conjuctionAnd();
+            query.or().like("servNo", searchValue).like("servName", searchValue).conjuctionAnd().and();
         }
         if(mapVlue.get("apply")!=null){
             String[] applyServNo= (String[]) mapVlue.get("apply");
@@ -154,7 +154,12 @@ public class MarketDao {
 
         if(mapVlue.get("searchValue")!=null){
             String searchValue= (String) mapVlue.get("searchValue");
-            query.or().like("servNo",searchValue.toUpperCase()).like("servName",searchValue.toUpperCase()).conjuctionAnd();
+            query.or().like("servNo",searchValue).like("servName",searchValue).conjuctionAnd().and();
+        }
+
+        if(mapVlue.get("classConditions")!=null){
+            String classConditions= (String) mapVlue.get("classConditions");
+            query.and().eq("marketCategory",classConditions);
         }
         if(mapVlue.get("apply")!=null){
             String[] applyServNo= (String[]) mapVlue.get("apply");
@@ -162,10 +167,6 @@ public class MarketDao {
                 return new PageQueryResult<MarketEntiy>();
             }
             query.in("servNo",applyServNo);
-        }
-        if(mapVlue.get("classConditions")!=null){
-            String classConditions= (String) mapVlue.get("classConditions");
-            query.and().eq("marketCategory",classConditions);
         }
         query .eq("marketStat","Y");
         return query.doPageQuery(pageIndex,pageSize,MarketEntiy.class);

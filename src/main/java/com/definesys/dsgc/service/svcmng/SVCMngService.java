@@ -692,8 +692,15 @@ public class SVCMngService {
      * @param servNo
      * @return
      */
-    public List<Map<String,Object>> queryApprover(String servNo){
-        return svcMngDao.getSystemUserByServNo(servNo);
+    public List<Map<String,Object>> queryApprover(String servNo,String sourType){
+        List<Map<String,Object>> result=null;
+        if(sourType.equals("servSource")){
+            result= svcMngDao.getSystemUserByServNo(servNo);
+        }
+        if(sourType.equals("apiSource")){
+            result= svcMngDao.getSystemUserByApiNo(servNo);
+        }
+        return result;
 
     }
 

@@ -148,11 +148,9 @@ public class ApiHomeService {
     //获取流量分析数据
     public  Map<String,Object> queryTrafficAnalysis (){
         Map<String,Object> result=new HashMap<String,Object>();
-
         Calendar instance = Calendar.getInstance();
         String hour = instance.get(instance.HOUR_OF_DAY)+"";
         String minute = instance.get(instance.MINUTE)+"";
-
         ApiHomeHisto errNow=apiHomeDao.queryTrafficErrorNow();
         errNow.setName(hour+":"+minute);
         ApiHomeHisto runTimesNow=apiHomeDao.queryTrafficRuntimesNow();
@@ -161,6 +159,10 @@ public class ApiHomeService {
         result.put("avgCost",apiHomeDao.queryTrafficCost());
         result.put("errorTimes",apiHomeDao.queryTrafficError().add(errNow));
         return result;
+    }
+
+    public  ApiHomeHisto queryAdminLocaltion(String code){
+        return apiHomeDao.queryAdminLocaltion(code);
     }
 
 
