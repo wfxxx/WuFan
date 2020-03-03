@@ -1,17 +1,26 @@
 package com.definesys.dsgc.service.svclog;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONException;
+import com.alibaba.fastjson.JSONObject;
+import com.definesys.dsgc.service.apilog.bean.ApiLogInstListDTO;
+import com.definesys.dsgc.service.svclog.bean.*;
 import com.definesys.dsgc.service.system.bean.DSGCSystemEntities;
 import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
-import com.definesys.dsgc.service.svclog.bean.DSGCLogAudit;
-import com.definesys.dsgc.service.svclog.bean.DSGCLogInstance;
-import com.definesys.dsgc.service.svclog.bean.DSGCLogOutBound;
 import com.definesys.dsgc.service.rpt.bean.TopologyVO;
+import com.definesys.dsgc.service.utils.StringUtil;
+import com.definesys.dsgc.service.utils.httpclient.HttpReqUtil;
+import com.definesys.dsgc.service.utils.httpclient.ResultVO;
 import com.definesys.mpaas.common.exception.MpaasRuntimeException;
+import com.definesys.mpaas.common.http.Response;
 import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.ArrayList;
@@ -22,6 +31,8 @@ public class DSGCLogInstanceService {
 
     @Autowired
     DSGCLogInstanceDao dsgcLogInstanceDao;
+    @Autowired
+    SVCLogDao svcLogDao;
 
 
     public PageQueryResult<DSGCLogInstance> query(List<Object> keyword,String userRole, String uid, DSGCLogInstance instance, int pageSize, int pageIndex) {
@@ -176,5 +187,50 @@ public class DSGCLogInstanceService {
 
     public List<DSGCSystemEntities> getAllSystemCodeAndName() {
         return dsgcLogInstanceDao.getAllSystemCodeAndName();
+    }
+
+    public Response queryEsbServLogInst( TempQueryLogCondition tempQueryLogCondition,int pageSize,int pageIndex,String userRole,String userId, HttpServletRequest request)throws Exception{
+        DSGCLogInstance logInstance = tempQueryLogCondition.getLogInstance();
+        List<Object> keyword = tempQueryLogCondition.getKeywordForm();
+        if(StringUtil.isBlank(tempQueryLogCondition.getEnv())){
+            throw new Exception("请求参数错误！");
+        }
+        FndProperties fndProperties =dsgcLogInstanceDao.findFndPropertiesByKey("DSGC_CURRENT_ENV");
+        if(fndProperties == null){
+            throw new Exception("请配置当前环境代码！");
+        }
+        List<DSGCEnvInfoCfg> envList = svcLogDao.queryEsbEnv();
+        if ( fndProperties.getPropertyValue().equals(tempQueryLogCondition.getEnv())){
+            PageQueryResult<DSGCLogInstance> result =  query(keyword,userRole,userId,logInstance,pageSize,pageIndex);
+            return Response.ok().setData(result);
+        }else {
+            ResultVO<Response> resultvo = new ResultVO<>();
+            for (int i = 0; i < envList.size(); i++) {
+                if(tempQueryLogCondition.getEnv().equals(envList.get(i).getEnvCode())){
+                    String logPath =envList.get(i).getDsgcAdmin();
+                    logPath += "/dsgc/logInstance/HttpRestLogSwith?pageSize="+pageSize+"&pageIndex="+pageIndex;
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("keyword", JSON.toJSONString(keyword));
+                    jsonObject.put("logInstance",JSON.toJSONString(logInstance));
+                    jsonObject.put("pageSize",JSON.toJSONString(pageSize));
+                    jsonObject.put("pageIndex",JSON.toJSONString(pageIndex));
+                    try {
+                        resultvo = HttpReqUtil.sendPostRequest(logPath,jsonObject,request);
+
+                    }catch(JSONException jex){
+                        jex.printStackTrace();
+                        throw new JSONException("参数解析异常，请检查请求参数是否正确！");
+                    }catch (HttpClientErrorException hcex){
+                        hcex.printStackTrace();
+                        throw new HttpClientErrorException(HttpStatus.resolve(404));
+                    }catch (IllegalArgumentException ex){
+                        ex.printStackTrace();
+                        throw new IllegalArgumentException("环境信息配置的uri不能为空！");
+                    }
+                    break;
+                }
+            }
+            return resultvo.getData();
+        }
     }
 }

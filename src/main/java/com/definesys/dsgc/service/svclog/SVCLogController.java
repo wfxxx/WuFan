@@ -2,6 +2,7 @@ package com.definesys.dsgc.service.svclog;
 
 import com.definesys.dsgc.service.svclog.bean.*;
 import com.definesys.dsgc.service.svclog.bean.DSGCValidResutl;
+import com.definesys.dsgc.service.svcmng.bean.DSGCServInterfaceNode;
 import com.definesys.mpaas.common.http.Response;
 import com.definesys.mpaas.query.db.PageQueryResult;
 import io.swagger.annotations.Api;
@@ -152,5 +153,23 @@ public class SVCLogController {
             return Response.error(e.getMessage());
         }
         return Response.ok();
+    }
+    @RequestMapping(value="/queryEsbEnv",method = RequestMethod.GET)
+    public Response queryEsbEnv(){
+
+        List<EsbEnvInfoCfgDTO> result = null;
+        try {
+            result  = sls.queryEsbEnv();
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("查询环境信息失败");
+        }
+        return Response.ok().data(result);
+    }
+    @RequestMapping(value = "/getKeyword",method = RequestMethod.GET)
+    public Response getKeyword(@RequestParam String servNo){
+        List<DSGCServInterfaceNode> list = this.sls.getKeyword(servNo);
+        return Response.ok().data(list);
+
     }
 }

@@ -88,41 +88,50 @@ public class DSGCLogInstanceController {
                                      @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
                                      @RequestParam(value = "pageIndex", required = false, defaultValue = "1") int pageIndex,
                                      HttpServletRequest request){
-        DSGCLogInstance logInstance = tempQueryLogCondition.getLogInstance();
-        List<Object> keyword = tempQueryLogCondition.getKeywordForm();
-//        System.out.println(logInstance);
-        String reqUrl = tempQueryLogCondition.getHttpReqUrl();
-//        String reqUrl = "http://localhost:8888/dsgc/logInstance/query11?pageSize=10&pageIndex=1";
-//        String reqUrl = "http://localhost:8888/dsgc/logInstance/query11";
-//        String reqUrl = "http://10.16.128.98:8021/dsgcService";
-//        String url = request.getScheme()+"://"+ request.getServerName()+":"+request.getServerPort()+request.getRequestURI();
-//        String reqUrl = "http://localhost:8888/dsgc/logInstance/queryLogInstanceBySwitchUrl";
-        com.alibaba.fastjson.JSONObject reqMap = new com.alibaba.fastjson.JSONObject();
-        ResultVO<PageQueryResult<DSGCLogInstance>> resultvo = new ResultVO<>();
-        try{
-            reqMap.put("keyword", JSON.toJSONString(keyword));
-            reqMap.put("logInstance",JSON.toJSONString(logInstance));
-            reqMap.put("pageSize",JSON.toJSONString(pageSize));
-            reqMap.put("pageIndex",JSON.toJSONString(pageIndex));
-//            reqMap.put("userName",JSON.toJSONString(tempQueryLogCondition.getUserName()));
-
-            resultvo = HttpReqUtil.sendPostRequest(reqUrl,reqMap,request);
-
-        }catch(JSONException jex){
+        String userRole = request.getHeader("userRole");
+        String userId = request.getHeader("uid");
+        try {
+             return logService.queryEsbServLogInst(tempQueryLogCondition,pageSize,pageIndex,userRole,userId,request);
+    }catch(JSONException jex){
             jex.printStackTrace();
-            logger.error("%s", jex.getMessage());
-            return Response.error("参数解析异常！").setCode("error").setMessage("参数解析异常，请检查请求参数是否正确！");
+            return Response.error(jex.getMessage());
         }catch (HttpClientErrorException hcex){
             hcex.printStackTrace();
-            logger.error("%s", hcex.getMessage());
-            return Response.error("404，请求的url不存在！").setCode("error").setMessage("404，请求的url不存在，请检查要访问的远程外部接口URL配置是否正确！");
+            return Response.error(hcex.getMessage());
         }catch (IllegalArgumentException ex){
             ex.printStackTrace();
-            logger.error("%s", ex.getMessage());
-            return Response.error("请求的uri不能为空！").setCode("error").setMessage("请求的uri不能为空！");
+            return Response.error(ex.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.error("查询数据失败！");
         }
 
-        return Response.ok().data(resultvo.getData());
+//        DSGCLogInstance logInstance = tempQueryLogCondition.getLogInstance();
+//        List<Object> keyword = tempQueryLogCondition.getKeywordForm();
+//        String reqUrl = tempQueryLogCondition.getHttpReqUrl();
+//        com.alibaba.fastjson.JSONObject reqMap = new com.alibaba.fastjson.JSONObject();
+//        ResultVO<PageQueryResult<DSGCLogInstance>> resultvo = new ResultVO<>();
+//        try{
+//            reqMap.put("keyword", JSON.toJSONString(keyword));
+//            reqMap.put("logInstance",JSON.toJSONString(logInstance));
+//            reqMap.put("pageSize",JSON.toJSONString(pageSize));
+//            reqMap.put("pageIndex",JSON.toJSONString(pageIndex));
+//            resultvo = HttpReqUtil.sendPostRequest(reqUrl,reqMap,request);
+//
+//        }catch(JSONException jex){
+//            jex.printStackTrace();
+//            logger.error("%s", jex.getMessage());
+//            return Response.error("参数解析异常！").setCode("error").setMessage("参数解析异常，请检查请求参数是否正确！");
+//        }catch (HttpClientErrorException hcex){
+//            hcex.printStackTrace();
+//            logger.error("%s", hcex.getMessage());
+//            return Response.error("404，请求的url不存在！").setCode("error").setMessage("404，请求的url不存在，请检查要访问的远程外部接口URL配置是否正确！");
+//        }catch (IllegalArgumentException ex){
+//            ex.printStackTrace();
+//            logger.error("%s", ex.getMessage());
+//            return Response.error("请求的uri不能为空！").setCode("error").setMessage("请求的uri不能为空！");
+//        }
+//        return Response.ok().data(resultvo.getData());
     }
 
 

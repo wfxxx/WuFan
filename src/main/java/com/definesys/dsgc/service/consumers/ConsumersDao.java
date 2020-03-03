@@ -151,4 +151,13 @@ public class ConsumersDao {
     public List<DSGCEnvInfoCfg> queryApiEnv(){
         return sw.buildQuery().eq("env_type","DAG").doQuery(DSGCEnvInfoCfg.class);
     }
+
+    public Boolean checkCsmCodeIsExsit(String csmCode){
+        DSGCConsumerEntities dsgcConsumerEntities = sw.buildQuery().eq("csm_code",csmCode).doQueryFirst(DSGCConsumerEntities.class);
+        if (dsgcConsumerEntities != null){
+            return true;
+        }else {
+            return false;
+        }
+    }
 }

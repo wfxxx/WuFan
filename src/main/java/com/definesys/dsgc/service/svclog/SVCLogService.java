@@ -377,6 +377,24 @@ public PageQueryResult<SVCLogListBean> querySvcLogRecordListByCon(SVCLogQueryBea
         }
 
     }
+
+    public List<EsbEnvInfoCfgDTO> queryEsbEnv(){
+        List<EsbEnvInfoCfgDTO> result = new ArrayList<>();
+      List<DSGCEnvInfoCfg>  list = sldao.queryEsbEnv();
+      Iterator<DSGCEnvInfoCfg> iterator = list.iterator();
+      while (iterator.hasNext()){
+          DSGCEnvInfoCfg dsgcEnvInfoCfg = iterator.next();
+          EsbEnvInfoCfgDTO dto = new EsbEnvInfoCfgDTO();
+          dto.setEnvCode(dsgcEnvInfoCfg.getEnvCode());
+          dto.setEnvName(dsgcEnvInfoCfg.getEnvName());
+          result.add(dto);
+      }
+      return result;
+    }
+
+    public List<DSGCServInterfaceNode> getKeyword(String servNo) {
+        return this.sldao.getKeyword(servNo);
+    }
 }
 //    insert into DSGC_SVCGEN_OBJ
 //        select deve_id,

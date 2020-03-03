@@ -112,4 +112,14 @@ public class ConsumersController {
         }
         return Response.ok();
     }
+    @RequestMapping(value = "checkCsmCodeIsExsit")
+    public Response checkCsmCodeIsExsit(@RequestBody() CommonReqBean param){
+        try {
+          return Response.ok().setData(consumersService.checkCsmCodeIsExsit(param));
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("检测消费者是否存在失败！");
+        }
+    }
+
 }
