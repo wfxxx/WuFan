@@ -677,19 +677,19 @@ public class MyNtyDao {
 
 
     public List<MyNtyUserSltInfoBean> getMNSubUser(String ruleType,String ruleId,String filterUserName,String filterUserDesc,String[] unSlt,String[] newSlted) {
-        List<MyNtyUserSltInfoBean> res = new ArrayList<MyNtyUserSltInfoBean>();
-        if (ruleId == null || ruleId.trim().length() == 0) {
-            return res;
-        }
+//        List<MyNtyUserSltInfoBean> res = new ArrayList<MyNtyUserSltInfoBean>();
+//        if (ruleId == null || ruleId.trim().length() == 0) {
+//            return res;
+//        }
         StringBuilder sql = new StringBuilder();
 
-        sql.append("select du.user_id,du.user_name,du.user_role,du.user_mail,du.user_phone,du.user_description,(select dmu.creation_date from dsgc_mn_user dmu where dmu.rule_id = '" + ruleId + "' and du.user_id = dmu.user_id ) creation_date from dsgc_user du");
+        sql.append("select du.user_id,du.user_name,du.user_role,du.user_mail,du.user_phone,du.user_description,(select dmu.creation_date from dsgc_mn_subcribes dmu where dmu.mn_rule = '" + ruleId + "' and du.user_id = dmu.scb_user ) creation_date from dsgc_user du");
 
         String newSltedInStr = this.covertArrayToInStr(newSlted);
         if (newSltedInStr != null) {
-            sql.append(" where (du.user_id in (" + newSltedInStr + ") or du.user_id in (select u.user_id from dsgc_mn_user u where u.rule_id = '" + ruleId + "'))");
+            sql.append(" where (du.user_id in (" + newSltedInStr + ") or du.user_id in (select u.scb_user from dsgc_mn_subcribes u where u.mn_rule = '" + ruleId + "'))");
         } else {
-            sql.append(" where du.user_id in (select u.user_id from dsgc_mn_user u where u.rule_id = '" + ruleId + "')");
+            sql.append(" where du.user_id in (select u.scb_user from dsgc_mn_subcribes u where u.mn_rule = '" + ruleId + "')");
         }
 
         String unSltInStr = this.covertArrayToInStr(unSlt);
@@ -711,94 +711,89 @@ public class MyNtyDao {
 
 
     /**
-     * 保存服务预警规则订阅服务
+     * 保存服务预警规则接收用户
      *
      * @param ruleId
      * @param unSlt
      * @param newSlted
      */
     public void saveMNSubUser(String ruleType,String ruleId,String[] unSlt,String[] newSlted) {
-        if ("SE".equals(ruleType)) {
-            this.saveMNSESubUser(ruleId,unSlt,newSlted);
-        } else {
-            this.saveMNSASubUser(ruleId,unSlt,newSlted);
-        }
+//        if ("SE".equals(ruleType)) {
+//            this.saveMNSESubUser(ruleId,unSlt,newSlted);
+//        } else {
+//            this.saveMNSASubUser(ruleId,unSlt,newSlted);
+//        }
+        this.saveMNSubUser(ruleId,unSlt,newSlted);
     }
 
 
-    public void saveMNSASubUser(String ruleId,String[] unSlt,String[] newSlted) {
+    public void saveMNSubUser(String ruleId,String[] unSlt,String[] newSlted) {
         if (ruleId != null || ruleId.trim().length() > 0) {
 
             //删除取消订阅的服务
             if (unSlt != null && unSlt.length > 0) {
-                sw.buildQuery().in("user_id",unSlt).eq("RULE_ID",ruleId).table("DSGC_MN_USER").doDelete();
+                sw.buildQuery().in("SCB_USER",unSlt).eq("MN_RULE",ruleId).table("dsgc_mn_subcribes").doDelete();
             }
 
             //添加新增订阅的服务
             if (newSlted != null && newSlted.length > 0) {
-                List<MyNtyRulesBean> ruleExprList = sw.buildQuery().eq("ruleId",ruleId).doQuery(MyNtyRulesBean.class);
-                if (ruleExprList != null && ruleExprList.size() > 0) {
-                    String ruleExpr = ruleExprList.get(0).getRuleExpr();
-                    //更新已经存在的
-                    List<MyNtyUserBean> existedSubServList = sw.buildQuery().in("user_id",newSlted).eq("RULE_ID",ruleId).doQuery(MyNtyUserBean.class);
+                    List<MyNtySubcribesBean> existedSubUserList = sw.buildQuery().in("SCB_USER",newSlted).eq("MN_RULE",ruleId).doQuery(MyNtySubcribesBean.class);
                     Set<String> existFlag = new HashSet<String>();
-                    Iterator<MyNtyUserBean> existIter = existedSubServList.iterator();
+                    Iterator<MyNtySubcribesBean> existIter = existedSubUserList.iterator();
                     while (existIter.hasNext()) {
-                        MyNtyUserBean ssb = existIter.next();
-                        existFlag.add(ssb.getUserId());//标记已经存在
-                        sw.buildQuery().rowid("dmuId",ssb.getDmuId()).doUpdate(ssb);
+                        MyNtySubcribesBean ssb = existIter.next();
+                        existFlag.add(ssb.getScbUser());//标记已经存在
                     }
                     //插入不存在的
                     for (int i = 0; i < newSlted.length; i++) {
                         String userId = newSlted[i];
                         if (userId != null && userId.trim().length() > 0 && !existFlag.contains(userId)) {
-                            MyNtyUserBean newSsb = new MyNtyUserBean();
-                            newSsb.setUserId(userId);
-                            newSsb.setRuleId(ruleId);
+                            MyNtySubcribesBean newSsb = new MyNtySubcribesBean();
+                            newSsb.setScbUser(userId);
+                            newSsb.setMnRule(ruleId);
+                            newSsb.setIsEnable("Y");
                             sw.buildQuery().doInsert(newSsb);
                         }
                     }
-
-                }
             }
         }
     }
-
-    public void saveMNSESubUser(String ruleId,String[] unSlt,String[] newSlted) {
-        if (ruleId != null || ruleId.trim().length() > 0) {
-
-            //删除取消订阅的服务
-            if (unSlt != null && unSlt.length > 0) {
-                sw.buildQuery().in("user_id",unSlt).eq("RULE_ID",ruleId).table("DSGC_MN_USER").doDelete();
-            }
-
-            //添加新增订阅的服务
-            if (newSlted != null && newSlted.length > 0) {
-                List<ServExcptSubRulesBean> ruleExprList = sw.buildQuery().eq("seeId",ruleId).doQuery(ServExcptSubRulesBean.class);
-                if (ruleExprList != null && ruleExprList.size() > 0) {
-                    String ruleExpr = ruleExprList.get(0).getReExpr();
-                    //更新已经存在的
-                    List<MyNtyUserBean> existedSubServList = sw.buildQuery().in("user_id",newSlted).eq("RULE_ID",ruleId).doQuery(MyNtyUserBean.class);
-                    Set<String> existFlag = new HashSet<String>();
-                    Iterator<MyNtyUserBean> existIter = existedSubServList.iterator();
-                    while (existIter.hasNext()) {
-                        MyNtyUserBean ssb = existIter.next();
-                        existFlag.add(ssb.getUserId());//标记已经存在
-                        sw.buildQuery().rowid("dmuId",ssb.getDmuId()).doUpdate(ssb);
-                    }
-                    //插入不存在的
-                    for (int i = 0; i < newSlted.length; i++) {
-                        String userId = newSlted[i];
-                        if (userId != null && userId.trim().length() > 0 && !existFlag.contains(userId)) {
-                            MyNtyUserBean newSsb = new MyNtyUserBean();
-                            newSsb.setUserId(userId);
-                            newSsb.setRuleId(ruleId);
-                            sw.buildQuery().doInsert(newSsb);
-                        }
-                    }
-
-                }
-            }
-        }
-    }
+//
+//    public void saveMNSESubUser(String ruleId,String[] unSlt,String[] newSlted) {
+//        if (ruleId != null || ruleId.trim().length() > 0) {
+//
+//            //删除取消订阅的服务
+//            if (unSlt != null && unSlt.length > 0) {
+//                sw.buildQuery().in("user_id",unSlt).eq("RULE_ID",ruleId).table("DSGC_MN_USER").doDelete();
+//            }
+//
+//            //添加新增订阅的服务
+//            if (newSlted != null && newSlted.length > 0) {
+//                List<ServExcptSubRulesBean> ruleExprList = sw.buildQuery().eq("seeId",ruleId).doQuery(ServExcptSubRulesBean.class);
+//                if (ruleExprList != null && ruleExprList.size() > 0) {
+//                    String ruleExpr = ruleExprList.get(0).getReExpr();
+//                    //更新已经存在的
+//                    List<MyNtyUserBean> existedSubServList = sw.buildQuery().in("user_id",newSlted).eq("RULE_ID",ruleId).doQuery(MyNtyUserBean.class);
+//                    Set<String> existFlag = new HashSet<String>();
+//                    Iterator<MyNtyUserBean> existIter = existedSubServList.iterator();
+//                    while (existIter.hasNext()) {
+//                        MyNtyUserBean ssb = existIter.next();
+//                        existFlag.add(ssb.getUserId());//标记已经存在
+//                        sw.buildQuery().rowid("dmuId",ssb.getDmuId()).doUpdate(ssb);
+//                    }
+//                    //插入不存在的
+//                    for (int i = 0; i < newSlted.length; i++) {
+//                        String userId = newSlted[i];
+//                        if (userId != null && userId.trim().length() > 0 && !existFlag.contains(userId)) {
+//                            MyNtyUserBean newSsb = new MyNtyUserBean();
+//                            newSsb.setUserId(userId);
+//                            newSsb.setRuleId(ruleId);
+//                            sw.buildQuery().doInsert(newSsb);
+//                        }
+//                    }
+//
+//                }
+//            }
+//        }
+//    }
 }

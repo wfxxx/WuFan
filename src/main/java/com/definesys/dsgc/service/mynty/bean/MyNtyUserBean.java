@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.Date;
-
+@Deprecated
 @Table(value = "dsgc_mn_user")
 public class MyNtyUserBean {
 
