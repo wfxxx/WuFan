@@ -209,5 +209,13 @@ public class SVCMngDao {
                 .setVar("servNo",servNo)
                 .doQuery();
     }
+    public List<Map<String,Object>> getSystemUserByApiNo(String servNo){
+        return sw.buildQuery().sql("select u.user_id code,u.user_name name from dsgc_user u,dsgc_system_user su,dsgc_apis s \n" +
+                "                where s.api_code='api_test5'  and s.app_code=su.sys_code \n" +
+                "                and u.user_id= su.user_id and u.user_role='SystemLeader'")
+                .setVar("servNo",servNo)
+                .doQuery();
+    }
+
 
 }

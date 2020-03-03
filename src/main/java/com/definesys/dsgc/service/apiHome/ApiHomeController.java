@@ -37,7 +37,7 @@ public class ApiHomeController {
 //获取Api首页卡片视图数据
     @GetMapping("/queryCardsData")
     public Response queryCardsData(HttpServletRequest request){
-        Map<String,Object> result;
+        Map<String,Object> result=null;
         try{
             result=apiHomeService.queryCardsData();
         }catch (Exception e){
@@ -192,6 +192,19 @@ public class ApiHomeController {
         Map<String,Object> result=null;
         try{
             result=apiHomeService.queryTrafficAnalysis();
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error(e.getMessage());
+        }
+        return Response.ok().setData(result);
+    }
+
+    //获取当前环境地址
+    @PostMapping("/queryAdminLocaltion")
+    public Response queryAdminLocaltion (@RequestBody  CommonReqBean reqBean,HttpServletRequest request){
+        ApiHomeHisto result=null;
+        try{
+            result=apiHomeService.queryAdminLocaltion(reqBean.getCon0());
         }catch (Exception e){
             e.printStackTrace();
             return Response.error(e.getMessage());

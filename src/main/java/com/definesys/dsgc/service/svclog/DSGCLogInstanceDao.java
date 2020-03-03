@@ -4,6 +4,7 @@ package com.definesys.dsgc.service.svclog;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.definesys.dsgc.service.rpt.bean.TopologyVO;
+import com.definesys.dsgc.service.svclog.bean.FndProperties;
 import com.definesys.dsgc.service.system.bean.DSGCSystemEntities;
 import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
 import com.definesys.dsgc.service.svclog.bean.DSGCLogAudit;
@@ -293,6 +294,10 @@ public class DSGCLogInstanceDao {
                 .in("sys_code",systenCode)
                 .doQuery(TopologyVO.class);
     }
-
+    public FndProperties findFndPropertiesByKey(String key) {
+        return sw.buildQuery()
+                .eq("property_key",key)
+                .doQueryFirst(FndProperties.class);
+    }
 
 }

@@ -126,7 +126,7 @@ public class SVCMngController {
      * @return
      */
     @RequestMapping(value = "/queryApprover",method = RequestMethod.GET)
-    public Response queryApprover(@RequestParam(value = "servNo")String servNo){
-        return Response.ok().setData(svcMngService.queryApprover(servNo));
+    public Response queryApprover(@RequestParam(value = "servNo")String servNo,@RequestParam(value = "sourType")String sourType){
+        return Response.ok().setData(svcMngService.queryApprover(servNo,sourType));
     }
 }

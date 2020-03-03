@@ -1,12 +1,9 @@
 package com.definesys.dsgc.service.svclog;
 
-import com.definesys.dsgc.service.svclog.bean.SVCLogListBean;
-import com.definesys.dsgc.service.svclog.bean.SVCLogQueryBean;
-import com.definesys.dsgc.service.svclog.bean.UpdateBizResolveVO;
+import com.definesys.dsgc.service.svclog.bean.*;
 import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
 import com.definesys.dsgc.service.svcmng.bean.DSGCServInterfaceNode;
 import com.definesys.dsgc.service.svcmng.bean.DSGCService;
-import com.definesys.dsgc.service.svclog.bean.DSGCValidResutl;
 import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.mpaas.query.MpaasQuery;
 import com.definesys.mpaas.query.MpaasQueryFactory;
@@ -15,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -227,5 +225,16 @@ public class SVCLogDao {
     }
     public void updateBizResolve(UpdateBizResolveVO param){
         sw.buildQuery().update("biz_resolve",param.getBizResolve()).eq("servNo",param.getServNo()).doUpdate(DSGCService.class);
+    }
+    public List<DSGCEnvInfoCfg> queryEsbEnv(){
+       return sw.buildQuery().eq("env_type","ESB").doQuery(DSGCEnvInfoCfg.class);
+    }
+    public List<DSGCServInterfaceNode> getKeyword(String servNo) {
+        if(servNo == ""){
+            return new ArrayList<>();
+        }
+        return sw.buildQuery()
+                .eq("servNo", servNo)
+                .doQuery(DSGCServInterfaceNode.class);
     }
 }

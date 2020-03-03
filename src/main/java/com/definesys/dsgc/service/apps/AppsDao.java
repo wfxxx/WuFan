@@ -124,5 +124,12 @@ public class AppsDao {
         sw.buildQuery()
                 .doBatchInsert(userList);
     }
-
+    public Boolean checkSystemCodeIsExist(String sysCode){
+        DSGCSystemEntities dsgcSystemEntities = sw.buildQuery().eq("sys_code",sysCode).doQueryFirst(DSGCSystemEntities.class);
+        if (dsgcSystemEntities != null){
+            return true;
+        }else {
+            return false;
+        }
+    }
 }
