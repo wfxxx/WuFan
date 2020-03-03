@@ -5,7 +5,6 @@ import com.definesys.dsgc.service.mynty.bean.*;
 import com.definesys.dsgc.service.users.bean.DSGCUser;
 import com.definesys.dsgc.service.utils.UserHelper;
 import com.definesys.mpaas.query.db.PageQueryResult;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,6 +67,42 @@ public class MyNtyService {
         return "S";
     }
 
+    public void delMNRule(String uid,String ruleId) {
+
+
+    }
+
+    public MyNtyRuleDetailVO getMNRuleDetail(String ruleId) {
+        MyNtyRuleDetailVO res = new MyNtyRuleDetailVO();
+
+        MyNtyRulesBean rule = this.mndao.getMyNtyRuleDtl(ruleId);
+        if (rule != null) {
+            res.setRuleId(rule.getRuleId());
+            res.setDisableTime(rule.getDisableTime());
+            res.setMnLevel(rule.getMnLevel());
+            res.setRuleExpr(rule.getRuleExprDesc());
+            res.setRunInterval(rule.getRunInterval() / 60 / 60 / 1000);
+            res.setRuleTitle(rule.getRuleTitle());
+            res.setRuleType(rule.getRuleType());
+        }
+
+        MyNtyServSltBean serSlt = new MyNtyServSltBean();
+        serSlt.setRuleId(rule.getRuleId());
+        serSlt.setRuleType(rule.getRuleType());
+        res.setServSlt(this.getMNSubscributedServList(serSlt));
+
+        MyNtyUserSltBean userSlt = new MyNtyUserSltBean();
+        userSlt.setRuleId(rule.getRuleId());
+        userSlt.setRuleType(rule.getRuleType());
+
+        res.setUserSlt(userSlt);
+        return res;
+    }
+
+    public MyNtyRuleDetailVO updateMNRuleDetail(String uid,MyNtyRuleDetailVO reqParam) {
+        return null;
+    }
+
     /**
      * 获取我的通知订阅规则
      *
@@ -99,6 +134,7 @@ public class MyNtyService {
      *
      * @param userId
      * @param chgs
+     * @deprecated
      */
     public void updateMNRules(String userId,List<MyNtyRulesBean> chgs) {
         if (chgs != null) {

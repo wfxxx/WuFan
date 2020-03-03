@@ -42,7 +42,7 @@ public class MyNtyDao {
                 "         where e.sys_code = r.app_code) app_code_meaning,\n" +
                 "       r.alert_count,\n" +
                 "       (select s.is_enable from dsgc_mn_subcribes s where s.scb_user = '" + uid + "' and s.mn_rule = r.rule_id) sub_stat\n" +
-                "  from dsgc_mn_rules r";
+                "  from dsgc_mn_rules r where r.rule_type in (select fv.lookup_code from fnd_lookup_types ft,fnd_lookup_values fv where ft.lookup_id = fv.lookup_id and ft.lookup_type = 'MN_RULE_ALERT_TYPE') ";
 
         String queryAnd = "";
         if (reqParam.getRuleType() != null && !"ALL".equals(reqParam.getRuleType())) {
@@ -85,7 +85,6 @@ public class MyNtyDao {
             sql = "select * from (" + sql + ") where 1 = 1 " + queryAnd;
         }
 
-        System.out.println(sql);
         return sw.buildQuery().sql(sql).doPageQuery(pageIndex,pageSize,MyNtyQueryListBean.class);
 
     }

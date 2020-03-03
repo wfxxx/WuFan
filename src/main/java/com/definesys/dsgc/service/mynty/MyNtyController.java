@@ -50,6 +50,22 @@ public class MyNtyController {
         }
     }
 
+    @RequestMapping(value = "/delMNRule", method = RequestMethod.POST)
+    public Response delMNRule(@RequestBody MyNtyRuleIdVO reqParam,HttpServletRequest request){
+        return null;
+    }
+
+    @RequestMapping(value = "/getMNRuleDetail", method = RequestMethod.POST)
+    public Response getMNRuleDetail(@RequestBody MyNtyRuleIdVO reqParam,HttpServletRequest request){
+       return Response.ok().setData(this.mns.getMNRuleDetail(reqParam.getRuleId()));
+    }
+
+    @RequestMapping(value = "/updateMNRuleDetail", method = RequestMethod.POST)
+    public Response updateMNRuleDetail(@RequestBody MyNtyRuleDetailVO reqParam,HttpServletRequest request){
+        return null;
+    }
+
+
 
     /**
      * 获取规则列表
