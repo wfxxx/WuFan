@@ -51,8 +51,14 @@ public class MyNtyController {
     }
 
     @RequestMapping(value = "/delMNRule", method = RequestMethod.POST)
-    public Response delMNRule(@RequestBody MyNtyRuleIdVO reqParam,HttpServletRequest request){
-        return null;
+    public Response delMNRule(@RequestBody MyNtyRuleIdVO reqParam,HttpServletRequest request) {
+        String uId = request.getHeader("uid");
+        try {
+            this.mns.delMNRule(uId,reqParam.getRuleId());
+            return Response.ok();
+        } catch (Exception e) {
+            return Response.error(e.getMessage());
+        }
     }
 
     @RequestMapping(value = "/getMNRuleDetail", method = RequestMethod.POST)

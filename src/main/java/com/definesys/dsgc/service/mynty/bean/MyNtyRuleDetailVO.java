@@ -11,8 +11,10 @@ public class MyNtyRuleDetailVO {
 
     private String ruleId;
     private String ruleType;
+    private String ruleTypeMeaning;
     private Integer mnLevel;
     private String appCode;
+    private String appName;
     private long runInterval;
     private String ruleExpr;
     private String ruleTitle;
@@ -100,5 +102,21 @@ public class MyNtyRuleDetailVO {
 
     public void setAppCode(String appCode) {
         this.appCode = appCode;
+    }
+
+    public String getRuleTypeMeaning() {
+        return ruleTypeMeaning;
+    }
+
+    public void setRuleTypeMeaning(String ruleTypeMeaning) {
+        this.ruleTypeMeaning = ruleTypeMeaning;
+    }
+
+    public String getAppName() {
+        return appName;
+    }
+
+    public void setAppName(String appName) {
+        this.appName = appName;
     }
 }

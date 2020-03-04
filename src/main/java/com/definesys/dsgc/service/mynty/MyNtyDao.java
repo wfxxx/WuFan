@@ -118,6 +118,18 @@ public class MyNtyDao {
        return  sw.buildQuery().eq("ruleId",ruleId).doQueryFirst(MyNtyRulesBean.class);
     }
 
+
+    public void deleteMyNtyRule(String ruleId){
+
+        //删除用户订阅
+        sw.buildQuery().eq("mnRule",ruleId).doDelete(MyNtySubcribesBean.class);
+        //删除订阅规则选择的服务
+        sw.buildQuery().eq("ruleId",ruleId).doDelete(MyNtySubServBean.class);
+        //删除订阅规则
+        sw.buildQuery().rowid("ruleId",ruleId).doDelete(MyNtyRulesBean.class);
+
+
+    }
     /**
      * 根据用户id和订阅规则类型，获取用户订阅规则
      *
@@ -609,6 +621,26 @@ public class MyNtyDao {
             lkv = this.lkvDao.getlookupValues("MN_ALA_EXPR_FILEDS");
         }
         return lkv;
+    }
+
+    public String getRuleTypeMeaningFromLKV(String ruleType){
+        Map<String,String> lkv = this.lkvDao.getlookupValues("MN_RULE_ALERT_TYPE");
+        if(lkv != null){
+            return lkv.get(ruleType);
+        } else {
+            return null;
+        }
+    }
+
+    public String getAppCodeName(String appCode){
+        Map<String,Object> res = sw.buildQuery().sql("select SYS_NAME from dsgc_system_entities where sys_code = #sysCode").setVar("sysCode",appCode).doQueryFirst();
+        if(res != null){
+            Object obj = res.get("SYS_NAME");
+            if(obj !=null){
+                return obj.toString();
+            }
+        }
+        return null;
     }
 
     public List<DSGCMnNotices> findDSGCMnNotices(DSGCMnNotices dsgcMnNotices) {
