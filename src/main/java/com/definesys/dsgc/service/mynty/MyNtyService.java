@@ -97,6 +97,9 @@ public class MyNtyService {
             res.setRunInterval(rule.getRunInterval() / 60 / 60 / 1000);
             res.setRuleTitle(rule.getRuleTitle());
             res.setRuleType(rule.getRuleType());
+            res.setAppCode(rule.getAppCode());
+            res.setRuleTypeMeaning(this.mndao.getRuleTypeMeaningFromLKV(rule.getRuleType()));
+            res.setAppName(this.mndao.getAppCodeName(rule.getAppCode()));
         }
 
         MyNtyServSltBean serSlt = new MyNtyServSltBean();
@@ -107,8 +110,8 @@ public class MyNtyService {
         MyNtyUserSltBean userSlt = new MyNtyUserSltBean();
         userSlt.setRuleId(rule.getRuleId());
         userSlt.setRuleType(rule.getRuleType());
-
         res.setUserSlt(userSlt);
+
         return res;
     }
 

@@ -623,6 +623,26 @@ public class MyNtyDao {
         return lkv;
     }
 
+    public String getRuleTypeMeaningFromLKV(String ruleType){
+        Map<String,String> lkv = this.lkvDao.getlookupValues("MN_RULE_ALERT_TYPE");
+        if(lkv != null){
+            return lkv.get(ruleType);
+        } else {
+            return null;
+        }
+    }
+
+    public String getAppCodeName(String appCode){
+        Map<String,Object> res = sw.buildQuery().sql("select SYS_NAME from dsgc_system_entities where sys_code = #sysCode").setVar("sysCode",appCode).doQueryFirst();
+        if(res != null){
+            Object obj = res.get("SYS_NAME");
+            if(obj !=null){
+                return obj.toString();
+            }
+        }
+        return null;
+    }
+
     public List<DSGCMnNotices> findDSGCMnNotices(DSGCMnNotices dsgcMnNotices) {
         MpaasQuery mpaasQuery = this.sw.buildQuery()
                 .eq("ntyUser",dsgcMnNotices.getNtyUser());
