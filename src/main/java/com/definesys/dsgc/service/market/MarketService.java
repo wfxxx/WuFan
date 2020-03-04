@@ -1,5 +1,6 @@
 package com.definesys.dsgc.service.market;
 
+import com.definesys.dsgc.service.apiroute.ApiRouteDao;
 import com.definesys.dsgc.service.esbenv.DSGCBusCfgDao;
 import com.definesys.dsgc.service.esbenv.bean.DSGCEnvInfoCfg;
 import com.definesys.dsgc.service.market.bean.*;
@@ -24,6 +25,9 @@ public class MarketService {
 
     @Autowired
     private SVCMngDao svcMngDao;
+
+    @Autowired
+    private ApiRouteDao apiRouteDao;
 
     public void addMarketCate(MarketCateVO marketcateVO) {
         marketDao.addMarketCate(marketcateVO);
@@ -166,7 +170,8 @@ public class MarketService {
             servBaseDTO.setServDesc(dsgcService.getServDesc());
             result.setServBase(servBaseDTO);
         }
-        List<DSGCEnvInfoCfg> envInfoCfgs = busCfgDao.queryEnvInfoCfgListPage();
+        List<DSGCEnvInfoCfg> envInfoCfgs = marketDao.queryEsbEnv();
+                //busCfgDao.queryEnvInfoCfgListPage();
         List<DSGCServicesUri> servicesUris = svcMngDao.queryServUri(servNo);
         StringBuilder restRequestSample = new StringBuilder("");
         StringBuilder soapRequestSample =  new StringBuilder("");
@@ -425,7 +430,8 @@ public class MarketService {
             apiDetailBaseDTO.setApiDesc(apisBean.getApiDesc());
             result.setApiBase(apiDetailBaseDTO);
         }
-        List<DSGCEnvInfoCfg> envInfoCfgs = busCfgDao.queryEnvInfoCfgListPage();
+        List<DSGCEnvInfoCfg> envInfoCfgs =marketDao.queryApiEnv();
+                //busCfgDao.queryEnvInfoCfgListPage();
         List<DSGCServicesUri> servicesUris = svcMngDao.queryServUri(apiCode);
 
         if (servicesUris != null && servicesUris.size()>0){

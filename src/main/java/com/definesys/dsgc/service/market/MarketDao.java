@@ -213,4 +213,10 @@ public class MarketDao {
                 .eq("api_code",apiCode)
                 .doQueryFirst(DSGCApisBean.class);
     }
+    public List<DSGCEnvInfoCfg> queryApiEnv(){
+        return sw.buildQuery().eq("env_type","DAG").doQuery(DSGCEnvInfoCfg.class);
+    }
+    public List<DSGCEnvInfoCfg> queryEsbEnv(){
+        return sw.buildQuery().eq("env_type","ESB").doQuery(DSGCEnvInfoCfg.class);
+    }
 }

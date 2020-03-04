@@ -261,13 +261,7 @@ public void updateRoutePathStrip(DagRoutesBean param){
         dagDeployReqVO.setVid(param.getVid());
         dagDeployReqVO.setEnvCode(param.getDeployEnv());
         dagDeployReqVO.setDeployDesc(param.getDeployDesc());
-        String res = "";
-        try{
-           res  = dagClientService.deploy(dagDeployReqVO,userId);
-        }catch (Exception e){
-            e.printStackTrace();
-            throw new Exception("部署失败!");
-        }
+        String res  = dagClientService.deploy(dagDeployReqVO,userId);
         if (!"S".equals(res)) {
             throw new Exception(res);
         }
