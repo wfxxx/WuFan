@@ -5,6 +5,7 @@ import com.definesys.dsgc.service.apiauth.bean.CommonReqBean;
 import com.definesys.dsgc.service.apiauth.bean.DSGCApisAccess;
 import com.definesys.dsgc.service.apiauth.bean.DSGCApisBean;
 import com.definesys.dsgc.service.consumers.bean.DSGCConsumerEntities;
+import com.definesys.dsgc.service.dagclient.ConsumerDeployService;
 import com.definesys.dsgc.service.svcAuth.bean.SVCHisBean;
 import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
 import com.definesys.mpaas.query.db.PageQueryResult;
@@ -20,6 +21,8 @@ import java.util.List;
 public class ApiAuthService {
     @Autowired
     private ApiAuthDao apiAuthDao;
+    @Autowired
+    private ConsumerDeployService consumerDeployService;
 
     public APIInfoListBean queryApiAuthDetailBaseInfo(String apiCode){
         DSGCApisBean dsgcApisBean = apiAuthDao.queryApiAuthDetailBaseInfo(apiCode);
@@ -47,6 +50,10 @@ public class ApiAuthService {
         DSGCApisAccess dsgcApisAccess = new DSGCApisAccess();
         dsgcApisAccess.setApiCode(param.getApiCode());
         dsgcApisAccess.setCsmCode(param.getSysCode());
+
+        //将授权信息部署至网关
+        this.consumerDeployService.addDAGConsumerAcl(param.getSysCode(),param.getApiCode());
+
         apiAuthDao.addServAuthSytem(dsgcApisAccess);
 
         DSGCConsumerEntities dsgcConsumerEntities =apiAuthDao.queryConsumerByCode(dsgcApisAccess.getCsmCode());
@@ -71,6 +78,10 @@ public class ApiAuthService {
     public void deleteApiAuthConsumer(CommonReqBean param,String userName){
         DSGCApisAccess dsgcApisAccess = apiAuthDao.queryAccessSystem(param.getCon0());
         if(dsgcApisAccess.getDaaId() != null){
+
+            //将授权信息从网关移除
+            this.consumerDeployService.removeDAGConsumerAcl(dsgcApisAccess.getCsmCode(),dsgcApisAccess.getApiCode());
+
             apiAuthDao.deleteAccessSystem(dsgcApisAccess.getDaaId());
             DSGCConsumerEntities dsgcConsumerEntities =apiAuthDao.queryConsumerByCode(dsgcApisAccess.getCsmCode());
             String cnt = "移除已授权系统："+dsgcConsumerEntities.getCsmName();

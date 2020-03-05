@@ -13,7 +13,7 @@ import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public class ApiMngDao {
+public class  ApiMngDao {
     @Autowired
     private MpaasQueryFactory sw;
 
