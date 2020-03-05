@@ -261,23 +261,8 @@ public void updateRoutePathStrip(DagRoutesBean param){
         dagDeployReqVO.setVid(param.getVid());
         dagDeployReqVO.setEnvCode(param.getDeployEnv());
         dagDeployReqVO.setDeployDesc(param.getDeployDesc());
-        String res = dagClientService.deploy(dagDeployReqVO,userId);
-        if ("S".equals(res)) {
-//            DagDeployStatBean dagDeployStatBean = new DagDeployStatBean();
-//            dagDeployStatBean.setDeployTime(new Date());
-//            dagDeployStatBean.setEnvCode(param.getDeployEnv());
-//            dagDeployStatBean.setVid(param.getVid());
-//            Boolean isExist = apiRouteDao.queryDagDeployStatIsExist(dagDeployStatBean);
-//            if(isExist){
-//                apiRouteDao.delDagDeployStat(dagDeployStatBean);
-//            }
-//            apiRouteDao.addDagDeployStat(dagDeployStatBean);
-//            DagDeployLogBean dagDeployLogBean = new DagDeployLogBean();
-//            dagDeployLogBean.setEnvCode(param.getDeployEnv());
-//            dagDeployLogBean.setLogCnt(param.getDeployDesc());
-//            dagDeployLogBean.setVid(param.getVid());
-//            apiRouteDao.addDagDeployLog(dagDeployLogBean);
-        } else {
+        String res  = dagClientService.deploy(dagDeployReqVO,userId);
+        if (!"S".equals(res)) {
             throw new Exception(res);
         }
 
