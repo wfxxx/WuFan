@@ -46,12 +46,13 @@ public class DSGCRoleControlDao {
     public PageQueryResult<DSGCRoleControlVO> queryRoleControl2(DSGCRoleControl roleControl, int pageSize, int pageIndex){
         return sw.buildQuery().sql("select * from (select c.role_id, \n" +
                 "c.role_code as role_code ,\n" +
-                "(case when u.user_name is null then v2.meaning else (u.user_description||'-'||u.user_name) end) as roleName,\n" +
-                "v1.meaning as menuBarName,c.is_see,c.is_edit \n" +
+                "(case when u.user_name is null then v2.meaning else (u.user_description||'-'||u.user_name) end) as role_Name,\n" +
+                "v1.meaning as menu_Bar_Name,c.is_see,c.is_edit \n" +
                 "from dsgc_role_control c\n" +
                 "left join dsgc_user u on c.role_code=u.user_id\n" +
                 "left join fnd_lookup_values v1 on v1.lookup_code=c.menu_bar \n" +
                 "left join fnd_lookup_values v2 on v2.lookup_code=c.role_code)")
+                .or()
                 .likeNocase("roleName", roleControl.getRoleControlDescription())
                 .likeNocase("menuBarName", roleControl.getRoleControlDescription())
                 .doPageQuery(pageIndex, pageSize, DSGCRoleControlVO.class);

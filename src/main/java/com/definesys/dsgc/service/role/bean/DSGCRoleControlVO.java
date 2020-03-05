@@ -41,6 +41,7 @@ public class DSGCRoleControlVO extends MpaasBasePojo {
     @Column(value = "attribue5")
     private String attribue5;
 
+
     private String roleName;
 
     private String menuBarName;
