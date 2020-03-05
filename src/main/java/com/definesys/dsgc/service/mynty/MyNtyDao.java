@@ -658,6 +658,9 @@ public class MyNtyDao {
             }
 
         }
+        if (StringUtils.isNotEmpty(dsgcMnNotices.getMnLevel()) && !dsgcMnNotices.getMnLevel().equals("all")){
+            mpaasQuery = mpaasQuery.eq("mnLevel",dsgcMnNotices.getMnLevel());
+        }
         List<DSGCMnNotices> dsgcMnNoticesList = mpaasQuery.doQuery(DSGCMnNotices.class);
 
         return dsgcMnNoticesList;
