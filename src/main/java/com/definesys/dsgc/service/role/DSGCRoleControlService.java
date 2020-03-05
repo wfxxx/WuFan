@@ -20,7 +20,7 @@ public class DSGCRoleControlService {
      roleControlDao.addRoleControl(roleControl);
     }
     public PageQueryResult<DSGCRoleControlVO> queryRoleControl(DSGCRoleControl roleControl, int pageSize, int pageIndex) {
-        return this.roleControlDao.queryRoleControl(roleControl, pageSize, pageIndex);
+        return this.roleControlDao.queryRoleControl2(roleControl, pageSize, pageIndex);
     }
     public int  checkRoleControl(DSGCRoleControl roleControl){
         List<Map<String,Object>> list =  roleControlDao.checkRoleControl(roleControl);

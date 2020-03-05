@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.io.Serializable;
 import java.util.Date;
 
-@Table(value = "DAG_ENV_INFO_CFG")
+@Table(value = "DSGC_ENV_INFO_CFG")
 public class DagEnvInfoCfgBean extends MpaasBasePojo implements Serializable {
     @RowID(type = RowIDType.UUID)
     private String deicId;
