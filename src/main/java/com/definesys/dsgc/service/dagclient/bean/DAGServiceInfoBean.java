@@ -37,13 +37,13 @@ public class DAGServiceInfoBean extends MpaasBasePojo {
     @Column(value = "paths", type = ColumnType.DB)
     private String paths;
     @Column(value = "rty_count", type = ColumnType.DB)
-    private int rtyCount;
+    private Integer rtyCount;
     @Column(value = "connect_timeout", type = ColumnType.DB)
-    private long connectTimeout;
+    private Long connectTimeout;
     @Column(value = "send_timeout", type = ColumnType.DB)
-    private long sendTimeout;
+    private Long sendTimeout;
     @Column(value = "read_timeout", type = ColumnType.DB)
-    private long readTimeout;
+    private Long readTimeout;
 
     public String getVid() {
         return vid;
@@ -93,35 +93,35 @@ public class DAGServiceInfoBean extends MpaasBasePojo {
         this.paths = paths;
     }
 
-    public int getRtyCount() {
+    public Integer getRtyCount() {
         return rtyCount;
     }
 
-    public void setRtyCount(int rtyCount) {
+    public void setRtyCount(Integer rtyCount) {
         this.rtyCount = rtyCount;
     }
 
-    public long getConnectTimeout() {
+    public Long getConnectTimeout() {
         return connectTimeout;
     }
 
-    public void setConnectTimeout(long connectTimeout) {
+    public void setConnectTimeout(Long connectTimeout) {
         this.connectTimeout = connectTimeout;
     }
 
-    public long getSendTimeout() {
+    public Long getSendTimeout() {
         return sendTimeout;
     }
 
-    public void setSendTimeout(long sendTimeout) {
+    public void setSendTimeout(Long sendTimeout) {
         this.sendTimeout = sendTimeout;
     }
 
-    public long getReadTimeout() {
+    public Long getReadTimeout() {
         return readTimeout;
     }
 
-    public void setReadTimeout(long readTimeout) {
+    public void setReadTimeout(Long readTimeout) {
         this.readTimeout = readTimeout;
     }
 }
