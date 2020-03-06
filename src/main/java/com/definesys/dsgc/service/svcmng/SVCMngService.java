@@ -433,6 +433,9 @@ public class SVCMngService {
             dsgcServicesUri.setIbUri(temp.getIbUri());
             dsgcServicesUri.setUriType(temp.getUriType());
             dsgcServicesUri.setServNo(vo.getServNo());
+            if(StringUtil.isNotBlank(temp.getHttpMethod())){
+                dsgcServicesUri.setHttpMethod(temp.getHttpMethod());
+            }
             svcMngDao.addServUri(dsgcServicesUri);
           //  servicesUriList.add(dsgcServicesUri);
         }
