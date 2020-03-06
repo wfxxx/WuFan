@@ -26,6 +26,9 @@ public class ServiceDeployService {
         }
 
         DAGServiceInfoBean bsInfo = this.serviceDeployDao.getDagServiceInfoByVid(vid);
+        if(bsInfo==null){
+            return "未找到信息技术配置信息";
+        }
 
         if (bsInfo.getHostName() == null || bsInfo.getHostName().trim().length() == 0) {
             return "后端地址不正确！";
