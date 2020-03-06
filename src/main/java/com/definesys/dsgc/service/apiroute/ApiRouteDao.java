@@ -36,7 +36,7 @@ public class ApiRouteDao {
                 }
             }
         }
-        mq.sql(sqlStr.toString());
+        mq.sql(sqlStr.toString()+"order by dr.creation_date desc");
         return mq.doPageQuery(pageIndex, pageSize, DagRoutesBean.class);
     }
 
@@ -75,7 +75,7 @@ public class ApiRouteDao {
         return sw.buildQuery().eq("vid",param.getCon0()).doQueryFirst(DagCodeVersionBean.class);
     }
     public List<DagCodeVersionBean> queryRouteConfigListBySourCode(CommonReqBean param){
-        return sw.buildQuery().eq("sour_code",param.getCon0()).eq("sour_type",param.getQueryType()).doQuery(DagCodeVersionBean.class);
+        return sw.buildQuery().eq("sour_code",param.getCon0()).eq("sour_type",param.getQueryType()).orderBy("creationDate","desc").doQuery(DagCodeVersionBean.class);
     }
     public void addRouteConfig(DagCodeVersionBean dagCodeVersionBean){
         sw.buildQuery().doInsert(dagCodeVersionBean);

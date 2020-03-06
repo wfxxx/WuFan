@@ -41,7 +41,7 @@ public class ApiLrDao {
                 }
             }
         }
-        mq.sql(sqlStr.toString());
+        mq.sql(sqlStr.toString()+"order by db.creation_date desc");
         return mq.doPageQuery(pageIndex, pageSize, DagLrbean.class);
     }
 
@@ -72,7 +72,7 @@ public class ApiLrDao {
     }
 
     public List<DagCodeVersionBean> queryLrConfigListBySourCode(CommonReqBean param){
-        return sw.buildQuery().eq("sour_code",param.getCon0()).eq("sour_type",param.getQueryType()).doQuery(DagCodeVersionBean.class);
+        return sw.buildQuery().eq("sour_code",param.getCon0()).eq("sour_type",param.getQueryType()).orderBy("creationDate","desc").doQuery(DagCodeVersionBean.class);
     }
 
     public void addLrConfig(DagCodeVersionBean dagCodeVersionBean){
