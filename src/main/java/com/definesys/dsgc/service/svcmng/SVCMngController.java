@@ -2,6 +2,7 @@ package com.definesys.dsgc.service.svcmng;
 
 import com.definesys.dsgc.service.svcmng.bean.*;
 import com.definesys.mpaas.common.http.Response;
+import jdk.management.resource.internal.ResourceNatives;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -128,5 +129,44 @@ public class SVCMngController {
     @RequestMapping(value = "/queryApprover",method = RequestMethod.GET)
     public Response queryApprover(@RequestParam(value = "servNo")String servNo,@RequestParam(value = "sourType")String sourType){
         return Response.ok().setData(svcMngService.queryApprover(servNo,sourType));
+    }
+
+    @RequestMapping(value = "/checkServNoIsExsit",method = RequestMethod.POST)
+    public Response checkServNoIsExsit(@RequestBody SVCCommonReqBean param){
+       Boolean isExist = svcMngService.checkServNoIsExsit(param);
+       return Response.ok().setData(isExist);
+    }
+    @RequestMapping(value = "/addRestServ",method = RequestMethod.POST)
+    public Response addRestServ(@RequestBody AddRestServVO addRestServVO){
+        try {
+            svcMngService.addRestServ(addRestServVO);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("添加服务失败");
+        }
+
+        return Response.ok();
+    }
+    @RequestMapping(value = "/addSoapServ",method = RequestMethod.POST)
+    public Response addSoapServ(@RequestBody AddSoapServVO addSoapServVO){
+        try {
+            svcMngService.addSoapServ(addSoapServVO);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("添加服务失败");
+        }
+
+        return Response.ok();
+    }
+    @RequestMapping(value = "/addOtherServ",method = RequestMethod.POST)
+    public Response addOtherServ(@RequestBody AddOtherServVO addOtherServVO){
+        try {
+            svcMngService.addOtherServ(addOtherServVO);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("添加服务失败");
+        }
+
+        return Response.ok();
     }
 }

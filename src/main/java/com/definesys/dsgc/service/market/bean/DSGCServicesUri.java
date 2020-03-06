@@ -1,4 +1,4 @@
-package com.definesys.dsgc.service.svcmng.bean;
+package com.definesys.dsgc.service.market.bean;
 
 import com.definesys.mpaas.query.annotation.Column;
 import com.definesys.mpaas.query.annotation.SystemColumn;
@@ -30,6 +30,7 @@ public class DSGCServicesUri extends MpaasBasePojo implements Serializable{
     private String uriType;
 
     private String transportType;
+
     private String dsuId;
     private String httpMethod;
     private String provider;

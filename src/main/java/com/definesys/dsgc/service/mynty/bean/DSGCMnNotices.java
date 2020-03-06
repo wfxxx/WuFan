@@ -29,6 +29,7 @@ public class DSGCMnNotices extends MpaasBasePojo {
     private String refType;
     private String refValue;
     private String readStat;
+    private String mnLevel;
 
     @SystemColumn(SystemColumnType.OBJECT_VERSION)
     @Column(value = "object_version_number")
@@ -175,5 +176,13 @@ public class DSGCMnNotices extends MpaasBasePojo {
 
     public void setLastUpdateDate(Date lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
+    }
+
+    public String getMnLevel() {
+        return mnLevel;
+    }
+
+    public void setMnLevel(String mnLevel) {
+        this.mnLevel = mnLevel;
     }
 }
