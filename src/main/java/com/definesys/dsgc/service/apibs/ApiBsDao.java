@@ -38,7 +38,7 @@ public class ApiBsDao {
                 }
             }
         }
-        mq.sql(sqlStr.toString());
+        mq.sql(sqlStr.toString()+"order by db.creation_date desc");
         return mq.doPageQuery(pageIndex, pageSize, DagBsbean.class);
     }
 
@@ -119,7 +119,7 @@ public class ApiBsDao {
 
 
     public List<DagPlugUsingBean> queryPluginUsing(String vid){
-        return sw.buildQuery().eq("vid",vid).doQuery(DagPlugUsingBean.class);
+        return sw.buildQuery().eq("vid",vid).orderBy("creationDate","desc").doQuery(DagPlugUsingBean.class);
     }
 
     public List<DagPlugStoreBean> queryPluginStoreByType(String type){

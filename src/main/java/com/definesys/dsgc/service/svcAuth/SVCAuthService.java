@@ -328,7 +328,8 @@ public class SVCAuthService {
         DSGCUser dsgcUser= dsgcUserDao.findUserById(applyAuthProBean.getApplicant());
         applyAuthProBeanDTO.setApplicantEmail(dsgcUser.getUserMail());
         applyAuthProBeanDTO.setApplicantPhone(dsgcUser.getUserMail());
-        applyAuthProBeanDTO.setApplicantName(dsgcUser.getUserDescription());
+        applyAuthProBeanDTO.setApplicantName(dsgcUser.getUserName());
+        applyAuthProBeanDTO.setApplicantDesc(dsgcUser.getUserDescription());
         //补充基础信息
         applyAuthProBeanDTO.setApplyDesc(applyAuthProBean.getApplyDesc());
         applyAuthProBeanDTO.setApplySerName(applyAuthProBean.getApplySerName());

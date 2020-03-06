@@ -22,9 +22,13 @@ public class BpmInstanceBean extends MpaasBasePojo {
     private String instStat;
     @Column(value = "created_by")
     private String createdBy;
+    @Column(type = ColumnType.JAVA)
+    private String creatorDes;
 
     @Column(type = ColumnType.JAVA)
     private List<String> approver;
+    @Column(type = ColumnType.JAVA)
+    private List<String> approverDes;
 
     @JsonSerialize(using = MpaasDateTimeSerializer.class)
     @JsonDeserialize(using = MpaasDateTimeDeserializer.class)
@@ -34,6 +38,8 @@ public class BpmInstanceBean extends MpaasBasePojo {
     @SystemColumn(SystemColumnType.LASTUPDATE_BY)
     @Column(value = "last_updated_by")
     private String lastUpdatedBy;
+    @Column(type = ColumnType.JAVA)
+    private String lastUpdatedDesc;
     @JsonSerialize(using = MpaasDateTimeSerializer.class)
     @JsonDeserialize(using = MpaasDateTimeDeserializer.class)
     @SystemColumn(SystemColumnType.LASTUPDATE_ON)
@@ -129,5 +135,29 @@ public class BpmInstanceBean extends MpaasBasePojo {
 
     public void setApprover(List<String> approver) {
         this.approver = approver;
+    }
+
+    public List<String> getApproverDes() {
+        return approverDes;
+    }
+
+    public void setApproverDes(List<String> approverDes) {
+        this.approverDes = approverDes;
+    }
+
+    public String getCreatorDes() {
+        return creatorDes;
+    }
+
+    public void setCreatorDes(String creatorDes) {
+        this.creatorDes = creatorDes;
+    }
+
+    public String getLastUpdatedDesc() {
+        return lastUpdatedDesc;
+    }
+
+    public void setLastUpdatedDesc(String lastUpdatedDesc) {
+        this.lastUpdatedDesc = lastUpdatedDesc;
     }
 }

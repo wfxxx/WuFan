@@ -26,6 +26,9 @@ public class ApplyAuthProBeanDTO {
 
     private String applicantName;
 
+
+    private String applicantDesc;
+
     private String applicantPhone;
 
     private String applicantEmail;
@@ -120,5 +123,13 @@ public class ApplyAuthProBeanDTO {
 
     public void setAppliSer(MarketEntiy appliSer) {
         this.appliSer = appliSer;
+    }
+
+    public String getApplicantDesc() {
+        return applicantDesc;
+    }
+
+    public void setApplicantDesc(String applicantDesc) {
+        this.applicantDesc = applicantDesc;
     }
 }
