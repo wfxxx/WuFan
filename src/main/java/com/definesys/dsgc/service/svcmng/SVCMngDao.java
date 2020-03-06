@@ -120,6 +120,9 @@ public class SVCMngDao {
     public void delServUriParamter(String servNo){
         sw.buildQuery().eq("res_code",servNo).doDelete(DSGCUriParamsBean.class);
     }
+    public void addServ( DSGCService dsgcService){
+        sw.buildQuery().doInsert(dsgcService);
+    }
     public void addServUri(DSGCServicesUri servicesUri){
         sw.buildQuery()
                 .doInsert(servicesUri);
@@ -217,5 +220,12 @@ public class SVCMngDao {
                 .doQuery();
     }
 
-
+public Boolean checkServNoIsExsit(String servNo){
+    DSGCService dsgcService =  sw.buildQuery().eq("serv_no",servNo).doQueryFirst(DSGCService.class);
+    if(dsgcService != null){
+        return true;
+    }else {
+        return false;
+    }
+}
 }

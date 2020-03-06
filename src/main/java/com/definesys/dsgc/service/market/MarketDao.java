@@ -219,4 +219,7 @@ public class MarketDao {
     public List<DSGCEnvInfoCfg> queryEsbEnv(){
         return sw.buildQuery().eq("env_type","ESB").doQuery(DSGCEnvInfoCfg.class);
     }
+    public List<DSGCServicesUri> queryServUri(String servNo){
+        return sw.buildQuery().eq("servNo",servNo).doQuery(DSGCServicesUri.class);
+    }
 }

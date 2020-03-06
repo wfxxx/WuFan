@@ -1,5 +1,8 @@
 package com.definesys.dsgc.service.market;
 
+import com.definesys.dsgc.service.apideploylog.ApiDeployLogDao;
+import com.definesys.dsgc.service.apideploylog.bean.CommonReqBean;
+import com.definesys.dsgc.service.apideploylog.bean.DagDeployStatBean;
 import com.definesys.dsgc.service.apiroute.ApiRouteDao;
 import com.definesys.dsgc.service.esbenv.DSGCBusCfgDao;
 import com.definesys.dsgc.service.esbenv.bean.DSGCEnvInfoCfg;
@@ -8,6 +11,8 @@ import com.definesys.dsgc.service.market.bean.PayloadParamDTO;
 import com.definesys.dsgc.service.market.bean.ServUriParamterDTO;
 import com.definesys.dsgc.service.svcmng.SVCMngDao;
 import com.definesys.dsgc.service.svcmng.bean.*;
+import com.definesys.dsgc.service.svcmng.bean.DSGCServicesUri;
+import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +33,9 @@ public class MarketService {
 
     @Autowired
     private ApiRouteDao apiRouteDao;
+
+    @Autowired
+    private ApiDeployLogDao apiDeployLogDao;
 
     public void addMarketCate(MarketCateVO marketcateVO) {
         marketDao.addMarketCate(marketcateVO);
@@ -330,6 +338,7 @@ public class MarketService {
                     ServLocation servLocation = new ServLocation();
                     servLocation.setUrlType(dsgcServicesUri.getUriType());
                     servLocation.setEnvName(dsgcEnvInfoCfg.getEnvName());
+                    servLocation.setHttpMethod(dsgcServicesUri.getHttpMethod());
                     String url ="http://"+ dsgcEnvInfoCfg.getEsbIp()+":"+dsgcEnvInfoCfg.getEsbPort()+"/"+dsgcServicesUri.getIbUri();
                     servLocation.setUrl(url);
                     locationList.add(servLocation);
@@ -433,11 +442,30 @@ public class MarketService {
         List<DSGCEnvInfoCfg> envInfoCfgs =marketDao.queryApiEnv();
                 //busCfgDao.queryEnvInfoCfgListPage();
         List<DSGCServicesUri> servicesUris = svcMngDao.queryServUri(apiCode);
-
-        if (servicesUris != null && servicesUris.size()>0){
-            List<ServLocation> locationList = generateLocationList(servicesUris,envInfoCfgs);
+        String routeCode = servicesUris.get(0).getProvider();
+        if(StringUtil.isNotBlank(routeCode)) {
+            CommonReqBean commonReqBean = new CommonReqBean();
+            commonReqBean.setCon0(routeCode);
+            commonReqBean.setQueryType("route");
+            List<DagDeployStatBean> list = apiDeployLogDao.queryDeploySurvey(commonReqBean);
+            if (list != null){
+                List<DSGCEnvInfoCfg> dsgcEnvInfoCfgs = new ArrayList<>();
+            for (int i = 0; i < list.size(); i++) {
+                for (int j = 0; j < envInfoCfgs.size(); j++) {
+                    if (list.get(i).getEnvCode().equals(envInfoCfgs.get(j).getEnvCode())) {
+                        dsgcEnvInfoCfgs.add(envInfoCfgs.get(j));
+                        break;
+                    }
+                }
+            }
+            List<ServLocation> locationList = generateLocationList(servicesUris, dsgcEnvInfoCfgs);
             result.setLocationList(locationList);
         }
+        }
+//        if (servicesUris != null && servicesUris.size()>0){
+//            List<ServLocation> locationList = generateLocationList(servicesUris,envInfoCfgs);
+//            result.setLocationList(locationList);
+//        }
         List<DSGCUriParamsBean> paramsBeans = svcMngDao.queryServUriParamter(apiCode);
         if (paramsBeans != null && paramsBeans.size()>0){
             List<ServUriParamterDTO> uriParamterDTOS = generateUriParam(paramsBeans);

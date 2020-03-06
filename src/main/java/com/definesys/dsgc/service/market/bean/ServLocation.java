@@ -4,6 +4,7 @@ public class ServLocation {
     private String urlType;
     private String url;
     private String envName;
+    private String httpMethod;
 
     public String getUrlType() {
         return urlType;
@@ -27,5 +28,13 @@ public class ServLocation {
 
     public void setEnvName(String envName) {
         this.envName = envName;
+    }
+
+    public String getHttpMethod() {
+        return httpMethod;
+    }
+
+    public void setHttpMethod(String httpMethod) {
+        this.httpMethod = httpMethod;
     }
 }

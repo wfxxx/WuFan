@@ -350,6 +350,9 @@ public class SVCMngService {
                 ServUriDTO servUriDTO = new ServUriDTO();
                 servUriDTO.setIbUri(temp.getIbUri());
                 servUriDTO.setUriType(temp.getUriType());
+                servUriDTO.setHttpMethod(temp.getHttpMethod());
+                servUriDTO.setSoapOper(temp.getSoapOper());
+                servUriDTO.setTransportType(temp.getTransportType());
                 result.add(servUriDTO);
 
         }
@@ -850,5 +853,60 @@ public class SVCMngService {
 
     }
 
-
+public Boolean checkServNoIsExsit(SVCCommonReqBean param){
+      return svcMngDao.checkServNoIsExsit(param.getCon0());
+}
+@Transactional(rollbackFor = Exception.class)
+public void addRestServ(AddRestServVO addRestServVO){
+    if(addRestServVO != null){
+        DSGCService dsgcService = new DSGCService();
+        dsgcService.setServNo(addRestServVO.getServNo());
+        dsgcService.setServName(addRestServVO.getServName());
+        dsgcService.setSubordinateSystem(addRestServVO.getAppCode());
+        dsgcService.setShareType(addRestServVO.getShareType());
+        svcMngDao.addServ(dsgcService);
+        DSGCServicesUri dsgcServicesUri = new DSGCServicesUri();
+        dsgcServicesUri.setServNo(addRestServVO.getServNo());
+        dsgcServicesUri.setIbUri(addRestServVO.getServUri());
+        dsgcServicesUri.setUriType("REST");
+        dsgcServicesUri.setTransportType("http");
+        dsgcServicesUri.setHttpMethod(addRestServVO.getHttpMethod());
+        svcMngDao.addServUri(dsgcServicesUri);
+    }
+}
+    @Transactional(rollbackFor = Exception.class)
+    public void addSoapServ(AddSoapServVO addSoapServVO){
+        if(addSoapServVO != null){
+            DSGCService dsgcService = new DSGCService();
+            dsgcService.setServNo(addSoapServVO.getServNo());
+            dsgcService.setServName(addSoapServVO.getServName());
+            dsgcService.setSubordinateSystem(addSoapServVO.getAppCode());
+            dsgcService.setShareType(addSoapServVO.getShareType());
+            svcMngDao.addServ(dsgcService);
+            DSGCServicesUri dsgcServicesUri = new DSGCServicesUri();
+            dsgcServicesUri.setServNo(addSoapServVO.getServNo());
+            dsgcServicesUri.setIbUri(addSoapServVO.getServUri());
+            dsgcServicesUri.setUriType("SOAP");
+            dsgcServicesUri.setTransportType("http");
+            dsgcServicesUri.setSoapOper(addSoapServVO.getWsdlFunction());
+            svcMngDao.addServUri(dsgcServicesUri);
+        }
+    }
+    @Transactional(rollbackFor = Exception.class)
+    public void addOtherServ(AddOtherServVO addOtherServVO){
+        if(addOtherServVO != null){
+            DSGCService dsgcService = new DSGCService();
+            dsgcService.setServNo(addOtherServVO.getServNo());
+            dsgcService.setServName(addOtherServVO.getServName());
+            dsgcService.setSubordinateSystem(addOtherServVO.getAppCode());
+            dsgcService.setShareType(addOtherServVO.getShareType());
+            svcMngDao.addServ(dsgcService);
+            DSGCServicesUri dsgcServicesUri = new DSGCServicesUri();
+            dsgcServicesUri.setServNo(addOtherServVO.getServNo());
+            dsgcServicesUri.setIbUri("-");
+            dsgcServicesUri.setUriType(addOtherServVO.getServType());
+            dsgcServicesUri.setTransportType(addOtherServVO.getServType());
+            svcMngDao.addServUri(dsgcServicesUri);
+        }
+    }
 }
