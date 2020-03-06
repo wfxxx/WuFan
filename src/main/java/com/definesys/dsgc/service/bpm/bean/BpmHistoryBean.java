@@ -20,11 +20,15 @@ public class BpmHistoryBean extends MpaasBasePojo {
     @Column(type = ColumnType.JAVA)
     private String nodeName;
     private String approver;
+    @Column(type = ColumnType.JAVA)
+    private String approverDes;
     private String approveOper;
     private String approveOpinion;
     @SystemColumn(SystemColumnType.CREATE_BY)
     @Column(value = "created_by")
     private String createdBy;
+    @Column(type = ColumnType.JAVA)
+    private String creatorDes;
 
     @JsonSerialize(using = MpaasDateTimeSerializer.class)
     @JsonDeserialize(using = MpaasDateTimeDeserializer.class)
@@ -137,5 +141,21 @@ public class BpmHistoryBean extends MpaasBasePojo {
 
     public void setNodeId(String nodeId) {
         this.nodeId = nodeId;
+    }
+
+    public String getApproverDes() {
+        return approverDes;
+    }
+
+    public void setApproverDes(String approverDes) {
+        this.approverDes = approverDes;
+    }
+
+    public String getCreatorDes() {
+        return creatorDes;
+    }
+
+    public void setCreatorDes(String creatorDes) {
+        this.creatorDes = creatorDes;
     }
 }
