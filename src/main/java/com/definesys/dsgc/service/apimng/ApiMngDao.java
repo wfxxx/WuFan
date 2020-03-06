@@ -13,13 +13,13 @@ import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public class ApiMngDao {
+public class  ApiMngDao {
     @Autowired
     private MpaasQueryFactory sw;
 
     public PageQueryResult<DSGCApisBean> queryApiMngList(CommonReqBean q, int pageIndex, int pageSize, String userId, String userRole, List<String> sysCodeList) {
         MpaasQuery query = sw.buildQuery()
-                .sql("select * from (select da.API_CODE,da.API_NAME,da.API_DESC,(select dse.SYS_CODE from DSGC_SYSTEM_ENTITIES dse where dse.SYS_CODE = da.APP_CODE) APP_CODE,da.INFO_FULL,dsu.PROVIDER,dsu.HTTP_METHOD,dsu.IB_URI from DSGC_APIS da,DSGC_SERVICES_URI dsu where da.API_CODE = dsu.SERV_NO(+))");
+                .sql("select * from (select da.API_CODE,da.API_NAME,da.API_DESC,(select dse.SYS_CODE from DSGC_SYSTEM_ENTITIES dse where dse.SYS_CODE = da.APP_CODE) APP_CODE,da.INFO_FULL,dsu.PROVIDER,dsu.HTTP_METHOD,dsu.IB_URI,da.CREATION_DATE from DSGC_APIS da,DSGC_SERVICES_URI dsu where da.API_CODE = dsu.SERV_NO(+)) order by CREATION_DATE desc");
         if ("Y".equals(q.getIsComplete())) {
             query.and()
                     .ne("infoFull", "100")

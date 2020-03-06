@@ -5,6 +5,9 @@ import com.definesys.dsgc.service.dagclient.proxy.ConsumerProxy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Iterator;
+import java.util.List;
+
 @Service
 public class ConsumerDeployService {
 
@@ -39,10 +42,15 @@ public class ConsumerDeployService {
             }
 
             if (res) {
+                //设置认证
                 String basicAuthPd = this.consumerDeployDao.getConsumerBasicAuth(consumerCode,envCode);
                 if(basicAuthPd != null && basicAuthPd.trim().length() > 0) {
                     res = cp.setBasicAuth(basicAuthPd);
                 }
+
+                //设置groups
+                List<String> groups = this.consumerDeployDao.getConsumerGroups(consumerCode);
+                res = cp.setGroups(groups);
             }
 
         } else if ("ESB".equals(env.getEnvType()) && "OSB".equals(env.getTechType())) {
@@ -51,6 +59,70 @@ public class ConsumerDeployService {
 
         return res;
 
+    }
+
+    /**
+     * 添加group至所有已部署环境
+     * @param consumerCode
+     * @param apiCode
+     * @return
+     */
+    public boolean addDAGConsumerAcl(String consumerCode,String apiCode){
+
+        List<DAGEnvBean> envList = this.dagEnvDao.getConsumerDeployedDAGEnvInfo(consumerCode);
+
+        String group = this.consumerDeployDao.getGroupByApiCode(apiCode);
+
+        if(envList != null && group != null && group.trim().length() >0){
+            Iterator<DAGEnvBean> envIter = envList.iterator();
+            while(envIter.hasNext()){
+                DAGEnvBean env = envIter.next();
+                if(env != null && "DAG".equals(env.getEnvType())){
+                    ConsumerProxy cp = new ConsumerProxy(env.getAdminLocation(),consumerCode);
+                    if (cp.isFound()) {
+                        cp.addGroup(group);
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 取消group至所有已部署环境
+     * @param consumerCode
+     * @param apiCode
+     * @return
+     */
+    public boolean removeDAGConsumerAcl(String consumerCode,String apiCode){
+
+        List<DAGEnvBean> envList = this.dagEnvDao.getConsumerDeployedDAGEnvInfo(consumerCode);
+
+        String group = this.consumerDeployDao.getGroupByApiCode(apiCode);
+
+        if(envList != null && group != null && group.trim().length() >0){
+            Iterator<DAGEnvBean> envIter = envList.iterator();
+            while(envIter.hasNext()){
+                DAGEnvBean env = envIter.next();
+                if(env != null && "DAG".equals(env.getEnvType())){
+                    ConsumerProxy cp = new ConsumerProxy(env.getAdminLocation(),consumerCode);
+                    if (cp.isFound()) {
+                        cp.removeGroup(group);
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+
+    /**
+     * 从所有已部署环境移除group
+     * @param group
+     * @return
+     */
+    public boolean removeGroupToALLEnv(String group){
+        return true;
     }
 
     /**

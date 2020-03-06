@@ -44,9 +44,7 @@ public class BpmService {
         List<BpmInstanceDTO> bpmInstanceDTOList = new ArrayList<>();
         long count = beanPageQueryResult.getCount();
         List<BpmInstanceBean> bpmInstanceBeanList = beanPageQueryResult.getResult();
-
         instanceBeanListMapping(bpmInstanceBeanList,bpmInstanceDTOList);
-
         PageQueryResult<BpmInstanceDTO> result = new PageQueryResult<>();
         result.setCount(count);
         result.setResult(bpmInstanceDTOList);
@@ -83,13 +81,13 @@ public class BpmService {
             Iterator<DSGCUser> iterator = users.iterator();
             while (iterator.hasNext()){
                 DSGCUser user = iterator.next();
-                userList.add(user.getUserName());
+                userList.add(user.getUserDescription());
             }
             bpmInstanceDTO.setApprover(userList);
         }
         bpmInstanceDTO.setProcessName(bpmdao.findBpmProcessById(bpmInstanceBean.getProcessId()).get(0).getProcessName());
-        bpmInstanceDTO.setCreatedBy(dsgcUserDao.findUserById(bpmInstanceBean.getCreatedBy()).getUserName());
-        bpmInstanceDTO.setLastUpdatedBy(dsgcUserDao.findUserById(bpmInstanceBean.getLastUpdatedBy()).getUserName());
+        bpmInstanceDTO.setCreatedBy(dsgcUserDao.findUserById(bpmInstanceBean.getCreatedBy()).getUserDescription());
+        bpmInstanceDTO.setLastUpdatedBy(dsgcUserDao.findUserById(bpmInstanceBean.getLastUpdatedBy()).getUserDescription());
         bpmInstanceDTO.setCreationDate(bpmInstanceBean.getCreationDate());
         bpmInstanceDTO.setCurNode(bpmInstanceBean.getCurNode());
         bpmInstanceDTO.setProcessId(bpmInstanceBean.getProcessId());
@@ -106,7 +104,7 @@ public class BpmService {
         List<BpmHistoryDTO> bpmHistoryDTOList = new ArrayList<>();
         for (BpmHistoryBean item:bpmHistoryBeanList) {
             BpmHistoryDTO bpmHistoryDTO = new BpmHistoryDTO();
-            bpmHistoryDTO.setApprover(dsgcUserDao.findUserById(item.getApprover()).getUserName());
+            bpmHistoryDTO.setApprover(dsgcUserDao.findUserById(item.getApprover()).getUserDescription());
             bpmHistoryDTO.setCreatedBy(dsgcUserDao.findUserById(item.getCreatedBy()).getUserName());
             bpmHistoryDTO.setLastUpdatedBy(dsgcUserDao.findUserById(item.getLastUpdatedBy()).getUserName());
             bpmHistoryDTO.setInstTitle(bpmdao.findBpmInstanceById(item.getInstId()).get(0).getInstTitle());

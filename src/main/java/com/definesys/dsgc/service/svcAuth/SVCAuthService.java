@@ -328,7 +328,7 @@ public class SVCAuthService {
         DSGCUser dsgcUser= dsgcUserDao.findUserById(applyAuthProBean.getApplicant());
         applyAuthProBeanDTO.setApplicantEmail(dsgcUser.getUserMail());
         applyAuthProBeanDTO.setApplicantPhone(dsgcUser.getUserMail());
-        applyAuthProBeanDTO.setApplicantName(dsgcUser.getUserName());
+        applyAuthProBeanDTO.setApplicantName(dsgcUser.getUserDescription());
         //补充基础信息
         applyAuthProBeanDTO.setApplyDesc(applyAuthProBean.getApplyDesc());
         applyAuthProBeanDTO.setApplySerName(applyAuthProBean.getApplySerName());
@@ -355,7 +355,7 @@ public class SVCAuthService {
 
 
     //流程结束，赋予权限
-    public void authSevPro(String instanceId) {
+    public void authSevPro(String instanceId,String userName) {
         //根据instanceId获取业务信息
         ApplyAuthProBean applyAuthProBean = svcAuthDao.getProcessBusinessInfo(instanceId);
         //根据服务类型注册
@@ -373,10 +373,10 @@ public class SVCAuthService {
         }
         if (servType.equals("servSource")) {
             for (String item : consumerlist) {
-                DSGCSystemAccess access = new DSGCSystemAccess();
-                access.setServNo(applyAuthProBean.getApplySerName());
-                access.setSysCode(item);
-                this.systemDao.addDSGCSystemAccess(access);
+                SVCAddAuthSystemReqBean bean=new SVCAddAuthSystemReqBean();
+                bean.setServNo(applyAuthProBean.getApplySerName());
+                bean.setSysCode(item);
+                addServAuthConsumer(bean,userName);
             }
         }
     }

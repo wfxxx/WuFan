@@ -149,9 +149,10 @@ public class SVCAuthController {
      * @Version 1.0
      **/
     @RequestMapping(value = "/authSevPro",method = RequestMethod.GET)
-    public Response authSevPro(@RequestParam(value = "instId") String instanceId){
+    public Response authSevPro(@RequestParam(value = "instId") String instanceId, HttpServletRequest request){
+        String userName = request.getHeader("userName");
         try{
-            svcAuthService.authSevPro(instanceId);
+            svcAuthService.authSevPro(instanceId,userName);
         }catch (Exception e){
             return Response.error("权限赋予失败");
         }
