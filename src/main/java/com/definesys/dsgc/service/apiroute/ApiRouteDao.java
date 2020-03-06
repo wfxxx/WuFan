@@ -36,7 +36,9 @@ public class ApiRouteDao {
                 }
             }
         }
+        sqlStr.append(" order by dr.creation_date desc ");
         mq.sql(sqlStr.toString());
+
         return mq.doPageQuery(pageIndex, pageSize, DagRoutesBean.class);
     }
 
