@@ -4,10 +4,7 @@ package com.definesys.dsgc.service.users;
 //import com.definesys.dsgc.aspect.annotation.OperationAspect;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.definesys.dsgc.service.users.bean.DSGCServiceQueryVO;
-import com.definesys.dsgc.service.users.bean.DSGCServiceUser;
-import com.definesys.dsgc.service.users.bean.DSGCUser;
-import com.definesys.dsgc.service.users.bean.DSGCUserKs;
+import com.definesys.dsgc.service.users.bean.*;
 import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.mpaas.common.adapter.UserProfile;
 import com.definesys.mpaas.common.http.Response;
@@ -18,6 +15,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.regexp.RE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -354,5 +352,14 @@ public class DSGCUserController {
         Map<String,List> map = userService.findAllService(service);
         return Response.ok().data(map);
     }
+    @RequestMapping(value = "/checkSystemLeaderAllowAccess", method = RequestMethod.POST)
+    public Response checkSystemLeaderAllowAccess(@RequestBody CheckSysLeaderRoleVO param, HttpServletRequest request) {
+        try {
+          return Response.ok().setData( userService.checkSystemLeaderAllowAccess(param));
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.ok().setData(false);
+        }
 
+    }
 }
