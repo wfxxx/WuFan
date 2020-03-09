@@ -45,8 +45,8 @@ public class ConsumersDao {
             }
         }
         if("SystemLeader".equals(userRole) || "Tourist".equals(userRole)){
-            strSql.append(" and upper(owner) like #userName ");
-            mq.setVar("userName",userName);
+            strSql.append(" and upper(owner) like upper(#userName) ");
+            mq.setVar("userName","%"+userName+"%");
         }
         if(!"ALL".equals(commonReqBean.getQueryType())){
             strSql.append(" and upper(deploy_env) like '%"+commonReqBean.getQueryType().toUpperCase()+"%' ");

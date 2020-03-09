@@ -45,7 +45,7 @@ public class AppsDao {
     }
 
     public PageQueryResult<DSGCSystemEntities> queryAppsList(CommonReqBean commonReqBean, int pageSize, int pageIndex,String userName,String userRole){
-        StringBuffer strSql = new StringBuffer("select * from( select ent.id,ent.sys_code, ent.sys_name, ent.sys_desc,ent.creation_date, t.user_name owner  from DSGC_SYSTEM_ENTITIES ent, (select listagg(u.user_name, ',') within GROUP(order by su.sys_code) user_name, su.sys_code from DSGC_SYSTEM_user su, dsgc_user u where su.user_id = u.user_id group by su.sys_code) t where t.sys_code(+) = ent.sys_code and (ent.attribue1 != 'N'or ent.attribue1 is null))  WHERE 1 = 1 order by creation_date desc ");
+        StringBuffer strSql = new StringBuffer("select * from( select ent.id,ent.sys_code, ent.sys_name, ent.sys_desc,ent.creation_date, t.user_name owner  from DSGC_SYSTEM_ENTITIES ent, (select listagg(u.user_name, ',') within GROUP(order by su.sys_code) user_name, su.sys_code from DSGC_SYSTEM_user su, dsgc_user u where su.user_id = u.user_id group by su.sys_code) t where t.sys_code(+) = ent.sys_code and (ent.attribue1 != 'N'or ent.attribue1 is null))  WHERE 1 = 1 ");
         MpaasQuery mq = sw.buildQuery();
 
         if (StringUtil.isNotBlank(commonReqBean.getCon0())) {
@@ -60,10 +60,10 @@ public class AppsDao {
 //            strSql.append(" and (upper(sys_code) like #con0 or upper(sys_name) like #con0 or upper(owner) like #con0 ) ");
 //        }
         if("SystemLeader".equals(userRole)){
-            strSql.append(" and upper(owner) like #userName ");
-            mq.setVar("userName",userName);
+            strSql.append(" and upper(owner) like upper(#userName) ");
+            mq.setVar("userName","%"+userName+"%");
         }
-        mq.sql(strSql.toString());
+        mq.sql(strSql.toString()+" order by creation_date desc ");
 //        if(StringUtil.isNotBlank(commonReqBean.getCon0())){
 //            mq.setVar("con0","%"+commonReqBean.getCon0().toUpperCase().trim()+"%");
 //        }
