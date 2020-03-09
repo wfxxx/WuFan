@@ -27,8 +27,8 @@ public class DSGCRoleControl extends MpaasBasePojo {
     private String isEdit;
     @Column(value = "role_control_description")
     private String roleControlDescription;
-    @Column(value = "attribue1")
-    private String attribue1;
+    @Column(value = "ser_type")
+    private String serType;
     @Column(value = "attribue2")
     private String attribue2;
     @Column(value = "attribue3")
@@ -163,20 +163,20 @@ public class DSGCRoleControl extends MpaasBasePojo {
         this.lastUpdateDate = lastUpdateDate;
     }
 
-    public String getAttribue1() {
-        return attribue1;
-    }
-
-    public void setAttribue1(String attribue1) {
-        this.attribue1 = attribue1;
-    }
-
     public String getAttribue2() {
         return attribue2;
     }
 
     public void setAttribue2(String attribue2) {
         this.attribue2 = attribue2;
+    }
+
+    public String getSerType() {
+        return serType;
+    }
+
+    public void setSerType(String serType) {
+        this.serType = serType;
     }
 
     public String getAttribue3() {
@@ -219,8 +219,8 @@ public class DSGCRoleControl extends MpaasBasePojo {
                 ", menuBar='" + menuBar + '\'' +
                 ", isSee='" + isSee + '\'' +
                 ", isEdit='" + isEdit + '\'' +
-                ", attribue1='" + attribue1 + '\'' +
                 ", attribue2='" + attribue2 + '\'' +
+                ", serType='" + serType + '\'' +
                 ", attribue3='" + attribue3 + '\'' +
                 ", attribue4='" + attribue4 + '\'' +
                 ", attribue5='" + attribue5 + '\'' +
