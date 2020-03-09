@@ -5,6 +5,7 @@ import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
 import com.definesys.dsgc.service.svcmng.bean.DSGCServInterfaceNode;
 import com.definesys.dsgc.service.svcmng.bean.DSGCService;
 import com.definesys.dsgc.service.utils.StringUtil;
+import com.definesys.mpaas.log.SWordLogger;
 import com.definesys.mpaas.query.MpaasQuery;
 import com.definesys.mpaas.query.MpaasQueryFactory;
 import com.definesys.mpaas.query.db.PageQueryResult;
@@ -20,7 +21,8 @@ import java.util.List;
 public class SVCLogDao {
     @Autowired
     private MpaasQueryFactory sw;
-
+    @Autowired
+    private SWordLogger logger;
     public PageQueryResult<DSGCService> querySvcLogRecordListByCon(SVCLogQueryBean q, int pageSize, int pageIndex,String userRole,String userId,List<String> sysCodeList){
         StringBuffer sqlStr = new StringBuffer("select distinct ds.serv_id servId, ds.serv_no servNo,ds.serv_name servName,dse.sys_name attribue1,dse.sys_code subordinateSystem,ds.body_store_type bodyStoreType from dsgc_services ds,dsgc_system_entities dse where ds.subordinate_system = dse.sys_code ");
         MpaasQuery mq = sw.buildQuery();
@@ -140,6 +142,7 @@ public class SVCLogDao {
 //            mq.setVar("con0", "%" + q.getCon0().toUpperCase() + "%");
 //        }
         mq.sql(sqlStr.toString());
+        this.logger.info("sql",sqlStr);
         return mq.doPageQuery(pageIndex,pageSize,DSGCValidResutl.class);
     }
     private String generateLikeAndCluse(String con) {
