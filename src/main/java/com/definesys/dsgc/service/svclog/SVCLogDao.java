@@ -127,6 +127,8 @@ public class SVCLogDao {
                     sqlStr.append("'"+sysCodeList.get(i)+"') ");
                 }
             }
+        }else if("SystemLeader".equals(userRole) && sysCodeList.size() == 0){
+            sqlStr.append(" and ds.subordinate_system is null ");
         }
         if (StringUtil.isNotBlank(q.getCon0())) {
             // sqlStr.append(" and ds.is_prod = 'N' ");

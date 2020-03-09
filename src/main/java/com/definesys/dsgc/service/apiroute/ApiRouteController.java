@@ -226,4 +226,14 @@ public class ApiRouteController {
         }
         return Response.ok();
     }
+    @RequestMapping(value = "/checkRouteCodeIsExsit",method = RequestMethod.POST)
+    public Response checkRouteCodeIsExsit(@RequestBody CommonReqBean param) {
+        try {
+           Boolean isExist = apiRouteService.checkRouteCodeIsExsit(param);
+            return Response.ok().setData(isExist);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.error("验证路由代码失败！");
+        }
+    }
 }

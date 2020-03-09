@@ -310,4 +310,8 @@ public void updateRoutePathStrip(DagRoutesBean param){
             }
         }
     }
+    public Boolean checkRouteCodeIsExsit(CommonReqBean param){
+           Boolean isExist =  apiRouteDao.checkRouteCodeIsExsit(param.getCon0());
+          return isExist;
+    }
 }

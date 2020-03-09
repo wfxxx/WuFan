@@ -175,6 +175,8 @@ public class AppsService {
         if(userList != null && userList.size()>0){
             appsDao.delSytemUser(systemEntitireDTO.getSysCode());
             appsDao.addSystemUser(userList);
+        }else {
+            appsDao.delSytemUser(systemEntitireDTO.getSysCode());
         }
 
     }
