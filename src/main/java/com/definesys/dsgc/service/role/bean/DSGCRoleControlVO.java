@@ -167,7 +167,7 @@ public class DSGCRoleControlVO extends MpaasBasePojo {
         return serType;
     }
 
-    public void setSerType(String attribue1) {
+    public void setSerType(String serType) {
         this.serType = serType;
     }
 
