@@ -33,7 +33,6 @@ public class DSGCRoleControlService {
         DSGCRoleControl control =  roleControlDao.findRoleControlById(roleControl.getRoleId());
         control.setIsEdit(roleControl.getIsEdit());
         control.setIsSee(roleControl.getIsSee());
-        control.setSerType(roleControl.getSerType());
       return  roleControlDao.updateRoleControl(control);
     }
     @Transactional(rollbackFor = Exception.class)
