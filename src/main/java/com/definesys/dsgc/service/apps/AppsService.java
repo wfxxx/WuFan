@@ -99,6 +99,7 @@ public class AppsService {
     public List<DSGCService> queryServBySysCode(String sysCode){
        return appsDao.queryServBySysCode(sysCode);
     }
+
     public SystemEntitireDTO queryAppDataById(String id){
         DSGCSystemEntities dsgcSystemEntities = appsDao.querySystemEnt(id);
         SystemEntitireDTO result = new SystemEntitireDTO();
