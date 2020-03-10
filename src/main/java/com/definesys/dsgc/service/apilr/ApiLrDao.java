@@ -65,9 +65,9 @@ public class ApiLrDao {
         return sw.buildQuery().eq("dl_id",param.getCon0()).doQueryFirst(DagLrbean.class);
     }
 
-    public DagLrbean queryLrDetail(CommonReqBean param){
+    public DagLrbean queryLrDetail(String param){
         return  sw.buildQuery().sql("select dr.*,dse.sys_name appName from DAG_LR dr,dsgc_system_entities dse where dr.APP_CODE = dse.sys_code and dr.LR_NAME = #lrName\n")
-                .setVar("lrName",param.getCon0())
+                .setVar("lrName",param)
                 .doQueryFirst(DagLrbean.class);
     }
 

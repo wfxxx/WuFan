@@ -390,4 +390,18 @@ public class DSGCUserController {
         }
 
     }
+    @RequestMapping(value = "/checkApiLrDetailAllowAccess", method = RequestMethod.POST)
+    public Response checkApiLrDetailAllowAccess(@RequestBody CheckApiRouteDetailVO param, HttpServletRequest request) {
+        String userId = request.getHeader("uid");
+        if(!userId.equals(param.getUserId())){
+            return Response.error("非法请求");
+        }
+        try {
+            return Response.ok().setData( userService.checkApiLrDetailAllowAccess(param));
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.ok().setData(false);
+        }
+
+    }
 }

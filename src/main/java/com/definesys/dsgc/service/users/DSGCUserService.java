@@ -3,6 +3,8 @@ package com.definesys.dsgc.service.users;
 //import com.auth0.jwt.JWT;
 //import com.auth0.jwt.algorithms.Algorithm;
 import com.alibaba.fastjson.JSONObject;
+import com.definesys.dsgc.service.apilr.ApiLrDao;
+import com.definesys.dsgc.service.apilr.bean.DagLrbean;
 import com.definesys.dsgc.service.apiroute.ApiRouteDao;
 import com.definesys.dsgc.service.apiroute.bean.DagRoutesBean;
 import com.definesys.dsgc.service.apps.AppsDao;
@@ -49,6 +51,9 @@ public class DSGCUserService {
     
     @Autowired
     private MarketDao marketDao;
+
+    @Autowired
+    private ApiLrDao apiLrDao;
 
 
 //    @Autowired
@@ -320,6 +325,22 @@ public class DSGCUserService {
         List<DSGCSystemUser> systemUserList = systemDao.findSystemUserByUserId(param.getUserId());
         DagRoutesBean dagRoutesBean = apiRouteDao.queryRouteDetail(param.getRouteCode());
         String appCode = dagRoutesBean.getAppCode();
+        Boolean isEdit = false;
+        if(StringUtil.isBlank(appCode)){
+            return isEdit;
+        }
+        for (int i = 0; i <systemUserList.size() ; i++) {
+            if (appCode.equals(systemUserList.get(i).getSysCode())){
+                isEdit = true;
+                break;
+            }
+        }
+        return isEdit;
+    }
+    public Boolean checkApiLrDetailAllowAccess(CheckApiRouteDetailVO param){
+        List<DSGCSystemUser> systemUserList = systemDao.findSystemUserByUserId(param.getUserId());
+        DagLrbean dagLrbean = apiLrDao.queryLrDetail(param.getRouteCode());
+        String appCode = dagLrbean.getAppCode();
         Boolean isEdit = false;
         if(StringUtil.isBlank(appCode)){
             return isEdit;
