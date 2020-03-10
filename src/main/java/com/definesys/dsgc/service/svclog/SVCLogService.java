@@ -141,7 +141,7 @@ public PageQueryResult<SVCLogListBean> querySvcLogRecordListByCon(SVCLogQueryBea
             }
 
         }
-    public PageQueryResult<SVCLogResultResDTO> querySvcLogResultByCon(SVCLogQueryBean q,int pageSize,int pageIndex,String userId,String userRole){
+    public PageQueryResult<SVCLogResultResDTO> querySvcLogResultByCon(SVCLogQueryBean q,int pageSize,int pageIndex,String userRole,String userId){
         if ("Tourist".equals(userRole)){
             return new PageQueryResult<>();
         }else {

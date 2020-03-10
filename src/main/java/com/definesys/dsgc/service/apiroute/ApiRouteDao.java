@@ -157,4 +157,13 @@ public class ApiRouteDao {
     public void addDagDeployLog(DagDeployLogBean dagDeployLogBean){
         sw.buildQuery().doInsert(dagDeployLogBean);
     }
+
+    public Boolean checkRouteCodeIsExsit(String routeCode){
+        DagRoutesBean dagRoutesBean = sw.buildQuery().eq("route_code",routeCode).doQueryFirst(DagRoutesBean.class);
+        if (dagRoutesBean == null){
+            return false;
+        }else {
+            return true;
+        }
+    }
 }
