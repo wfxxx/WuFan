@@ -355,7 +355,21 @@ public class DSGCUserController {
     @RequestMapping(value = "/checkSystemLeaderAllowAccess", method = RequestMethod.POST)
     public Response checkSystemLeaderAllowAccess(@RequestBody CheckSysLeaderRoleVO param, HttpServletRequest request) {
         try {
-          return Response.ok().setData( userService.checkSystemLeaderAllowAccess(param));
+            return Response.ok().setData( userService.checkSystemLeaderAllowAccess(param));
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.ok().setData(false);
+        }
+
+    }
+    @RequestMapping(value = "/checkAppdetailEdit", method = RequestMethod.POST)
+    public Response checkAppdetailEdit(@RequestBody CheckAppDetailEditVO param, HttpServletRequest request) {
+        String userId = request.getHeader("uid");
+        if(!userId.equals(param.getUserId())){
+            return Response.error("非法请求");
+        }
+        try {
+            return Response.ok().setData( userService.checkAppdetailEdit(param));
         }catch (Exception e){
             e.printStackTrace();
             return Response.ok().setData(false);

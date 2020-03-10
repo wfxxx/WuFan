@@ -221,10 +221,11 @@ public PageQueryResult<SVCLogListBean> querySvcLogRecordListByCon(SVCLogQueryBea
             List<String> userSubsystemList = this.queryUserSubSystem(userId);
             DSGCService dsgcService =this.sldao.queryServiceByServNo(validResut.getServNo());
             for (int i = 0; i < userSubsystemList.size(); i++) {
-                if (!dsgcService.getSubordinateSystem().equals(userSubsystemList.get(i))){
-                    temp = false;
-                }else {
+                if (dsgcService.getSubordinateSystem().equals(userSubsystemList.get(i))){
                     temp = true;
+                    break;
+                }else {
+                    temp = false;
                 }
             }
         }

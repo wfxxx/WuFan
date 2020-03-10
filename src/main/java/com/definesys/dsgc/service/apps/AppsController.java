@@ -41,7 +41,8 @@ public class AppsController {
                                   @RequestParam(value = "pageIndex", required = false, defaultValue = "1") int pageIndex,HttpServletRequest request){
         String userRole= request.getHeader("userRole");
         String userName = request.getHeader("userName");
-        PageQueryResult<DSGCSystemEntities> result = appsService.queryAllAppsList(commonReqBean,pageSize,pageIndex,userName,userRole);
+        String userId = request.getHeader("uid");
+        PageQueryResult<DSGCSystemEntities> result = appsService.queryAllAppsList(commonReqBean,pageSize,pageIndex,userName,userRole,userId);
         return Response.ok().setData(result);
     }
 

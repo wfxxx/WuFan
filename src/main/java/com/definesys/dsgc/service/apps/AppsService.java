@@ -5,6 +5,7 @@ import com.definesys.dsgc.service.apps.bean.SystemEntitireDTO;
 import com.definesys.dsgc.service.apps.bean.UserResDTO;
 import com.definesys.dsgc.service.apps.bean.UserRoleResDTO;
 import com.definesys.dsgc.service.svcAuth.SVCAuthDao;
+import com.definesys.dsgc.service.system.DSGCSystemDao;
 import com.definesys.dsgc.service.system.bean.DSGCSystemEntities;
 import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
 import com.definesys.dsgc.service.svcmng.bean.DSGCService;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 @Service
@@ -26,6 +28,9 @@ public class AppsService {
 
     @Autowired
     private SVCAuthDao svcAuthDao;
+
+    @Autowired
+    private DSGCSystemDao systemDao;
 
     public PageQueryResult<UserResDTO> queryUserList(CommonReqBean commonReqBean,int pageSize,int pageIndex,String userRole){
         PageQueryResult<UserResDTO> resDTOPageQueryResult = new PageQueryResult<>();
@@ -74,13 +79,25 @@ public class AppsService {
         return resDTOS;
     }
 
-    public PageQueryResult<DSGCSystemEntities> queryAllAppsList(CommonReqBean commonReqBean,int pageSize,int pageIndex,String userName,String userRole){
+    public PageQueryResult<DSGCSystemEntities> queryAllAppsList(CommonReqBean commonReqBean,int pageSize,int pageIndex,String userName,String userRole,String userId){
         PageQueryResult<DSGCSystemEntities> entitiesPageQueryResult = new PageQueryResult<>();
         if("Tourist".equals(userRole)){
             return new PageQueryResult<>();
         }else {
            commonReqBean.setCon0(StringUtil.filtration(commonReqBean.getCon0()));
              entitiesPageQueryResult = appsDao.queryAppsList(commonReqBean,pageSize,pageIndex,userName,userRole);
+            Iterator<DSGCSystemEntities> iterator = entitiesPageQueryResult.getResult().iterator();
+            List<DSGCSystemUser> systemUserList = systemDao.findSystemUserByUserId(userId);
+            while (iterator.hasNext()){
+                DSGCSystemEntities dsgcSystemEntities = iterator.next();
+                dsgcSystemEntities.setEdit(false);
+                for (int i = 0; i < systemUserList.size(); i++) {
+                    if (dsgcSystemEntities.getSysCode().equals(systemUserList.get(i).getSysCode())){
+                        dsgcSystemEntities.setEdit(true);
+                        break;
+                    }
+                }
+            }
         }
         return entitiesPageQueryResult;
     }

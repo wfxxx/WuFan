@@ -29,6 +29,9 @@ public class DSGCSystemEntities extends MpaasBasePojo {
     @Column(type = ColumnType.JAVA)
     List<DSGCSystemUser> dsgcSystemUserList = new ArrayList<>();
 
+    @Column(type = ColumnType.JAVA)
+    private Boolean isEdit;
+
     public List<DSGCSystemUser> getDsgcSystemUserList() {
         return dsgcSystemUserList;
     }
@@ -183,6 +186,14 @@ public class DSGCSystemEntities extends MpaasBasePojo {
 
     public void setLastUpdateDate(Date lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
+    }
+
+    public Boolean getEdit() {
+        return isEdit;
+    }
+
+    public void setEdit(Boolean edit) {
+        isEdit = edit;
     }
 
     @Override

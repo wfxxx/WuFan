@@ -3,9 +3,11 @@ package com.definesys.dsgc.service.users;
 //import com.auth0.jwt.JWT;
 //import com.auth0.jwt.algorithms.Algorithm;
 import com.alibaba.fastjson.JSONObject;
+import com.definesys.dsgc.service.apps.AppsDao;
 import com.definesys.dsgc.service.svcmng.SVCMngDao;
 import com.definesys.dsgc.service.svcmng.bean.DSGCService;
 import com.definesys.dsgc.service.system.DSGCSystemDao;
+import com.definesys.dsgc.service.system.bean.DSGCSystemEntities;
 import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
 import com.definesys.dsgc.service.users.bean.*;
 //import com.definesys.dsgc.app.svcmng.DSGCServiceDao;
@@ -34,6 +36,9 @@ public class DSGCUserService {
 
     @Autowired
     private DSGCSystemDao systemDao;
+
+    @Autowired
+    private AppsDao appsDao;
 
 //    @Autowired
 //    DSGCServiceDao dsgc_service;
@@ -267,5 +272,22 @@ public class DSGCUserService {
             }
         }
         return result;
+    }
+
+    public Boolean checkAppdetailEdit(CheckAppDetailEditVO param){
+        List<DSGCSystemUser> systemUserList = systemDao.findSystemUserByUserId(param.getUserId());
+        DSGCSystemEntities dsgcSystemEntities = appsDao.querySystemEnt(param.getAppId());
+        String appCode = dsgcSystemEntities.getSysCode();
+        Boolean isEdit = false;
+        if(StringUtil.isBlank(appCode)){
+            return isEdit;
+        }
+        for (int i = 0; i <systemUserList.size() ; i++) {
+            if (appCode.equals(systemUserList.get(i).getSysCode())){
+                isEdit = true;
+                break;
+            }
+        }
+        return isEdit;
     }
 }

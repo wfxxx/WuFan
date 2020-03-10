@@ -46,7 +46,7 @@ public class SVCLogController {
         String userId = request.getHeader("uid");
         List<SVCCommonServResDTO> result = new ArrayList<>();
         try {
-            result =  this.sls.queryServCommonByCon(q,userRole,userId);
+            result =  this.sls.queryServCommonByCon(q,userId,userRole);
         } catch (Exception e) {
             return Response.error(e.getMessage());
         }
