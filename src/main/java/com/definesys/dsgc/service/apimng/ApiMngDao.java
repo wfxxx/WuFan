@@ -19,7 +19,7 @@ public class  ApiMngDao {
 
     public PageQueryResult<DSGCApisBean> queryApiMngList(CommonReqBean q, int pageIndex, int pageSize, String userId, String userRole, List<String> sysCodeList) {
         MpaasQuery query = sw.buildQuery()
-                .sql("select * from (select da.API_CODE,da.API_NAME,da.API_DESC,(select dse.SYS_CODE from DSGC_SYSTEM_ENTITIES dse where dse.SYS_CODE = da.APP_CODE) APP_CODE,da.INFO_FULL,dsu.PROVIDER,dsu.HTTP_METHOD,dsu.IB_URI,da.CREATION_DATE from DSGC_APIS da,DSGC_SERVICES_URI dsu where da.API_CODE = dsu.SERV_NO(+)) order by CREATION_DATE desc");
+                .sql("select * from (select da.API_CODE,da.API_NAME,da.API_DESC,(select dse.SYS_NAME from DSGC_SYSTEM_ENTITIES dse where dse.SYS_CODE = da.APP_CODE) APP_CODE,da.APP_CODE sys_code,da.INFO_FULL,dsu.PROVIDER,dsu.HTTP_METHOD,dsu.IB_URI,da.CREATION_DATE from DSGC_APIS da,DSGC_SERVICES_URI dsu where da.API_CODE = dsu.SERV_NO(+) order by CREATION_DATE desc)\n");
         if ("Y".equals(q.getIsComplete())) {
             query.and()
                     .ne("infoFull", "100")
@@ -28,9 +28,9 @@ public class  ApiMngDao {
         if ("SystemLeader".equals(userRole)) {
             if (sysCodeList.size() != 0) {
                 if (sysCodeList.size() <= 1) {
-                    query.eq("appCode", sysCodeList.get(0));
+                    query.eq("sys_code", sysCodeList.get(0));
                 } else {
-                    query.in("appCode", sysCodeList);
+                    query.in("sys_code", sysCodeList);
                 }
             } else {
                 return new PageQueryResult<>();

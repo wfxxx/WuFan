@@ -38,27 +38,24 @@ public class SVCLogDao {
                     sqlStr.append(" and 1=1 ");
                     break;
                 case "Y":
-                    sqlStr.append(" and 1=1 and dse.sys_code in  (#str) ");
-                    String str = "";
+                    sqlStr.append(" and 1=1 and dse.sys_code in  ( ");
                    for (int i =0;i<sysCodeList.size();i++){
-                       str += sysCodeList.get(i);
                        if (i<sysCodeList.size()-1){
-                           str+=",";
+                         sqlStr.append("'"+sysCodeList.get(i)+"',");
+                       }else {
+                         sqlStr.append("'"+sysCodeList.get(i)+"')");
                        }
                    }
-                    mq.setVar("sysCode",str);
                     break;
                 case "N":
-                    sqlStr.append(" and 1=1 and dse.sys_code != (#str) ");
-                    String str1 = "";
+                    sqlStr.append(" and 1=1 and dse.sys_code not in ( ");
                     for (int i =0;i<sysCodeList.size();i++){
-                        str1 += sysCodeList.get(i);
                         if (i<sysCodeList.size()-1){
-                            str1+=",";
+                            sqlStr.append("'"+sysCodeList.get(i)+"',");
+                        }else {
+                            sqlStr.append("'"+sysCodeList.get(i)+"')");
                         }
                     }
-                    mq.setVar("sysCode",str1);
-                  //  mq.setVar("sysCode",sysCode);
                     break;
             }
         }else {

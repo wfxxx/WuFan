@@ -22,6 +22,8 @@ public class DSGCApisBean  extends MpaasBasePojo implements Serializable {
     private String marketStat;
     private String infoFull;
     @Column(type = ColumnType.JAVA)
+    private String sysCode;
+    @Column(type = ColumnType.JAVA)
     private String csmCode;
     @Column(type = ColumnType.JAVA)
     private String provider;
@@ -183,5 +185,13 @@ public class DSGCApisBean  extends MpaasBasePojo implements Serializable {
 
     public void setIbUri(String ibUri) {
         this.ibUri = ibUri;
+    }
+
+    public String getSysCode() {
+        return sysCode;
+    }
+
+    public void setSysCode(String sysCode) {
+        this.sysCode = sysCode;
     }
 }

@@ -5,6 +5,7 @@ package com.definesys.dsgc.service.mynty;
 import com.definesys.dsgc.service.mynty.bean.*;
 import com.definesys.dsgc.service.users.bean.DSGCUser;
 import com.definesys.mpaas.common.http.Response;
+import com.definesys.mpaas.query.db.PageQueryResult;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -242,5 +243,15 @@ public class MyNtyController {
         return Response.ok().setData(mns.saveMNSubUser(sltReq));
     }
 
+    @RequestMapping(value = "getUserList",method = RequestMethod.POST)
+    public Response queryUserList(@RequestBody() CommonReqBean commonReqBean,
+                                  @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
+                                  @RequestParam(value = "pageIndex", required = false, defaultValue = "1") int pageIndex,HttpServletRequest request){
+        String userRole= request.getHeader("userRole");
+
+        PageQueryResult<UserResDTO> result = mns.queryUserList(commonReqBean,pageSize,pageIndex,userRole);
+
+        return Response.ok().setData(result);
+    }
 
 }
