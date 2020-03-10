@@ -32,7 +32,7 @@ public PageQueryResult<SVCLogListBean> querySvcLogRecordListByCon(SVCLogQueryBea
         for (DSGCSystemUser item:dsgcSystemUsers) {
             sysCodeList.add(item.getSysCode());
         }
-       // sysCode = dsgcSystemUser.getSysCode();
+//        sysCode = dsgcSystemUser.getSysCode();
     }
     PageQueryResult<DSGCService> list =sldao.querySvcLogRecordListByCon(q,pageSize,pageIndex,userRole,userId,sysCodeList);
     List<DSGCService> dsgcServiceList = list.getResult();
@@ -54,7 +54,7 @@ public PageQueryResult<SVCLogListBean> querySvcLogRecordListByCon(SVCLogQueryBea
      for (DSGCService item:dsgcServiceList) {
          SVCLogListBean svcLogListBean = new SVCLogListBean();
          svcLogListBean.setBodyStoreType(item.getBodyStoreType());
-         if(sysCode.equals(item.getSubordinateSystem())){
+         if(sysCodeList.contains(item.getSubordinateSystem())){
              svcLogListBean.setModifiable("Y");
          }else {
              svcLogListBean.setModifiable("N");

@@ -6,6 +6,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.definesys.dsgc.service.apiroute.ApiRouteDao;
 import com.definesys.dsgc.service.apiroute.bean.DagRoutesBean;
 import com.definesys.dsgc.service.apps.AppsDao;
+import com.definesys.dsgc.service.market.MarketDao;
+import com.definesys.dsgc.service.market.bean.DSGCApisBean;
 import com.definesys.dsgc.service.svcmng.SVCMngDao;
 import com.definesys.dsgc.service.svcmng.bean.DSGCService;
 import com.definesys.dsgc.service.system.DSGCSystemDao;
@@ -44,6 +46,10 @@ public class DSGCUserService {
 
     @Autowired
     private ApiRouteDao apiRouteDao;
+    
+    @Autowired
+    private MarketDao marketDao;
+
 
 //    @Autowired
 //    DSGCServiceDao dsgc_service;
@@ -261,19 +267,34 @@ public class DSGCUserService {
 
     public Boolean checkSystemLeaderAllowAccess(CheckSysLeaderRoleVO param){
         Boolean result = false;
-        if(StringUtil.isBlank(param.getServNo()) ||StringUtil.isBlank(param.getUserId()) ){
+        if(StringUtil.isBlank(param.getUserId())){
             return result;
         }
-        DSGCService service= svcMngDao.queryServByServNo(param.getServNo());
-        if(service == null){
-            return false;
-        }
-        List<DSGCSystemUser> systemUserList = systemDao.findSystemUserByUserId(param.getUserId());
-        String appCode = service.getSubordinateSystem();
-        for (int i = 0; i < systemUserList.size(); i++) {
-            if (appCode.equals(systemUserList.get(i).getSysCode())){
-                result = true;
-                break;
+        if(StringUtil.isNotBlank(param.getServNo())){
+            DSGCService service= svcMngDao.queryServByServNo(param.getServNo());
+            if(service == null){
+                return false;
+            }
+            List<DSGCSystemUser> systemUserList = systemDao.findSystemUserByUserId(param.getUserId());
+            String appCode = service.getSubordinateSystem();
+            for (int i = 0; i < systemUserList.size(); i++) {
+                if (appCode.equals(systemUserList.get(i).getSysCode())){
+                    result = true;
+                    break;
+                }
+            }
+        }else if(StringUtil.isNotBlank(param.getApiCode())){
+            DSGCApisBean dsgcApis = marketDao.queryApiByApiCode(param.getApiCode());
+            if(dsgcApis == null){
+                return false;
+            }
+            List<DSGCSystemUser> systemUserList = systemDao.findSystemUserByUserId(param.getUserId());
+            String appCode = dsgcApis.getAppCode();
+            for (int i = 0; i < systemUserList.size(); i++) {
+                if (appCode.equals(systemUserList.get(i).getSysCode())){
+                    result = true;
+                    break;
+                }
             }
         }
         return result;

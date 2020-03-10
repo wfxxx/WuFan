@@ -22,6 +22,8 @@ public class DSGCApisBean extends MpaasBasePojo implements Serializable {
     private String marketStat;
     private String infoFull;
     @Column(type = ColumnType.JAVA)
+    private String sysCode;
+    @Column(type = ColumnType.JAVA)
     private String csmCode;
     @SystemColumn(SystemColumnType.CREATE_BY)
     @Column(value = "created_by")
@@ -153,5 +155,13 @@ public class DSGCApisBean extends MpaasBasePojo implements Serializable {
 
     public void setCsmCode(String csmCode) {
         this.csmCode = csmCode;
+    }
+
+    public String getSysCode() {
+        return sysCode;
+    }
+
+    public void setSysCode(String sysCode) {
+        this.sysCode = sysCode;
     }
 }
