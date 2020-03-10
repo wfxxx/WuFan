@@ -55,7 +55,7 @@ public class ApiRouteService {
 
     }
     public DagRoutesBean queryRouteDetail(CommonReqBean param){
-      return  apiRouteDao.queryRouteDetail(param);
+      return  apiRouteDao.queryRouteDetail(param.getCon0());
     }
     public List<DagEnvInfoCfgDTO> queryApiEnv(){
        List<DSGCEnvInfoCfg> list = apiRouteDao.queryApiEnv();
@@ -182,7 +182,7 @@ public void addRouteConfig(AddRouteConfigVO param){
 public void updateRoutePathStrip(DagRoutesBean param){
     CommonReqBean commonReqBean = new CommonReqBean();
     commonReqBean.setCon0(param.getRouteCode());
-    DagRoutesBean dagRoutesBean =  apiRouteDao.queryRouteDetail(commonReqBean);
+    DagRoutesBean dagRoutesBean =  apiRouteDao.queryRouteDetail(commonReqBean.getCon0());
     if (dagRoutesBean != null){
         apiRouteDao.updateRoutePathStrip(param);
     }
@@ -191,7 +191,7 @@ public void updateRoutePathStrip(DagRoutesBean param){
     public void updateRouteDesc(DagRoutesBean param){
         CommonReqBean commonReqBean = new CommonReqBean();
         commonReqBean.setCon0(param.getRouteCode());
-        DagRoutesBean dagRoutesBean =  apiRouteDao.queryRouteDetail(commonReqBean);
+        DagRoutesBean dagRoutesBean =  apiRouteDao.queryRouteDetail(commonReqBean.getCon0());
         if (dagRoutesBean != null){
             apiRouteDao.updateRouteDesc(param);
         }

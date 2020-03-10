@@ -376,4 +376,18 @@ public class DSGCUserController {
         }
 
     }
+    @RequestMapping(value = "/checApikRouteDetailAllowAccess", method = RequestMethod.POST)
+    public Response checApikRouteDetailAllowAccess(@RequestBody CheckApiRouteDetailVO param, HttpServletRequest request) {
+        String userId = request.getHeader("uid");
+        if(!userId.equals(param.getUserId())){
+            return Response.error("非法请求");
+        }
+        try {
+            return Response.ok().setData( userService.checApikRouteDetailAllowAccess(param));
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.ok().setData(false);
+        }
+
+    }
 }

@@ -121,9 +121,17 @@ public class SVCAuthService {
       return svcAuthDao.queryFndModuleByLookupType(lookupType);
     }
 
-    public List<SVCSystemResDTO> querySystem(){
+    public List<SVCSystemResDTO> querySystem(String userId,String userRole){
         List<SVCSystemResDTO> resDTOS = new ArrayList<>();
-        List<DSGCSystemEntities> list = svcAuthDao.querySystem();
+        List<DSGCSystemEntities> list = new ArrayList<>();
+        if(userRole.equals("SuperAdministrators") || userRole.equals("Administrators")){
+                 list = svcAuthDao.querySystem();
+        }else if(userRole.equals("SystemLeader")){
+            list =  svcAuthDao.querySystemLeaderSystem(userId);
+        }else {
+            return resDTOS;
+        }
+
         for (DSGCSystemEntities item:list) {
             SVCSystemResDTO dto = new SVCSystemResDTO();
             dto.setSysCode(item.getSysCode());

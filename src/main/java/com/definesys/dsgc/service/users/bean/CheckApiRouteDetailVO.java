@@ -1,15 +1,15 @@
 package com.definesys.dsgc.service.users.bean;
 
-public class CheckAppDetailEditVO {
-    private String appId;
+public class CheckApiRouteDetailVO {
+    private String routeCode;
     private String userId;
 
-    public String getAppId() {
-        return appId;
+    public String getRouteCode() {
+        return routeCode;
     }
 
-    public void setAppId(String appId) {
-        this.appId = appId;
+    public void setRouteCode(String routeCode) {
+        this.routeCode = routeCode;
     }
 
     public String getUserId() {

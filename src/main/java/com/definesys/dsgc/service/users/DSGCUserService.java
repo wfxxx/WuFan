@@ -3,6 +3,8 @@ package com.definesys.dsgc.service.users;
 //import com.auth0.jwt.JWT;
 //import com.auth0.jwt.algorithms.Algorithm;
 import com.alibaba.fastjson.JSONObject;
+import com.definesys.dsgc.service.apiroute.ApiRouteDao;
+import com.definesys.dsgc.service.apiroute.bean.DagRoutesBean;
 import com.definesys.dsgc.service.apps.AppsDao;
 import com.definesys.dsgc.service.svcmng.SVCMngDao;
 import com.definesys.dsgc.service.svcmng.bean.DSGCService;
@@ -39,6 +41,9 @@ public class DSGCUserService {
 
     @Autowired
     private AppsDao appsDao;
+
+    @Autowired
+    private ApiRouteDao apiRouteDao;
 
 //    @Autowired
 //    DSGCServiceDao dsgc_service;
@@ -290,4 +295,21 @@ public class DSGCUserService {
         }
         return isEdit;
     }
+    public Boolean checApikRouteDetailAllowAccess(CheckApiRouteDetailVO param){
+        List<DSGCSystemUser> systemUserList = systemDao.findSystemUserByUserId(param.getUserId());
+        DagRoutesBean dagRoutesBean = apiRouteDao.queryRouteDetail(param.getRouteCode());
+        String appCode = dagRoutesBean.getAppCode();
+        Boolean isEdit = false;
+        if(StringUtil.isBlank(appCode)){
+            return isEdit;
+        }
+        for (int i = 0; i <systemUserList.size() ; i++) {
+            if (appCode.equals(systemUserList.get(i).getSysCode())){
+                isEdit = true;
+                break;
+            }
+        }
+        return isEdit;
+    }
+
 }
