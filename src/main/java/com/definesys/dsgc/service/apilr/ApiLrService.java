@@ -63,7 +63,7 @@ public class ApiLrService {
     }
 
     public DagLrbean queryLrDetail(CommonReqBean param){
-        return  apiLrDao.queryLrDetail(param);
+        return  apiLrDao.queryLrDetail(param.getCon0());
     }
 
     public List<LrConfigDTO> queryLrConfigList(CommonReqBean param){
@@ -121,7 +121,7 @@ public class ApiLrService {
     public void updateLrDesc(DagLrbean param){
         CommonReqBean commonReqBean = new CommonReqBean();
         commonReqBean.setCon0(param.getLrName());
-        DagLrbean dagLrbean =  apiLrDao.queryLrDetail(commonReqBean);
+        DagLrbean dagLrbean =  apiLrDao.queryLrDetail(commonReqBean.getCon0());
         if (dagLrbean != null){
             apiLrDao.updateLrDesc(param);
         }

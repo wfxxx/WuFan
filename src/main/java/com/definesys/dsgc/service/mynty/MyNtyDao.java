@@ -851,4 +851,6 @@ public class MyNtyDao {
         mpaasQuery.sql(sqlStr.toString());
         return mpaasQuery.doPageQuery(pageIndex,pageSize,DSGCUser.class);
     }
+
+
 }
