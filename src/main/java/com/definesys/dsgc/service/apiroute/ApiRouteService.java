@@ -40,9 +40,32 @@ public class ApiRouteService {
         PageQueryResult pageQueryResult = apiRouteDao.queryApiRouteList(param,pageSize,pageIndex,userRole,sysCodeList);
         return pageQueryResult;
     }
-
+    @Transactional(rollbackFor = Exception.class)
     public void addApiRoute(DagRoutesBean dagRoutesBean){
         apiRouteDao.addApiRoute(dagRoutesBean);
+        List<DSGCEnvInfoCfg>  list = apiRouteDao.queryApiEnv();
+        Collections.sort(list, new Comparator<DSGCEnvInfoCfg>(){
+            public int compare(DSGCEnvInfoCfg o1, DSGCEnvInfoCfg o2) {
+                //排序属性
+                if(o1.getEnvSeq() > o2.getEnvSeq()){
+                    return 1;
+                }
+                if(o1.getEnvSeq() == o2.getEnvSeq()){
+                    return 0;
+                }
+                return -1;
+            }
+        });
+        DagCodeVersionBean dagCodeVersionBean = new DagCodeVersionBean();
+        dagCodeVersionBean.setSourCode(dagRoutesBean.getRouteCode());
+        dagCodeVersionBean.setSourType("route");
+        dagCodeVersionBean.setvName("默认配置");
+        if(list != null){
+            dagCodeVersionBean.setEnvTargets(list.get(0).getEnvCode());
+        }
+
+        apiRouteDao.addRouteConfig(dagCodeVersionBean);
+
     }
     @Transactional(rollbackFor = Exception.class)
     public void delApiRoute(CommonReqBean param)throws Exception{

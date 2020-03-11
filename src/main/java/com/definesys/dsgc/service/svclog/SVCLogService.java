@@ -318,26 +318,27 @@ public PageQueryResult<SVCLogListBean> querySvcLogRecordListByCon(SVCLogQueryBea
     }
     @Transactional(rollbackFor = Exception.class)
     public List<SVCKeywordResDTO> queryServBizkey(SVCLogQueryBean param,String userRole,String userId){
+        List<SVCKeywordResDTO> result = new ArrayList<>();
         if("Tourist".equals(userRole)){
-            return null;
+            return result;
         }
         Boolean temp = true;
         if("SystemLeader".equals(userRole)){
             List<String> userSubsystemList = this.queryUserSubSystem(userId);
             DSGCService dsgcService =this.sldao.queryServiceByServNo(param.getCon0());
             for (int i = 0; i < userSubsystemList.size(); i++) {
-                if (!dsgcService.getSubordinateSystem().equals(userSubsystemList.get(i))){
-                    temp = false;
-                }else {
+                if (dsgcService.getSubordinateSystem().equals(userSubsystemList.get(i))){
                     temp = true;
+                    break;
+                }else {
+                    temp = false;
                 }
             }
         }
         if(!temp){
-            return null;
+            return result;
         }else {
           List<DSGCServInterfaceNode> list =  this.sldao.queryServBizkey(param.getCon0());
-          List<SVCKeywordResDTO> result = new ArrayList<>();
             for (DSGCServInterfaceNode item:list) {
                 SVCKeywordResDTO svcKeywordResDTO = new SVCKeywordResDTO();
                 svcKeywordResDTO.setServNo(item.getServNo());

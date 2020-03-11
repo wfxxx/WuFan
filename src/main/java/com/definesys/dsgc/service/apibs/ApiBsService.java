@@ -44,6 +44,7 @@ public class ApiBsService {
             dagBsListDTO.setBsCode(dagBsbean.getBsCode());
             dagBsListDTO.setBsDesc(dagBsbean.getBsDesc());
             dagBsListDTO.setBsId(dagBsbean.getBsId());
+            dagBsListDTO.setAppCode(dagBsbean.getAppCode());
             listDTOS.add(dagBsListDTO);
         }
         result.setCount(queryApiBsList.getCount());
