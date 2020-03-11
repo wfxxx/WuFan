@@ -46,7 +46,7 @@ public class DSGCUserService {
 
     @Autowired
     private ApiRouteDao apiRouteDao;
-    
+
     @Autowired
     private MarketDao marketDao;
 
