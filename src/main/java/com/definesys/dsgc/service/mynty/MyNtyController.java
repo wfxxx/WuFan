@@ -194,8 +194,7 @@ public class MyNtyController {
 
     @RequestMapping(value = "/findDSGCMnNotices", method = RequestMethod.POST)
     public Response findDSGCMnNotices(@RequestBody DSGCMnNotices dsgcMnNotices) {
-        List<DSGCMnNotices> dsgcMnNoticesList = this.mns.findDSGCMnNotices(dsgcMnNotices);
-        return Response.ok().data(dsgcMnNoticesList);
+        return Response.ok().data(this.mns.findDSGCMnNotices(dsgcMnNotices));
     }
 
     @RequestMapping(value = "getServByUser", method = RequestMethod.POST)

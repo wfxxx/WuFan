@@ -647,6 +647,9 @@ public class MyNtyDao {
     public List<DSGCMnNotices> findDSGCMnNotices(DSGCMnNotices dsgcMnNotices) {
         MpaasQuery mpaasQuery = this.sw.buildQuery()
                 .eq("ntyUser",dsgcMnNotices.getNtyUser());
+        if (StringUtils.isNotEmpty(dsgcMnNotices.getMnTitle())) {
+            mpaasQuery = mpaasQuery.eq("mnTitle",dsgcMnNotices.getMnTitle());
+        }
         if (StringUtils.isNotEmpty(dsgcMnNotices.getMnType())) {
             mpaasQuery = mpaasQuery.eq("mnType",dsgcMnNotices.getMnType());
         }
@@ -853,4 +856,9 @@ public class MyNtyDao {
     }
 
 
+    public DSGCMnNotices getNoticesCount(String ntyUser){
+       return sw.buildQuery().sql("select distinct (select count(*) from DSGC_MN_NOTICES) allCount,(select count(*) from DSGC_MN_NOTICES where read_stat = 0) unreadCount from DSGC_MN_NOTICES where nty_user = #ntyUser ")
+               .setVar("ntyUser",ntyUser)
+               .doQueryFirst(DSGCMnNotices.class);
+    }
 }
