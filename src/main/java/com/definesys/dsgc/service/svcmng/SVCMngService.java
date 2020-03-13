@@ -912,7 +912,47 @@ public void addRestServ(AddRestServVO addRestServVO){
             svcMngDao.addServUri(dsgcServicesUri);
         }
     }
-    public void querySvcSourceList(SVCCommonReqBean param){
-        
+    public PageQueryResult<SourceUriListDTO> querySvcSourceList(SVCCommonReqBean param,int pageIndex,int pageSize){
+        PageQueryResult<DSGCSvcgenUriBean> pageQueryResult =  svcMngDao.querySvcSourceList(param,pageIndex,pageSize);
+        PageQueryResult<SourceUriListDTO> result = new PageQueryResult<>();
+        List<SourceUriListDTO> listDTOS = new ArrayList<>();
+        result.setCount(pageQueryResult.getCount());
+        Iterator<DSGCSvcgenUriBean> iterator = pageQueryResult.getResult().iterator();
+        while (iterator.hasNext()){
+            DSGCSvcgenUriBean dsgcSvcgenUriBean = iterator.next();
+            SourceUriListDTO sourceUriListDTO = new SourceUriListDTO();
+            sourceUriListDTO.setSourceName(dsgcSvcgenUriBean.getObjCode());
+            sourceUriListDTO.setSourceType(dsgcSvcgenUriBean.getUriType());
+            sourceUriListDTO.setSourceUri(dsgcSvcgenUriBean.getIbUri());
+            sourceUriListDTO.setHttpMethod(dsgcSvcgenUriBean.getHttpMethod());
+            sourceUriListDTO.setSoapOper(dsgcSvcgenUriBean.getSoapOper());
+            listDTOS.add(sourceUriListDTO);
+        }
+        result.setResult(listDTOS);
+        return result;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void addQuickServ(AddQuickServVO addQuickServVO){
+        if(addQuickServVO != null){
+            DSGCService dsgcService = new DSGCService();
+            dsgcService.setServNo(addQuickServVO.getServNo());
+            dsgcService.setServName(addQuickServVO.getServName());
+            dsgcService.setSubordinateSystem(addQuickServVO.getAppCode());
+            dsgcService.setShareType(addQuickServVO.getShareType());
+            svcMngDao.addServ(dsgcService);
+            DSGCServicesUri dsgcServicesUri = new DSGCServicesUri();
+            dsgcServicesUri.setServNo(addQuickServVO.getServNo());
+            dsgcServicesUri.setIbUri(addQuickServVO.getServUri());
+            dsgcServicesUri.setUriType(addQuickServVO.getSourceType());
+            if("REST".equals(addQuickServVO.getSourceType())){
+                dsgcServicesUri.setHttpMethod(addQuickServVO.getHttpMethod());
+            }
+            if("SOAP".equals(addQuickServVO.getSourceType())){
+                dsgcServicesUri.setSoapOper(addQuickServVO.getSoapFunction());
+            }
+            dsgcServicesUri.setTransportType("http");
+            svcMngDao.addServUri(dsgcServicesUri);
+        }
     }
 }
