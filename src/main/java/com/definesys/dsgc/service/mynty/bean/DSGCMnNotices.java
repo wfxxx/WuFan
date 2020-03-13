@@ -30,6 +30,10 @@ public class DSGCMnNotices extends MpaasBasePojo {
     private String refValue;
     private String readStat;
     private String mnLevel;
+    @Column(type = ColumnType.CALCULATE)
+    private Integer unreadCount;
+    @Column(type = ColumnType.CALCULATE)
+    private Integer allCount;
 
     @SystemColumn(SystemColumnType.OBJECT_VERSION)
     @Column(value = "object_version_number")
@@ -184,5 +188,21 @@ public class DSGCMnNotices extends MpaasBasePojo {
 
     public void setMnLevel(String mnLevel) {
         this.mnLevel = mnLevel;
+    }
+
+    public Integer getUnreadCount() {
+        return unreadCount;
+    }
+
+    public void setUnreadCount(Integer unreadCount) {
+        this.unreadCount = unreadCount;
+    }
+
+    public Integer getAllCount() {
+        return allCount;
+    }
+
+    public void setAllCount(Integer allCount) {
+        this.allCount = allCount;
     }
 }

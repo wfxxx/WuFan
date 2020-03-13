@@ -378,8 +378,23 @@ public class MyNtyService {
         mndao.updServExcptSubRules(userId,chgs);
     }
 
-    public List<DSGCMnNotices> findDSGCMnNotices(DSGCMnNotices dsgcMnNotices) {
-        return this.mndao.findDSGCMnNotices(dsgcMnNotices);
+    @Transactional(rollbackFor = Exception.class)
+    public MyMnNoticesDTO findDSGCMnNotices(DSGCMnNotices dsgcMnNotices) {
+        MyMnNoticesDTO myMnNoticesDTO = new MyMnNoticesDTO();
+
+        DSGCMnNotices noticesCount = this.mndao.getNoticesCount(dsgcMnNotices.getNtyUser());
+        if(noticesCount!=null){
+            myMnNoticesDTO.setAllCount(noticesCount.getAllCount());
+            myMnNoticesDTO.setUnreadCount(noticesCount.getUnreadCount());
+        }else {
+            myMnNoticesDTO.setAllCount(0);
+            myMnNoticesDTO.setUnreadCount(0);
+        }
+
+        List<DSGCMnNotices> mnNotices = this.mndao.findDSGCMnNotices(dsgcMnNotices);
+        myMnNoticesDTO.setNotices(mnNotices);
+
+        return myMnNoticesDTO;
     }
 
 
