@@ -1,7 +1,9 @@
 package com.definesys.dsgc.service.mynty;
 
+import com.definesys.dsgc.service.lkv.bean.FndLookupValue;
 import com.definesys.dsgc.service.lov.LovDao;
 import com.definesys.dsgc.service.mynty.bean.*;
+import com.definesys.dsgc.service.svcAuth.SVCAuthDao;
 import com.definesys.dsgc.service.users.bean.DSGCUser;
 import com.definesys.dsgc.service.utils.UserHelper;
 import com.definesys.mpaas.query.db.PageQueryResult;
@@ -17,6 +19,8 @@ public class MyNtyService {
     @Autowired
     private MyNtyDao mndao;
 
+    @Autowired
+    private SVCAuthDao svcAuthDao;
 
     @Autowired
     private LovDao lovDao;
@@ -374,8 +378,23 @@ public class MyNtyService {
         mndao.updServExcptSubRules(userId,chgs);
     }
 
-    public List<DSGCMnNotices> findDSGCMnNotices(DSGCMnNotices dsgcMnNotices) {
-        return this.mndao.findDSGCMnNotices(dsgcMnNotices);
+    @Transactional(rollbackFor = Exception.class)
+    public MyMnNoticesDTO findDSGCMnNotices(DSGCMnNotices dsgcMnNotices) {
+        MyMnNoticesDTO myMnNoticesDTO = new MyMnNoticesDTO();
+
+        DSGCMnNotices noticesCount = this.mndao.getNoticesCount(dsgcMnNotices.getNtyUser());
+        if(noticesCount!=null){
+            myMnNoticesDTO.setAllCount(noticesCount.getAllCount());
+            myMnNoticesDTO.setUnreadCount(noticesCount.getUnreadCount());
+        }else {
+            myMnNoticesDTO.setAllCount(0);
+            myMnNoticesDTO.setUnreadCount(0);
+        }
+
+        List<DSGCMnNotices> mnNotices = this.mndao.findDSGCMnNotices(dsgcMnNotices);
+        myMnNoticesDTO.setNotices(mnNotices);
+
+        return myMnNoticesDTO;
     }
 
 
@@ -475,5 +494,41 @@ public class MyNtyService {
         sltReq.setOldDel(null);
         sltReq.setOldAdd(null);
         return sltReq;
+    }
+
+    public PageQueryResult<UserResDTO> queryUserList(CommonReqBean commonReqBean,int pageSize,int pageIndex,String userRole){
+        PageQueryResult<UserResDTO> resDTOPageQueryResult = new PageQueryResult<>();
+        if("SuperAdministrators".equals(userRole) || "Administrators".equals(userRole)||"SystemLeader".equals(userRole)){
+            List<FndLookupValue> lookupValueList = svcAuthDao.queryFndModuleByLookupType("plateFormRole");
+            PageQueryResult<DSGCUser> userList = mndao.queryUserList(commonReqBean,pageSize,pageIndex);
+            Long total = userList.getCount();
+            List<UserResDTO> resDTOS = userDataMapping(userList.getResult(),lookupValueList);
+            resDTOPageQueryResult.setCount(total);
+            resDTOPageQueryResult.setResult(resDTOS);
+        }else {
+            return null;
+        }
+        return resDTOPageQueryResult;
+    }
+
+    public List<UserResDTO> userDataMapping(List<DSGCUser> dsgcUsers,List<FndLookupValue> lookupValueList){
+        List<UserResDTO> result = new ArrayList<>();
+        for (int i=0;i<dsgcUsers.size();i++){
+            UserResDTO userResDTO = new UserResDTO();
+            userResDTO.setUserId(dsgcUsers.get(i).getUserId());
+            userResDTO.setUserName(dsgcUsers.get(i).getUserName());
+            userResDTO.setUserRole(dsgcUsers.get(i).getUserRole());
+            userResDTO.setUserDescription(dsgcUsers.get(i).getUserDescription());
+            userResDTO.setUserMail(dsgcUsers.get(i).getUserMail());
+            userResDTO.setUserPhone(dsgcUsers.get(i).getUserPhone());
+            for (int j = 0;j<lookupValueList.size();j++){
+                if (userResDTO.getUserRole().equals(lookupValueList.get(j).getLookupCode())){
+                    userResDTO.setUserRoleName(lookupValueList.get(j).getMeaning());
+                    break;
+                }
+            }
+            result.add(userResDTO);
+        }
+        return result;
     }
 }

@@ -269,6 +269,9 @@ public class BpmService {
                String[] users = apprCode.split(",");
                result = Arrays.asList(users);
                 break;
+            case "creator":
+                result.add(apprCode);
+                break;
             case "spy":          //前置审批人指定
                 break;
         }

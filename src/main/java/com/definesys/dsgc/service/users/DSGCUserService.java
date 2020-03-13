@@ -3,9 +3,17 @@ package com.definesys.dsgc.service.users;
 //import com.auth0.jwt.JWT;
 //import com.auth0.jwt.algorithms.Algorithm;
 import com.alibaba.fastjson.JSONObject;
+import com.definesys.dsgc.service.apilr.ApiLrDao;
+import com.definesys.dsgc.service.apilr.bean.DagLrbean;
+import com.definesys.dsgc.service.apiroute.ApiRouteDao;
+import com.definesys.dsgc.service.apiroute.bean.DagRoutesBean;
+import com.definesys.dsgc.service.apps.AppsDao;
+import com.definesys.dsgc.service.market.MarketDao;
+import com.definesys.dsgc.service.market.bean.DSGCApisBean;
 import com.definesys.dsgc.service.svcmng.SVCMngDao;
 import com.definesys.dsgc.service.svcmng.bean.DSGCService;
 import com.definesys.dsgc.service.system.DSGCSystemDao;
+import com.definesys.dsgc.service.system.bean.DSGCSystemEntities;
 import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
 import com.definesys.dsgc.service.users.bean.*;
 //import com.definesys.dsgc.app.svcmng.DSGCServiceDao;
@@ -34,6 +42,19 @@ public class DSGCUserService {
 
     @Autowired
     private DSGCSystemDao systemDao;
+
+    @Autowired
+    private AppsDao appsDao;
+
+    @Autowired
+    private ApiRouteDao apiRouteDao;
+
+    @Autowired
+    private MarketDao marketDao;
+
+    @Autowired
+    private ApiLrDao apiLrDao;
+
 
 //    @Autowired
 //    DSGCServiceDao dsgc_service;
@@ -262,21 +283,86 @@ public class DSGCUserService {
 
     public Boolean checkSystemLeaderAllowAccess(CheckSysLeaderRoleVO param){
         Boolean result = false;
-        if(StringUtil.isBlank(param.getServNo()) ||StringUtil.isBlank(param.getUserId()) ){
+        if(StringUtil.isBlank(param.getUserId())){
             return result;
         }
-        DSGCService service= svcMngDao.queryServByServNo(param.getServNo());
-        if(service == null){
-            return false;
-        }
-        List<DSGCSystemUser> systemUserList = systemDao.findSystemUserByUserId(param.getUserId());
-        String appCode = service.getSubordinateSystem();
-        for (int i = 0; i < systemUserList.size(); i++) {
-            if (appCode.equals(systemUserList.get(i).getSysCode())){
-                result = true;
-                break;
+        if(StringUtil.isNotBlank(param.getServNo())){
+            DSGCService service= svcMngDao.queryServByServNo(param.getServNo());
+            if(service == null){
+                return false;
+            }
+            List<DSGCSystemUser> systemUserList = systemDao.findSystemUserByUserId(param.getUserId());
+            String appCode = service.getSubordinateSystem();
+            for (int i = 0; i < systemUserList.size(); i++) {
+                if (appCode.equals(systemUserList.get(i).getSysCode())){
+                    result = true;
+                    break;
+                }
+            }
+        }else if(StringUtil.isNotBlank(param.getApiCode())){
+            DSGCApisBean dsgcApis = marketDao.queryApiByApiCode(param.getApiCode());
+            if(dsgcApis == null){
+                return false;
+            }
+            List<DSGCSystemUser> systemUserList = systemDao.findSystemUserByUserId(param.getUserId());
+            String appCode = dsgcApis.getAppCode();
+            for (int i = 0; i < systemUserList.size(); i++) {
+                if (appCode.equals(systemUserList.get(i).getSysCode())){
+                    result = true;
+                    break;
+                }
             }
         }
         return result;
     }
+
+    public Boolean checkAppdetailEdit(CheckAppDetailEditVO param){
+        List<DSGCSystemUser> systemUserList = systemDao.findSystemUserByUserId(param.getUserId());
+        DSGCSystemEntities dsgcSystemEntities = appsDao.querySystemEnt(param.getAppId());
+        String appCode = dsgcSystemEntities.getSysCode();
+        Boolean isEdit = false;
+        if(StringUtil.isBlank(appCode)){
+            return isEdit;
+        }
+        for (int i = 0; i <systemUserList.size() ; i++) {
+            if (appCode.equals(systemUserList.get(i).getSysCode())){
+                isEdit = true;
+                break;
+            }
+        }
+        return isEdit;
+    }
+    public Boolean checApikRouteDetailAllowAccess(CheckApiRouteDetailVO param){
+        List<DSGCSystemUser> systemUserList = systemDao.findSystemUserByUserId(param.getUserId());
+        DagRoutesBean dagRoutesBean = apiRouteDao.queryRouteDetail(param.getRouteCode());
+        String appCode = dagRoutesBean.getAppCode();
+        Boolean isEdit = false;
+        if(StringUtil.isBlank(appCode)){
+            return isEdit;
+        }
+        for (int i = 0; i <systemUserList.size() ; i++) {
+            if (appCode.equals(systemUserList.get(i).getSysCode())){
+                isEdit = true;
+                break;
+            }
+        }
+        return isEdit;
+    }
+    public Boolean checkApiLrDetailAllowAccess(CheckApiRouteDetailVO param){
+        List<DSGCSystemUser> systemUserList = systemDao.findSystemUserByUserId(param.getUserId());
+        DagLrbean dagLrbean = apiLrDao.queryLrDetail(param.getRouteCode());
+        String appCode = dagLrbean.getAppCode();
+        Boolean isEdit = false;
+        if(StringUtil.isBlank(appCode)){
+            return isEdit;
+        }
+        for (int i = 0; i <systemUserList.size() ; i++) {
+            if (appCode.equals(systemUserList.get(i).getSysCode())){
+                isEdit = true;
+                break;
+            }
+        }
+        return isEdit;
+    }
+
 }

@@ -5,6 +5,7 @@ package com.definesys.dsgc.service.mynty;
 import com.definesys.dsgc.service.mynty.bean.*;
 import com.definesys.dsgc.service.users.bean.DSGCUser;
 import com.definesys.mpaas.common.http.Response;
+import com.definesys.mpaas.query.db.PageQueryResult;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -193,8 +194,7 @@ public class MyNtyController {
 
     @RequestMapping(value = "/findDSGCMnNotices", method = RequestMethod.POST)
     public Response findDSGCMnNotices(@RequestBody DSGCMnNotices dsgcMnNotices) {
-        List<DSGCMnNotices> dsgcMnNoticesList = this.mns.findDSGCMnNotices(dsgcMnNotices);
-        return Response.ok().data(dsgcMnNoticesList);
+        return Response.ok().data(this.mns.findDSGCMnNotices(dsgcMnNotices));
     }
 
     @RequestMapping(value = "getServByUser", method = RequestMethod.POST)
@@ -242,5 +242,15 @@ public class MyNtyController {
         return Response.ok().setData(mns.saveMNSubUser(sltReq));
     }
 
+    @RequestMapping(value = "getUserList",method = RequestMethod.POST)
+    public Response queryUserList(@RequestBody() CommonReqBean commonReqBean,
+                                  @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
+                                  @RequestParam(value = "pageIndex", required = false, defaultValue = "1") int pageIndex,HttpServletRequest request){
+        String userRole= request.getHeader("userRole");
+
+        PageQueryResult<UserResDTO> result = mns.queryUserList(commonReqBean,pageSize,pageIndex,userRole);
+
+        return Response.ok().setData(result);
+    }
 
 }

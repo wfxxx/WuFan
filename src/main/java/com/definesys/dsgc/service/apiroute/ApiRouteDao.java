@@ -62,9 +62,9 @@ public class ApiRouteDao {
     public void delApiRoute(CommonReqBean param){
         sw.buildQuery().eq("dr_id",param.getCon0()).doDelete(DagRoutesBean.class);
     }
-    public DagRoutesBean queryRouteDetail(CommonReqBean param){
+    public DagRoutesBean queryRouteDetail(String  routeCode){
         return  sw.buildQuery().sql("select dr.*,dse.sys_name appName from dag_routes dr,dsgc_system_entities dse where dr.app_code = dse.sys_code and dr.route_code = #routeCode")
-                .setVar("routeCode",param.getCon0())
+                .setVar("routeCode",routeCode)
                 .doQueryFirst(DagRoutesBean.class);
     }
     public List<DSGCEnvInfoCfg> queryApiEnv(){

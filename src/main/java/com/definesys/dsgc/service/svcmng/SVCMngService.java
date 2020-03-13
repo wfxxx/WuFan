@@ -912,4 +912,7 @@ public void addRestServ(AddRestServVO addRestServVO){
             svcMngDao.addServUri(dsgcServicesUri);
         }
     }
+    public void querySvcSourceList(SVCCommonReqBean param){
+        
+    }
 }

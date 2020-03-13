@@ -169,4 +169,15 @@ public class SVCMngController {
 
         return Response.ok();
     }
+    @RequestMapping(value = "/querySvcSourceList",method = RequestMethod.POST)
+    public Response querySvcSourceList(@RequestBody SVCCommonReqBean param){
+        try {
+            svcMngService.querySvcSourceList(param);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("查询资源失败");
+        }
+
+        return Response.ok();
+    }
 }

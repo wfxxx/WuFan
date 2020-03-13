@@ -3,6 +3,7 @@ package com.definesys.dsgc.service.mynty;
 import com.definesys.dsgc.service.mynty.bean.*;
 import com.definesys.dsgc.service.lkv.FndLookupTypeDao;
 import com.definesys.dsgc.service.users.bean.DSGCUser;
+import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.dsgc.service.utils.StringUtils;
 import com.definesys.dsgc.service.utils.UserHelper;
 import com.definesys.mpaas.query.MpaasQuery;
@@ -646,6 +647,9 @@ public class MyNtyDao {
     public List<DSGCMnNotices> findDSGCMnNotices(DSGCMnNotices dsgcMnNotices) {
         MpaasQuery mpaasQuery = this.sw.buildQuery()
                 .eq("ntyUser",dsgcMnNotices.getNtyUser());
+        if (StringUtils.isNotEmpty(dsgcMnNotices.getMnTitle())) {
+            mpaasQuery = mpaasQuery.eq("mnTitle",dsgcMnNotices.getMnTitle());
+        }
         if (StringUtils.isNotEmpty(dsgcMnNotices.getMnType())) {
             mpaasQuery = mpaasQuery.eq("mnType",dsgcMnNotices.getMnType());
         }
@@ -831,4 +835,30 @@ public class MyNtyDao {
 //            }
 //        }
 //    }
+
+    public PageQueryResult<DSGCUser> queryUserList(CommonReqBean commonReqBean, int pageSize, int pageIndex){
+        MpaasQuery mpaasQuery =  sw.buildQuery();
+        StringBuffer sqlStr= new StringBuffer("select * from dsgc_user du where 1=1 ");
+        if (StringUtil.isNotBlank(commonReqBean.getCon0())) {
+            String[] conArray = commonReqBean.getCon0().trim().split(" ");
+            for (String s : conArray) {
+                if (s != null && s.length() > 0) {
+                    sqlStr.append(this.generateLikeAndCluse(s));
+                }
+            }
+        }
+        if(!commonReqBean.getUserRole().equals("ALL")){
+            sqlStr.append(" and du.user_role = #userRole ");
+            mpaasQuery.setVar("userRole",commonReqBean.getUserRole());
+        }
+        mpaasQuery.sql(sqlStr.toString());
+        return mpaasQuery.doPageQuery(pageIndex,pageSize,DSGCUser.class);
+    }
+
+
+    public DSGCMnNotices getNoticesCount(String ntyUser){
+       return sw.buildQuery().sql("select distinct (select count(*) from DSGC_MN_NOTICES) allCount,(select count(*) from DSGC_MN_NOTICES where read_stat = 0) unreadCount from DSGC_MN_NOTICES where nty_user = #ntyUser ")
+               .setVar("ntyUser",ntyUser)
+               .doQueryFirst(DSGCMnNotices.class);
+    }
 }

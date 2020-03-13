@@ -56,17 +56,12 @@ public class AppsDao {
                 }
             }
         }
-//        if(StringUtil.isNotBlank(commonReqBean.getCon0())){
-//            strSql.append(" and (upper(sys_code) like #con0 or upper(sys_name) like #con0 or upper(owner) like #con0 ) ");
+//        if("SystemLeader".equals(userRole)){
+//            strSql.append(" and upper(owner) like upper(#userName) ");
+//            mq.setVar("userName","%"+userName+"%");
 //        }
-        if("SystemLeader".equals(userRole)){
-            strSql.append(" and upper(owner) like upper(#userName) ");
-            mq.setVar("userName","%"+userName+"%");
-        }
         mq.sql(strSql.toString()+" order by creation_date desc ");
-//        if(StringUtil.isNotBlank(commonReqBean.getCon0())){
-//            mq.setVar("con0","%"+commonReqBean.getCon0().toUpperCase().trim()+"%");
-//        }
+
 
         return mq.doPageQuery(pageIndex,pageSize,DSGCSystemEntities.class);
     }

@@ -169,6 +169,10 @@ public class SVCAuthDao {
     public List<DSGCSystemEntities> querySystem(){
         return sw.buildQuery().doQuery(DSGCSystemEntities.class);
     }
+    public List<DSGCSystemEntities> querySystemLeaderSystem(String userId){
+        return sw.buildQuery().sql("select dse.* from dsgc_system_user dsu,dsgc_system_entities dse where dsu.sys_code = dse.sys_code and dsu.user_id = #userId")
+                .setVar("userId",userId).doQuery(DSGCSystemEntities.class);
+    }
 
     public String queryAuthSystemCount(String servNo){
         Map<String, Object> map = sw.buildQuery().sql("select count(*) count from (select dsa.* " +
