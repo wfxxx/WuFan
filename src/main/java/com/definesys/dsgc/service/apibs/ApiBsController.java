@@ -191,13 +191,14 @@ public class ApiBsController {
     @RequestMapping(value = "/addDagCodeVersion",method = RequestMethod.POST)
     public Response addDagCodeVersion(@RequestBody DagCodeVersionBean dagCodeVersionBean){
         DagCodeVersionBean result=null;
+        String vid="";
         try {
-            apiBsService.addDagCodeVersion(dagCodeVersionBean);
+             vid=apiBsService.addDagCodeVersion(dagCodeVersionBean);
         }catch (Exception e){
             e.printStackTrace();
             return Response.error("新增失败");
         }
-        return Response.ok();
+        return Response.ok().setData(vid);
     }
 
     @RequestMapping(value = "/copyDagCodeVersion",method = RequestMethod.POST)

@@ -141,8 +141,9 @@ public class ApiBsService {
         return apiBsDao.updateDagCodeVersion(dagCodeVersionBean);
     }
 
-    public void addDagCodeVersion(DagCodeVersionBean dagCodeVersionBean){
-         apiBsDao.addDagCodeVersion(dagCodeVersionBean);
+    public String addDagCodeVersion(DagCodeVersionBean dagCodeVersionBean){
+         return apiBsDao.addDagCodeVersion(dagCodeVersionBean);
+
     }
 
     @Transactional(rollbackFor = Exception.class)

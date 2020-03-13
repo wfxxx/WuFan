@@ -38,6 +38,11 @@ public class DSGCUserDao {
         return u;
     }
 
+    public List<Map<String,Object>> findAppCodeByUser(String userName) {
+        return sw.buildQuery().sql("select dsu.sys_code as sysCode from dsgc_system_user dsu,dsgc_user du where dsu.user_id = du.user_id and du.user_Name=#userName")
+                .setVar("userName",userName).doQuery();
+    }
+
     public String changePwd(DSGCUser user) {
 //        logger.debug(user.toString());
 //        DSGCUser user2 = this.findUserById(user);

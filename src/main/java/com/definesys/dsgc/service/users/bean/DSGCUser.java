@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Date;
+import java.util.List;
 
 @SQLQuery(value = {
         @SQL(view = "query_all_user", sql = " select us.user_id, us.user_name, us.user_dept, us.user_mail, us.user_phone, us.is_admin, us.user_description, us.created_by, us.creation_date, us.last_updated_by, us.last_update_date, us.user_role, us.is_locked, us.work_number, lookup.meaning role_name from dsgc_user us,( select vl.lookup_code, vl.meaning from fnd_lookup_values vl where vl.lookup_id in ( select tp.lookup_id from fnd_lookup_types tp where tp.lookup_type = 'plateFormRole') ) lookup where us.user_role = lookup.lookup_code(+) "),
@@ -34,6 +35,8 @@ public class DSGCUser  extends MpaasBasePojo {
 
     @Column(type = ColumnType.JAVA)
     private String wechat;
+    @Column(type = ColumnType.JAVA)
+    private List<String> appCode;
 
     @ApiModelProperty(value = "角色名称",notes = "当前用户对应值列表中的名称")
     @Column(type = ColumnType.JAVA)
@@ -201,6 +204,14 @@ public class DSGCUser  extends MpaasBasePojo {
 
     public void setWorkNumber(String workNumber) {
         this.workNumber = workNumber;
+    }
+
+    public List<String> getAppCode() {
+        return appCode;
+    }
+
+    public void setAppCode(List<String> appCode) {
+        this.appCode = appCode;
     }
 
     @Override

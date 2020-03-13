@@ -102,7 +102,7 @@ public class SVCLogController {
         String userId = request.getHeader("uid");
         PageQueryResult<SVCBizkeyResDTO> result = new PageQueryResult<>();
         try {
-            result =  this.sls.querySvcLogBizkeyByCon(q,pageSize,pageIndex,userRole,userId);
+            result =  this.sls.querySvcLogBizkeyByCon(q,pageSize,pageIndex,userId,userRole);
         } catch (Exception e) {
             return Response.error(e.getMessage());
         }
@@ -140,7 +140,11 @@ public class SVCLogController {
         String userRole = request.getHeader("userRole");
         String userId = request.getHeader("uid");
         List<SVCKeywordResDTO> result =  this.sls.queryServBizkey(param,userRole,userId);
+        if(result==null){
+            return Response.error("您权限下无对应数据");
+        }else{
             return Response.ok().setData(result);
+        }
         }
     @RequestMapping(value = "/updateBizResolve", method = RequestMethod.POST)
     public Response updateBizResolve(@RequestBody UpdateBizResolveVO param,

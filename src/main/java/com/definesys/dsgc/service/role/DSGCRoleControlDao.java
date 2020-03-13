@@ -47,7 +47,7 @@ public class DSGCRoleControlDao {
         return sw.buildQuery().sql("select * from (select c.role_id, \n" +
                 "                c.role_code as role_code ,\n" +
                 "                (case when u.user_name is null then v2.meaning else (u.user_description||'-'||u.user_name) end) as role_Name,\n" +
-                "                v1.meaning as menu_Bar_Name,c.is_see,c.is_edit\n" +
+                "                v1.meaning as menu_Bar_Name,c.is_see,c.is_edit,c.creation_date\n" +
                 "                from dsgc_role_control c\n" +
                 "                left join dsgc_user u on c.role_code=u.user_id\n" +
                 "                left join fnd_lookup_values v1 on v1.lookup_code=c.menu_bar \n" +
@@ -56,6 +56,7 @@ public class DSGCRoleControlDao {
                 .or()
                 .likeNocase("roleName", roleControl.getRoleControlDescription())
                 .likeNocase("menuBarName", roleControl.getRoleControlDescription())
+                .orderBy("creationDate","desc")
                 .doPageQuery(pageIndex, pageSize, DSGCRoleControlVO.class);
     }
     public List<Map<String,Object>>  checkRoleControl(DSGCRoleControl roleControl) {

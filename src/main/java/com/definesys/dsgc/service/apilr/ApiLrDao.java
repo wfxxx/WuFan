@@ -23,7 +23,7 @@ public class ApiLrDao {
     public PageQueryResult queryApiLrList(CommonReqBean param, int pageSize, int pageIndex, String userRole, List<String> sysCodeList){
         StringBuffer sqlStr = new StringBuffer("select db.*,dse.sys_name appName from DAG_LR db,dsgc_system_entities dse where 1=1 and db.app_code = dse.sys_code ");
         MpaasQuery mq = sw.buildQuery();
-        if ("SystemLeader".equals(userRole)) {
+        if ("SystemLeader".equals(userRole)&&sysCodeList.size()>0) {
             sqlStr.append(" and db.app_code in ( ");
             for (int i = 0; i < sysCodeList.size(); i++) {
                 if (i < sysCodeList.size() - 1) {

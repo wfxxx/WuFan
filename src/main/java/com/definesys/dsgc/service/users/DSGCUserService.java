@@ -60,8 +60,19 @@ public class DSGCUserService {
 //    DSGCServiceDao dsgc_service;
 
     public DSGCUser login(DSGCUser user) {
-        return this.userDao.login(user);
+        DSGCUser result=this.userDao.login(user);
+        if(result.getUserRole().equals("SystemLeader")){
+            List<Map<String,Object>> appList=this.userDao.findAppCodeByUser(user.getUserName());
+            List<String> appCodeList=new ArrayList<String>();
+            for(Map<String,Object> item :appList){
+                appCodeList.add((String) item.get("SYSCODE"));
+            }
+            result.setAppCode(appCodeList);
+        }
+        return result;
     }
+
+
 
     @Transactional(rollbackFor = Exception.class)
     public String createUser(DSGCUser user, List<DSGCServiceUser> dsgcServiceUsers) {
