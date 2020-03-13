@@ -152,8 +152,9 @@ public class ApiBsDao {
         return queryDagCodeVersionByid(dagCodeVersionBean.getVid());
     }
 
-    public void addDagCodeVersion(DagCodeVersionBean dagCodeVersionBean){
+    public String addDagCodeVersion(DagCodeVersionBean dagCodeVersionBean){
         sw.buildQuery().doInsert(dagCodeVersionBean);
+        return dagCodeVersionBean.getVid();
     }
 
 
