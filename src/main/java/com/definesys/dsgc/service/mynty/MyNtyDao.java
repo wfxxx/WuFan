@@ -675,8 +675,12 @@ public class MyNtyDao {
         if (StringUtils.isNotEmpty(dsgcMnNotices.getMnTitle())) {
             mpaasQuery = mpaasQuery.eq("mnTitle",dsgcMnNotices.getMnTitle());
         }
-        if (StringUtils.isNotEmpty(dsgcMnNotices.getMnType())) {
-            mpaasQuery = mpaasQuery.eq("mnType",dsgcMnNotices.getMnType());
+        if (dsgcMnNotices.getMnTypeList()!=null) {
+            if(dsgcMnNotices.getMnTypeList().size()==0){
+                mpaasQuery = mpaasQuery.eq("mnType","xxxx");
+            }else {
+                mpaasQuery = mpaasQuery.in("mnType",dsgcMnNotices.getMnTypeList());
+            }
         }
         if (StringUtils.isNotEmpty(dsgcMnNotices.getReadStat()) && !dsgcMnNotices.getReadStat().equals("all")) {
             if ("unread".equals(dsgcMnNotices.getReadStat())) {
