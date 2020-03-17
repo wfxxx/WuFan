@@ -170,12 +170,23 @@ public class SVCMngController {
         return Response.ok();
     }
     @RequestMapping(value = "/querySvcSourceList",method = RequestMethod.POST)
-    public Response querySvcSourceList(@RequestBody SVCCommonReqBean param){
+    public Response querySvcSourceList(@RequestBody SVCCommonReqBean param, @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
+                                       @RequestParam(value = "pageIndex", required = false, defaultValue = "1") int pageIndex){
         try {
-            svcMngService.querySvcSourceList(param);
+           return Response.ok().setData(svcMngService.querySvcSourceList(param,pageIndex,pageSize)) ;
         }catch (Exception e){
             e.printStackTrace();
             return Response.error("查询资源失败");
+        }
+
+    }
+    @RequestMapping(value = "/addQuickServ",method = RequestMethod.POST)
+    public Response addQuickServ(@RequestBody AddQuickServVO addQuickServVO){
+        try {
+            svcMngService.addQuickServ(addQuickServVO);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("添加服务失败");
         }
 
         return Response.ok();

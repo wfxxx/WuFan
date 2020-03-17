@@ -384,10 +384,35 @@ public class MyNtyDao {
         }
 
         if (filterServNo != null && filterServNo.trim().length() > 0) {
-            if ("ALA".equals(ruleType)) {
-                sqlBuilder.append(" and t.api_code like '%" + filterServNo + "%'");
-            } else {
-                sqlBuilder.append(" and t.serv_no like '%" + filterServNo + "%'");
+            String[] conArray =filterServNo.trim().split(" ");
+            if(conArray.length==1){
+                if ("ALA".equals(ruleType)) {
+                    sqlBuilder.append(" and ( t.api_code like '%" + conArray[0] + "%'"+" or t.api_name like '%" + conArray[0] + "%'"+" or (select sys_name from dsgc_system_entities where sys_code = t.app_code) like '%" + conArray[0] + "%' )");
+                } else {
+                    sqlBuilder.append(" and ( UPPER(t.serv_no) like '%" + conArray[0] + "%'"+" or UPPER(t.serv_name) like '%" + conArray[0] + "%'"+" or (select sys_name from dsgc_system_entities where sys_code = t.subordinate_system)  like '%" + conArray[0] + "%' )");
+                }
+            }else {
+                for (int i=0;i<conArray.length;i++) {
+                    if (StringUtil.isNotBlank(conArray[i])) {
+                        if ("ALA".equals(ruleType)) {
+                            if(i == 0){
+                                sqlBuilder.append(" and ( (t.api_code like '%" + conArray[i] + "%'"+" or t.api_name like '%" + conArray[i] + "%'"+" or (select sys_name from dsgc_system_entities where sys_code = t.app_code) like '%" + conArray[i] + "%' )");
+                            }else if(i>0 && i < conArray.length-1){
+                                sqlBuilder.append(" and (t.api_code like '%" + conArray[i] + "%'"+" or t.api_name like '%" + conArray[i] + "%'"+" or (select sys_name from dsgc_system_entities where sys_code = t.app_code) like '%" + conArray[i] + "%' )");
+                            }else if(i==conArray.length-1){
+                                sqlBuilder.append(" and (t.api_code like '%" + conArray[i] + "%'"+" or t.api_name like '%" + conArray[i] + "%'"+" or (select sys_name from dsgc_system_entities where sys_code = t.app_code) like '%" + conArray[i] + "%' ) )");
+                            }
+                        } else {
+                            if(i == 0){
+                                sqlBuilder.append(" and ( UPPER(t.serv_no) like '%" + conArray[i] + "%'"+" or UPPER(t.serv_name) like '%" + conArray[i] + "%'"+" or (select sys_name from dsgc_system_entities where sys_code = t.subordinate_system)  like '%" + conArray[i] + "%'");
+                            }else if(i>0 && i < conArray.length-1){
+                                sqlBuilder.append(" and UPPER(t.serv_no) like '%" + conArray[i] + "%'"+" or UPPER(t.serv_name) like '%" + conArray[i] + "%'"+" or (select sys_name from dsgc_system_entities where sys_code = t.subordinate_system)  like '%" + conArray[i] + "%'");
+                            }else if(i==conArray.length-1){
+                                sqlBuilder.append(" and UPPER(t.serv_no) like '%" + conArray[i] + "%'"+" or UPPER(t.serv_name) like '%" + conArray[i] + "%'"+" or (select sys_name from dsgc_system_entities where sys_code = t.subordinate_system)  like '%" + conArray[i] + "%' )");
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -650,8 +675,12 @@ public class MyNtyDao {
         if (StringUtils.isNotEmpty(dsgcMnNotices.getMnTitle())) {
             mpaasQuery = mpaasQuery.eq("mnTitle",dsgcMnNotices.getMnTitle());
         }
-        if (StringUtils.isNotEmpty(dsgcMnNotices.getMnType())) {
-            mpaasQuery = mpaasQuery.eq("mnType",dsgcMnNotices.getMnType());
+        if (dsgcMnNotices.getMnTypeList()!=null) {
+            if(dsgcMnNotices.getMnTypeList().size()==0){
+                mpaasQuery = mpaasQuery.eq("mnType","xxxx");
+            }else {
+                mpaasQuery = mpaasQuery.in("mnType",dsgcMnNotices.getMnTypeList());
+            }
         }
         if (StringUtils.isNotEmpty(dsgcMnNotices.getReadStat()) && !dsgcMnNotices.getReadStat().equals("all")) {
             if ("unread".equals(dsgcMnNotices.getReadStat())) {
@@ -738,7 +767,22 @@ public class MyNtyDao {
 
 
         if (filterUserName != null && filterUserName.trim().length() > 0) {
-            sql.append(" and du.user_name like '%" + filterUserName + "%'");
+            String[] conArray =filterUserName.trim().split(" ");
+            if(conArray.length==1){
+                sql.append(" and ( du.user_name like '%" + conArray[0] + "%'"+" or du.user_description like '%" + conArray[0] + "%' )");
+            }else {
+                for (int i=0;i<conArray.length;i++) {
+                    if (StringUtil.isNotBlank(conArray[i])) {
+                        if(i == 0){
+                            sql.append(" and ( (du.user_name like '%" + conArray[i] + "%'"+" or du.user_description like '%" + conArray[i] + "%' ) ");
+                        }else if(i>0 && i < conArray.length-1){
+                            sql.append(" and (du.user_name like '%" + conArray[i] + "%'"+" or du.user_description like '%" + conArray[i] + "%' ) ");
+                        }else if(i==conArray.length-1){
+                            sql.append(" and (du.user_name like '%" + conArray[i] + "%'"+" or du.user_description like '%" + conArray[i] + "%' ) )");
+                        }
+                    }
+                }
+            }
         }
 
         if (filterUserDesc != null && filterUserDesc.trim().length() > 0) {
@@ -843,7 +887,7 @@ public class MyNtyDao {
             String[] conArray = commonReqBean.getCon0().trim().split(" ");
             for (String s : conArray) {
                 if (s != null && s.length() > 0) {
-                    sqlStr.append(this.generateLikeAndCluse(s));
+                    sqlStr.append(" and du.user_name like '%" + s + "%'"+" or du.user_description like '%" + s + "%'");
                 }
             }
         }

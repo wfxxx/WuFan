@@ -9,7 +9,9 @@ import com.definesys.mpaas.query.model.MpaasBasePojo;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import javax.websocket.ClientEndpoint;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Copyright: Shanghai Definesys Company.All rights reserved.
@@ -34,6 +36,8 @@ public class DSGCMnNotices extends MpaasBasePojo {
     private Integer unreadCount;
     @Column(type = ColumnType.CALCULATE)
     private Integer allCount;
+    @Column(type = ColumnType.JAVA)
+    private List mnTypeList;
 
     @SystemColumn(SystemColumnType.OBJECT_VERSION)
     @Column(value = "object_version_number")
@@ -204,5 +208,13 @@ public class DSGCMnNotices extends MpaasBasePojo {
 
     public void setAllCount(Integer allCount) {
         this.allCount = allCount;
+    }
+
+    public List getMnTypeList() {
+        return mnTypeList;
+    }
+
+    public void setMnTypeList(List mnTypeList) {
+        this.mnTypeList = mnTypeList;
     }
 }

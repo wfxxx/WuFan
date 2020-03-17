@@ -228,4 +228,30 @@ public Boolean checkServNoIsExsit(String servNo){
         return false;
     }
 }
+
+public PageQueryResult<DSGCSvcgenUriBean> querySvcSourceList(SVCCommonReqBean param,int pageIndex,int pageSize){
+   MpaasQuery mq = sw.buildQuery();
+    StringBuffer stringBuffer = new StringBuffer("select v.* from (select dsu.* from dsgc_svcgen_uri dsu where dsu.uri_type = 'SOAP' or (dsu.uri_type = 'REST' and dsu.ib_uri not in(select ib_uri from dsgc_services_uri where uri_type = 'REST' and http_method  in ('GET','POST')  group by ib_uri " +
+            " having count(ib_uri) > 1))) v where not exists(select ib_uri,soap_oper from dsgc_services_uri n where n.uri_type = 'SOAP' and v.ib_uri = n.ib_uri and n.soap_oper is not null)");
+   if(StringUtil.isNotBlank(param.getQueryType())){
+        stringBuffer.append(" and v.uri_type = #uriType");
+       mq.setVar("uriType",param.getQueryType());
+
+   }
+    if (StringUtil.isNotBlank(param.getCon0())) {
+        String[] conArray = param.getCon0().trim().split(" ");
+        for (String s : conArray) {
+            if (s != null && s.length() > 0) {
+                stringBuffer.append(this.generateSourceLikeAndCluse(s));
+            }
+        }
+    }
+  return sw.buildQuery().sql(stringBuffer.toString()).doPageQuery(pageIndex,pageSize,DSGCSvcgenUriBean.class);
+}
+    private String generateSourceLikeAndCluse(String con) {
+        String conUpper = con.toUpperCase();
+        String conAnd = " and  (UPPER(v.obj_code) like '%" + conUpper + "%'";
+        conAnd += " or UPPER(v.ib_uri) like '%" + conUpper + "%' )";
+        return conAnd;
+    }
 }
