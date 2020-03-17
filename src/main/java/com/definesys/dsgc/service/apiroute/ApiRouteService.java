@@ -1,5 +1,6 @@
 package com.definesys.dsgc.service.apiroute;
 
+import com.definesys.dsgc.service.apiplugin.bean.DAGPluginListVO;
 import com.definesys.dsgc.service.apiroute.bean.*;
 import com.definesys.dsgc.service.dagclient.DAGClientService;
 import com.definesys.dsgc.service.dagclient.bean.DAGDeployReqVO;
@@ -38,6 +39,19 @@ public class ApiRouteService {
             }
         }
         PageQueryResult pageQueryResult = apiRouteDao.queryApiRouteList(param,pageSize,pageIndex,userRole,sysCodeList);
+        List<DagRoutesBean> queryPluginList= pageQueryResult.getResult();
+        for(DagRoutesBean item:queryPluginList){
+            if(item.getEnvCode()!=null&&item.getEnvCode().length()>0) {
+                List<DSGCEnvInfoCfg> value = apiRouteDao.queryDeplogDev(item.getEnvCode());
+                if (value != null) {
+                    for (DSGCEnvInfoCfg valueItem : value) {
+                        item.setEnvName(item.getEnvName() + valueItem.getEnvName()+",");
+                    }
+                    String envName=item.getEnvName();
+                    item.setEnvName(envName.trim().substring(0,envName.length()-1));
+                }
+            }
+        }
         return pageQueryResult;
     }
     @Transactional(rollbackFor = Exception.class)

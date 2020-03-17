@@ -1,10 +1,9 @@
 package com.definesys.dsgc.service.apiplugin;
 
-import com.definesys.dsgc.service.apilr.bean.CommonReqBean;
-import com.definesys.dsgc.service.apilr.bean.DagLrbean;
+import com.definesys.dsgc.service.apiplugin.bean.CommonReqBean;
 import com.definesys.dsgc.service.apiplugin.bean.DAGPluginListVO;
+import com.definesys.dsgc.service.esbenv.bean.DSGCEnvInfoCfg;
 import com.definesys.dsgc.service.utils.StringUtil;
-import com.definesys.mpaas.query.MpaasQuery;
 import com.definesys.mpaas.query.MpaasQueryFactory;
 import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,7 @@ public class ApiPlugInDao {
 
     @Autowired
     private MpaasQueryFactory sw;
-    public PageQueryResult queryPluginList(CommonReqBean param, int pageSize, int pageIndex,String userRole, List<String> sysCodeList){
+    public PageQueryResult queryPluginList(CommonReqBean param, int pageSize, int pageIndex, String userRole, List<String> sysCodeList){
         StringBuffer sqlStr = new StringBuffer("select * from (\n" +
                 "    select t1.*,case when e.sys_name is not null then  e.sys_name else '未知' end as app_name  from\n" +
                 "           (select \n" +
@@ -35,6 +34,7 @@ public class ApiPlugInDao {
                 "                 when  rou.app_code is not null then  rou.app_code \n" +
                 "                 when bs.app_code is not null then bs.app_code else '未知' end) \n" +
                 "           as app_code,\n" +
+                "           stat.env_code,\n" +
                 "           v.creation_date \n" +
                 "           from dag_plugin_using u \n" +
                 "           left join dag_plugin_store s on u.plugin_code=s.plugin_code\n" +
@@ -42,6 +42,7 @@ public class ApiPlugInDao {
                 "           left join dag_lr lr on lr.lr_name=v.sour_code\n" +
                 "           left join dag_routes rou on rou.route_code =v.sour_code\n" +
                 "           left join dag_bs bs on bs.bs_code=v.sour_code\n" +
+                "           left join (select t.vid,to_char(wm_concat(t.env_code)) as env_code from DAG_DEPLOY_STAT t  group by t.vid)  stat on stat.vid=v.vid\n" +
                 "        ) \n" +
                 "        t1\n" +
                 "        left join  dsgc_system_entities e on t1.app_code=e.sys_code\n" +
@@ -65,18 +66,21 @@ public class ApiPlugInDao {
                 }
             }
         }
+        if(StringUtil.isNotBlank(param.getParamsType())&&!param.getParamsType().equals("ALL")){
+            String[] conArray = param.getParamsType().trim().split(" ");
+            for (String s : conArray) {
+                if (s != null && s.length() > 0) {
+                    sqlStr.append("and  env_code like '%" + s + "%'");
+                }
+            }
+        }
         return sw.buildQuery().sql(sqlStr.toString()).doPageQuery(pageIndex, pageSize, DAGPluginListVO.class);
     }
 
 
-    public Map<String,Object> queryDeplogDev(String vid){
-        return sw.buildQuery().sql("select  LISTAGG(ENV_NAME, ',') WITHIN GROUP (ORDER BY ENV_NAME) as dev  from (\n" +
-                "select t.ENV_NAME from(\n" +
-                "SELECT S.VID,S.ENV_CODE,I.ENV_NAME FROM dag_deploy_stat S \n" +
-                "LEFT JOIN DSGC_ENV_INFO_CFG I ON S.ENV_CODE=I.ENV_CODE\n" +
-                "where vid=#vid and  I.env_type='DAG'\n" +
-                ") t group by t.ENV_NAME)")
-                .setVar("vid",vid).doQueryFirst();
+    public List<DSGCEnvInfoCfg> queryDeplogDev(String envCode){
+        String[] conArray = envCode.trim().split(",");
+        return sw.buildQuery().in("ENV_CODE",conArray).doQuery(DSGCEnvInfoCfg.class);
     }
 
     private String generateLikeAndCluse(String con) {

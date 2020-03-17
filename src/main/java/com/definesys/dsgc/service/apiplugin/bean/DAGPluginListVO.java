@@ -39,8 +39,10 @@ public class DAGPluginListVO {
     private String appCode;
     //插件所属应用的名称
     private String appName;
-    //插件部署环境
-    private String devName;
+    //插件部署环境名称
+    private String devName="";
+    //插件部署环境code
+    private String envCode;
 
     @JsonSerialize(using = MpaasDateTimeSerializer.class)
     @JsonDeserialize(using = MpaasDateTimeDeserializer.class)
@@ -144,5 +146,13 @@ public class DAGPluginListVO {
 
     public void setDevName(String devName) {
         this.devName = devName;
+    }
+
+    public String getEnvCode() {
+        return envCode;
+    }
+
+    public void setEnvCode(String envCode) {
+        this.envCode = envCode;
     }
 }

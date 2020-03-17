@@ -3,6 +3,7 @@ package com.definesys.dsgc.service.apibs;
 import com.definesys.dsgc.service.apibs.bean.*;
 import com.definesys.dsgc.service.apiroute.bean.DagEnvInfoCfgBean;
 import com.definesys.dsgc.service.apiroute.bean.DagRoutesBean;
+import com.definesys.dsgc.service.esbenv.bean.DSGCEnvInfoCfg;
 import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.mpaas.query.MpaasQuery;
 import com.definesys.mpaas.query.MpaasQueryFactory;
@@ -18,10 +19,13 @@ public class ApiBsDao {
     @Autowired
     private MpaasQueryFactory sw;
     public PageQueryResult queryApiBsList(CommonReqBean param, int pageSize, int pageIndex, String userRole,List<String> sysCodeList){
-        StringBuffer sqlStr = new StringBuffer("select db.*,dse.sys_name appName from dag_bs db,dsgc_system_entities dse where 1=1 and db.app_code = dse.sys_code ");
+        StringBuffer sqlStr = new StringBuffer("select t1.*,t2.env_code from \n" +
+                "(select db.*,dse.sys_name appName from dag_bs db,dsgc_system_entities dse where 1=1 and db.app_code = dse.sys_code) t1,\n" +
+                "(select v.vid,v.sour_code,stat.env_code from dag_code_version v left join (select t.vid,to_char(wm_concat(t.env_code)) as env_code from DAG_DEPLOY_STAT t  group by t.vid)  stat on stat.vid=v.vid) t2\n" +
+                "where 1=1 and  t1.bs_code=t2.sour_code  ");
         MpaasQuery mq = sw.buildQuery();
         if ("SystemLeader".equals(userRole)&&sysCodeList.size()>0) {
-            sqlStr.append(" and db.app_code in ( ");
+            sqlStr.append(" and t1.app_code in ( ");
             for (int i = 0; i < sysCodeList.size(); i++) {
                 if (i < sysCodeList.size() - 1) {
                     sqlStr.append("'" + sysCodeList.get(i) + "',");
@@ -38,15 +42,24 @@ public class ApiBsDao {
                 }
             }
         }
-        mq.sql(sqlStr.toString()+"order by db.creation_date desc");
+        if(StringUtil.isNotBlank(param.getQueryType())&&!param.getQueryType().equals("ALL")){
+            String[] conArray = param.getQueryType().trim().split(" ");
+            for (String s : conArray) {
+                if (s != null && s.length() > 0) {
+                    sqlStr.append("and  env_code like '%" + s + "%'");
+                }
+            }
+        }
+        System.out.println(sqlStr.toString());
+        mq.sql(sqlStr.toString()+"order by t1.creation_date desc");
         return mq.doPageQuery(pageIndex, pageSize, DagBsbean.class);
     }
 
     private String generateLikeAndCluse(String con) {
         String conUpper = con.toUpperCase();
-        String conAnd = " and  (UPPER(db.bs_code) like '%" + conUpper + "%'";
-        conAnd += " or UPPER(db.bs_desc) like '%" + conUpper + "%'";
-        conAnd += " or UPPER(dse.sys_name) like '%" + conUpper + "%' )";
+        String conAnd = " and  (UPPER(t1.bs_code) like '%" + conUpper + "%'";
+        conAnd += " or UPPER(t1.bs_desc) like '%" + conUpper + "%'";
+        conAnd += " or UPPER(t1.sys_name) like '%" + conUpper + "%' )";
 
         return conAnd;
     }
@@ -166,6 +179,11 @@ public class ApiBsDao {
 
     public List<DagEnvInfoCfgBean> queryEnv(List<String> envCode){
         return  sw.buildQuery().in("envCode",envCode).doQuery(DagEnvInfoCfgBean.class);
+    }
+
+    public List<DSGCEnvInfoCfg> queryDeplogDev(String envCode){
+        String[] conArray = envCode.trim().split(",");
+        return sw.buildQuery().in("ENV_CODE",conArray).doQuery(DSGCEnvInfoCfg.class);
     }
 
 }

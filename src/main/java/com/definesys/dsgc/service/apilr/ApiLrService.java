@@ -1,6 +1,7 @@
 package com.definesys.dsgc.service.apilr;
 
 import com.definesys.dsgc.service.apilr.bean.*;
+import com.definesys.dsgc.service.esbenv.bean.DSGCEnvInfoCfg;
 import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
 import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.mpaas.query.db.PageQueryResult;
@@ -41,6 +42,18 @@ public class ApiLrService {
             dagLrListDTO.setDlId(dagLrbean.getDlId());
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             dagLrListDTO.setCreationDate(sdf.format(dagLrbean.getCreationDate()));
+            if(dagLrbean.getEnvCode()!=null&&dagLrbean.getEnvCode().length()>0) {
+                List<DSGCEnvInfoCfg> value = apiLrDao.queryDeplogDev(dagLrbean.getEnvCode());
+                if (value != null) {
+                    for (DSGCEnvInfoCfg valueItem : value) {
+                        dagLrbean.setEnvName(dagLrbean.getEnvName() + valueItem.getEnvName()+",");
+                    }
+                    String envName=dagLrbean.getEnvName();
+                    dagLrbean.setEnvName(envName.trim().substring(0,envName.length()));
+                }
+            }
+            dagLrListDTO.setEnvCode(dagLrbean.getEnvCode());
+            dagLrListDTO.setEnvName(dagLrbean.getEnvName());
             listDTOS.add(dagLrListDTO);
         }
         result.setCount(queryApiBsList.getCount());

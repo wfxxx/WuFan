@@ -1,8 +1,7 @@
 package com.definesys.dsgc.service.apiplugin;
 
-import com.definesys.dsgc.service.apilr.bean.CommonReqBean;
-import com.definesys.dsgc.service.apiplugin.bean.DAGPluginListVO;
-import com.definesys.dsgc.service.dagclient.bean.DAGDeployReqVO;
+
+import com.definesys.dsgc.service.apiplugin.bean.CommonReqBean;
 import com.definesys.mpaas.common.http.Response;
 import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -16,10 +16,13 @@ public class ApiRouteDao {
     @Autowired
     private MpaasQueryFactory sw;
     public PageQueryResult queryApiRouteList(CommonReqBean param, int pageSize, int pageIndex, String userRole, List<String> sysCodeList) {
-        StringBuffer sqlStr = new StringBuffer("select dr.*,dse.sys_name appName from dag_routes dr,dsgc_system_entities dse where 1=1 and dr.app_code = dse.sys_code ");
+        StringBuffer sqlStr = new StringBuffer("select t1.*,t2.env_code from \n" +
+                "(select dr.*,dse.sys_name appName from dag_routes dr,dsgc_system_entities dse where 1=1 and dr.app_code = dse.sys_code) t1,\n" +
+                "(select v.vid,v.sour_code,stat.env_code from dag_code_version v left join (select t.vid,to_char(wm_concat(t.env_code)) as env_code from DAG_DEPLOY_STAT t  group by t.vid)  stat on stat.vid=v.vid) t2\n" +
+                "where 1=1 and  t1.route_code=t2.sour_code  ");
         MpaasQuery mq = sw.buildQuery();
         if ("SystemLeader".equals(userRole)&&sysCodeList.size()>0) {
-            sqlStr.append(" and dr.app_code in ( ");
+            sqlStr.append(" and t1.app_code in ( ");
             for (int i = 0; i < sysCodeList.size(); i++) {
                 if (i < sysCodeList.size() - 1) {
                     sqlStr.append("'" + sysCodeList.get(i) + "',");
@@ -36,7 +39,16 @@ public class ApiRouteDao {
                 }
             }
         }
-        sqlStr.append(" order by dr.creation_date desc ");
+        if(StringUtil.isNotBlank(param.getQueryType())&&!param.getQueryType().equals("ALL")){
+            String[] conArray = param.getQueryType().trim().split(" ");
+            for (String s : conArray) {
+                if (s != null && s.length() > 0) {
+                    sqlStr.append("and  env_code like '%" + s + "%'");
+                }
+            }
+        }
+        sqlStr.append(" order by t1.creation_date desc ");
+        System.out.println(sqlStr.toString());
         mq.sql(sqlStr.toString());
 
         return mq.doPageQuery(pageIndex, pageSize, DagRoutesBean.class);
@@ -44,12 +56,12 @@ public class ApiRouteDao {
 
     private String generateLikeAndCluse(String con) {
         String conUpper = con.toUpperCase();
-        String conAnd = " and  (UPPER(dr.route_code) like '%" + conUpper + "%'";
-        conAnd += " or UPPER(dr.bs_code) like '%" + conUpper + "%'";
-        conAnd += " or UPPER(dr.route_path) like '%" + conUpper + "%'";
-        conAnd += " or UPPER(dr.route_method) like '%" + conUpper + "%'";
-        conAnd += " or UPPER(dr.route_desc) like '%" + conUpper + "%'";
-        conAnd += " or UPPER(dse.sys_name) like '%" + conUpper + "%' )";
+        String conAnd = " and  (UPPER(t1.route_code) like '%" + conUpper + "%'";
+        conAnd += " or UPPER(t1.bs_code) like '%" + conUpper + "%'";
+        conAnd += " or UPPER(t1.route_path) like '%" + conUpper + "%'";
+        conAnd += " or UPPER(t1.route_method) like '%" + conUpper + "%'";
+        conAnd += " or UPPER(t1.route_desc) like '%" + conUpper + "%'";
+        conAnd += " or UPPER(t1.sys_name) like '%" + conUpper + "%' )";
 
         return conAnd;
     }
@@ -165,5 +177,11 @@ public class ApiRouteDao {
         }else {
             return true;
         }
+    }
+
+
+    public List<DSGCEnvInfoCfg> queryDeplogDev(String envCode){
+        String[] conArray = envCode.trim().split(",");
+        return sw.buildQuery().in("ENV_CODE",conArray).doQuery(DSGCEnvInfoCfg.class);
     }
 }

@@ -1,6 +1,7 @@
 package com.definesys.dsgc.service.apilr;
 
 import com.definesys.dsgc.service.apilr.bean.*;
+import com.definesys.dsgc.service.esbenv.bean.DSGCEnvInfoCfg;
 import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
 import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.mpaas.query.MpaasQuery;
@@ -21,10 +22,13 @@ public class ApiLrDao {
     }
 
     public PageQueryResult queryApiLrList(CommonReqBean param, int pageSize, int pageIndex, String userRole, List<String> sysCodeList){
-        StringBuffer sqlStr = new StringBuffer("select db.*,dse.sys_name appName from DAG_LR db,dsgc_system_entities dse where 1=1 and db.app_code = dse.sys_code ");
+        StringBuffer sqlStr = new StringBuffer("select t1.*,t2.env_code from \n" +
+                "(select db.*,dse.sys_name appName from DAG_LR db,dsgc_system_entities dse where 1=1 and db.app_code = dse.sys_code ) t1,\n" +
+                "(select v.vid,v.sour_code,stat.env_code from dag_code_version v left join (select t.vid,to_char(wm_concat(t.env_code)) as env_code from DAG_DEPLOY_STAT t  group by t.vid)  stat on stat.vid=v.vid) t2\n" +
+                "where 1=1 and  t1.lr_name=t2.sour_code  ");
         MpaasQuery mq = sw.buildQuery();
         if ("SystemLeader".equals(userRole)&&sysCodeList.size()>0) {
-            sqlStr.append(" and db.app_code in ( ");
+            sqlStr.append(" and t1.app_code in ( ");
             for (int i = 0; i < sysCodeList.size(); i++) {
                 if (i < sysCodeList.size() - 1) {
                     sqlStr.append("'" + sysCodeList.get(i) + "',");
@@ -41,15 +45,23 @@ public class ApiLrDao {
                 }
             }
         }
-        mq.sql(sqlStr.toString()+"order by db.creation_date desc");
+        if(StringUtil.isNotBlank(param.getQueryType())&&!param.getQueryType().equals("ALL")){
+            String[] conArray = param.getQueryType().trim().split(" ");
+            for (String s : conArray) {
+                if (s != null && s.length() > 0) {
+                    sqlStr.append("and  env_code like '%" + s + "%'");
+                }
+            }
+        }
+        mq.sql(sqlStr.toString()+"order by t1.creation_date desc");
         return mq.doPageQuery(pageIndex, pageSize, DagLrbean.class);
     }
 
     private String generateLikeAndCluse(String con) {
         String conUpper = con.toUpperCase();
-        String conAnd = " and  (UPPER(db.lr_name) like '%" + conUpper + "%'";
-        conAnd += " or UPPER(db.lr_desc) like '%" + conUpper + "%'";
-        conAnd += " or UPPER(dse.sys_name) like '%" + conUpper + "%' )";
+        String conAnd = " and  (UPPER(t1.lr_name) like '%" + conUpper + "%'";
+        conAnd += " or UPPER(t1.lr_desc) like '%" + conUpper + "%'";
+        conAnd += " or UPPER(t1.sys_name) like '%" + conUpper + "%' )";
         return conAnd;
     }
 
@@ -107,5 +119,11 @@ public class ApiLrDao {
 
     public void copyLrTargetList(DagLrTargetBean dagLrTargetBean){
         sw.buildQuery().doInsert(dagLrTargetBean);
+    }
+
+
+    public List<DSGCEnvInfoCfg> queryDeplogDev(String envCode){
+        String[] conArray = envCode.trim().split(",");
+        return sw.buildQuery().in("ENV_CODE",conArray).doQuery(DSGCEnvInfoCfg.class);
     }
 }

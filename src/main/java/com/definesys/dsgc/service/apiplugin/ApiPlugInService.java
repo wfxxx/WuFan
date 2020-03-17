@@ -1,16 +1,15 @@
 package com.definesys.dsgc.service.apiplugin;
 
 import com.definesys.dsgc.service.apilr.ApiLrDao;
-import com.definesys.dsgc.service.apilr.bean.CommonReqBean;
-import com.definesys.dsgc.service.apilr.bean.DagLrListDTO;
-import com.definesys.dsgc.service.apilr.bean.DagLrbean;
+import com.definesys.dsgc.service.apiplugin.bean.CommonReqBean;
 import com.definesys.dsgc.service.apiplugin.bean.DAGPluginListVO;
+import com.definesys.dsgc.service.esbenv.bean.DSGCEnvInfoCfg;
 import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
 import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -37,12 +36,15 @@ public class ApiPlugInService {
         PageQueryResult result=apiPlugInDao.queryPluginList(param,pageSize,pageIndex,userRole,sysCodeList);
         List<DAGPluginListVO> queryPluginList= result.getResult();
         for(DAGPluginListVO item:queryPluginList){
-            Map<String,Object> value=apiPlugInDao.queryDeplogDev(item.getVid());
-            if(value !=null){
-                Object devName=value.get("DEV");
-                item.setDevName(devName.toString());
-            }else{
-                item.setDevName("未部署");
+            if(item.getEnvCode()!=null&&item.getEnvCode().length()>0) {
+                List<DSGCEnvInfoCfg> value = apiPlugInDao.queryDeplogDev(item.getEnvCode());
+                if (value != null) {
+                    for (DSGCEnvInfoCfg valueItem : value) {
+                        item.setDevName(item.getDevName() + valueItem.getEnvName()+",");
+                    }
+                    String envName=item.getDevName();
+                    item.setDevName(envName.trim().substring(0,envName.length()-1));
+                }
             }
         }
         result.setResult(queryPluginList);

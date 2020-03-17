@@ -2,7 +2,6 @@ package com.definesys.dsgc.service.svcmng;
 
 import com.definesys.dsgc.service.svcmng.bean.*;
 import com.definesys.mpaas.common.http.Response;
-import jdk.management.resource.internal.ResourceNatives;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

@@ -1,12 +1,17 @@
 package com.definesys.dsgc.service.apilr.bean;
 
+import com.definesys.mpaas.query.annotation.Column;
+import com.definesys.mpaas.query.annotation.ColumnType;
+
 public class DagLrListDTO {
     private String dlId;
     private String lrName;
     private String lrDesc;
     private String appName;
     private String creationDate;
-
+    private String envCode;
+    @Column(type = ColumnType.JAVA)
+    private String envName="";
     public String getDlId() {
         return dlId;
     }
@@ -45,5 +50,21 @@ public class DagLrListDTO {
 
     public void setAppName(String appName) {
         this.appName = appName;
+    }
+
+    public String getEnvCode() {
+        return envCode;
+    }
+
+    public void setEnvCode(String envCode) {
+        this.envCode = envCode;
+    }
+
+    public String getEnvName() {
+        return envName;
+    }
+
+    public void setEnvName(String envName) {
+        this.envName = envName;
     }
 }

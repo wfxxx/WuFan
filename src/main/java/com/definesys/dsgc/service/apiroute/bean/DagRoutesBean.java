@@ -22,6 +22,10 @@ public class DagRoutesBean extends MpaasBasePojo implements Serializable {
     private String routeDesc;
     private String appCode;
 
+    private String envCode;
+    @Column(type = ColumnType.JAVA)
+    private String envName="";
+
     @Column(type = ColumnType.JAVA)
     private String appName;
     @SystemColumn(SystemColumnType.CREATE_BY)
@@ -154,5 +158,21 @@ public class DagRoutesBean extends MpaasBasePojo implements Serializable {
 
     public void setAppName(String appName) {
         this.appName = appName;
+    }
+
+    public String getEnvCode() {
+        return envCode;
+    }
+
+    public void setEnvCode(String envCode) {
+        this.envCode = envCode;
+    }
+
+    public String getEnvName() {
+        return envName;
+    }
+
+    public void setEnvName(String envName) {
+        this.envName = envName;
     }
 }
