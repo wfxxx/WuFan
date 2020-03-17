@@ -61,7 +61,7 @@ public class ApiRouteDao {
         conAnd += " or UPPER(t1.route_path) like '%" + conUpper + "%'";
         conAnd += " or UPPER(t1.route_method) like '%" + conUpper + "%'";
         conAnd += " or UPPER(t1.route_desc) like '%" + conUpper + "%'";
-        conAnd += " or UPPER(t1.sys_name) like '%" + conUpper + "%' )";
+        conAnd += " or UPPER(t1.appName) like '%" + conUpper + "%' )";
 
         return conAnd;
     }

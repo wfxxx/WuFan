@@ -59,7 +59,7 @@ public class ApiBsDao {
         String conUpper = con.toUpperCase();
         String conAnd = " and  (UPPER(t1.bs_code) like '%" + conUpper + "%'";
         conAnd += " or UPPER(t1.bs_desc) like '%" + conUpper + "%'";
-        conAnd += " or UPPER(t1.sys_name) like '%" + conUpper + "%' )";
+        conAnd += " or UPPER(t1.appName) like '%" + conUpper + "%' )";
 
         return conAnd;
     }

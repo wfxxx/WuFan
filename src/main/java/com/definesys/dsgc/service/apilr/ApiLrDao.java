@@ -61,7 +61,7 @@ public class ApiLrDao {
         String conUpper = con.toUpperCase();
         String conAnd = " and  (UPPER(t1.lr_name) like '%" + conUpper + "%'";
         conAnd += " or UPPER(t1.lr_desc) like '%" + conUpper + "%'";
-        conAnd += " or UPPER(t1.sys_name) like '%" + conUpper + "%' )";
+        conAnd += " or UPPER(t1.appName) like '%" + conUpper + "%' )";
         return conAnd;
     }
 
