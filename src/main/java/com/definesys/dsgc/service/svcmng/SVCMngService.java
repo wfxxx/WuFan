@@ -129,6 +129,8 @@ public class SVCMngService {
         svcMngInfoListBean.setShareTypeDesc(dsgcService.getShareType());
         svcMngInfoListBean.setInfoFull(dsgcService.getInfoFull());
         svcMngInfoListBean.setIsProd(dsgcService.getIsProd());
+        svcMngInfoListBean.setIbUri(dsgcService.getIbUri());
+        svcMngInfoListBean.setHttpMethod(dsgcService.getHttpMethod());
       //  svcMngInfoListBean.setCurBpmNode(dsgcService.getAttribue2());
         if(dsgcService.getInstanceId() != null && !"".equals(dsgcService.getInstanceId())){
             BpmCommonReqBean bpmCommonReqBean = new BpmCommonReqBean();

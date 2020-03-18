@@ -18,9 +18,18 @@ public class SVCMngDao {
     public PageQueryResult<DSGCService> querySvcMngServList(SVCCommonReqBean param, int pageIndex, int pageSize,String userRole, List<String> sysCodeList,String servIsOnline){
         StringBuffer sqlStr;
         MpaasQuery mq = sw.buildQuery();
-            sqlStr = new StringBuffer("select distinct  ds.serv_no servNo,ds.serv_name servName,dse.sys_name attribue1,dse.sys_code subordinateSystem,ds.share_type shareType, " +
+//        sqlStr = new StringBuffer("select distinct  ds.serv_no servNo,ds.serv_name servName,dse.sys_name attribue1,dse.sys_code subordinateSystem,ds.share_type shareType, " +
+//                "NVL(ds.info_full,0) infoFull,ds.is_prod isProd,ds.instance_id instanceId,ds.deployed_node deployedNode,dbn.node_name attribue2 " +
+//                "from dsgc_services ds,dsgc_system_entities dse,dsgc_bpm_instance dbi,dsgc_bpm_nodes dbn " +
+//                " where ds.subordinate_system = dse.sys_code  "+
+//                " and ds.instance_id = dbi.inst_id(+) and dbi.cur_node = dbn.node_id(+) ");
+            sqlStr = new StringBuffer("select distinct  ds.serv_no servNo,ds.serv_name servName,dse.sys_name attribue1,dse.sys_code subordinateSystem,ds.share_type shareType, ds.ibUri,ds.httpMethod, " +
                     "NVL(ds.info_full,0) infoFull,ds.is_prod isProd,ds.instance_id instanceId,ds.deployed_node deployedNode,dbn.node_name attribue2 " +
-                    "from dsgc_services ds,dsgc_system_entities dse,dsgc_bpm_instance dbi,dsgc_bpm_nodes dbn where ds.subordinate_system = dse.sys_code "+
+                    "from " +
+                    "(select ds.*,t.ib_uri ibUri,t.http_method httpMethod from dsgc_services ds left join (select * from (select dsu.*,(row_number()over(partition by serv_no order by serv_no desc)) px " +
+                    " from dsgc_services_uri dsu) e where px = 1) t on ds.serv_no = t.serv_no ) ds,"+
+                    "dsgc_system_entities dse,dsgc_bpm_instance dbi,dsgc_bpm_nodes dbn " +
+                    " where ds.subordinate_system = dse.sys_code  "+
              " and ds.instance_id = dbi.inst_id(+) and dbi.cur_node = dbn.node_id(+) ");
 
         if(StringUtil.isNotBlank(servIsOnline)){

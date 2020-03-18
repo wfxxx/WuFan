@@ -11,6 +11,25 @@ public class SVCMngInfoListBean {
     private String deployedNode;
     private String deployedNodeName;
     private String curBpmNode;
+    private String ibUri;
+    private String httpMethod;
+
+    public String getIbUri() {
+        return ibUri;
+    }
+
+    public void setIbUri(String ibUri) {
+        this.ibUri = ibUri;
+    }
+
+    public String getHttpMethod() {
+        return httpMethod;
+    }
+
+    public void setHttpMethod(String httpMethod) {
+        this.httpMethod = httpMethod;
+    }
+
     public String getServNo() {
         return servNo;
     }

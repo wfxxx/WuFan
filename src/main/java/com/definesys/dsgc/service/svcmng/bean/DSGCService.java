@@ -156,6 +156,12 @@ public class DSGCService extends MpaasBasePojo implements Serializable {
 
     private String bizResolve;
 
+    @Column(type = ColumnType.JAVA)
+    private String ibUri;
+
+    @Column(type = ColumnType.JAVA)
+    private String httpMethod;
+
     public String getDeployedNode() {
         return deployedNode;
     }
@@ -610,6 +616,22 @@ public class DSGCService extends MpaasBasePojo implements Serializable {
 
     public void setBizResolve(String bizResolve) {
         this.bizResolve = bizResolve;
+    }
+
+    public String getIbUri() {
+        return ibUri;
+    }
+
+    public void setIbUri(String ibUri) {
+        this.ibUri = ibUri;
+    }
+
+    public String getHttpMethod() {
+        return httpMethod;
+    }
+
+    public void setHttpMethod(String httpMethod) {
+        this.httpMethod = httpMethod;
     }
 
     @Override
