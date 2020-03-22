@@ -47,6 +47,12 @@ public class EnvInfoDao {
               .sql("select de.*,row_number() over(partition by de.ENV_TYPE order by de.ENV_SEQ asc)  row_number from DSGC_ENV_INFO_CFG de ")
               .doQuery(DsgcEnvInfoCfgBean.class);
     }
+    public List<DsgcEnvInfoCfgBean> queryEnvListDetail(String envType){
+        return sw.buildQuery()
+               .eq("env_type",envType)
+                .doQuery(DsgcEnvInfoCfgBean.class);
+    }
+
 
     public void addOrUpdateEnvInfoCfg(DsgcEnvInfoCfgBean envInfoCfg) {
         MpaasQuery mq = sw.buildQuery();

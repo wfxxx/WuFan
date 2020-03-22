@@ -119,4 +119,15 @@ public class EnvInfoController {
         DSGCBusCfgVO busCfgVO = envInfoService.queryEsbCfgDetails(deicId);
         return Response.ok().data(busCfgVO);
     }
+    @RequestMapping(value = "/queryEnvListDetail",method = RequestMethod.POST)
+    public Response queryEnvListDetail (@RequestBody CommonReqBean param){
+        List<DagEnvInfoDTO> result = null;
+        try {
+            result = envInfoService.queryEnvListDetail(param.getCon0());
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("查询环境信息失败");
+        }
+        return Response.ok().data(result);
+    }
 }

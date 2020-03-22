@@ -4,6 +4,7 @@ public class ServDetailBaseDTO {
     private String servNo;
     private String servName;
     private String servDesc;
+    private String uriType;
 
     public String getServNo() {
         return servNo;
@@ -27,5 +28,13 @@ public class ServDetailBaseDTO {
 
     public void setServDesc(String servDesc) {
         this.servDesc = servDesc;
+    }
+
+    public String getUriType() {
+        return uriType;
+    }
+
+    public void setUriType(String uriType) {
+        this.uriType = uriType;
     }
 }

@@ -106,7 +106,9 @@ public class SVCMngDao {
     public List<DSGCServicesUri> queryServUri(String servNo){
         return sw.buildQuery().eq("servNo",servNo).doQuery(DSGCServicesUri.class);
     }
-
+    public DSGCServicesUri queryServUriFirst(String servNo){
+        return sw.buildQuery().eq("servNo",servNo).doQueryFirst(DSGCServicesUri.class);
+    }
     public List<DSGCUriParamsBean> queryServUriParamter(String resCode){
         return sw.buildQuery().eq("resCode",resCode).doQuery(DSGCUriParamsBean.class);
     }
@@ -163,6 +165,13 @@ public class SVCMngDao {
                 .eq("res_code",param.getCon0())
                 .eq("req_or_res",param.getQueryType())
                 .doQuery(DSGCPayloadSampleBean.class);
+    }
+    public DSGCPayloadSampleBean querySrvRestPaloadSample(String resCode){
+        return sw.buildQuery()
+                .eq("res_code",resCode)
+                .eq("req_or_res","REQ")
+                .eq("uri_type","REST")
+                .doQueryFirst(DSGCPayloadSampleBean.class);
     }
     public DSGCPayloadSampleBean querySrvPaloadSoapOrRestSample(DSGCPayloadSampleBean param){
         return sw.buildQuery()

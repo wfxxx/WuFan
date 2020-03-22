@@ -256,4 +256,23 @@ public class EnvInfoService {
         }
 
     }
+    public List<DagEnvInfoDTO> queryEnvListDetail(String envType) {
+        List<DagEnvInfoDTO> result = new ArrayList<>();
+        List<DsgcEnvInfoCfgBean> cfgList = envInfoDao.queryEnvListDetail(envType);
+        Iterator<DsgcEnvInfoCfgBean> cfg = cfgList.iterator();
+        while (cfg.hasNext()) {
+            DagEnvInfoDTO dto = new DagEnvInfoDTO();
+            DsgcEnvInfoCfgBean dsgcEnvInfoCfgBean = cfg.next();
+            dto.setEnvCode(dsgcEnvInfoCfgBean.getEnvCode());
+            dto.setEnvName(dsgcEnvInfoCfgBean.getEnvName());
+            dto.setEnvSeq(dsgcEnvInfoCfgBean.getEnvSeq());
+            dto.setReqLocation(dsgcEnvInfoCfgBean.getReqLocation());
+            dto.setAdminLocation(dsgcEnvInfoCfgBean.getAdminLocation());
+            dto.setDeicId(dsgcEnvInfoCfgBean.getDeicId());
+            dto.setEnvType(dsgcEnvInfoCfgBean.getEnvType());
+            result.add(dto);
+        }
+        return result;
+
+    }
 }

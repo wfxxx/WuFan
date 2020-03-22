@@ -160,4 +160,10 @@ public class ConsumersDao {
             return false;
         }
     }
+    public DSGCConsumerAuth queryConsumerDataByCsmCodeAndEnv(String csmCode,String envCode){
+        return sw.buildQuery().eq("csm_code",csmCode)
+                .eq("env_code",envCode)
+                .doQueryFirst(DSGCConsumerAuth.class);
+
+    }
 }

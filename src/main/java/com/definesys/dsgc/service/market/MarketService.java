@@ -169,18 +169,20 @@ public class MarketService {
     public SrevDetailInfoDTO queryServBaseInfo(String servNo){
         SrevDetailInfoDTO result = new SrevDetailInfoDTO();
         DSGCService dsgcService =svcMngDao.queryServByServNo(servNo);
+        ServDetailBaseDTO servBaseDTO = new ServDetailBaseDTO();
         if (dsgcService == null){
             return null;
         }else {
-            ServDetailBaseDTO servBaseDTO = new ServDetailBaseDTO();
             servBaseDTO.setServNo(dsgcService.getServNo());
             servBaseDTO.setServName(dsgcService.getServName());
             servBaseDTO.setServDesc(dsgcService.getServDesc());
-            result.setServBase(servBaseDTO);
+
         }
         List<DSGCEnvInfoCfg> envInfoCfgs = marketDao.queryEsbEnv();
                 //busCfgDao.queryEnvInfoCfgListPage();
         List<DSGCServicesUri> servicesUris = svcMngDao.queryServUri(servNo);
+        servBaseDTO.setUriType(servicesUris.get(0).getUriType());
+        result.setServBase(servBaseDTO);
         StringBuilder restRequestSample = new StringBuilder("");
         StringBuilder soapRequestSample =  new StringBuilder("");
         List<ServLocation> locationList = new ArrayList<>();
