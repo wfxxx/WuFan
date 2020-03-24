@@ -75,10 +75,10 @@ public class EnvInfoController {
     }
 
     @RequestMapping(value = "/queryApiEnvCfgList",method = RequestMethod.POST)
-    public Response queryApiEnvCfgList (){
+    public Response queryApiEnvCfgList (@RequestBody CommonReqBean q){
         List<DagEnvInfoDTO> result = null;
         try {
-            result = envInfoService.queryApiEnvCfgList();
+            result = envInfoService.queryApiEnvCfgList(q);
         }catch (Exception e){
             e.printStackTrace();
             return Response.error("查询环境信息失败");

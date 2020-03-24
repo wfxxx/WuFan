@@ -66,7 +66,10 @@ public class ApiPlugInDao {
                 }
             }
         }
-        if(StringUtil.isNotBlank(param.getParamsType())&&!param.getParamsType().equals("ALL")){
+        if(param.getParamsType().equals("ALL")){
+        } else if(param.getParamsType().equals("notDeploy")){
+            sqlStr.append("and (env_code is null or env_code ='')");
+        } else{
             String[] conArray = param.getParamsType().trim().split(" ");
             for (String s : conArray) {
                 if (s != null && s.length() > 0) {

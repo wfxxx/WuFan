@@ -20,9 +20,14 @@ public class ApiBsDao {
     private MpaasQueryFactory sw;
     public PageQueryResult queryApiBsList(CommonReqBean param, int pageSize, int pageIndex, String userRole,List<String> sysCodeList){
         StringBuffer sqlStr = new StringBuffer("select t1.*,t2.env_code from \n" +
-                "(select db.*,dse.sys_name appName from dag_bs db,dsgc_system_entities dse where 1=1 and db.app_code = dse.sys_code) t1,\n" +
-                "(select v.vid,v.sour_code,stat.env_code from dag_code_version v left join (select t.vid,to_char(wm_concat(t.env_code)) as env_code from DAG_DEPLOY_STAT t  group by t.vid)  stat on stat.vid=v.vid) t2\n" +
-                "where 1=1 and  t1.bs_code=t2.sour_code  ");
+                "        (select db.*,dse.sys_name appName from dag_bs db,dsgc_system_entities dse where 1=1 and db.app_code = dse.sys_code) t1,\n" +
+                "        (select * from( \n" +
+                "select t.*,row_number() over(partition by sour_code order by env_code) as rowrid   from(    \n" +
+                "  select v.vid,v.sour_code,stat.env_code \n" +
+                "  from dag_code_version v \n" +
+                "  left join (select t.vid,to_char(wm_concat(t.env_code)) as env_code from DAG_DEPLOY_STAT t  group by t.vid)  stat on stat.vid=v.vid  ) t) s where s.rowrid=1) t2\n" +
+                "        where 1=1 and  t1.bs_code=t2.sour_code    \n" +
+                "; ");
         MpaasQuery mq = sw.buildQuery();
         if ("SystemLeader".equals(userRole)&&sysCodeList.size()>0) {
             sqlStr.append(" and t1.app_code in ( ");
@@ -42,7 +47,11 @@ public class ApiBsDao {
                 }
             }
         }
-        if(StringUtil.isNotBlank(param.getQueryType())&&!param.getQueryType().equals("ALL")){
+        if(param.getQueryType().equals("ALL")){
+
+        } else if(param.getQueryType().equals("notDeploy")){
+            sqlStr.append("and (env_code is null or env_code ='')");
+        } else{
             String[] conArray = param.getQueryType().trim().split(" ");
             for (String s : conArray) {
                 if (s != null && s.length() > 0) {
@@ -63,6 +72,11 @@ public class ApiBsDao {
 
         return conAnd;
     }
+
+    public DagBsbean checkSame(DagBsbean bean){
+        return sw.buildQuery().eq("bs_code",bean.getBsCode()).doQueryFirst(DagBsbean.class);
+    }
+
 
     public List<DagBsbean> queryApiBsByCustomInput(CommonReqBean param){
       return sw.buildQuery().like("bs_code",param.getCon0()).doQuery(DagBsbean.class);

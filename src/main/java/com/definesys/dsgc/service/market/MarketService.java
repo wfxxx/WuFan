@@ -122,7 +122,7 @@ public class MarketService {
                 }
                 Map<String,Object> mapEsb=new HashMap<String,Object>();
                 mapEsb.put("apply",userId);
-                PageQueryResult<MarketEntiy> esbList= getMarketApi(mapEsb,12,1);
+                PageQueryResult<MarketEntiy> esbList= getMarketEsb(mapEsb,12,1);
                 applyTotal=esbList.getCount()==null?0:esbList.getCount();
                 break;
             default:

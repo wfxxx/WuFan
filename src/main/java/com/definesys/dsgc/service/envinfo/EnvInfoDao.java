@@ -42,10 +42,13 @@ public class EnvInfoDao {
       sw.buildQuery().eq("env_code", dsgcEnvInfoCfgBean.getEnvCode()).doUpdate(dsgcEnvInfoCfgBean);
     }
 
-    public List<DsgcEnvInfoCfgBean> queryApiEnvCfgList(){
-      return sw.buildQuery()
-              .sql("select de.*,row_number() over(partition by de.ENV_TYPE order by de.ENV_SEQ asc)  row_number from DSGC_ENV_INFO_CFG de ")
-              .doQuery(DsgcEnvInfoCfgBean.class);
+    public List<DsgcEnvInfoCfgBean> queryApiEnvCfgList(CommonReqBean q){
+      MpaasQuery sql=sw.buildQuery()
+              .sql("select de.*,row_number() over(partition by de.ENV_TYPE order by de.ENV_SEQ asc)  row_number from DSGC_ENV_INFO_CFG de ");
+      if(q.getCon0()!=null&&!q.getCon0().equals("")){
+          sql.eq("env_type",q.getCon0());
+      }
+        return sql.doQuery(DsgcEnvInfoCfgBean.class);
     }
     public List<DsgcEnvInfoCfgBean> queryEnvListDetail(String envType){
         return sw.buildQuery()

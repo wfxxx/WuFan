@@ -39,7 +39,10 @@ public class ApiRouteDao {
                 }
             }
         }
-        if(StringUtil.isNotBlank(param.getQueryType())&&!param.getQueryType().equals("ALL")){
+        if(param.getQueryType().equals("ALL")){
+        } else if(param.getQueryType().equals("notDeploy")){
+            sqlStr.append("and (env_code is null or env_code ='')");
+        } else{
             String[] conArray = param.getQueryType().trim().split(" ");
             for (String s : conArray) {
                 if (s != null && s.length() > 0) {

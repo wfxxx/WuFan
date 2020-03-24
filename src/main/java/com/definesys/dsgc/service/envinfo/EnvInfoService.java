@@ -101,9 +101,9 @@ public class EnvInfoService {
         envInfoDao.updateApiInfoCfg(dsgcEnvInfoCfgBean);
     }
 
-    public List<DagEnvInfoDTO> queryApiEnvCfgList() {
+    public List<DagEnvInfoDTO> queryApiEnvCfgList(CommonReqBean q) {
         List<DagEnvInfoDTO> result = new ArrayList<>();
-        List<DsgcEnvInfoCfgBean> cfgList = envInfoDao.queryApiEnvCfgList();
+        List<DsgcEnvInfoCfgBean> cfgList = envInfoDao.queryApiEnvCfgList(q);
         Iterator<DsgcEnvInfoCfgBean> cfg = cfgList.iterator();
         while (cfg.hasNext()) {
             DagEnvInfoDTO dto = new DagEnvInfoDTO();

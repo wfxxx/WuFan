@@ -36,6 +36,23 @@ public class ApiBsController {
 
         return Response.ok().setData(result);
     }
+
+
+    @RequestMapping(value = "/checkSame",method = RequestMethod.POST)
+    public Response queryApiBsList(@RequestBody DagBsbean bean){
+        DagBsbean result;
+        try {
+            result = apiBsService.checkSame(bean);
+            if(result==null){
+                return Response.ok();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("异常");
+        }
+        return Response.error("存在相同数据");
+    }
+
     @RequestMapping(value = "/queryApiBsByCustomInput",method = RequestMethod.POST)
     public Response queryApiBsByCustomInput(@RequestBody CommonReqBean param, HttpServletRequest request){
         List<String> result = new ArrayList<>();

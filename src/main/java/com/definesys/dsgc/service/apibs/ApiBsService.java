@@ -70,6 +70,12 @@ public class ApiBsService {
         return result;
     }
 
+
+    public DagBsbean checkSame(DagBsbean bean){
+        return apiBsDao.checkSame(bean);
+    }
+
+
     public List<String> queryApiBsByCustomInput(CommonReqBean param){
     List<DagBsbean> list = apiBsDao.queryApiBsByCustomInput(param);
     Iterator<DagBsbean> iterator = list.iterator();

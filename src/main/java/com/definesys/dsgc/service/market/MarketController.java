@@ -182,6 +182,9 @@ public class MarketController {
         if(mapValue.get("sourceType")!=null){
             sourceType= (String) mapValue.get("sourceType");
         }
+        if(mapValue.get("sourceType")!=null){
+            sourceType= (String) mapValue.get("sourceType");
+        }
         if(userId==null||sourceType==null){
             return Response.error("参数不完整");
         }
