@@ -20,6 +20,7 @@ public class DagBsbean extends MpaasBasePojo implements Serializable {
     private String appCode;
     @Column(type = ColumnType.JAVA)
     private String appName;
+    @Column(type = ColumnType.JAVA)
     private String envCode;
     @Column(type = ColumnType.JAVA)
     private String envName="";
