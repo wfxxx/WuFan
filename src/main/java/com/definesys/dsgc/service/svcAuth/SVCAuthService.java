@@ -6,6 +6,7 @@ import com.definesys.dsgc.service.apiauth.ApiAuthDao;
 
 import com.definesys.dsgc.service.apiauth.ApiAuthService;
 import com.definesys.dsgc.service.apiauth.bean.CommonReqBean;
+import com.definesys.dsgc.service.apiauth.bean.DSGCApisAccess;
 import com.definesys.dsgc.service.consumers.ConsumersDao;
 import com.definesys.dsgc.service.consumers.bean.DSGCConsumerEntities;
 import com.definesys.dsgc.service.svcAuth.bean.*;
@@ -388,6 +389,11 @@ public class SVCAuthService {
                 addServAuthConsumer(bean,userName);
             }
         }
+    }
+
+    //检查该消费者是否持有服务权限
+    public List<DSGCSystemAccess> checkSerAuthIsExist(String servNo, List<String> customerList){
+        return svcAuthDao.checkSerAuthIsExist(servNo,customerList);
     }
 
 }

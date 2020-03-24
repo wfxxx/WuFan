@@ -1,6 +1,7 @@
 package com.definesys.dsgc.service.svcAuth;
 
 
+import com.definesys.dsgc.service.apiauth.bean.CommonReqBean;
 import com.definesys.dsgc.service.svcAuth.bean.*;
 import com.definesys.mpaas.common.http.Response;
 import com.definesys.mpaas.query.db.PageQueryResult;
@@ -161,6 +162,15 @@ public class SVCAuthController {
         return Response.ok();
     }
 
+    /**
+     * Ser检查是否存在授权消费者
+     * @param param
+     * @return
+     */
+    @RequestMapping(value = "/checkSerAuthIsExist",method = RequestMethod.POST)
+    public Response checkSerAuthIsExist(@RequestBody CommonReqBean param, HttpServletRequest request){
+        return Response.ok().setData(svcAuthService.checkSerAuthIsExist(param.getApiCode(),param.getSelectSystemList()));
+    }
 
 
 }

@@ -132,4 +132,11 @@ public class ApiAuthService {
         apiInfoListBean.setAuthSystemCount(apiAuthDao.queryAuthSystemCount(dsgcApisBean.getApiCode()));
         return apiInfoListBean;
     }
+
+    //检查该消费者是否持有服务权限
+    public List<DSGCApisAccess> checkAPIAuthIsExist(String apiCode,List<String> customerList){
+
+        return apiAuthDao.checkAPIAuthIsExist(apiCode,customerList);
+    }
+
 }

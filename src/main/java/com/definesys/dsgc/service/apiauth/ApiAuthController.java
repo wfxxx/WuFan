@@ -62,4 +62,14 @@ public class ApiAuthController {
         String userRole= request.getHeader("userRole");
         return Response.ok().setData(apiAuthService.queryApiAuthList(param,pageIndex,pageSize,userId,userRole));
     }
+
+    /**
+     * API检查是否存在授权消费者
+     * @param param
+     * @return
+     */
+    @RequestMapping(value = "/checkAPIAuthIsExist",method = RequestMethod.POST)
+    public Response checkAPIAuthIsExist(@RequestBody CommonReqBean param, HttpServletRequest request){
+        return Response.ok().setData(apiAuthService.checkAPIAuthIsExist(param.getApiCode(),param.getSelectSystemList()));
+    }
 }

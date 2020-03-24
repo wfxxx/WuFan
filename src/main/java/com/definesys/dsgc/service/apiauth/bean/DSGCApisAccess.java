@@ -15,6 +15,8 @@ public class DSGCApisAccess extends MpaasBasePojo {
     private String daaId;
     private String apiCode;
     private String csmCode;
+    @Column(type = ColumnType.JAVA)
+    private String csmName;
 
     @SystemColumn(SystemColumnType.OBJECT_VERSION)
     @Column(value = "object_version_number")
@@ -98,5 +100,13 @@ public class DSGCApisAccess extends MpaasBasePojo {
 
     public void setCsmCode(String csmCode) {
         this.csmCode = csmCode;
+    }
+
+    public String getCsmName() {
+        return csmName;
+    }
+
+    public void setCsmName(String csmName) {
+        this.csmName = csmName;
     }
 }

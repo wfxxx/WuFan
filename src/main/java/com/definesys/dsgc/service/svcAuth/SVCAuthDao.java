@@ -1,5 +1,6 @@
 package com.definesys.dsgc.service.svcAuth;
 
+import com.definesys.dsgc.service.apiauth.bean.DSGCApisAccess;
 import com.definesys.dsgc.service.consumers.bean.DSGCConsumerEntities;
 import com.definesys.dsgc.service.market.bean.MarketApiBean;
 import com.definesys.dsgc.service.market.bean.MarketEntiy;
@@ -282,5 +283,13 @@ public class SVCAuthDao {
                 "                from DSGC_SERVICES t \n" +
                 "                left join dsgc_system_entities e on t.subordinate_system=e.sys_code\n" +
                 "                where t.serv_no=#servCode").setVar("servCode",servCode).doQueryFirst(MarketEntiy.class);
+    }
+
+    public List<DSGCSystemAccess> checkSerAuthIsExist(String servNo, List<String> customerList){
+        return sw.buildQuery().sql("select * from （SELECT a.serv_no,a.sys_code  ,e.csm_name    FROM dsgc_system_access a\n" +
+                "                left join  dsgc_consumer_entities  e on e.csm_code=a.sys_code） ")
+                .in("sys_code",customerList)
+                .eq("serv_no",servNo)
+                .doQuery(DSGCSystemAccess.class);
     }
 }

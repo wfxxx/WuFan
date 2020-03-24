@@ -142,6 +142,13 @@ public class ApiAuthDao {
         Map<String, Object> map = sw.buildQuery().sql("select count(*) count from (select daa.* from DSGC_APIS da,DSGC_APIS_ACCESS daa where da.API_CODE = daa.API_CODE and da.API_CODE = #apiCode)")
                 .setVar("apiCode", apiCode).doQueryFirst();
         return map.get("COUNT").toString();
+    }
 
+    public List<DSGCApisAccess> checkAPIAuthIsExist(String apiCode,List<String> customerList){
+        return sw.buildQuery().sql("select * from （SELECT a.api_code,a.csm_code  ,e.csm_name    FROM DSGC_APIS_ACCESS a\n" +
+                "left join  dsgc_consumer_entities  e on e.csm_code=a.csm_code） ")
+                .in("csm_code",customerList)
+                .eq("api_code",apiCode)
+                .doQuery(DSGCApisAccess.class);
     }
 }

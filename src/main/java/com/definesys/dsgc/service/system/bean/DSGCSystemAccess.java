@@ -15,7 +15,8 @@ public class DSGCSystemAccess extends MpaasBasePojo {
     private String saId;
     private String sysCode;
     private String servNo;
-
+    @Column(type = ColumnType.JAVA)
+    private String csm_name;
     @SystemColumn(SystemColumnType.OBJECT_VERSION)
     @Column(value = "object_version_number")
     private Integer objectVersionNumber;
@@ -98,6 +99,14 @@ public class DSGCSystemAccess extends MpaasBasePojo {
 
     public void setServNo(String servNo) {
         this.servNo = servNo;
+    }
+
+    public String getCsm_name() {
+        return csm_name;
+    }
+
+    public void setCsm_name(String csm_name) {
+        this.csm_name = csm_name;
     }
 
     @Override

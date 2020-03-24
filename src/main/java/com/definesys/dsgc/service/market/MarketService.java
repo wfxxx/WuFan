@@ -181,7 +181,9 @@ public class MarketService {
         List<DSGCEnvInfoCfg> envInfoCfgs = marketDao.queryEsbEnv();
                 //busCfgDao.queryEnvInfoCfgListPage();
         List<DSGCServicesUri> servicesUris = svcMngDao.queryServUri(servNo);
-        servBaseDTO.setUriType(servicesUris.get(0).getUriType());
+        if(servicesUris!=null&&servicesUris.size()>0){
+            servBaseDTO.setUriType(servicesUris.get(0).getUriType());
+        }
         result.setServBase(servBaseDTO);
         StringBuilder restRequestSample = new StringBuilder("");
         StringBuilder soapRequestSample =  new StringBuilder("");
@@ -444,7 +446,11 @@ public class MarketService {
         List<DSGCEnvInfoCfg> envInfoCfgs =marketDao.queryApiEnv();
                 //busCfgDao.queryEnvInfoCfgListPage();
         List<DSGCServicesUri> servicesUris = svcMngDao.queryServUri(apiCode);
-        String routeCode = servicesUris.get(0).getProvider();
+        String routeCode=null;
+        if(servicesUris!=null&&servicesUris.size()>0){
+             routeCode = servicesUris.get(0).getProvider();
+        }
+
         if(StringUtil.isNotBlank(routeCode)) {
             CommonReqBean commonReqBean = new CommonReqBean();
             commonReqBean.setCon0(routeCode);
