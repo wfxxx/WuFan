@@ -17,9 +17,13 @@ public class ApiRouteDao {
     private MpaasQueryFactory sw;
     public PageQueryResult queryApiRouteList(CommonReqBean param, int pageSize, int pageIndex, String userRole, List<String> sysCodeList) {
         StringBuffer sqlStr = new StringBuffer("select t1.*,t2.env_code from \n" +
-                "(select dr.*,dse.sys_name appName from dag_routes dr,dsgc_system_entities dse where 1=1 and dr.app_code = dse.sys_code) t1,\n" +
-                "(select v.vid,v.sour_code,stat.env_code from dag_code_version v left join (select t.vid,to_char(wm_concat(t.env_code)) as env_code from DAG_DEPLOY_STAT t  group by t.vid)  stat on stat.vid=v.vid) t2\n" +
-                "where 1=1 and  t1.route_code=t2.sour_code  ");
+                "                (select dr.*,dse.sys_name appName from dag_routes dr,dsgc_system_entities dse where 1=1 and dr.app_code = dse.sys_code) t1,\n" +
+                "                (select * from\n" +
+                "                        ( select t.*,row_number() over(partition by sour_code order by env_code) as rowrid   from(    \n" +
+                "                         select v.vid,v.sour_code,stat.env_code \n" +
+                "                          from dag_code_version v \n" +
+                "                           left join (select t.vid,to_char(wm_concat(t.env_code)) as env_code from DAG_DEPLOY_STAT t  group by t.vid)  stat on stat.vid=v.vid  ) t) s where s.rowrid=1) t2\n" +
+                "                where 1=1 and  t1.route_code=t2.sour_code ");
         MpaasQuery mq = sw.buildQuery();
         if ("SystemLeader".equals(userRole)&&sysCodeList.size()>0) {
             sqlStr.append(" and t1.app_code in ( ");

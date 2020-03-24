@@ -26,8 +26,7 @@ public class ApiBsDao {
                 "  select v.vid,v.sour_code,stat.env_code \n" +
                 "  from dag_code_version v \n" +
                 "  left join (select t.vid,to_char(wm_concat(t.env_code)) as env_code from DAG_DEPLOY_STAT t  group by t.vid)  stat on stat.vid=v.vid  ) t) s where s.rowrid=1) t2\n" +
-                "        where 1=1 and  t1.bs_code=t2.sour_code    \n" +
-                "; ");
+                "        where 1=1 and  t1.bs_code=t2.sour_code");
         MpaasQuery mq = sw.buildQuery();
         if ("SystemLeader".equals(userRole)&&sysCodeList.size()>0) {
             sqlStr.append(" and t1.app_code in ( ");
@@ -60,7 +59,7 @@ public class ApiBsDao {
             }
         }
         System.out.println(sqlStr.toString());
-        mq.sql(sqlStr.toString()+"order by t1.creation_date desc");
+        mq.sql(sqlStr.toString()+" order by t1.creation_date desc");
         return mq.doPageQuery(pageIndex, pageSize, DagBsbean.class);
     }
 
