@@ -31,10 +31,7 @@ public class ApiLogController {
         if ("".equals(body)) {
             throw new MpaasBusinessException("日志数据为空");
         }
-        System.out.println(body);
-        System.out.println("===================================================================================================================");
         JSONArray jsonArray = JSONArray.parseArray(body);
-        System.out.println(jsonArray);
         try {
             apiLogService.recordLog(jsonArray);
         }catch (Exception e){

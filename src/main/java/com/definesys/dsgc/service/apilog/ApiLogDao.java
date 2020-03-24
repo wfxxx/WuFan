@@ -62,6 +62,7 @@ public class ApiLogDao {
       if(userRole.equals("SystemLeader")){
           mq.in("extra_attr3",appCodeList);
       }
+      mq.orderBy("creation_date","desc");
       return mq.doPageQuery(pageIndex,pageSize,DagLogInstanceBean.class);
   }
     public FndProperties findFndPropertiesByKey(String key) {
