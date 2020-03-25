@@ -37,7 +37,7 @@ public class MarketDao {
     }
 
     public PageQueryResult<MarketCateVO> getAllMarketCate(MarketQueryBean q, int pageSize, int pageIndex) {
-        MpaasQuery query = sw.buildQuery().sql("select * from (select y.mc_id,y.cate_code,y.cate_name,y.cate_order,y.CREATION_DATE,(select s.MEANING from FND_LOOKUP_VALUES s where y.PARENT_CATE = s.LOOKUP_CODE) PARENT_CATE from DSGC_MARKET_CATEGORY y) order by CREATION_DATE desc ");
+        MpaasQuery query = sw.buildQuery().sql("select * from (select y.mc_id,y.cate_code,y.cate_name,y.cate_order,y.CREATION_DATE,(select s.MEANING from FND_LOOKUP_VALUES s where y.PARENT_CATE = s.LOOKUP_CODE) PARENT_CATE from DSGC_MARKET_CATEGORY y) ");
         if(!"ALL".equals(q.getShareType().trim())){
             String shareTypNoSpace = q.getShareType().trim();
             query.and().eq("parentCate",shareTypNoSpace);
@@ -53,6 +53,7 @@ public class MarketDao {
                             .likeNocase("parentCate", conNoSpace);
                 }
             }
+            query.orderBy("creation_date","desc");
         }
         return query.doPageQuery(pageIndex, pageSize, MarketCateVO.class);
     }
