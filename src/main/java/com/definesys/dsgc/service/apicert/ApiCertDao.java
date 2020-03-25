@@ -2,7 +2,7 @@ package com.definesys.dsgc.service.apicert;
 
 
 import com.definesys.dsgc.service.apicert.bean.CommonReqBean;
-import com.definesys.dsgc.service.apicert.bean.DagCertbeanVO;
+import com.definesys.dsgc.service.apicert.bean.DagCertbean;
 import com.definesys.mpaas.query.MpaasQueryFactory;
 import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +25,22 @@ public class ApiCertDao {
 
 
     public PageQueryResult queryApiCertList(CommonReqBean param, int pageSize, int pageIndex, String userRole, List<String> sysCodeList){
-        return sw.buildQuery().doPageQuery(pageIndex,pageSize,DagCertbeanVO.class);
+        return sw.buildQuery().doPageQuery(pageIndex,pageSize, DagCertbean.class);
+    }
+
+    public void addApiCert(DagCertbean dagCertbean){
+         sw.buildQuery().doInsert(dagCertbean);
+    }
+
+    public void updateApiCert(DagCertbean dagCertbean){
+        sw.buildQuery().doUpdate(dagCertbean);
+    }
+
+    public void delApiCert(DagCertbean dagCertbean){
+        sw.buildQuery().eq("dc_id",dagCertbean.getDcId()).doDelete(DagCertbean.class);
+    }
+
+    public DagCertbean checkSameName(String certName){
+       return  sw.buildQuery().eq("cert_name",certName).doQueryFirst(DagCertbean.class);
     }
 }

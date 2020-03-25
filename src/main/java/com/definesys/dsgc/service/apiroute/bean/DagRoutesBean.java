@@ -21,7 +21,7 @@ public class DagRoutesBean extends MpaasBasePojo implements Serializable {
     private String stripPath;
     private String routeDesc;
     private String appCode;
-
+    @Column(type = ColumnType.JAVA)
     private String envCode;
     @Column(type = ColumnType.JAVA)
     private String envName="";
