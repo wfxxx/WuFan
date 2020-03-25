@@ -1,6 +1,7 @@
 package com.definesys.dsgc.service.apicert;
 
 import com.definesys.dsgc.service.apicert.bean.CommonReqBean;
+import com.definesys.dsgc.service.apicert.bean.DagCertbean;
 import com.definesys.dsgc.service.svclog.SVCLogDao;
 import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
 import com.definesys.mpaas.query.db.PageQueryResult;
@@ -39,4 +40,23 @@ public class ApiCertService {
         PageQueryResult ApiCertList = apiCertDao.queryApiCertList(param,pageSize,pageIndex,userRole,sysCodeList);
         return ApiCertList;
     }
+
+
+    public void addApiCert(DagCertbean dagCertbean){
+         apiCertDao.addApiCert(dagCertbean);
+    }
+
+    public void updateApiCert(DagCertbean dagCertbean){
+        apiCertDao.updateApiCert(dagCertbean);
+    }
+
+    public void delApiCert(DagCertbean dagCertbean){
+        apiCertDao.delApiCert(dagCertbean);
+    }
+
+    public DagCertbean checkSameName(String certName){
+        return apiCertDao.checkSameName(certName);
+    }
+
+
 }
