@@ -20,9 +20,8 @@ public class PlOauth2 {
 
     @RowID(type= RowIDType.UUID)
     private String poId;
-    private String pluginCode;
-    private String vid;
-    private String consumer;
+
+
     private String scopes;
     private String mandatoryScope;
     private String provisionKey;
@@ -37,6 +36,15 @@ public class PlOauth2 {
     private String globalCredentials;
     private String authHeaderName;
     private Integer refreshTokenTtl;
+    private String dpuId;
+
+    public String getDpuId() {
+        return dpuId;
+    }
+
+    public void setDpuId(String dpuId) {
+        this.dpuId = dpuId;
+    }
     @SystemColumn(SystemColumnType.CREATE_BY)
     @Column(value = "created_by")
     private String createdBy;
@@ -65,29 +73,11 @@ public class PlOauth2 {
         this.poId = poId;
     }
 
-    public String getPluginCode() {
-        return pluginCode;
-    }
 
-    public void setPluginCode(String pluginCode) {
-        this.pluginCode = pluginCode;
-    }
 
-    public String getVid() {
-        return vid;
-    }
 
-    public void setVid(String vid) {
-        this.vid = vid;
-    }
 
-    public String getConsumer() {
-        return consumer;
-    }
 
-    public void setConsumer(String consumer) {
-        this.consumer = consumer;
-    }
 
     public String getScopes() {
         return scopes;

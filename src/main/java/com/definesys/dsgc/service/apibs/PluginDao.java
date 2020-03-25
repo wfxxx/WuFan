@@ -24,96 +24,96 @@ public class PluginDao {
 
 
 //PlBasicAuthBean 1
-    public PlBasicAuthBean queryPlBasicAuthBeanByVid(String vid){ return  sw.buildQuery().eq("vid",vid).doQueryFirst(PlBasicAuthBean.class); }
+    public PlBasicAuthBean queryPlBasicAuthBeanById(String id){ return  sw.buildQuery().eq("dpuId",id).doQueryFirst(PlBasicAuthBean.class); }
     public void addPlBasicAuthBean(PlBasicAuthBean plBasicAuthBean){sw.buildQuery().doInsert(plBasicAuthBean); }
-    public void delPlBasicAuthBeanByVId(String vid){
-     sw.buildQuery().eq("vid",vid).doDelete(PlBasicAuthBean.class);
+    public void delPlBasicAuthBeanById(String id){
+     sw.buildQuery().eq("dpuId",id).doDelete(PlBasicAuthBean.class);
     }
-    public void updatePlBasicAuthBean(PlBasicAuthBean plBasicAuthBean){ sw.buildQuery().eq("vid",plBasicAuthBean.getVid()).doUpdate(plBasicAuthBean); }
+    public void updatePlBasicAuthBean(PlBasicAuthBean plBasicAuthBean){ sw.buildQuery().eq("baId",plBasicAuthBean.getBaId()).doUpdate(plBasicAuthBean); }
 
 //PlBasicAuthBean 2
-    public PlKeyAuthBean queryPlKeyAuthBeannByVid(String vid){ return  sw.buildQuery().eq("vid",vid).doQueryFirst(PlKeyAuthBean.class); }
+    public PlKeyAuthBean queryPlKeyAuthBeannById(String id){ return  sw.buildQuery().eq("dpuId",id).doQueryFirst(PlKeyAuthBean.class); }
     public void addPlKeyAuthBean(PlKeyAuthBean plKeyAuthBean){sw.buildQuery().doInsert(plKeyAuthBean); }
-    public void delPlKeyAuthBeanByVId(String vid){
-        sw.buildQuery().eq("vid",vid).doDelete(PlKeyAuthBean.class);
+    public void delPlKeyAuthBeanById(String id){
+        sw.buildQuery().eq("dpuId",id).doDelete(PlKeyAuthBean.class);
     }
-    public void updatePlKeyAuthBeanBean(PlKeyAuthBean plKeyAuthBean){ sw.buildQuery().eq("vid",plKeyAuthBean.getVid()).doUpdate(plKeyAuthBean); }
+    public void updatePlKeyAuthBeanBean(PlKeyAuthBean plKeyAuthBean){ sw.buildQuery().eq("kaId",plKeyAuthBean.getKaId()).doUpdate(plKeyAuthBean); }
 
  //    PlOauth2;  3
-    public PlOauth2 queryPlOauth2nByVid(String vid){ return  sw.buildQuery().eq("vid",vid).doQueryFirst(PlOauth2.class); }
+    public PlOauth2 queryPlOauth2nById(String id){ return  sw.buildQuery().eq("dpuId",id).doQueryFirst(PlOauth2.class); }
     public void addPlOauth2(PlOauth2 plOauth2){sw.buildQuery().doInsert(plOauth2); }
-    public void delPlOauth2ByVId(String vid){
-        sw.buildQuery().eq("vid",vid).doDelete(PlOauth2.class);
+    public void delPlOauth2ById(String id){
+        sw.buildQuery().eq("dpuId",id).doDelete(PlOauth2.class);
     }
-    public void updatePlOauth2(PlOauth2 plOauth2){ sw.buildQuery().eq("vid",plOauth2.getVid()).doUpdate(plOauth2); }
+    public void updatePlOauth2(PlOauth2 plOauth2){ sw.buildQuery().eq("poId",plOauth2.getPoId()).doUpdate(plOauth2); }
 
     //    PlAddAcl;  4
-    public PlAddAcl queryPlAddAclByVid(String vid){ return  sw.buildQuery().eq("vid",vid).doQueryFirst(PlAddAcl.class); }
+    public PlAddAcl queryPlAddAclById(String id){ return  sw.buildQuery().eq("dpuId",id).doQueryFirst(PlAddAcl.class); }
     public void addPlAddAcl(PlAddAcl plAddAcl){sw.buildQuery().doInsert(plAddAcl); }
-    public void delPlAddAclByVId(String vid){
-        sw.buildQuery().eq("vid",vid).doDelete(PlAddAcl.class);
+    public void delPlAddAclById(String id){
+        sw.buildQuery().eq("dpuId",id).doDelete(PlAddAcl.class);
     }
-    public void updatePlAddAcl(PlAddAcl plAddAcl){ sw.buildQuery().eq("vid",plAddAcl.getVid()).doUpdate(plAddAcl); }
+    public void updatePlAddAcl(PlAddAcl plAddAcl){ sw.buildQuery().eq("aclId",plAddAcl.getAclId()).doUpdate(plAddAcl); }
 
  //    PlIpRestriction;  5
-    public PlIpRestriction queryPlIpRestrictionByVid(String vid){ return  sw.buildQuery().eq("vid",vid).doQueryFirst(PlIpRestriction.class); }
+    public PlIpRestriction queryPlIpRestrictionById(String id){ return  sw.buildQuery().eq("dpuId",id).doQueryFirst(PlIpRestriction.class); }
     public void addPlIpRestriction(PlIpRestriction plIpRestriction){sw.buildQuery().doInsert(plIpRestriction); }
-    public void delPlIpRestrictionByVId(String vid){
-        sw.buildQuery().eq("vid",vid).doDelete(PlIpRestriction.class);
+    public void delPlIpRestrictionById(String id){
+        sw.buildQuery().eq("dpuId",id).doDelete(PlIpRestriction.class);
     }
-    public void updatePlIpRestriction(PlIpRestriction plIpRestriction){ sw.buildQuery().eq("vid",plIpRestriction.getVid()).doUpdate(plIpRestriction); }
+    public void updatePlIpRestriction(PlIpRestriction plIpRestriction){ sw.buildQuery().eq("irId",plIpRestriction.getIrId()).doUpdate(plIpRestriction); }
   //   PlRateLimiting; 6
 
-    public PlRateLimiting queryPlRateLimitingByVid(String vid){ return  sw.buildQuery().eq("vid",vid).doQueryFirst(PlRateLimiting.class); }
+    public PlRateLimiting queryPlRateLimitingById(String id){ return  sw.buildQuery().eq("dpuId",id).doQueryFirst(PlRateLimiting.class); }
     public void addPlRateLimiting(PlRateLimiting plRateLimiting){sw.buildQuery().doInsert(plRateLimiting); }
-    public void delPlRateLimitingByVId(String vid){
-        sw.buildQuery().eq("vid",vid).doDelete(PlRateLimiting.class);
+    public void delPlRateLimitingById(String id){
+        sw.buildQuery().eq("dpuId",id).doDelete(PlRateLimiting.class);
     }
-    public void updatePlRateLimiting(PlRateLimiting plRateLimiting){ sw.buildQuery().eq("vid",plRateLimiting.getVid()).doUpdate(plRateLimiting); }
+    public void updatePlRateLimiting(PlRateLimiting plRateLimiting){ sw.buildQuery().eq("prlId",plRateLimiting.getPrlId()).doUpdate(plRateLimiting); }
   //   PlReqSizeLimiting; 7
 
-    public PlReqSizeLimiting queryPlReqSizeLimitingByVid(String vid){ return  sw.buildQuery().eq("vid",vid).doQueryFirst(PlReqSizeLimiting.class); }
+    public PlReqSizeLimiting queryPlReqSizeLimitingById(String id){ return  sw.buildQuery().eq("dpuId",id).doQueryFirst(PlReqSizeLimiting.class); }
     public void addPlReqSizeLimiting(PlReqSizeLimiting plReqSizeLimiting){sw.buildQuery().doInsert(plReqSizeLimiting); }
-    public void delPlReqSizeLimitingByVId(String vid){ sw.buildQuery().eq("vid",vid).doDelete(PlReqSizeLimiting.class); }
-    public void updatePlReqSizeLimitingl(PlReqSizeLimiting plReqSizeLimiting){ sw.buildQuery().eq("vid",plReqSizeLimiting.getVid()).doUpdate(plReqSizeLimiting); }
+    public void delPlReqSizeLimitingById(String id){ sw.buildQuery().eq("dpuId",id).doDelete(PlReqSizeLimiting.class); }
+    public void updatePlReqSizeLimitingl(PlReqSizeLimiting plReqSizeLimiting){ sw.buildQuery().eq("rslId",plReqSizeLimiting.getRslId()).doUpdate(plReqSizeLimiting); }
 
  //    PlReqTrans;  8
-    public PlReqTrans queryPlReqTransByVid(String vid){ return  sw.buildQuery().eq("vid",vid).doQueryFirst(PlReqTrans.class); }
+    public PlReqTrans queryPlReqTransById(String id){ return  sw.buildQuery().eq("dpuId",id).doQueryFirst(PlReqTrans.class); }
     public void addPlReqTrans(PlReqTrans plReqTrans){sw.buildQuery().doInsert(plReqTrans); }
-    public void delPlReqTransByVId(String vid){ sw.buildQuery().eq("vid",vid).doDelete(PlReqTrans.class); }
-    public void updatePlReqTrans(PlReqTrans plReqTrans){ sw.buildQuery().eq("vid",plReqTrans.getVid()).doUpdate(plReqTrans); }
+    public void delPlReqTransById(String id){ sw.buildQuery().eq("dpuId",id).doDelete(PlReqTrans.class); }
+    public void updatePlReqTrans(PlReqTrans plReqTrans){ sw.buildQuery().eq("prtId",plReqTrans.getPrtId()).doUpdate(plReqTrans); }
 
 //     PlResTrans;  9
-    public PlResTrans queryPlResTransByVid(String vid){ return  sw.buildQuery().eq("vid",vid).doQueryFirst(PlResTrans.class); }
+    public PlResTrans queryPlResTransById(String id){ return  sw.buildQuery().eq("dpuId",id).doQueryFirst(PlResTrans.class); }
     public void addPlResTrans(PlResTrans plResTrans){sw.buildQuery().doInsert(plResTrans); }
-    public void delPlResTransByVId(String vid){ sw.buildQuery().eq("vid",vid).doDelete(PlResTrans.class); }
-    public void updatePlResTrans(PlResTrans plResTrans){ sw.buildQuery().eq("vid",plResTrans.getVid()).doUpdate(plResTrans); }
+    public void delPlResTransById(String id){ sw.buildQuery().eq("dpuId",id).doDelete(PlResTrans.class); }
+    public void updatePlResTrans(PlResTrans plResTrans){ sw.buildQuery().eq("prtId",plResTrans.getPrtId()).doUpdate(plResTrans); }
 
 //     PlCorrelationId;  10
-    public PlCorrelationId queryPlCorrelationIdByVid(String vid){ return  sw.buildQuery().eq("vid",vid).doQueryFirst(PlCorrelationId.class); }
+    public PlCorrelationId queryPlCorrelationIdById(String id){ return  sw.buildQuery().eq("dpuId",id).doQueryFirst(PlCorrelationId.class); }
     public void addPlCorrelationId(PlCorrelationId plCorrelationId){sw.buildQuery().doInsert(plCorrelationId); }
-    public void delPlCorrelationIdByVId(String vid){ sw.buildQuery().eq("vid",vid).doDelete(PlCorrelationId.class); }
-    public void updatePlCorrelationId(PlCorrelationId plCorrelationId){ sw.buildQuery().eq("vid",plCorrelationId.getVid()).doUpdate(plCorrelationId); }
+    public void delPlCorrelationIdById(String id){ sw.buildQuery().eq("dpuId",id).doDelete(PlCorrelationId.class); }
+    public void updatePlCorrelationId(PlCorrelationId plCorrelationId){ sw.buildQuery().eq("clId",plCorrelationId.getClId()).doUpdate(plCorrelationId); }
 
 //     PluginTcpLog;   11
 
-    public PluginTcpLog queryPluginTcpLogByVid(String vid){ return  sw.buildQuery().eq("vid",vid).doQueryFirst(PluginTcpLog.class); }
+    public PluginTcpLog queryPluginTcpLogById(String id){ return  sw.buildQuery().eq("dpuId",id).doQueryFirst(PluginTcpLog.class); }
     public void addPluginTcpLog(PluginTcpLog pluginTcpLog){sw.buildQuery().doInsert(pluginTcpLog); }
-    public void delPluginTcpLog(String vid){ sw.buildQuery().eq("vid",vid).doDelete(PluginTcpLog.class); }
-    public void updatePluginTcpLog(PluginTcpLog pluginTcpLog){ sw.buildQuery().eq("vid",pluginTcpLog.getVid()).doUpdate(pluginTcpLog); }
+    public void delPluginTcpLog(String id){ sw.buildQuery().eq("dpuId",id).doDelete(PluginTcpLog.class); }
+    public void updatePluginTcpLog(PluginTcpLog pluginTcpLog){ sw.buildQuery().eq("tlId",pluginTcpLog.getTlId()).doUpdate(pluginTcpLog); }
 
 //     PlUdpLog;  12
 
-    public PlUdpLog queryplUdpLogByVid(String vid){ return  sw.buildQuery().eq("vid",vid).doQueryFirst(PlUdpLog.class); }
+    public PlUdpLog queryplUdpLogById(String id){ return  sw.buildQuery().eq("dpuId",id).doQueryFirst(PlUdpLog.class); }
     public void addplUdpLog(PlUdpLog plUdpLog){sw.buildQuery().doInsert(plUdpLog); }
-    public void delplUdpLogByVId(String vid){ sw.buildQuery().eq("vid",vid).doDelete(PlUdpLog.class); }
-    public void updateplUdpLog(PlUdpLog plUdpLog){ sw.buildQuery().eq("vid",plUdpLog.getVid()).doUpdate(plUdpLog); }
+    public void delplUdpLogById(String id){ sw.buildQuery().eq("dpuId",id).doDelete(PlUdpLog.class); }
+    public void updateplUdpLog(PlUdpLog plUdpLog){ sw.buildQuery().eq("uiId",plUdpLog.getUlId()).doUpdate(plUdpLog); }
 
 //     PlHttpLog;  13
-public PlHttpLog queryPlHttpLogByVid(String vid){ return  sw.buildQuery().eq("vid",vid).doQueryFirst(PlHttpLog.class); }
+public PlHttpLog queryPlHttpLogById(String id){ return  sw.buildQuery().eq("dpuId",id).doQueryFirst(PlHttpLog.class); }
     public void addPlHttpLog(PlHttpLog plHttpLog){sw.buildQuery().doInsert(plHttpLog); }
-    public void delPlHttpLogByVId(String vid){ sw.buildQuery().eq("vid",vid).doDelete(PlHttpLog.class); }
-    public void updatePlHttpLog(PlHttpLog plHttpLog){ sw.buildQuery().eq("vid",plHttpLog.getVid()).doUpdate(plHttpLog); }
+    public void delPlHttpLogById(String id){ sw.buildQuery().eq("dpuId",id).doDelete(PlHttpLog.class); }
+    public void updatePlHttpLog(PlHttpLog plHttpLog){ sw.buildQuery().eq("hlId",plHttpLog.getHlId()).doUpdate(plHttpLog); }
 
 
 }

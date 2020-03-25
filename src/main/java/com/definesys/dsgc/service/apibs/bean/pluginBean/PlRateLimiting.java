@@ -20,9 +20,8 @@ public class PlRateLimiting {
 
     @RowID(type= RowIDType.UUID)
     private String prlId;
-    private String pluginCode;
-    private String  vid;
-    private String consumer;
+
+
     private Integer pSecond ;
     private Integer  pMinute;
     private Integer pHour;
@@ -38,6 +37,15 @@ public class PlRateLimiting {
     private Integer redisTimeout;
     private Integer redisDatabase;
     private String hideClientHeaders;
+    private String dpuId;
+
+    public String getDpuId() {
+        return dpuId;
+    }
+
+    public void setDpuId(String dpuId) {
+        this.dpuId = dpuId;
+    }
     @SystemColumn(SystemColumnType.CREATE_BY)
     @Column(value = "created_by")
     private String createdBy;
@@ -66,29 +74,11 @@ public class PlRateLimiting {
         this.prlId = prlId;
     }
 
-    public String getPluginCode() {
-        return pluginCode;
-    }
 
-    public void setPluginCode(String pluginCode) {
-        this.pluginCode = pluginCode;
-    }
 
-    public String getVid() {
-        return vid;
-    }
 
-    public void setVid(String vid) {
-        this.vid = vid;
-    }
 
-    public String getConsumer() {
-        return consumer;
-    }
 
-    public void setConsumer(String consumer) {
-        this.consumer = consumer;
-    }
 
     public Integer getpSecond() {
         return pSecond;

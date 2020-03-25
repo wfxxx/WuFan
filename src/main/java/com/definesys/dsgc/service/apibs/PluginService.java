@@ -19,47 +19,47 @@ public class PluginService {
     @Autowired
     private PluginDao pluginDao;
 
-    public void deletePluginContext(String vid,String pluginCode) throws Exception {
+    public void deletePluginContext(String budId,String pluginCode) throws Exception {
         switch (pluginCode){
-            case "1":
-                pluginDao.delPlBasicAuthBeanByVId(vid);
+            case "basic-auth":
+                pluginDao.delPlBasicAuthBeanById(budId);
                 break;
-            case"2":
-                pluginDao.delPlKeyAuthBeanByVId(vid);
+            case"key-auth":
+                pluginDao.delPlKeyAuthBeanById(budId);
                 break;
-            case"3":
-                pluginDao.delPlOauth2ByVId(vid);
+            case"oauth2":
+                pluginDao.delPlOauth2ById(budId);
                 break;
-            case"4":
-                pluginDao.delPlAddAclByVId(vid);
+            case"acl":
+                pluginDao.delPlAddAclById(budId);
                 break;
-            case"5":
-                pluginDao.delPlIpRestrictionByVId(vid);
+            case"ip-restriction":
+                pluginDao.delPlIpRestrictionById(budId);
                 break;
-            case"6":
-                pluginDao.delPlRateLimitingByVId(vid);
+            case"rate-limiting":
+                pluginDao.delPlRateLimitingById(budId);
                 break;
-            case"7":
-                pluginDao.delPlReqSizeLimitingByVId(vid);
+            case"request-size-limiting":
+                pluginDao.delPlReqSizeLimitingById(budId);
                 break;
-            case"8":
-                pluginDao.delPlReqTransByVId(vid);
+            case"request-transformer":
+                pluginDao.delPlReqTransById(budId);
                 break;
-            case"9":
-                pluginDao.delPlResTransByVId(vid);
+            case"response-transformer":
+                pluginDao.delPlResTransById(budId);
                 break;
-            case"10":
-                pluginDao.delPlCorrelationIdByVId(vid);
+            case"correlation-id":
+                pluginDao.delPlCorrelationIdById(budId);
                 break;
-            case"11":
-                pluginDao.delPluginTcpLog(vid);
-                break;
-            case"12":
-                pluginDao.delplUdpLogByVId(vid);
-                break;
-            case"13":
-                pluginDao.delPlHttpLogByVId(vid);
-                break;
+//            case"11":
+//                pluginDao.delPluginTcpLog(id);
+//                break;
+//            case"12":
+//                pluginDao.delplUdpLogById(id);
+//                break;
+//            case"13":
+//                pluginDao.delPlHttpLogById(id);
+//                break;
             default:
                 throw new Exception("插件"+pluginCode+"删除失败，没有对应的插件表");
 
@@ -67,85 +67,85 @@ public class PluginService {
     }
     //  PlBasicAuthBean
     public void addPlBasicAuthBean(PlBasicAuthBean plBasicAuthBean){ pluginDao.addPlBasicAuthBean(plBasicAuthBean); }
-    public PlBasicAuthBean queryPlBasicAuthBeanByVid(String vid){ return pluginDao.queryPlBasicAuthBeanByVid(vid); }
-    public void delPlBasicAuthBeanByVId(String vid){ pluginDao.delPlBasicAuthBeanByVId(vid); }
+    public PlBasicAuthBean queryPlBasicAuthBeanById(String id){ return pluginDao.queryPlBasicAuthBeanById(id); }
+    public void delPlBasicAuthBeanById(String id){ pluginDao.delPlBasicAuthBeanById(id); }
     public void updatePlBasicAuthBean(PlBasicAuthBean plBasicAuthBean){ pluginDao.updatePlBasicAuthBean(plBasicAuthBean); }
 
     //PlKeyAuthBeann
-    public PlKeyAuthBean queryPlKeyAuthBeannByVid(String vid){ return  pluginDao.queryPlKeyAuthBeannByVid(vid); }
+    public PlKeyAuthBean queryPlKeyAuthBeannById(String id){ return  pluginDao.queryPlKeyAuthBeannById(id); }
     public void addPlKeyAuthBean(PlKeyAuthBean plKeyAuthBean){pluginDao.addPlKeyAuthBean(plKeyAuthBean);}
-    public void delPlKeyAuthBeanByVId(String vid){ pluginDao.delPlKeyAuthBeanByVId(vid); }
+    public void delPlKeyAuthBeanById(String id){ pluginDao.delPlKeyAuthBeanById(id); }
     public void updatePlKeyAuthBeanBean(PlKeyAuthBean plKeyAuthBean){ pluginDao.updatePlKeyAuthBeanBean(plKeyAuthBean); }
     //    PlOauth2;  3
-    public PlOauth2 queryPlOauth2nByVid(String vid){ return  pluginDao.queryPlOauth2nByVid(vid); }
+    public PlOauth2 queryPlOauth2nById(String id){ return  pluginDao.queryPlOauth2nById(id); }
     public void addPlOauth2(PlOauth2 plOauth2){pluginDao.addPlOauth2(plOauth2); }
-    public void delPlOauth2ByVId(String vid){
-        pluginDao.delPlOauth2ByVId(vid);
+    public void delPlOauth2ById(String id){
+        pluginDao.delPlOauth2ById(id);
     }
     public void updatePlOauth2(PlOauth2 plOauth2){ pluginDao.updatePlOauth2( plOauth2); }
 
     //    PlAddAcl;  4
-    public PlAddAcl queryPlAddAclByVid(String vid){ return  pluginDao.queryPlAddAclByVid( vid); }
+    public PlAddAcl queryPlAddAclById(String id){ return  pluginDao.queryPlAddAclById(id); }
     public void addPlAddAcl(PlAddAcl plAddAcl){pluginDao.addPlAddAcl( plAddAcl); }
-    public void delPlAddAclByVId(String vid){
-        pluginDao.delPlAddAclByVId( vid);
+    public void delPlAddAclById(String id){
+        pluginDao.delPlAddAclById(id);
     }
     public void updatePlAddAcl(PlAddAcl plAddAcl){ pluginDao.updatePlAddAcl( plAddAcl); }
 
     //    PlIpRestriction;  5
-    public PlIpRestriction queryPlIpRestrictionByVid(String vid){ return  pluginDao.queryPlIpRestrictionByVid( vid); }
+    public PlIpRestriction queryPlIpRestrictionById(String id){ return  pluginDao.queryPlIpRestrictionById(id); }
     public void addPlIpRestriction(PlIpRestriction plIpRestriction){pluginDao.addPlIpRestriction(plIpRestriction); }
-    public void delPlIpRestrictionByVId(String vid){ pluginDao.delPlIpRestrictionByVId( vid); }
+    public void delPlIpRestrictionById(String id){ pluginDao.delPlIpRestrictionById(id); }
     public void updatePlIpRestriction(PlIpRestriction plIpRestriction){ pluginDao.updatePlIpRestriction(plIpRestriction); }
     //   PlRateLimiting; 6
 
-    public PlRateLimiting queryPlRateLimitingByVid(String vid){ return  pluginDao.queryPlRateLimitingByVid( vid); }
+    public PlRateLimiting queryPlRateLimitingById(String id){ return  pluginDao.queryPlRateLimitingById(id); }
     public void addPlRateLimiting(PlRateLimiting plRateLimiting){pluginDao.addPlRateLimiting( plRateLimiting); }
-    public void delPlRateLimitingByVId(String vid){ pluginDao.delPlRateLimitingByVId( vid); }
+    public void delPlRateLimitingById(String id){ pluginDao.delPlRateLimitingById(id); }
     public void updatePlRateLimiting(PlRateLimiting plRateLimiting){ pluginDao.updatePlRateLimiting( plRateLimiting); }
     //   PlReqSizeLimiting; 7
 
-    public PlReqSizeLimiting queryPlReqSizeLimitingByVid(String vid){ return  pluginDao.queryPlReqSizeLimitingByVid( vid); }
+    public PlReqSizeLimiting queryPlReqSizeLimitingById(String id){ return  pluginDao.queryPlReqSizeLimitingById(id); }
     public void addPlReqSizeLimiting(PlReqSizeLimiting plReqSizeLimiting){pluginDao.addPlReqSizeLimiting( plReqSizeLimiting); }
-    public void delPlReqSizeLimitingByVId(String vid){ pluginDao.delPlReqSizeLimitingByVId( vid); }
+    public void delPlReqSizeLimitingById(String id){ pluginDao.delPlReqSizeLimitingById(id); }
     public void updatePlReqSizeLimitingl(PlReqSizeLimiting plReqSizeLimiting){ pluginDao.updatePlReqSizeLimitingl( plReqSizeLimiting); }
 
     //    PlReqTrans;  8
-    public PlReqTrans queryPlReqTransByVid(String vid){ return  pluginDao.queryPlReqTransByVid( vid); }
+    public PlReqTrans queryPlReqTransById(String id){ return  pluginDao.queryPlReqTransById(id); }
     public void addPlReqTrans(PlReqTrans plReqTrans){pluginDao.addPlReqTrans( plReqTrans); }
-    public void delPlReqTransByVId(String vid){ pluginDao.delPlReqTransByVId( vid); }
+    public void delPlReqTransById(String id){ pluginDao.delPlReqTransById(id); }
     public void updatePlReqTrans(PlReqTrans plReqTrans){ pluginDao.updatePlReqTrans( plReqTrans); }
 
     //     PlResTrans;  9
-    public PlResTrans queryPlResTransByVid(String vid){ return  pluginDao.queryPlResTransByVid( vid); }
+    public PlResTrans queryPlResTransById(String id){ return  pluginDao.queryPlResTransById(id); }
     public void addPlResTrans(PlResTrans plResTrans){pluginDao.addPlResTrans( plResTrans); }
-    public void delPlResTransByVId(String vid){ pluginDao.delPlResTransByVId( vid); }
+    public void delPlResTransById(String id){ pluginDao.delPlResTransById(id); }
     public void updatePlResTrans(PlResTrans plResTrans){ pluginDao.updatePlResTrans( plResTrans); }
 
     //     PlCorrelationId;  10
-    public PlCorrelationId queryPlCorrelationIdByVid(String vid){ return  pluginDao.queryPlCorrelationIdByVid( vid); }
+    public PlCorrelationId queryPlCorrelationIdById(String id){ return  pluginDao.queryPlCorrelationIdById(id); }
     public void addPlCorrelationId(PlCorrelationId plCorrelationId){pluginDao.addPlCorrelationId( plCorrelationId); }
-    public void delPlCorrelationIdByVId(String vid){ pluginDao.delPlCorrelationIdByVId( vid); }
+    public void delPlCorrelationIdById(String id){ pluginDao.delPlCorrelationIdById(id); }
     public void updatePlCorrelationId(PlCorrelationId plCorrelationId){ pluginDao.updatePlCorrelationId( plCorrelationId); }
 
 //     PluginTcpLog;   11
 
-    public PluginTcpLog queryPluginTcpLogByVid(String vid){ return  pluginDao. queryPluginTcpLogByVid( vid); }
+    public PluginTcpLog queryPluginTcpLogById(String id){ return  pluginDao. queryPluginTcpLogById(id); }
     public void addPluginTcpLog(PluginTcpLog pluginTcpLog){pluginDao.addPluginTcpLog( pluginTcpLog); }
-    public void delPluginTcpLog(String vid){ pluginDao.delPluginTcpLog( vid); }
+    public void delPluginTcpLog(String id){ pluginDao.delPluginTcpLog(id); }
     public void updatePluginTcpLog(PluginTcpLog pluginTcpLog){ pluginDao. updatePluginTcpLog( pluginTcpLog); }
 
 //     PlUdpLog;  12
 
-    public PlUdpLog queryplUdpLogByVid(String vid){ return  pluginDao.queryplUdpLogByVid( vid); }
+    public PlUdpLog queryplUdpLogById(String id){ return  pluginDao.queryplUdpLogById(id); }
     public void addplUdpLog(PlUdpLog plUdpLog){pluginDao.addplUdpLog( plUdpLog); }
-    public void delplUdpLogByVId(String vid){ pluginDao.delplUdpLogByVId( vid); }
+    public void delplUdpLogById(String id){ pluginDao.delplUdpLogById(id); }
     public void updateplUdpLog(PlUdpLog plUdpLog){ pluginDao.updateplUdpLog( plUdpLog); }
 
     //     PlHttpLog;  13
-    public PlHttpLog queryPlHttpLogByVid(String vid){ return  pluginDao.queryPlHttpLogByVid( vid); }
+    public PlHttpLog queryPlHttpLogById(String id){ return  pluginDao.queryPlHttpLogById(id); }
     public void addPlHttpLog(PlHttpLog plHttpLog){pluginDao.addPlHttpLog( plHttpLog); }
-    public void delPlHttpLogByVId(String vid){ pluginDao.delPlHttpLogByVId( vid); }
+    public void delPlHttpLogById(String id){ pluginDao.delPlHttpLogById(id); }
     public void updatePlHttpLog(PlHttpLog plHttpLog){ pluginDao.updatePlHttpLog( plHttpLog); }
 
 

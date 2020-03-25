@@ -32,7 +32,7 @@ public class DagPlugUsingBean extends MpaasBasePojo {
     private String pluginName;
 
     private String isEnable;
-
+    private String consumer;
     @SystemColumn(SystemColumnType.CREATE_BY)
     @Column(value = "created_by")
     private String createdBy;
@@ -131,5 +131,13 @@ public class DagPlugUsingBean extends MpaasBasePojo {
 
     public void setObjectVersionNumber(Integer objectVersionNumber) {
         this.objectVersionNumber = objectVersionNumber;
+    }
+
+    public String getConsumer() {
+        return consumer;
+    }
+
+    public void setConsumer(String consumer) {
+        this.consumer = consumer;
     }
 }

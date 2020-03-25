@@ -19,12 +19,19 @@ import java.util.Date;
 public class PlUdpLog {
     @RowID(type= RowIDType.UUID)
     private String ulId;
-    private String pluginCode;
-    private String vid;
-    private String consumer;
+
     private String host;
     private Integer port;
     private Integer timeout;
+    private String dpuId;
+
+    public String getDpuId() {
+        return dpuId;
+    }
+
+    public void setDpuId(String dpuId) {
+        this.dpuId = dpuId;
+    }
     @SystemColumn(SystemColumnType.CREATE_BY)
     @Column(value = "created_by")
     private String createdBy;
@@ -53,29 +60,10 @@ public class PlUdpLog {
         this.ulId = ulId;
     }
 
-    public String getPluginCode() {
-        return pluginCode;
-    }
 
-    public void setPluginCode(String pluginCode) {
-        this.pluginCode = pluginCode;
-    }
 
-    public String getVid() {
-        return vid;
-    }
 
-    public void setVid(String vid) {
-        this.vid = vid;
-    }
 
-    public String getConsumer() {
-        return consumer;
-    }
-
-    public void setConsumer(String consumer) {
-        this.consumer = consumer;
-    }
 
     public String getHost() {
         return host;

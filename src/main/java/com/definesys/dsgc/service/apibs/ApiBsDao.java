@@ -131,8 +131,9 @@ public class ApiBsDao {
         sw.buildQuery().eq("dpu_Id",dagPlugUsingBean.getDpuId()).doUpdate(dagPlugUsingBean);
     }
 
-    public void addPluginUsing(DagPlugUsingBean dagPlugUsingBean){
+    public DagPlugUsingBean addPluginUsing(DagPlugUsingBean dagPlugUsingBean){
         sw.buildQuery().doInsert(dagPlugUsingBean);
+        return dagPlugUsingBean;
     }
 
     public void delPluginUsing(String id){

@@ -103,7 +103,9 @@ public class ApiAuthDao {
 
     public PageQueryResult<DSGCApisBean> queryApiAuthList(CommonReqBean q, int pageIndex, int pageSize, String userId, String userRole, List<String> sysCodeList) {
         MpaasQuery query = sw.buildQuery()
-                .sql("select * from (select da.API_CODE,da.API_NAME,(select dse.SYS_NAME from DSGC_SYSTEM_ENTITIES dse where da.APP_CODE = dse.SYS_CODE) APP_CODE,da.APP_CODE sys_code,da.INFO_FULL,daa.CSM_CODE from DSGC_APIS da,DSGC_APIS_ACCESS daa where da.APP_CODE = daa.API_CODE(+))\n");
+                .sql("select * from (select da.API_CODE,da.API_NAME,(select dse.SYS_NAME from DSGC_SYSTEM_ENTITIES dse where da.APP_CODE = dse.SYS_CODE) \n" +
+                        "APP_CODE,da.APP_CODE sys_code,da.INFO_FULL,daa.CSM_CODE,da.creation_date from DSGC_APIS da,DSGC_APIS_ACCESS daa where da.APP_CODE = daa.API_CODE(+)\n" +
+                        "order by creation_date desc)");
         if(q.getSelectSystemList().size() != 0){
             if(q.getSelectSystemList().size()<=1){
                 query.and().eq("csmCode",q.getSelectSystemList().get(0));

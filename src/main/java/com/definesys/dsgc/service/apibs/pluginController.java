@@ -31,11 +31,11 @@ public class pluginController {
     @RequestMapping(value = "/addPlBasicAuthBean",method = RequestMethod.POST)
     public Response addPlBasicAuthBean(@RequestBody PlBasicAuthBean plBasicAuthBean){
         try {
-            String vid=plBasicAuthBean.getVid();
-            PlBasicAuthBean value=pluginService.queryPlBasicAuthBeanByVid(vid);
-            if(value!=null&&value.getBaId()!=null){
-                return Response.error("服务违反插件唯一性约束");
-            }
+//            String dupId=plBasicAuthBean.getVid();
+//            PlBasicAuthBean value=pluginService.queryPlBasicAuthBeanById(dupId);
+//            if(value!=null&&value.getBaId()!=null){
+//                return Response.error("服务违反插件唯一性约束");
+//            }
             pluginService.addPlBasicAuthBean(plBasicAuthBean);
         }catch (Exception e){
             e.printStackTrace();
@@ -44,12 +44,12 @@ public class pluginController {
         return Response.ok();
     }
 
-    @RequestMapping(value = "/queryPlBasicAuthBeanByVid",method = RequestMethod.POST)
-    public Response queryPlBasicAuthBeanByVid(@RequestBody CommonReqBean param, HttpServletRequest request){
+    @RequestMapping(value = "/queryPlBasicAuthBeanById",method = RequestMethod.POST)
+    public Response queryPlBasicAuthBeanById(@RequestBody CommonReqBean param, HttpServletRequest request){
         PlBasicAuthBean result =null;
         try {
-            String vid=param.getCon0();
-            result=pluginService.queryPlBasicAuthBeanByVid(vid);
+            String dupId=param.getCon0();
+            result=pluginService.queryPlBasicAuthBeanById(dupId);
         }catch (Exception e){
             e.printStackTrace();
             return Response.error("查询插件错误!");
@@ -67,11 +67,11 @@ public class pluginController {
         }
         return Response.ok();
     }
-    @RequestMapping(value = "/delPlBasicAuthBeanByVId",method = RequestMethod.POST)
-    public Response delPlBasicAuthBeanByVId(@RequestBody CommonReqBean param, HttpServletRequest request){
+    @RequestMapping(value = "/delPlBasicAuthBeanById",method = RequestMethod.POST)
+    public Response delPlBasicAuthBeanById(@RequestBody CommonReqBean param, HttpServletRequest request){
         try {
-            String vid=param.getCon0();
-            pluginService.delPlBasicAuthBeanByVId(vid);
+            String dupId=param.getCon0();
+            pluginService.delPlBasicAuthBeanById(dupId);
         }catch (Exception e){
             e.printStackTrace();
             return Response.error("删除插件错误!");
@@ -83,11 +83,11 @@ public class pluginController {
     @RequestMapping(value = "/addPlKeyAuthBean",method = RequestMethod.POST)
     public Response addPlKeyAuthBean(@RequestBody PlKeyAuthBean plKeyAuthBean){
         try {
-            String vid=plKeyAuthBean.getVid();
-            PlKeyAuthBean value=pluginService.queryPlKeyAuthBeannByVid(vid);
-            if(value!=null&&value.getKaId()!=null){
-                return Response.error("服务违反插件唯一性约束");
-            }
+//            String dupId=plKeyAuthBean.getVid();
+//            PlKeyAuthBean value=pluginService.queryPlKeyAuthBeannById(dupId);
+//            if(value!=null&&value.getKaId()!=null){
+//                return Response.error("服务违反插件唯一性约束");
+//            }
             pluginService.addPlKeyAuthBean(plKeyAuthBean);
         }catch (Exception e){
             e.printStackTrace();
@@ -96,12 +96,12 @@ public class pluginController {
         return Response.ok();
     }
 
-    @RequestMapping(value = "/queryPlKeyAuthBeannByVid",method = RequestMethod.POST)
-    public Response queryPlKeyAuthBeannByVid(@RequestBody CommonReqBean param, HttpServletRequest request){
+    @RequestMapping(value = "/queryPlKeyAuthBeannById",method = RequestMethod.POST)
+    public Response queryPlKeyAuthBeannById(@RequestBody CommonReqBean param, HttpServletRequest request){
         PlKeyAuthBean result =null;
         try {
-            String vid=param.getCon0();
-            result=pluginService.queryPlKeyAuthBeannByVid(vid);
+            String dupId=param.getCon0();
+            result=pluginService.queryPlKeyAuthBeannById(dupId);
         }catch (Exception e){
             e.printStackTrace();
             return Response.error("查询插件错误!");
@@ -119,11 +119,11 @@ public class pluginController {
         }
         return Response.ok();
     }
-    @RequestMapping(value = "/delPlKeyAuthBeanByVId",method = RequestMethod.POST)
-    public Response delPlKeyAuthBeanByVId(@RequestBody CommonReqBean param, HttpServletRequest request){
+    @RequestMapping(value = "/delPlKeyAuthBeanById",method = RequestMethod.POST)
+    public Response delPlKeyAuthBeanById(@RequestBody CommonReqBean param, HttpServletRequest request){
         try {
-            String vid=param.getCon0();
-            pluginService.delPlKeyAuthBeanByVId(vid);
+            String dupId=param.getCon0();
+            pluginService.delPlKeyAuthBeanById(dupId);
         }catch (Exception e){
             e.printStackTrace();
             return Response.error("删除插件错误!");
@@ -135,11 +135,11 @@ public class pluginController {
     @RequestMapping(value = "/addPlOauth2",method = RequestMethod.POST)
     public Response addPlOauth2(@RequestBody PlOauth2 plOauth2){
         try {
-            String vid=plOauth2.getVid();
-            PlOauth2 value=pluginService.queryPlOauth2nByVid(vid);
-            if(value!=null&&value.getPoId()!=null){
-                return Response.error("服务违反插件唯一性约束");
-            }
+//            String dupId=plOauth2.getVid();
+//            PlOauth2 value=pluginService.queryPlOauth2nById(dupId);
+//            if(value!=null&&value.getPoId()!=null){
+//                return Response.error("服务违反插件唯一性约束");
+//            }
             pluginService.addPlOauth2(plOauth2);
         }catch (Exception e){
             e.printStackTrace();
@@ -148,12 +148,12 @@ public class pluginController {
         return Response.ok();
     }
 
-    @RequestMapping(value = "/queryPlOauth2nByVid",method = RequestMethod.POST)
-    public Response queryPlOauth2nByVid(@RequestBody CommonReqBean param, HttpServletRequest request){
+    @RequestMapping(value = "/queryPlOauth2nById",method = RequestMethod.POST)
+    public Response queryPlOauth2nById(@RequestBody CommonReqBean param, HttpServletRequest request){
         PlOauth2 result =null;
         try {
-            String vid=param.getCon0();
-            result=pluginService.queryPlOauth2nByVid(vid);
+            String dupId=param.getCon0();
+            result=pluginService.queryPlOauth2nById(dupId);
         }catch (Exception e){
             e.printStackTrace();
             return Response.error("查询插件错误!");
@@ -171,11 +171,11 @@ public class pluginController {
         }
         return Response.ok();
     }
-    @RequestMapping(value = "/delPlOauth2ByVId",method = RequestMethod.POST)
-    public Response delPlOauth2ByVId(@RequestBody CommonReqBean param, HttpServletRequest request){
+    @RequestMapping(value = "/delPlOauth2ById",method = RequestMethod.POST)
+    public Response delPlOauth2ById(@RequestBody CommonReqBean param, HttpServletRequest request){
         try {
-            String vid=param.getCon0();
-            pluginService.delPlOauth2ByVId(vid);
+            String dupId=param.getCon0();
+            pluginService.delPlOauth2ById(dupId);
         }catch (Exception e){
             e.printStackTrace();
             return Response.error("删除插件错误!");
@@ -187,11 +187,11 @@ public class pluginController {
     @RequestMapping(value = "/addPlAddAcl",method = RequestMethod.POST)
     public Response addPlAddAcl(@RequestBody PlAddAcl plAddAcl){
         try {
-            String vid=plAddAcl.getVid();
-            PlAddAcl value=pluginService.queryPlAddAclByVid(vid);
-            if(value!=null&&value.getAclId()!=null){
-                return Response.error("服务违反插件唯一性约束");
-            }
+//            String dupId=plAddAcl.getVid();
+//            PlAddAcl value=pluginService.queryPlAddAclById(dupId);
+//            if(value!=null&&value.getAclId()!=null){
+//                return Response.error("服务违反插件唯一性约束");
+//            }
             pluginService.addPlAddAcl(plAddAcl);
         }catch (Exception e){
             e.printStackTrace();
@@ -212,12 +212,12 @@ public class pluginController {
         return Response.ok();
     }
 
-    @RequestMapping(value = "/queryPlAddAclByVid",method = RequestMethod.POST)
-    public Response queryPlAddAclByVid(@RequestBody CommonReqBean param, HttpServletRequest request){
+    @RequestMapping(value = "/queryPlAddAclById",method = RequestMethod.POST)
+    public Response queryPlAddAclById(@RequestBody CommonReqBean param, HttpServletRequest request){
         PlAddAcl result =null;
         try {
-            String vid=param.getCon0();
-            result=pluginService.queryPlAddAclByVid(vid);
+            String dupId=param.getCon0();
+            result=pluginService.queryPlAddAclById(dupId);
         }catch (Exception e){
             e.printStackTrace();
             return Response.error("查询插件错误!");
@@ -225,11 +225,11 @@ public class pluginController {
         return Response.ok().setData(result);
     }
 
-    @RequestMapping(value = "/delPlAddAclByVId",method = RequestMethod.POST)
-    public Response delPlAddAclByVId(@RequestBody CommonReqBean param, HttpServletRequest request){
+    @RequestMapping(value = "/delPlAddAclById",method = RequestMethod.POST)
+    public Response delPlAddAclById(@RequestBody CommonReqBean param, HttpServletRequest request){
         try {
-            String vid=param.getCon0();
-            pluginService.delPlAddAclByVId(vid);
+            String dupId=param.getCon0();
+            pluginService.delPlAddAclById(dupId);
         }catch (Exception e){
             e.printStackTrace();
             return Response.error("删除插件错误!");
@@ -242,11 +242,11 @@ public class pluginController {
     @RequestMapping(value = "/addPlIpRestriction",method = RequestMethod.POST)
     public Response addPlIpRestriction(@RequestBody PlIpRestriction plIpRestriction){
         try {
-            String vid=plIpRestriction.getVid();
-            PlIpRestriction value=pluginService.queryPlIpRestrictionByVid(vid);
-            if(value!=null&&value.getIrId()!=null){
-                return Response.error("服务违反插件唯一性约束");
-            }
+//            String dupId=plIpRestriction.getVid();
+//            PlIpRestriction value=pluginService.queryPlIpRestrictionById(dupId);
+//            if(value!=null&&value.getIrId()!=null){
+//                return Response.error("服务违反插件唯一性约束");
+//            }
             pluginService.addPlIpRestriction(plIpRestriction);
         }catch (Exception e){
             e.printStackTrace();
@@ -267,12 +267,12 @@ public class pluginController {
         return Response.ok();
     }
 
-    @RequestMapping(value = "/queryPlIpRestrictionByVid",method = RequestMethod.POST)
-    public Response queryPlIpRestrictionByVid(@RequestBody CommonReqBean param, HttpServletRequest request){
+    @RequestMapping(value = "/queryPlIpRestrictionById",method = RequestMethod.POST)
+    public Response queryPlIpRestrictionById(@RequestBody CommonReqBean param, HttpServletRequest request){
         PlIpRestriction result =null;
         try {
-            String vid=param.getCon0();
-            result=pluginService.queryPlIpRestrictionByVid(vid);
+            String dupId=param.getCon0();
+            result=pluginService.queryPlIpRestrictionById(dupId);
         }catch (Exception e){
             e.printStackTrace();
             return Response.error("查询插件错误!");
@@ -280,11 +280,11 @@ public class pluginController {
         return Response.ok().setData(result);
     }
 
-    @RequestMapping(value = "/delPlIpRestrictionByVId",method = RequestMethod.POST)
-    public Response delPlIpRestrictionByVId(@RequestBody CommonReqBean param, HttpServletRequest request){
+    @RequestMapping(value = "/delPlIpRestrictionById",method = RequestMethod.POST)
+    public Response delPlIpRestrictionById(@RequestBody CommonReqBean param, HttpServletRequest request){
         try {
-            String vid=param.getCon0();
-            pluginService.delPlIpRestrictionByVId(vid);
+            String dupId=param.getCon0();
+            pluginService.delPlIpRestrictionById(dupId);
         }catch (Exception e){
             e.printStackTrace();
             return Response.error("删除插件错误!");
@@ -296,11 +296,11 @@ public class pluginController {
     @RequestMapping(value = "/addPlRateLimiting",method = RequestMethod.POST)
     public Response addPlRateLimiting(@RequestBody PlRateLimiting plRateLimiting){
         try {
-            String vid=plRateLimiting.getVid();
-            PlRateLimiting value=pluginService.queryPlRateLimitingByVid(vid);
-            if(value!=null&&value.getPrlId()!=null){
-                return Response.error("服务违反插件唯一性约束");
-            }
+//            String dupId=plRateLimiting.getVid();
+//            PlRateLimiting value=pluginService.queryPlRateLimitingById(dupId);
+//            if(value!=null&&value.getPrlId()!=null){
+//                return Response.error("服务违反插件唯一性约束");
+//            }
             pluginService.addPlRateLimiting(plRateLimiting);
         }catch (Exception e){
             e.printStackTrace();
@@ -321,12 +321,12 @@ public class pluginController {
         return Response.ok();
     }
 
-    @RequestMapping(value = "/queryPlRateLimitingByVid",method = RequestMethod.POST)
-    public Response queryPlRateLimitingByVid(@RequestBody CommonReqBean param, HttpServletRequest request){
+    @RequestMapping(value = "/queryPlRateLimitingById",method = RequestMethod.POST)
+    public Response queryPlRateLimitingById(@RequestBody CommonReqBean param, HttpServletRequest request){
         PlRateLimiting result =null;
         try {
-            String vid=param.getCon0();
-            result=pluginService.queryPlRateLimitingByVid(vid);
+            String dupId=param.getCon0();
+            result=pluginService.queryPlRateLimitingById(dupId);
         }catch (Exception e){
             e.printStackTrace();
             return Response.error("查询插件错误!");
@@ -334,11 +334,11 @@ public class pluginController {
         return Response.ok().setData(result);
     }
 
-    @RequestMapping(value = "/delPlRateLimitingByVId",method = RequestMethod.POST)
-    public Response delPlRateLimitingByVId(@RequestBody CommonReqBean param, HttpServletRequest request){
+    @RequestMapping(value = "/delPlRateLimitingById",method = RequestMethod.POST)
+    public Response delPlRateLimitingById(@RequestBody CommonReqBean param, HttpServletRequest request){
         try {
-            String vid=param.getCon0();
-            pluginService.delPlRateLimitingByVId(vid);
+            String dupId=param.getCon0();
+            pluginService.delPlRateLimitingById(dupId);
         }catch (Exception e){
             e.printStackTrace();
             return Response.error("删除插件错误!");
@@ -350,11 +350,11 @@ public class pluginController {
     @RequestMapping(value = "/addPlReqSizeLimiting",method = RequestMethod.POST)
     public Response addPlReqSizeLimiting(@RequestBody PlReqSizeLimiting plReqSizeLimiting){
         try {
-            String vid=plReqSizeLimiting.getVid();
-            PlReqSizeLimiting value=pluginService.queryPlReqSizeLimitingByVid(vid);
-            if(value!=null&&value.getRslId()!=null){
-                return Response.error("服务违反插件唯一性约束");
-            }
+//            String dupId=plReqSizeLimiting.getVid();
+//            PlReqSizeLimiting value=pluginService.queryPlReqSizeLimitingById(dupId);
+//            if(value!=null&&value.getRslId()!=null){
+//                return Response.error("服务违反插件唯一性约束");
+//            }
             pluginService.addPlReqSizeLimiting(plReqSizeLimiting);
         }catch (Exception e){
             e.printStackTrace();
@@ -375,12 +375,12 @@ public class pluginController {
         return Response.ok();
     }
 
-    @RequestMapping(value = "/queryPlReqSizeLimitingByVid",method = RequestMethod.POST)
-    public Response queryPlReqSizeLimitingByVid(@RequestBody CommonReqBean param, HttpServletRequest request){
+    @RequestMapping(value = "/queryPlReqSizeLimitingById",method = RequestMethod.POST)
+    public Response queryPlReqSizeLimitingById(@RequestBody CommonReqBean param, HttpServletRequest request){
         PlReqSizeLimiting result =null;
         try {
-            String vid=param.getCon0();
-            result=pluginService.queryPlReqSizeLimitingByVid(vid);
+            String dupId=param.getCon0();
+            result=pluginService.queryPlReqSizeLimitingById(dupId);
         }catch (Exception e){
             e.printStackTrace();
             return Response.error("查询插件错误!");
@@ -388,11 +388,11 @@ public class pluginController {
         return Response.ok().setData(result);
     }
 
-    @RequestMapping(value = "/delPlReqSizeLimitingByVId",method = RequestMethod.POST)
-    public Response delPlReqSizeLimitingByVId(@RequestBody CommonReqBean param, HttpServletRequest request){
+    @RequestMapping(value = "/delPlReqSizeLimitingById",method = RequestMethod.POST)
+    public Response delPlReqSizeLimitingById(@RequestBody CommonReqBean param, HttpServletRequest request){
         try {
-            String vid=param.getCon0();
-            pluginService.delPlReqSizeLimitingByVId(vid);
+            String dupId=param.getCon0();
+            pluginService.delPlReqSizeLimitingById(dupId);
         }catch (Exception e){
             e.printStackTrace();
             return Response.error("删除插件错误!");
@@ -404,11 +404,11 @@ public class pluginController {
     @RequestMapping(value = "/addPlReqTrans",method = RequestMethod.POST)
     public Response addPlReqTrans(@RequestBody PlReqTrans plReqTrans){
         try {
-            String vid=plReqTrans.getVid();
-            PlReqTrans value=pluginService.queryPlReqTransByVid(vid);
-            if(value!=null&&value.getPrtId()!=null){
-                return Response.error("服务违反插件唯一性约束");
-            }
+//            String dupId=plReqTrans.getVid();
+//            PlReqTrans value=pluginService.queryPlReqTransById(dupId);
+//            if(value!=null&&value.getPrtId()!=null){
+//                return Response.error("服务违反插件唯一性约束");
+//            }
             pluginService.addPlReqTrans(plReqTrans);
         }catch (Exception e){
             e.printStackTrace();
@@ -429,12 +429,12 @@ public class pluginController {
         return Response.ok();
     }
 
-    @RequestMapping(value = "/queryPlReqTransByVid",method = RequestMethod.POST)
-    public Response queryPlReqTransByVid(@RequestBody CommonReqBean param, HttpServletRequest request){
+    @RequestMapping(value = "/queryPlReqTransById",method = RequestMethod.POST)
+    public Response queryPlReqTransById(@RequestBody CommonReqBean param, HttpServletRequest request){
         PlReqTrans result =null;
         try {
-            String vid=param.getCon0();
-            result=pluginService.queryPlReqTransByVid(vid);
+            String dupId=param.getCon0();
+            result=pluginService.queryPlReqTransById(dupId);
         }catch (Exception e){
             e.printStackTrace();
             return Response.error("查询插件错误!");
@@ -442,11 +442,11 @@ public class pluginController {
         return Response.ok().setData(result);
     }
 
-    @RequestMapping(value = "/delPlReqTransByVId",method = RequestMethod.POST)
-    public Response delPlReqTransByVId(@RequestBody CommonReqBean param, HttpServletRequest request){
+    @RequestMapping(value = "/delPlReqTransById",method = RequestMethod.POST)
+    public Response delPlReqTransById(@RequestBody CommonReqBean param, HttpServletRequest request){
         try {
-            String vid=param.getCon0();
-            pluginService.delPlReqTransByVId(vid);
+            String dupId=param.getCon0();
+            pluginService.delPlReqTransById(dupId);
         }catch (Exception e){
             e.printStackTrace();
             return Response.error("删除插件错误!");
@@ -459,11 +459,11 @@ public class pluginController {
     @RequestMapping(value = "/addPlResTrans",method = RequestMethod.POST)
     public Response addPlResTrans(@RequestBody PlResTrans plResTrans){
         try {
-            String vid=plResTrans.getVid();
-            PlResTrans value=pluginService.queryPlResTransByVid(vid);
-            if(value!=null&&value.getPrtId()!=null){
-                return Response.error("服务违反插件唯一性约束");
-            }
+//            String dupId=plResTrans.getVid();
+//            PlResTrans value=pluginService.queryPlResTransById(dupId);
+//            if(value!=null&&value.getPrtId()!=null){
+//                return Response.error("服务违反插件唯一性约束");
+//            }
             pluginService.addPlResTrans(plResTrans);
         }catch (Exception e){
             e.printStackTrace();
@@ -484,12 +484,12 @@ public class pluginController {
         return Response.ok();
     }
 
-    @RequestMapping(value = "/queryPlResTransByVid",method = RequestMethod.POST)
-    public Response queryPlResTransByVid(@RequestBody CommonReqBean param, HttpServletRequest request){
+    @RequestMapping(value = "/queryPlResTransById",method = RequestMethod.POST)
+    public Response queryPlResTransById(@RequestBody CommonReqBean param, HttpServletRequest request){
         PlResTrans result =null;
         try {
-            String vid=param.getCon0();
-            result=pluginService.queryPlResTransByVid(vid);
+            String dupId=param.getCon0();
+            result=pluginService.queryPlResTransById(dupId);
         }catch (Exception e){
             e.printStackTrace();
             return Response.error("查询插件错误!");
@@ -497,11 +497,11 @@ public class pluginController {
         return Response.ok().setData(result);
     }
 
-    @RequestMapping(value = "/delPlResTransByVId",method = RequestMethod.POST)
-    public Response delPlResTransByVId(@RequestBody CommonReqBean param, HttpServletRequest request){
+    @RequestMapping(value = "/delPlResTransById",method = RequestMethod.POST)
+    public Response delPlResTransById(@RequestBody CommonReqBean param, HttpServletRequest request){
         try {
-            String vid=param.getCon0();
-            pluginService.delPlResTransByVId(vid);
+            String dupId=param.getCon0();
+            pluginService.delPlResTransById(dupId);
         }catch (Exception e){
             e.printStackTrace();
             return Response.error("删除插件错误!");
@@ -513,11 +513,11 @@ public class pluginController {
     @RequestMapping(value = "/addPlCorrelationId",method = RequestMethod.POST)
     public Response addPlCorrelationId(@RequestBody PlCorrelationId plCorrelationId){
         try {
-            String vid=plCorrelationId.getVid();
-            PlCorrelationId value=pluginService.queryPlCorrelationIdByVid(vid);
-            if(value!=null&&value.getClId()!=null){
-                return Response.error("服务违反插件唯一性约束");
-            }
+//            String dupId=plCorrelationId.getVid();
+//            PlCorrelationId value=pluginService.queryPlCorrelationIdById(dupId);
+//            if(value!=null&&value.getClId()!=null){
+//                return Response.error("服务违反插件唯一性约束");
+//            }
             pluginService.addPlCorrelationId(plCorrelationId);
         }catch (Exception e){
             e.printStackTrace();
@@ -538,12 +538,12 @@ public class pluginController {
         return Response.ok();
     }
 
-    @RequestMapping(value = "/queryPlCorrelationIdByVid",method = RequestMethod.POST)
-    public Response queryPlCorrelationIdByVid(@RequestBody CommonReqBean param, HttpServletRequest request){
+    @RequestMapping(value = "/queryPlCorrelationIdById",method = RequestMethod.POST)
+    public Response queryPlCorrelationIdById(@RequestBody CommonReqBean param, HttpServletRequest request){
         PlCorrelationId result =null;
         try {
-            String vid=param.getCon0();
-            result=pluginService.queryPlCorrelationIdByVid(vid);
+            String dupId=param.getCon0();
+            result=pluginService.queryPlCorrelationIdById(dupId);
         }catch (Exception e){
             e.printStackTrace();
             return Response.error("查询插件错误!");
@@ -551,11 +551,11 @@ public class pluginController {
         return Response.ok().setData(result);
     }
 
-    @RequestMapping(value = "/delPlCorrelationIdByVId",method = RequestMethod.POST)
-    public Response delPlCorrelationIdByVId(@RequestBody CommonReqBean param, HttpServletRequest request){
+    @RequestMapping(value = "/delPlCorrelationIdById",method = RequestMethod.POST)
+    public Response delPlCorrelationIdById(@RequestBody CommonReqBean param, HttpServletRequest request){
         try {
-            String vid=param.getCon0();
-            pluginService.delPlCorrelationIdByVId(vid);
+            String dupId=param.getCon0();
+            pluginService.delPlCorrelationIdById(dupId);
         }catch (Exception e){
             e.printStackTrace();
             return Response.error("删除插件错误!");
@@ -566,11 +566,11 @@ public class pluginController {
     @RequestMapping(value = "/addPluginTcpLog",method = RequestMethod.POST)
     public Response addPluginTcpLog(@RequestBody PluginTcpLog pluginTcpLog){
         try {
-            String vid=pluginTcpLog.getVid();
-            PluginTcpLog value=pluginService.queryPluginTcpLogByVid(vid);
-            if(value!=null&&value.getTlId()!=null){
-                return Response.error("服务违反插件唯一性约束");
-            }
+//            String dupId=pluginTcpLog.getVid();
+//            PluginTcpLog value=pluginService.queryPluginTcpLogById(dupId);
+//            if(value!=null&&value.getTlId()!=null){
+//                return Response.error("服务违反插件唯一性约束");
+//            }
             pluginService.addPluginTcpLog(pluginTcpLog);
         }catch (Exception e){
             e.printStackTrace();
@@ -591,12 +591,12 @@ public class pluginController {
         return Response.ok();
     }
 
-    @RequestMapping(value = "/queryPluginTcpLogByVid",method = RequestMethod.POST)
-    public Response queryPluginTcpLogByVid(@RequestBody CommonReqBean param, HttpServletRequest request){
+    @RequestMapping(value = "/queryPluginTcpLogById",method = RequestMethod.POST)
+    public Response queryPluginTcpLogById(@RequestBody CommonReqBean param, HttpServletRequest request){
         PluginTcpLog result =null;
         try {
-            String vid=param.getCon0();
-            result=pluginService.queryPluginTcpLogByVid(vid);
+            String dupId=param.getCon0();
+            result=pluginService.queryPluginTcpLogById(dupId);
         }catch (Exception e){
             e.printStackTrace();
             return Response.error("查询插件错误!");
@@ -607,8 +607,8 @@ public class pluginController {
     @RequestMapping(value = "/delPluginTcpLog",method = RequestMethod.POST)
     public Response delPluginTcpLog(@RequestBody CommonReqBean param, HttpServletRequest request){
         try {
-            String vid=param.getCon0();
-            pluginService.delPluginTcpLog(vid);
+            String dupId=param.getCon0();
+            pluginService.delPluginTcpLog(dupId);
         }catch (Exception e){
             e.printStackTrace();
             return Response.error("删除插件错误!");
@@ -619,11 +619,11 @@ public class pluginController {
     @RequestMapping(value = "/addplUdpLog",method = RequestMethod.POST)
     public Response addplUdpLog(@RequestBody PlUdpLog plUdpLog){
         try {
-            String vid=plUdpLog.getVid();
-            PlUdpLog value=pluginService.queryplUdpLogByVid(vid);
-            if(value!=null&&value.getUlId()!=null){
-                return Response.error("服务违反插件唯一性约束");
-            }
+//            String dupId=plUdpLog.getVid();
+//            PlUdpLog value=pluginService.queryplUdpLogById(dupId);
+//            if(value!=null&&value.getUlId()!=null){
+//                return Response.error("服务违反插件唯一性约束");
+//            }
             pluginService.addplUdpLog(plUdpLog);
         }catch (Exception e){
             e.printStackTrace();
@@ -644,12 +644,12 @@ public class pluginController {
         return Response.ok();
     }
 
-    @RequestMapping(value = "/queryplUdpLogByVid",method = RequestMethod.POST)
-    public Response queryplUdpLogByVid(@RequestBody CommonReqBean param, HttpServletRequest request){
+    @RequestMapping(value = "/queryplUdpLogById",method = RequestMethod.POST)
+    public Response queryplUdpLogById(@RequestBody CommonReqBean param, HttpServletRequest request){
         PlUdpLog result =null;
         try {
-            String vid=param.getCon0();
-            result=pluginService.queryplUdpLogByVid(vid);
+            String dupId=param.getCon0();
+            result=pluginService.queryplUdpLogById(dupId);
         }catch (Exception e){
             e.printStackTrace();
             return Response.error("查询插件错误!");
@@ -657,11 +657,11 @@ public class pluginController {
         return Response.ok().setData(result);
     }
 
-    @RequestMapping(value = "/delplUdpLogByVId",method = RequestMethod.POST)
-    public Response delplUdpLogByVId(@RequestBody CommonReqBean param, HttpServletRequest request){
+    @RequestMapping(value = "/delplUdpLogById",method = RequestMethod.POST)
+    public Response delplUdpLogById(@RequestBody CommonReqBean param, HttpServletRequest request){
         try {
-            String vid=param.getCon0();
-            pluginService.delplUdpLogByVId(vid);
+            String dupId=param.getCon0();
+            pluginService.delplUdpLogById(dupId);
         }catch (Exception e){
             e.printStackTrace();
             return Response.error("删除插件错误!");
@@ -674,12 +674,12 @@ public class pluginController {
     @RequestMapping(value = "/addPlHttpLog",method = RequestMethod.POST)
     public Response addPlHttpLog(@RequestBody PlHttpLog plHttpLog){
         try {
-            String vid=plHttpLog.getVid();
-            PlHttpLog value=pluginService.queryPlHttpLogByVid(vid);
-            if(value!=null&&value.getHlId()!=null){
-                return Response.error("服务违反插件唯一性约束");
-            }
-            pluginService.addPlHttpLog(plHttpLog);
+//            String dupId=plHttpLog.getVid();
+//            PlHttpLog value=pluginService.queryPlHttpLogById(dupId);
+//            if(value!=null&&value.getHlId()!=null){
+//                return Response.error("服务违反插件唯一性约束");
+//            }
+           pluginService.addPlHttpLog(plHttpLog);
         }catch (Exception e){
             e.printStackTrace();
             return Response.error("添加插件错误!");
@@ -699,12 +699,12 @@ public class pluginController {
         return Response.ok();
     }
 
-    @RequestMapping(value = "/queryPlHttpLogByVid",method = RequestMethod.POST)
-    public Response queryPlHttpLogByVid(@RequestBody CommonReqBean param, HttpServletRequest request){
+    @RequestMapping(value = "/queryPlHttpLogById",method = RequestMethod.POST)
+    public Response queryPlHttpLogById(@RequestBody CommonReqBean param, HttpServletRequest request){
         PlHttpLog result =null;
         try {
-            String vid=param.getCon0();
-            result=pluginService.queryPlHttpLogByVid(vid);
+            String dupId=param.getCon0();
+            result=pluginService.queryPlHttpLogById(dupId);
         }catch (Exception e){
             e.printStackTrace();
             return Response.error("查询插件错误!");
@@ -712,11 +712,11 @@ public class pluginController {
         return Response.ok().setData(result);
     }
 
-    @RequestMapping(value = "/delPlHttpLogByVId",method = RequestMethod.POST)
-    public Response delPlHttpLogByVId(@RequestBody CommonReqBean param, HttpServletRequest request){
+    @RequestMapping(value = "/delPlHttpLogById",method = RequestMethod.POST)
+    public Response delPlHttpLogById(@RequestBody CommonReqBean param, HttpServletRequest request){
         try {
-            String vid=param.getCon0();
-            pluginService.delPlHttpLogByVId(vid);
+            String dupId=param.getCon0();
+            pluginService.delPlHttpLogById(dupId);
         }catch (Exception e){
             e.printStackTrace();
             return Response.error("删除插件错误!");

@@ -217,9 +217,9 @@ public class ApiBsService {
     }
 
 
-    public void addPluginUsing(DagPlugUsingBean dagPlugUsingBean){
+    public DagPlugUsingBean addPluginUsing(DagPlugUsingBean dagPlugUsingBean){
         //添加插件，确保一个服务一种插件只能有一个
-        apiBsDao.addPluginUsing(dagPlugUsingBean);
+        return apiBsDao.addPluginUsing(dagPlugUsingBean);
         //添加插件内容，确保一个
 
     }
@@ -227,7 +227,7 @@ public class ApiBsService {
     @Transactional(rollbackFor = Exception.class)
     public void delPluginUsing(DagPlugUsingBean dagPlugUsingBean) throws Exception {
         //删除插件内容，
-        pluginService.deletePluginContext(dagPlugUsingBean.getVid(),dagPlugUsingBean.getPluginCode());
+        pluginService.deletePluginContext(dagPlugUsingBean.getDpuId(),dagPlugUsingBean.getPluginCode());
         //删除插件
         apiBsDao.delPluginUsing(dagPlugUsingBean.getDpuId());
     }
