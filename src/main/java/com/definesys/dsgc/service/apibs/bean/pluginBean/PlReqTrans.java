@@ -37,7 +37,8 @@ public class PlReqTrans {
     private String appendHeaders;
     private String appendQuerystring;
     private String dpuId;
-
+    @Column(type = ColumnType.JAVA)
+    private String consumer;
     public String getDpuId() {
         return dpuId;
     }
@@ -253,5 +254,13 @@ public class PlReqTrans {
 
     public void setObjectVersionNumber(Integer objectVersionNumber) {
         this.objectVersionNumber = objectVersionNumber;
+    }
+
+    public String getConsumer() {
+        return consumer;
+    }
+
+    public void setConsumer(String consumer) {
+        this.consumer = consumer;
     }
 }

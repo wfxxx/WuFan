@@ -218,10 +218,7 @@ public class ApiBsService {
 
 
     public DagPlugUsingBean addPluginUsing(DagPlugUsingBean dagPlugUsingBean){
-        //添加插件，确保一个服务一种插件只能有一个
         return apiBsDao.addPluginUsing(dagPlugUsingBean);
-        //添加插件内容，确保一个
-
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -234,6 +231,10 @@ public class ApiBsService {
 
     public void delPluginUsingByVid(String vid){
         apiBsDao.delPluginUsingByVid(vid);
+    }
+
+    public DagPlugUsingBean queryPluginUsingByid(String id){
+        return apiBsDao.queryPluginUsingByid(id);
     }
 
     public void updatePluginUsing(DagPlugUsingBean dagPlugUsingBean){
@@ -262,6 +263,11 @@ public class ApiBsService {
         }
         Collections.reverse(result);
         return result;
+    }
+
+
+    public void updatePluginUsingConsumer(String consumer,String dupId){
+        apiBsDao.updatePluginUsingConsumer(consumer,dupId);
     }
 
 

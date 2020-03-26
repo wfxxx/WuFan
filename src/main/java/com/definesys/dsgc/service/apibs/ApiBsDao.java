@@ -145,6 +145,10 @@ public class ApiBsDao {
     }
 
 
+    public DagPlugUsingBean queryPluginUsingByid(String id){
+        return sw.buildQuery().eq("dpu_id",id).doQueryFirst(DagPlugUsingBean.class);
+    }
+
     public List<DagPlugUsingBean> queryPluginUsing(String vid){
         return sw.buildQuery().eq("vid",vid).orderBy("creationDate","desc").doQuery(DagPlugUsingBean.class);
     }
@@ -199,5 +203,13 @@ public class ApiBsDao {
         String[] conArray = envCode.trim().split(",");
         return sw.buildQuery().in("ENV_CODE",conArray).doQuery(DSGCEnvInfoCfg.class);
     }
+
+    public void updatePluginUsingConsumer(String consumer,String dupId){
+        sw.buildQuery()
+                .update("consumer",consumer)
+                .eq("dpu_id",dupId)
+                .doUpdate(DagPlugUsingBean.class);
+    }
+
 
 }

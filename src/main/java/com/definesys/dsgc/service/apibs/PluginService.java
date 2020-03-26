@@ -1,8 +1,10 @@
 package com.definesys.dsgc.service.apibs;
 
+import com.definesys.dsgc.service.apibs.bean.DagPlugUsingBean;
 import com.definesys.dsgc.service.apibs.bean.pluginBean.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -18,6 +20,8 @@ public class PluginService {
 
     @Autowired
     private PluginDao pluginDao;
+    @Autowired
+    private ApiBsService apiBsService;
 
     public void deletePluginContext(String budId,String pluginCode) throws Exception {
         switch (pluginCode){
@@ -67,86 +71,193 @@ public class PluginService {
     }
     //  PlBasicAuthBean
     public void addPlBasicAuthBean(PlBasicAuthBean plBasicAuthBean){ pluginDao.addPlBasicAuthBean(plBasicAuthBean); }
-    public PlBasicAuthBean queryPlBasicAuthBeanById(String id){ return pluginDao.queryPlBasicAuthBeanById(id); }
+    public PlBasicAuthBean queryPlBasicAuthBeanById(String id){
+        DagPlugUsingBean consumerValue=apiBsService.queryPluginUsingByid(id);
+        PlBasicAuthBean result=pluginDao.queryPlBasicAuthBeanById(id);
+        result.setConsumer(consumerValue.getConsumer());
+        return result;
+    }
     public void delPlBasicAuthBeanById(String id){ pluginDao.delPlBasicAuthBeanById(id); }
-    public void updatePlBasicAuthBean(PlBasicAuthBean plBasicAuthBean){ pluginDao.updatePlBasicAuthBean(plBasicAuthBean); }
+    @Transactional
+    public void updatePlBasicAuthBean(PlBasicAuthBean plBasicAuthBean){
+        apiBsService.updatePluginUsingConsumer(plBasicAuthBean.getConsumer(),plBasicAuthBean.getDpuId());
+        pluginDao.updatePlBasicAuthBean(plBasicAuthBean);
+    }
 
     //PlKeyAuthBeann
-    public PlKeyAuthBean queryPlKeyAuthBeannById(String id){ return  pluginDao.queryPlKeyAuthBeannById(id); }
+    public PlKeyAuthBean queryPlKeyAuthBeannById(String id){
+        DagPlugUsingBean consumerValue=apiBsService.queryPluginUsingByid(id);
+        PlKeyAuthBean result=  pluginDao.queryPlKeyAuthBeannById(id);
+        result.setConsumer(consumerValue.getConsumer());
+        return result;
+    }
     public void addPlKeyAuthBean(PlKeyAuthBean plKeyAuthBean){pluginDao.addPlKeyAuthBean(plKeyAuthBean);}
     public void delPlKeyAuthBeanById(String id){ pluginDao.delPlKeyAuthBeanById(id); }
-    public void updatePlKeyAuthBeanBean(PlKeyAuthBean plKeyAuthBean){ pluginDao.updatePlKeyAuthBeanBean(plKeyAuthBean); }
+    @Transactional
+    public void updatePlKeyAuthBeanBean(PlKeyAuthBean plKeyAuthBean){
+        apiBsService.updatePluginUsingConsumer(plKeyAuthBean.getConsumer(),plKeyAuthBean.getDpuId());
+        pluginDao.updatePlKeyAuthBeanBean(plKeyAuthBean); }
     //    PlOauth2;  3
-    public PlOauth2 queryPlOauth2nById(String id){ return  pluginDao.queryPlOauth2nById(id); }
+    public PlOauth2 queryPlOauth2nById(String id) {
+        DagPlugUsingBean consumerValue = apiBsService.queryPluginUsingByid(id);
+        PlOauth2 result = pluginDao.queryPlOauth2nById(id);
+        result.setConsumer(consumerValue.getConsumer());
+        return result;
+    }
     public void addPlOauth2(PlOauth2 plOauth2){pluginDao.addPlOauth2(plOauth2); }
     public void delPlOauth2ById(String id){
         pluginDao.delPlOauth2ById(id);
     }
-    public void updatePlOauth2(PlOauth2 plOauth2){ pluginDao.updatePlOauth2( plOauth2); }
+    @Transactional
+    public void updatePlOauth2(PlOauth2 plOauth2){
+        apiBsService.updatePluginUsingConsumer(plOauth2.getConsumer(),plOauth2.getDpuId());
+        pluginDao.updatePlOauth2( plOauth2); }
 
     //    PlAddAcl;  4
-    public PlAddAcl queryPlAddAclById(String id){ return  pluginDao.queryPlAddAclById(id); }
+    public PlAddAcl queryPlAddAclById(String id){
+        DagPlugUsingBean consumerValue = apiBsService.queryPluginUsingByid(id);
+        PlAddAcl result = pluginDao.queryPlAddAclById(id);
+        result.setConsumer(consumerValue.getConsumer());
+        return result;
+        }
     public void addPlAddAcl(PlAddAcl plAddAcl){pluginDao.addPlAddAcl( plAddAcl); }
     public void delPlAddAclById(String id){
         pluginDao.delPlAddAclById(id);
     }
-    public void updatePlAddAcl(PlAddAcl plAddAcl){ pluginDao.updatePlAddAcl( plAddAcl); }
+    @Transactional
+    public void updatePlAddAcl(PlAddAcl plAddAcl){
+        apiBsService.updatePluginUsingConsumer(plAddAcl.getConsumer(),plAddAcl.getDpuId());
+        pluginDao.updatePlAddAcl( plAddAcl); }
 
     //    PlIpRestriction;  5
-    public PlIpRestriction queryPlIpRestrictionById(String id){ return  pluginDao.queryPlIpRestrictionById(id); }
+    public PlIpRestriction queryPlIpRestrictionById(String id){
+        DagPlugUsingBean consumerValue = apiBsService.queryPluginUsingByid(id);
+        PlIpRestriction result = pluginDao.queryPlIpRestrictionById(id);
+        result.setConsumer(consumerValue.getConsumer());
+        return result;
+         }
     public void addPlIpRestriction(PlIpRestriction plIpRestriction){pluginDao.addPlIpRestriction(plIpRestriction); }
     public void delPlIpRestrictionById(String id){ pluginDao.delPlIpRestrictionById(id); }
-    public void updatePlIpRestriction(PlIpRestriction plIpRestriction){ pluginDao.updatePlIpRestriction(plIpRestriction); }
+    @Transactional
+    public void updatePlIpRestriction(PlIpRestriction plIpRestriction){
+        apiBsService.updatePluginUsingConsumer(plIpRestriction.getConsumer(),plIpRestriction.getDpuId());
+        pluginDao.updatePlIpRestriction(plIpRestriction); }
     //   PlRateLimiting; 6
 
-    public PlRateLimiting queryPlRateLimitingById(String id){ return  pluginDao.queryPlRateLimitingById(id); }
+    public PlRateLimiting queryPlRateLimitingById(String id){
+        DagPlugUsingBean consumerValue = apiBsService.queryPluginUsingByid(id);
+        PlRateLimiting result = pluginDao.queryPlRateLimitingById(id);
+        result.setConsumer(consumerValue.getConsumer());
+        return result;
+         }
     public void addPlRateLimiting(PlRateLimiting plRateLimiting){pluginDao.addPlRateLimiting( plRateLimiting); }
     public void delPlRateLimitingById(String id){ pluginDao.delPlRateLimitingById(id); }
-    public void updatePlRateLimiting(PlRateLimiting plRateLimiting){ pluginDao.updatePlRateLimiting( plRateLimiting); }
+    @Transactional
+    public void updatePlRateLimiting(PlRateLimiting plRateLimiting){
+        apiBsService.updatePluginUsingConsumer(plRateLimiting.getConsumer(),plRateLimiting.getDpuId());
+        pluginDao.updatePlRateLimiting( plRateLimiting); }
     //   PlReqSizeLimiting; 7
 
-    public PlReqSizeLimiting queryPlReqSizeLimitingById(String id){ return  pluginDao.queryPlReqSizeLimitingById(id); }
+    public PlReqSizeLimiting queryPlReqSizeLimitingById(String id){
+        DagPlugUsingBean consumerValue = apiBsService.queryPluginUsingByid(id);
+        PlReqSizeLimiting result = pluginDao.queryPlReqSizeLimitingById(id);
+        result.setConsumer(consumerValue.getConsumer());
+        return result;
+         }
     public void addPlReqSizeLimiting(PlReqSizeLimiting plReqSizeLimiting){pluginDao.addPlReqSizeLimiting( plReqSizeLimiting); }
     public void delPlReqSizeLimitingById(String id){ pluginDao.delPlReqSizeLimitingById(id); }
-    public void updatePlReqSizeLimitingl(PlReqSizeLimiting plReqSizeLimiting){ pluginDao.updatePlReqSizeLimitingl( plReqSizeLimiting); }
+    @Transactional
+    public void updatePlReqSizeLimitingl(PlReqSizeLimiting plReqSizeLimiting){
+        apiBsService.updatePluginUsingConsumer(plReqSizeLimiting.getConsumer(),plReqSizeLimiting.getDpuId());
+        pluginDao.updatePlReqSizeLimitingl( plReqSizeLimiting); }
 
     //    PlReqTrans;  8
-    public PlReqTrans queryPlReqTransById(String id){ return  pluginDao.queryPlReqTransById(id); }
+    public PlReqTrans queryPlReqTransById(String id){
+        DagPlugUsingBean consumerValue = apiBsService.queryPluginUsingByid(id);
+        PlReqTrans result = pluginDao.queryPlReqTransById(id);
+        result.setConsumer(consumerValue.getConsumer());
+        return result;
+       }
     public void addPlReqTrans(PlReqTrans plReqTrans){pluginDao.addPlReqTrans( plReqTrans); }
     public void delPlReqTransById(String id){ pluginDao.delPlReqTransById(id); }
-    public void updatePlReqTrans(PlReqTrans plReqTrans){ pluginDao.updatePlReqTrans( plReqTrans); }
+    @Transactional
+    public void updatePlReqTrans(PlReqTrans plReqTrans){
+        apiBsService.updatePluginUsingConsumer(plReqTrans.getConsumer(),plReqTrans.getDpuId());
+        pluginDao.updatePlReqTrans( plReqTrans); }
 
     //     PlResTrans;  9
-    public PlResTrans queryPlResTransById(String id){ return  pluginDao.queryPlResTransById(id); }
+    public PlResTrans queryPlResTransById(String id){
+        DagPlugUsingBean consumerValue = apiBsService.queryPluginUsingByid(id);
+        PlResTrans result = pluginDao.queryPlResTransById(id);
+        result.setConsumer(consumerValue.getConsumer());
+        return result;
+         }
     public void addPlResTrans(PlResTrans plResTrans){pluginDao.addPlResTrans( plResTrans); }
     public void delPlResTransById(String id){ pluginDao.delPlResTransById(id); }
-    public void updatePlResTrans(PlResTrans plResTrans){ pluginDao.updatePlResTrans( plResTrans); }
+    @Transactional
+    public void updatePlResTrans(PlResTrans plResTrans){
+        apiBsService.updatePluginUsingConsumer(plResTrans.getConsumer(),plResTrans.getDpuId());
+        pluginDao.updatePlResTrans( plResTrans); }
 
     //     PlCorrelationId;  10
-    public PlCorrelationId queryPlCorrelationIdById(String id){ return  pluginDao.queryPlCorrelationIdById(id); }
+    public PlCorrelationId queryPlCorrelationIdById(String id){
+        DagPlugUsingBean consumerValue = apiBsService.queryPluginUsingByid(id);
+        PlCorrelationId result = pluginDao.queryPlCorrelationIdById(id);
+        result.setConsumer(consumerValue.getConsumer());
+        return result;
+         }
     public void addPlCorrelationId(PlCorrelationId plCorrelationId){pluginDao.addPlCorrelationId( plCorrelationId); }
     public void delPlCorrelationIdById(String id){ pluginDao.delPlCorrelationIdById(id); }
-    public void updatePlCorrelationId(PlCorrelationId plCorrelationId){ pluginDao.updatePlCorrelationId( plCorrelationId); }
+    @Transactional
+    public void updatePlCorrelationId(PlCorrelationId plCorrelationId){
+        apiBsService.updatePluginUsingConsumer(plCorrelationId.getConsumer(),plCorrelationId.getDpuId());
+        pluginDao.updatePlCorrelationId( plCorrelationId); }
 
 //     PluginTcpLog;   11
 
-    public PluginTcpLog queryPluginTcpLogById(String id){ return  pluginDao. queryPluginTcpLogById(id); }
+    public PluginTcpLog queryPluginTcpLogById(String id){
+        DagPlugUsingBean consumerValue = apiBsService.queryPluginUsingByid(id);
+        PluginTcpLog result = pluginDao.queryPluginTcpLogById(id);
+        result.setConsumer(consumerValue.getConsumer());
+        return result;
+         }
     public void addPluginTcpLog(PluginTcpLog pluginTcpLog){pluginDao.addPluginTcpLog( pluginTcpLog); }
     public void delPluginTcpLog(String id){ pluginDao.delPluginTcpLog(id); }
-    public void updatePluginTcpLog(PluginTcpLog pluginTcpLog){ pluginDao. updatePluginTcpLog( pluginTcpLog); }
+    @Transactional
+    public void updatePluginTcpLog(PluginTcpLog pluginTcpLog){
+        apiBsService.updatePluginUsingConsumer(pluginTcpLog.getConsumer(),pluginTcpLog.getDpuId());
+        pluginDao. updatePluginTcpLog( pluginTcpLog); }
 
 //     PlUdpLog;  12
 
-    public PlUdpLog queryplUdpLogById(String id){ return  pluginDao.queryplUdpLogById(id); }
+    public PlUdpLog queryplUdpLogById(String id){
+        DagPlugUsingBean consumerValue = apiBsService.queryPluginUsingByid(id);
+        PlUdpLog result = pluginDao.queryplUdpLogById(id);
+        result.setConsumer(consumerValue.getConsumer());
+        return result;
+        }
     public void addplUdpLog(PlUdpLog plUdpLog){pluginDao.addplUdpLog( plUdpLog); }
     public void delplUdpLogById(String id){ pluginDao.delplUdpLogById(id); }
-    public void updateplUdpLog(PlUdpLog plUdpLog){ pluginDao.updateplUdpLog( plUdpLog); }
+    @Transactional
+    public void updateplUdpLog(PlUdpLog plUdpLog){
+        apiBsService.updatePluginUsingConsumer(plUdpLog.getConsumer(),plUdpLog.getDpuId());
+        pluginDao.updateplUdpLog( plUdpLog); }
 
     //     PlHttpLog;  13
-    public PlHttpLog queryPlHttpLogById(String id){ return  pluginDao.queryPlHttpLogById(id); }
+    public PlHttpLog queryPlHttpLogById(String id){
+        DagPlugUsingBean consumerValue = apiBsService.queryPluginUsingByid(id);
+        PlHttpLog result = pluginDao.queryPlHttpLogById(id);
+        result.setConsumer(consumerValue.getConsumer());
+        return result;
+        }
     public void addPlHttpLog(PlHttpLog plHttpLog){pluginDao.addPlHttpLog( plHttpLog); }
     public void delPlHttpLogById(String id){ pluginDao.delPlHttpLogById(id); }
-    public void updatePlHttpLog(PlHttpLog plHttpLog){ pluginDao.updatePlHttpLog( plHttpLog); }
+    @Transactional
+    public void updatePlHttpLog(PlHttpLog plHttpLog){
+        apiBsService.updatePluginUsingConsumer(plHttpLog.getConsumer(),plHttpLog.getDpuId());
+        pluginDao.updatePlHttpLog( plHttpLog); }
+
+
 
 
 }

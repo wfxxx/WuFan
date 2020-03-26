@@ -1,8 +1,6 @@
 package com.definesys.dsgc.service.apibs.bean.pluginBean;
 
-import com.definesys.mpaas.query.annotation.RowID;
-import com.definesys.mpaas.query.annotation.RowIDType;
-import com.definesys.mpaas.query.annotation.Table;
+import com.definesys.mpaas.query.annotation.*;
 
 /**
  * @ClassName PlHttpLog
@@ -25,7 +23,8 @@ public class PlHttpLog {
     private Integer queueSize;
     private Integer flushTimeout;
     private String dpuId;
-
+    @Column(type = ColumnType.JAVA)
+    private String consumer;
     public String getDpuId() {
         return dpuId;
     }
@@ -109,5 +108,13 @@ public class PlHttpLog {
 
     public void setFlushTimeout(Integer flushTimeout) {
         this.flushTimeout = flushTimeout;
+    }
+
+    public String getConsumer() {
+        return consumer;
+    }
+
+    public void setConsumer(String consumer) {
+        this.consumer = consumer;
     }
 }

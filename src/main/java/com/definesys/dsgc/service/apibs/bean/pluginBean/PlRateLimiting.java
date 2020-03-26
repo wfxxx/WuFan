@@ -38,7 +38,8 @@ public class PlRateLimiting {
     private Integer redisDatabase;
     private String hideClientHeaders;
     private String dpuId;
-
+    @Column(type = ColumnType.JAVA)
+    private String consumer;
     public String getDpuId() {
         return dpuId;
     }
@@ -238,5 +239,12 @@ public class PlRateLimiting {
 
     public void setObjectVersionNumber(Integer objectVersionNumber) {
         this.objectVersionNumber = objectVersionNumber;
+    }
+    public String getConsumer() {
+        return consumer;
+    }
+
+    public void setConsumer(String consumer) {
+        this.consumer = consumer;
     }
 }

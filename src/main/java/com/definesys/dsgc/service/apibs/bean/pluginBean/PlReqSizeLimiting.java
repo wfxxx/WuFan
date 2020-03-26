@@ -24,7 +24,8 @@ public class PlReqSizeLimiting {
     private String allowedPayloadSize;
     private String sizeUnit;
     private String dpuId;
-
+    @Column(type = ColumnType.JAVA)
+    private String consumer;
     public String getDpuId() {
         return dpuId;
     }
@@ -120,5 +121,13 @@ public class PlReqSizeLimiting {
 
     public void setObjectVersionNumber(Integer objectVersionNumber) {
         this.objectVersionNumber = objectVersionNumber;
+    }
+
+    public String getConsumer() {
+        return consumer;
+    }
+
+    public void setConsumer(String consumer) {
+        this.consumer = consumer;
     }
 }

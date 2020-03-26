@@ -37,7 +37,8 @@ public class PlOauth2 {
     private String authHeaderName;
     private Integer refreshTokenTtl;
     private String dpuId;
-
+    @Column(type = ColumnType.JAVA)
+    private String consumer;
     public String getDpuId() {
         return dpuId;
     }
@@ -229,5 +230,13 @@ public class PlOauth2 {
 
     public void setObjectVersionNumber(Integer objectVersionNumber) {
         this.objectVersionNumber = objectVersionNumber;
+    }
+
+    public String getConsumer() {
+        return consumer;
+    }
+
+    public void setConsumer(String consumer) {
+        this.consumer = consumer;
     }
 }

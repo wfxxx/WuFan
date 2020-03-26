@@ -25,7 +25,8 @@ public class PlBasicAuthBean extends MpaasBasePojo implements Serializable {
     private String anonymous;
     private String hideCdls;
     private String dpuId;
-
+    @Column(type = ColumnType.JAVA)
+    private String consumer;
     public String getDpuId() {
         return dpuId;
     }
@@ -119,5 +120,12 @@ public class PlBasicAuthBean extends MpaasBasePojo implements Serializable {
 
     public void setObjectVersionNumber(Integer objectVersionNumber) {
         this.objectVersionNumber = objectVersionNumber;
+    }
+    public String getConsumer() {
+        return consumer;
+    }
+
+    public void setConsumer(String consumer) {
+        this.consumer = consumer;
     }
 }
