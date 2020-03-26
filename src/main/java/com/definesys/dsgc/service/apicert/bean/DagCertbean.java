@@ -27,12 +27,12 @@ public class DagCertbean extends MpaasBasePojo implements Serializable {
     private String certKey;
     private String certCnt;
     private String certSni;
-    private String appCode="";
+    private String appCode;
     @Column(type = ColumnType.JAVA)
-    private String appName="";
-    private String envCode="";
+    private String appName;
+    private String envCode;
     @Column(type = ColumnType.JAVA)
-    private String envName="";
+    private String envName;
     @SystemColumn(SystemColumnType.CREATE_BY)
     @Column(value = "created_by")
     private String createdBy;
