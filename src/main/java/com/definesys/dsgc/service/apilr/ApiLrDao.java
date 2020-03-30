@@ -133,4 +133,13 @@ public class ApiLrDao {
         String[] conArray = envCode.trim().split(",");
         return sw.buildQuery().in("ENV_CODE",conArray).doQuery(DSGCEnvInfoCfg.class);
     }
+
+    public Boolean checkLrTargetIsExist(String dltId){
+        DagLrTargetBean dagLrTargetBean = sw.buildQuery().eq("dlt_id",dltId).doQueryFirst(DagLrTargetBean.class);
+        return dagLrTargetBean == null? false:true;
+    }
+
+    public void delTarget(String dltId){
+        sw.buildQuery().eq("dlt_id",dltId).doDelete(DagLrTargetBean.class);
+    }
 }

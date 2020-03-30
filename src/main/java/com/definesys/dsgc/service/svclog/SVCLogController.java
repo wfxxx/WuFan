@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Api(description = "服务日志相关API", tags = "服务日志")
 @RequestMapping(value = "/dsgc/svclog")
@@ -160,8 +161,8 @@ public class SVCLogController {
     }
     @RequestMapping(value="/queryEsbEnv",method = RequestMethod.GET)
     public Response queryEsbEnv(){
-
-        List<EsbEnvInfoCfgDTO> result = null;
+    // List<EsbEnvInfoCfgDTO>
+        Map<String,Object> result = null;
         try {
             result  = sls.queryEsbEnv();
         }catch (Exception e){

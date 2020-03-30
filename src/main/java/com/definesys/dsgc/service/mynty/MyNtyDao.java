@@ -673,7 +673,7 @@ public class MyNtyDao {
         MpaasQuery mpaasQuery = this.sw.buildQuery()
                 .eq("ntyUser",dsgcMnNotices.getNtyUser());
         if (StringUtils.isNotEmpty(dsgcMnNotices.getMnTitle())) {
-            mpaasQuery = mpaasQuery.eq("mnTitle",dsgcMnNotices.getMnTitle());
+            mpaasQuery = mpaasQuery.like("mnTitle",dsgcMnNotices.getMnTitle());
         }
         if (dsgcMnNotices.getMnTypeList()!=null) {
             if(dsgcMnNotices.getMnTypeList().size()==0){

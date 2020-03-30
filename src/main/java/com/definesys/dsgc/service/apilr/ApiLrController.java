@@ -158,4 +158,15 @@ public class ApiLrController {
         }
         return Response.ok();
     }
+
+    @RequestMapping(value = "/delTarget",method = RequestMethod.POST)
+    public Response delTarget(@RequestBody CommonReqBean param){
+        try {
+            apiLrService.delTarget(param.getCon0());
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("删除失败！");
+        }
+        return Response.ok();
+    }
 }

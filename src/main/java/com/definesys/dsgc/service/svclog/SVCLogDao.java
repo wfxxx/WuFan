@@ -229,7 +229,7 @@ public class SVCLogDao {
         sw.buildQuery().update("biz_resolve",param.getBizResolve()).eq("servNo",param.getServNo()).doUpdate(DSGCService.class);
     }
     public List<DSGCEnvInfoCfg> queryEsbEnv(){
-       return sw.buildQuery().eq("env_type","ESB").doQuery(DSGCEnvInfoCfg.class);
+       return sw.buildQuery().eq("env_type","ESB").orderBy("env_seq","desc").doQuery(DSGCEnvInfoCfg.class);
     }
     public List<DSGCServInterfaceNode> getKeyword(String servNo) {
         if(servNo == ""){

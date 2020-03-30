@@ -174,4 +174,11 @@ public class ApiLrService {
             }
         }
     }
+    @Transactional(rollbackFor = Exception.class)
+    public void delTarget(String dltId) {
+       Boolean isExist = apiLrDao.checkLrTargetIsExist(dltId);
+       if(isExist){
+           apiLrDao.delTarget(dltId);
+       }
+    }
 }

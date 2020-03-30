@@ -71,7 +71,7 @@ public class ApiLogDao {
                 .doQueryFirst(FndProperties.class);
     }
     public List<DSGCEnvInfoCfg> queryApiEnv(){
-        return sw.buildQuery().eq("env_type","DAG").doQuery(DSGCEnvInfoCfg.class);
+        return sw.buildQuery().eq("env_type","DAG").orderBy("env_seq","desc").doQuery(DSGCEnvInfoCfg.class);
     }
     public DSGCApisBean queryApiByCode(String apiCode){
         return sw.buildQuery().eq("api_code",apiCode).doQueryFirst(DSGCApisBean.class);
