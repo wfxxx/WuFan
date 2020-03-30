@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.definesys.dsgc.service.apilog.bean.*;
 import com.definesys.dsgc.service.consumers.ConsumersDao;
 import com.definesys.dsgc.service.consumers.bean.DSGCConsumerEntities;
+import com.definesys.dsgc.service.svclog.DSGCLogInstanceDao;
 import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.dsgc.service.utils.httpclient.HttpReqUtil;
 import com.definesys.dsgc.service.utils.httpclient.ResultVO;
@@ -20,10 +21,7 @@ import org.springframework.web.client.HttpClientErrorException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class ApiLogService {
@@ -32,6 +30,9 @@ public class ApiLogService {
 
     @Autowired
     private ConsumersDao consumersDao;
+
+    @Autowired
+    DSGCLogInstanceDao dsgcLogInstanceDao;
 
     @Transactional(rollbackFor = Exception.class)
     public void recordLog(JSONArray jsonArray){
@@ -270,5 +271,22 @@ public class ApiLogService {
             }
             return resultvo.getData();
         }
+    }
+    public Map<String,Object> queryApiEnv(){
+        Map<String,Object> map = new HashMap<>();
+        List<DSGCEnvInfoCfg> list = apiLogDao.queryApiEnv();
+        com.definesys.dsgc.service.svclog.bean.FndProperties fndProperties =dsgcLogInstanceDao.findFndPropertiesByKey("DSGC_API_CURRENT_ENV");
+        List<DagEnvInfoCfgDTO> result = new ArrayList<>();
+        Iterator<DSGCEnvInfoCfg> infoCfgBeanIterator = list.iterator();
+        while (infoCfgBeanIterator.hasNext()){
+            DSGCEnvInfoCfg dsgcEnvInfoCfg = infoCfgBeanIterator.next();
+            DagEnvInfoCfgDTO dagEnvInfoCfgDTO = new DagEnvInfoCfgDTO();
+            dagEnvInfoCfgDTO.setEnvCode(dsgcEnvInfoCfg.getEnvCode());
+            dagEnvInfoCfgDTO.setEnvName(dsgcEnvInfoCfg.getEnvName());
+            result.add(dagEnvInfoCfgDTO);
+        }
+        map.put("envList",result);
+        map.put("currentEnv",fndProperties.getPropertyValue());
+        return map;
     }
 }

@@ -1,5 +1,6 @@
 package com.definesys.dsgc.service.svclog;
 
+import com.definesys.dsgc.service.lkv.FndPropertiesService;
 import com.definesys.dsgc.service.svclog.bean.*;
 import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
 import com.definesys.dsgc.service.svcmng.bean.DSGCServInterfaceNode;
@@ -11,9 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class SVCLogService {
@@ -22,6 +21,8 @@ public class SVCLogService {
 
     @Autowired
     private DSGCUserDao dsgcUserDao;
+    @Autowired
+    DSGCLogInstanceDao dsgcLogInstanceDao;
 
 public PageQueryResult<SVCLogListBean> querySvcLogRecordListByCon(SVCLogQueryBean q, int pageSize, int pageIndex,String userRole,String userId) {
     PageQueryResult<SVCLogListBean> result = new PageQueryResult<SVCLogListBean>();
@@ -380,9 +381,12 @@ public PageQueryResult<SVCLogListBean> querySvcLogRecordListByCon(SVCLogQueryBea
 
     }
 
-    public List<EsbEnvInfoCfgDTO> queryEsbEnv(){
+    public  Map<String,Object> queryEsbEnv(){
+        //List<EsbEnvInfoCfgDTO>
+        Map<String,Object> map = new HashMap<>();
         List<EsbEnvInfoCfgDTO> result = new ArrayList<>();
       List<DSGCEnvInfoCfg>  list = sldao.queryEsbEnv();
+        FndProperties fndProperties =dsgcLogInstanceDao.findFndPropertiesByKey("DSGC_CURRENT_ENV");
       Iterator<DSGCEnvInfoCfg> iterator = list.iterator();
       while (iterator.hasNext()){
           DSGCEnvInfoCfg dsgcEnvInfoCfg = iterator.next();
@@ -391,7 +395,9 @@ public PageQueryResult<SVCLogListBean> querySvcLogRecordListByCon(SVCLogQueryBea
           dto.setEnvName(dsgcEnvInfoCfg.getEnvName());
           result.add(dto);
       }
-      return result;
+      map.put("envList",result);
+      map.put("currentEnv",fndProperties.getPropertyValue());
+      return map;
     }
 
     public List<DSGCServInterfaceNode> getKeyword(String servNo) {

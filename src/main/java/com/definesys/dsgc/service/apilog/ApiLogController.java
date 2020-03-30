@@ -18,6 +18,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/dsgc/apilog")
@@ -93,5 +94,17 @@ public class ApiLogController {
         e.printStackTrace();
         return Response.error("查询数据失败！");
     }
+    }
+
+    @RequestMapping(value = "/queryApiEnv",method = RequestMethod.GET)
+    public Response queryApiEnv(){
+        Map<String,Object> result = null;
+        try {
+            result =  apiLogService.queryApiEnv();
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("查询环境信息失败");
+        }
+        return Response.ok().setData(result);
     }
 }
