@@ -1,8 +1,6 @@
 package com.definesys.dsgc.service.apibs.bean.pluginBean;
 
-import com.definesys.mpaas.query.annotation.RowID;
-import com.definesys.mpaas.query.annotation.RowIDType;
-import com.definesys.mpaas.query.annotation.Table;
+import com.definesys.mpaas.query.annotation.*;
 
 /**
  * @ClassName PlHttpLog
@@ -15,9 +13,7 @@ import com.definesys.mpaas.query.annotation.Table;
 public class PlHttpLog {
     @RowID(type= RowIDType.UUID)
     private String hlId;
-    private String pluginCode;
-    private String vid;
-    private String consumer;
+
     private String httpEndpoint;
     private String method;
     private String contentType;
@@ -26,7 +22,16 @@ public class PlHttpLog {
     private Integer retryCount;
     private Integer queueSize;
     private Integer flushTimeout;
+    private String dpuId;
+    @Column(type = ColumnType.JAVA)
+    private String consumer;
+    public String getDpuId() {
+        return dpuId;
+    }
 
+    public void setDpuId(String dpuId) {
+        this.dpuId = dpuId;
+    }
     public String getHlId() {
         return hlId;
     }
@@ -35,29 +40,11 @@ public class PlHttpLog {
         this.hlId = hlId;
     }
 
-    public String getPluginCode() {
-        return pluginCode;
-    }
 
-    public void setPluginCode(String pluginCode) {
-        this.pluginCode = pluginCode;
-    }
 
-    public String getVid() {
-        return vid;
-    }
 
-    public void setVid(String vid) {
-        this.vid = vid;
-    }
 
-    public String getConsumer() {
-        return consumer;
-    }
 
-    public void setConsumer(String consumer) {
-        this.consumer = consumer;
-    }
 
     public String getHttpEndpoint() {
         return httpEndpoint;
@@ -121,5 +108,13 @@ public class PlHttpLog {
 
     public void setFlushTimeout(Integer flushTimeout) {
         this.flushTimeout = flushTimeout;
+    }
+
+    public String getConsumer() {
+        return consumer;
+    }
+
+    public void setConsumer(String consumer) {
+        this.consumer = consumer;
     }
 }

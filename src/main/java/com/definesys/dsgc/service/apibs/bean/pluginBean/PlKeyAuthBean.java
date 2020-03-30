@@ -19,15 +19,23 @@ import java.util.Date;
 public class PlKeyAuthBean {
     @RowID(type= RowIDType.UUID)
     private String kaId;
-    private String vid;
-    private String pluginCode;
+
+
     private String keyName;
-    private String consumer;
     private String  anonymous;
     private String hideCdls;
     private String keyInBd;
     private String runOnPf;
+    private String dpuId;
+    @Column(type = ColumnType.JAVA)
+    private String consumer;
+    public String getDpuId() {
+        return dpuId;
+    }
 
+    public void setDpuId(String dpuId) {
+        this.dpuId = dpuId;
+    }
     @SystemColumn(SystemColumnType.CREATE_BY)
     @Column(value = "created_by")
     private String createdBy;
@@ -56,21 +64,8 @@ public class PlKeyAuthBean {
         this.kaId = kaId;
     }
 
-    public String getVid() {
-        return vid;
-    }
 
-    public void setVid(String vid) {
-        this.vid = vid;
-    }
 
-    public String getPluginCode() {
-        return pluginCode;
-    }
-
-    public void setPluginCode(String pluginCode) {
-        this.pluginCode = pluginCode;
-    }
 
     public String getKeyName() {
         return keyName;
@@ -80,13 +75,6 @@ public class PlKeyAuthBean {
         this.keyName = keyName;
     }
 
-    public String getConsumer() {
-        return consumer;
-    }
-
-    public void setConsumer(String consumer) {
-        this.consumer = consumer;
-    }
 
     public String getAnonymous() {
         return anonymous;
@@ -158,5 +146,13 @@ public class PlKeyAuthBean {
 
     public void setObjectVersionNumber(Integer objectVersionNumber) {
         this.objectVersionNumber = objectVersionNumber;
+    }
+
+    public String getConsumer() {
+        return consumer;
+    }
+
+    public void setConsumer(String consumer) {
+        this.consumer = consumer;
     }
 }

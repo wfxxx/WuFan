@@ -19,9 +19,7 @@ import java.util.Date;
 public class PlResTrans {
     @RowID(type= RowIDType.UUID)
     private String prtId;
-    private String pluginCode;
-    private String vid;
-    private String consumer;
+
     private String removeJson;
     private String removeHeaders;
     private String renameHeaders;
@@ -34,6 +32,16 @@ public class PlResTrans {
     private String appendJson;
     private String appendJsonType;
     private String appendHeaders;
+    private String dpuId;
+    @Column(type = ColumnType.JAVA)
+    private String consumer;
+    public String getDpuId() {
+        return dpuId;
+    }
+
+    public void setDpuId(String dpuId) {
+        this.dpuId = dpuId;
+    }
     @SystemColumn(SystemColumnType.CREATE_BY)
     @Column(value = "created_by")
     private String createdBy;
@@ -62,29 +70,10 @@ public class PlResTrans {
         this.prtId = prtId;
     }
 
-    public String getPluginCode() {
-        return pluginCode;
-    }
 
-    public void setPluginCode(String pluginCode) {
-        this.pluginCode = pluginCode;
-    }
 
-    public String getVid() {
-        return vid;
-    }
 
-    public void setVid(String vid) {
-        this.vid = vid;
-    }
 
-    public String getConsumer() {
-        return consumer;
-    }
-
-    public void setConsumer(String consumer) {
-        this.consumer = consumer;
-    }
 
     public String getRemoveJson() {
         return removeJson;
@@ -220,5 +209,13 @@ public class PlResTrans {
 
     public void setObjectVersionNumber(Integer objectVersionNumber) {
         this.objectVersionNumber = objectVersionNumber;
+    }
+
+    public String getConsumer() {
+        return consumer;
+    }
+
+    public void setConsumer(String consumer) {
+        this.consumer = consumer;
     }
 }

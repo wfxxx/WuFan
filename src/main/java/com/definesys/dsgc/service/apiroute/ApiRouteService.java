@@ -55,7 +55,7 @@ public class ApiRouteService {
         return pageQueryResult;
     }
     @Transactional(rollbackFor = Exception.class)
-    public void addApiRoute(DagRoutesBean dagRoutesBean){
+    public Map<String,String> addApiRoute(DagRoutesBean dagRoutesBean){
         apiRouteDao.addApiRoute(dagRoutesBean);
         List<DSGCEnvInfoCfg>  list = apiRouteDao.queryApiEnv();
         Collections.sort(list, new Comparator<DSGCEnvInfoCfg>(){
@@ -79,8 +79,10 @@ public class ApiRouteService {
         }
 
         apiRouteDao.addRouteConfig(dagCodeVersionBean);
-
-    }
+        Map<String,String> result= new HashMap<String,String>();
+        result.put("configId",dagCodeVersionBean.getVid());
+        return result;
+    };
     @Transactional(rollbackFor = Exception.class)
     public void delApiRoute(CommonReqBean param)throws Exception{
         DagRoutesBean dagBsbean = apiRouteDao.queryApiRouteById(param);

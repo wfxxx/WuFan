@@ -67,8 +67,10 @@ public class MarketDao {
                         "       t.MARKET_CATEGORY,\n" +
                         "       t.MARKET_STAT,\n" +
                         "       t.type,\n" +
-                        "       y.CATE_NAME\n" +
-                        "from (select API_ID, API_NAME, API_DESC, APP_CODE, MARKET_CATEGORY, MARKET_STAT, 'API' type\n" +
+                        "       y.CATE_NAME,\n" +
+                        "       t.creation_Date\n" +
+                        "                               \n" +
+                        "from (select API_ID, API_NAME, API_DESC, APP_CODE, MARKET_CATEGORY, MARKET_STAT,creation_Date, 'API' type\n" +
                         "      from DSGC_APIS\n" +
                         "      UNION ALL\n" +
                         "      select SERV_ID            API_ID,\n" +
@@ -77,6 +79,7 @@ public class MarketDao {
                         "             SUBORDINATE_SYSTEM APP_CODE,\n" +
                         "             MARKET_CATEGORY,\n" +
                         "             MARKET_STAT,\n" +
+                        "             creation_Date,\n" +
                         "             '集成服务'             type\n" +
                         "      from DSGC_SERVICES) t\n" +
                         "       left join DSGC_MARKET_CATEGORY y on t.MARKET_CATEGORY = y.CATE_CODE");
@@ -99,6 +102,8 @@ public class MarketDao {
                 }
             }
         }
+        query.orderBy("creationDate","desc");
+
         return query.doPageQuery(pageIndex, pageSize, MarketApiBean.class);
     }
 

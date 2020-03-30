@@ -1,6 +1,10 @@
 package com.definesys.dsgc.service.market.bean;
 
 import com.definesys.mpaas.query.annotation.*;
+import com.definesys.mpaas.query.json.MpaasDateTimeDeserializer;
+import com.definesys.mpaas.query.json.MpaasDateTimeSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Table("DSGC_APIS")
 public class MarketApiBean {
@@ -16,6 +20,8 @@ public class MarketApiBean {
     private String type;
     @Column(type = ColumnType.JAVA)
     private String cateName;
+
+    private String creationDate;
 
     public String getApiId() {
         return apiId;
@@ -80,5 +86,13 @@ public class MarketApiBean {
 
     public void setCateName(String cateName) {
         this.cateName = cateName;
+    }
+
+    public String getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(String creationDate) {
+        this.creationDate = creationDate;
     }
 }

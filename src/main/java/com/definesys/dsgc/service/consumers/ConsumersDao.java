@@ -136,7 +136,8 @@ public class ConsumersDao {
         }
     }
     public List<DSGCConsumerEntities> queryConsumersBaseInfoList(){
-       return sw.buildQuery().doQuery(DSGCConsumerEntities.class);
+       return sw.buildQuery().sql("select * from DSGC_CONSUMER_ENTITIES s order by upper(s.csm_name) asc")
+               .doQuery(DSGCConsumerEntities.class);
     }
 
     public List<Map<String,Object>> queryConsumersListByUserId(String id){

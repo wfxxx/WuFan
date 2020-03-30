@@ -19,9 +19,6 @@ import java.util.Date;
 public class PlReqTrans {
     @RowID(type= RowIDType.UUID)
     private String prtId;
-    private String pluginCode;
-    private String vid;
-    private String  consumer;
     private String httpMethod;
     private String  removeBody;
     private String removeHeaders;
@@ -39,6 +36,16 @@ public class PlReqTrans {
     private String appendBody;
     private String appendHeaders;
     private String appendQuerystring;
+    private String dpuId;
+    @Column(type = ColumnType.JAVA)
+    private String consumer;
+    public String getDpuId() {
+        return dpuId;
+    }
+
+    public void setDpuId(String dpuId) {
+        this.dpuId = dpuId;
+    }
     @SystemColumn(SystemColumnType.CREATE_BY)
     @Column(value = "created_by")
     private String createdBy;
@@ -67,29 +74,11 @@ public class PlReqTrans {
         this.prtId = prtId;
     }
 
-    public String getPluginCode() {
-        return pluginCode;
-    }
 
-    public void setPluginCode(String pluginCode) {
-        this.pluginCode = pluginCode;
-    }
 
-    public String getVid() {
-        return vid;
-    }
 
-    public void setVid(String vid) {
-        this.vid = vid;
-    }
 
-    public String getConsumer() {
-        return consumer;
-    }
 
-    public void setConsumer(String consumer) {
-        this.consumer = consumer;
-    }
 
     public String getHttpMethod() {
         return httpMethod;
@@ -265,5 +254,13 @@ public class PlReqTrans {
 
     public void setObjectVersionNumber(Integer objectVersionNumber) {
         this.objectVersionNumber = objectVersionNumber;
+    }
+
+    public String getConsumer() {
+        return consumer;
+    }
+
+    public void setConsumer(String consumer) {
+        this.consumer = consumer;
     }
 }

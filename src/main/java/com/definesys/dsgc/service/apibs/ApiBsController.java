@@ -244,13 +244,14 @@ public class ApiBsController {
 
     @RequestMapping(value = "/addPluginUsing",method = RequestMethod.POST)
     public Response addPluginUsing(@RequestBody DagPlugUsingBean dagPlugUsingBean){
+        DagPlugUsingBean result=null;
         try {
-            apiBsService.addPluginUsing(dagPlugUsingBean);
+            result =apiBsService.addPluginUsing(dagPlugUsingBean);
         }catch (Exception e){
             e.printStackTrace();
             return Response.error("新增失败");
         }
-        return Response.ok();
+        return Response.ok().setData(result);
     }
 
     @RequestMapping(value = "/updatePluginUsing",method = RequestMethod.POST)

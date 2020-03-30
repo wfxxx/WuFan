@@ -20,12 +20,19 @@ public class PlAddAcl {
 
     @RowID(type = RowIDType.UUID)
     private String aclId;
-    private String vid;
-    private String pluginCode;
-    private String consumer;
     private String whiteList;
     private String blackList;
     private String hideGpHeader;
+    private String dpuId;
+    @Column(type = ColumnType.JAVA)
+    private String consumer;
+    public String getDpuId() {
+        return dpuId;
+    }
+
+    public void setDpuId(String dpuId) {
+        this.dpuId = dpuId;
+    }
 
     @SystemColumn(SystemColumnType.CREATE_BY)
     @Column(value = "created_by")
@@ -55,29 +62,10 @@ public class PlAddAcl {
         this.aclId = aclId;
     }
 
-    public String getVid() {
-        return vid;
-    }
 
-    public void setVid(String vid) {
-        this.vid = vid;
-    }
 
-    public String getPluginCode() {
-        return pluginCode;
-    }
 
-    public void setPluginCode(String pluginCode) {
-        this.pluginCode = pluginCode;
-    }
 
-    public String getConsumer() {
-        return consumer;
-    }
-
-    public void setConsumer(String consumer) {
-        this.consumer = consumer;
-    }
 
     public String getWhiteList() {
         return whiteList;
@@ -141,5 +129,12 @@ public class PlAddAcl {
 
     public void setObjectVersionNumber(Integer objectVersionNumber) {
         this.objectVersionNumber = objectVersionNumber;
+    }
+    public String getConsumer() {
+        return consumer;
+    }
+
+    public void setConsumer(String consumer) {
+        this.consumer = consumer;
     }
 }

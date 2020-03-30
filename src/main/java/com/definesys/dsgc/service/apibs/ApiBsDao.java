@@ -131,8 +131,9 @@ public class ApiBsDao {
         sw.buildQuery().eq("dpu_Id",dagPlugUsingBean.getDpuId()).doUpdate(dagPlugUsingBean);
     }
 
-    public void addPluginUsing(DagPlugUsingBean dagPlugUsingBean){
+    public DagPlugUsingBean addPluginUsing(DagPlugUsingBean dagPlugUsingBean){
         sw.buildQuery().doInsert(dagPlugUsingBean);
+        return dagPlugUsingBean;
     }
 
     public void delPluginUsing(String id){
@@ -143,6 +144,10 @@ public class ApiBsDao {
         sw.buildQuery().eq("vid", vid).doDelete(DagPlugUsingBean.class);
     }
 
+
+    public DagPlugUsingBean queryPluginUsingByid(String id){
+        return sw.buildQuery().eq("dpu_id",id).doQueryFirst(DagPlugUsingBean.class);
+    }
 
     public List<DagPlugUsingBean> queryPluginUsing(String vid){
         return sw.buildQuery().eq("vid",vid).orderBy("creationDate","desc").doQuery(DagPlugUsingBean.class);
@@ -198,5 +203,13 @@ public class ApiBsDao {
         String[] conArray = envCode.trim().split(",");
         return sw.buildQuery().in("ENV_CODE",conArray).doQuery(DSGCEnvInfoCfg.class);
     }
+
+    public void updatePluginUsingConsumer(String consumer,String dupId){
+        sw.buildQuery()
+                .update("consumer",consumer)
+                .eq("dpu_id",dupId)
+                .doUpdate(DagPlugUsingBean.class);
+    }
+
 
 }

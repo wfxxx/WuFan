@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/dsgc/apiRoute")
@@ -29,13 +30,14 @@ public class ApiRouteController {
     }
     @RequestMapping(value = "/addApiRoute",method = RequestMethod.POST)
     public Response addApiRoute(@RequestBody DagRoutesBean dagRoutesBean){
+        Map<String,String> result=null;
         try {
-            apiRouteService.addApiRoute(dagRoutesBean);
+            result=apiRouteService.addApiRoute(dagRoutesBean);
         }catch (Exception e){
             e.printStackTrace();
             return Response.error("新增路由发生错误");
         }
-       return Response.ok();
+       return Response.ok().setData(result);
     }
     @RequestMapping(value = "/delApiRoute",method = RequestMethod.POST)
     public Response delApiRoute(@RequestBody CommonReqBean param){

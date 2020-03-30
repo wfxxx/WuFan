@@ -217,23 +217,24 @@ public class ApiBsService {
     }
 
 
-    public void addPluginUsing(DagPlugUsingBean dagPlugUsingBean){
-        //添加插件，确保一个服务一种插件只能有一个
-        apiBsDao.addPluginUsing(dagPlugUsingBean);
-        //添加插件内容，确保一个
-
+    public DagPlugUsingBean addPluginUsing(DagPlugUsingBean dagPlugUsingBean){
+        return apiBsDao.addPluginUsing(dagPlugUsingBean);
     }
 
     @Transactional(rollbackFor = Exception.class)
     public void delPluginUsing(DagPlugUsingBean dagPlugUsingBean) throws Exception {
         //删除插件内容，
-        pluginService.deletePluginContext(dagPlugUsingBean.getVid(),dagPlugUsingBean.getPluginCode());
+        pluginService.deletePluginContext(dagPlugUsingBean.getDpuId(),dagPlugUsingBean.getPluginCode());
         //删除插件
         apiBsDao.delPluginUsing(dagPlugUsingBean.getDpuId());
     }
 
     public void delPluginUsingByVid(String vid){
         apiBsDao.delPluginUsingByVid(vid);
+    }
+
+    public DagPlugUsingBean queryPluginUsingByid(String id){
+        return apiBsDao.queryPluginUsingByid(id);
     }
 
     public void updatePluginUsing(DagPlugUsingBean dagPlugUsingBean){
@@ -262,6 +263,11 @@ public class ApiBsService {
         }
         Collections.reverse(result);
         return result;
+    }
+
+
+    public void updatePluginUsingConsumer(String consumer,String dupId){
+        apiBsDao.updatePluginUsingConsumer(consumer,dupId);
     }
 
 
