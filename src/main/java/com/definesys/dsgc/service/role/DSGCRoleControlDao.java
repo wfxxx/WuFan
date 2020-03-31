@@ -52,7 +52,7 @@ public class DSGCRoleControlDao {
                 "                left join dsgc_user u on c.role_code=u.user_id\n" +
                 "                left join fnd_lookup_values v1 on v1.lookup_code=c.menu_bar \n" +
                 "                left join fnd_lookup_values v2 on v2.lookup_code=c.role_code\n" +
-                "                )")
+                "                ) m ")
                 .or()
                 .likeNocase("roleName", roleControl.getRoleControlDescription())
                 .likeNocase("menuBarName", roleControl.getRoleControlDescription())

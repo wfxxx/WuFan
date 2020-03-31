@@ -6,6 +6,8 @@ import com.definesys.dsgc.service.apideploylog.bean.DagDeployStatBean;
 import com.definesys.dsgc.service.apiroute.ApiRouteDao;
 import com.definesys.dsgc.service.esbenv.DSGCBusCfgDao;
 import com.definesys.dsgc.service.esbenv.bean.DSGCEnvInfoCfg;
+import com.definesys.dsgc.service.lkv.FndPropertiesDao;
+import com.definesys.dsgc.service.lkv.bean.FndProperties;
 import com.definesys.dsgc.service.market.bean.*;
 import com.definesys.dsgc.service.market.bean.PayloadParamDTO;
 import com.definesys.dsgc.service.market.bean.ServUriParamterDTO;
@@ -36,6 +38,9 @@ public class MarketService {
 
     @Autowired
     private ApiDeployLogDao apiDeployLogDao;
+    @Autowired
+    private FndPropertiesDao fndPropertiesDao;
+
 
     public void addMarketCate(MarketCateVO marketcateVO) {
         marketDao.addMarketCate(marketcateVO);
@@ -54,7 +59,12 @@ public class MarketService {
     }
 
     public PageQueryResult<MarketApiBean> getAllMarketPub(MarketQueryBean q, int pageSize, int pageIndex) {
-        return marketDao.getAllMarketPub(q,pageSize, pageIndex);
+        FndProperties fndProperties = fndPropertiesDao.findFndPropertiesByKey("SHOW_SER_TYPE");
+        String type = "ALL";
+        if(fndProperties != null){
+            type = fndProperties.getPropertyValue();
+        }
+        return marketDao.getAllMarketPub(q,pageSize, pageIndex,type);
     }
 
     public void updateMarketPub(MarketApiBean marketApiBean){

@@ -272,4 +272,8 @@ public class ConsumersService {
       Boolean isExsit =  consumersDao.checkCsmCodeIsExsit(param.getCon0());
       return isExsit;
     }
+    public Boolean checkCsmNameIsExsit(CommonReqBean param){
+        Boolean isExsit =  consumersDao.checkCsmNameIsExsit(param.getCon0());
+        return isExsit;
+    }
 }

@@ -104,9 +104,9 @@ public class FndPropertiesDao {
         return list.size() > 0;
     }
 
-    public FndProperties findFndPropertiesByKey(String svnAllowAccessUrl) {
+    public FndProperties findFndPropertiesByKey(String key) {
         return sw.buildQuery()
-                .eq("property_key",svnAllowAccessUrl)
+                .eq("property_key",key)
                 .doQueryFirst(FndProperties.class);
     }
 }

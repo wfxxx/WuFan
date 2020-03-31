@@ -161,6 +161,15 @@ public class ConsumersDao {
             return false;
         }
     }
+
+    public Boolean checkCsmNameIsExsit(String csmName){
+        DSGCConsumerEntities dsgcConsumerEntities = sw.buildQuery().eq("csm_name",csmName).doQueryFirst(DSGCConsumerEntities.class);
+        if (dsgcConsumerEntities != null){
+            return true;
+        }else {
+            return false;
+        }
+    }
     public DSGCConsumerAuth queryConsumerDataByCsmCodeAndEnv(String csmCode,String envCode){
         return sw.buildQuery().eq("csm_code",csmCode)
                 .eq("env_code",envCode)

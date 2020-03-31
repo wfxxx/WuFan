@@ -46,7 +46,7 @@ public class ApiPlugInDao {
                 "        ) \n" +
                 "        t1\n" +
                 "        left join  dsgc_system_entities e on t1.app_code=e.sys_code\n" +
-                "        order by t1.creation_date desc ) where 1=1 ");
+                "        order by t1.creation_date desc ) s where 1=1 ");
         if ("SystemLeader".equals(userRole)&&sysCodeList.size()>0) {
             sqlStr.append(" and app_code in ( ");
             for (int i = 0; i < sysCodeList.size(); i++) {

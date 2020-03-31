@@ -19,9 +19,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-@ServerEndpoint(value = "/dsgc/websocket")
-@Component
-@EnableScheduling
+//@ServerEndpoint(value = "/dsgc/websocket")
+//@Component
+//@EnableScheduling
 public class CustomWebSocket implements SchedulingConfigurer {
 
 

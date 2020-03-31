@@ -37,7 +37,7 @@ public class MarketDao {
     }
 
     public PageQueryResult<MarketCateVO> getAllMarketCate(MarketQueryBean q, int pageSize, int pageIndex) {
-        MpaasQuery query = sw.buildQuery().sql("select * from (select y.mc_id,y.cate_code,y.cate_name,y.cate_order,y.CREATION_DATE,(select s.MEANING from FND_LOOKUP_VALUES s where y.PARENT_CATE = s.LOOKUP_CODE) PARENT_CATE from DSGC_MARKET_CATEGORY y) ");
+        MpaasQuery query = sw.buildQuery().sql("select * from (select y.mc_id,y.cate_code,y.cate_name,y.cate_order,y.CREATION_DATE,(select s.MEANING from FND_LOOKUP_VALUES s where y.PARENT_CATE = s.LOOKUP_CODE) PARENT_CATE from DSGC_MARKET_CATEGORY y) s ");
         if(!"ALL".equals(q.getShareType().trim())){
             String shareTypNoSpace = q.getShareType().trim();
             query.and().eq("parentCate",shareTypNoSpace);
@@ -58,34 +58,76 @@ public class MarketDao {
         return query.doPageQuery(pageIndex, pageSize, MarketCateVO.class);
     }
 
-    public PageQueryResult<MarketApiBean> getAllMarketPub(MarketQueryBean q, int pageSize, int pageIndex) {
-        MpaasQuery query = sw.buildQuery()
-                .sql("select t.API_ID,\n" +
-                        "       t.API_NAME,\n" +
-                        "       t.APP_CODE,\n" +
-                        "       t.API_DESC,\n" +
-                        "       t.MARKET_CATEGORY,\n" +
-                        "       t.MARKET_STAT,\n" +
-                        "       t.type,\n" +
-                        "       y.CATE_NAME,\n" +
-                        "       t.creation_Date\n" +
-                        "                               \n" +
-                        "from (select API_ID, API_NAME, API_DESC, APP_CODE, MARKET_CATEGORY, MARKET_STAT,creation_Date, 'API' type\n" +
-                        "      from DSGC_APIS\n" +
-                        "      UNION ALL\n" +
-                        "      select SERV_ID            API_ID,\n" +
-                        "             SERV_NAME          API_NAME,\n" +
-                        "             SERV_DESC          API_DESC,\n" +
-                        "             SUBORDINATE_SYSTEM APP_CODE,\n" +
-                        "             MARKET_CATEGORY,\n" +
-                        "             MARKET_STAT,\n" +
-                        "             creation_Date,\n" +
-                        "             '集成服务'             type\n" +
-                        "      from DSGC_SERVICES) t\n" +
-                        "       left join DSGC_MARKET_CATEGORY y on t.MARKET_CATEGORY = y.CATE_CODE");
+    public PageQueryResult<MarketApiBean> getAllMarketPub(MarketQueryBean q, int pageSize, int pageIndex,String type) {
+        MpaasQuery query = sw.buildQuery();
+        if("ALL".equals(type)){
+            query .sql("select t.API_ID,\n" +
+                    "       t.API_NAME,\n" +
+                    "       t.APP_CODE,\n" +
+                    "       t.API_DESC,\n" +
+                    "       t.MARKET_CATEGORY,\n" +
+                    "       t.MARKET_STAT,\n" +
+                    "       t.type,\n" +
+                    "       y.CATE_NAME,\n" +
+                    "       t.creation_Date\n" +
+                    "                               \n" +
+                    "from (select API_ID, API_NAME, API_DESC, APP_CODE, MARKET_CATEGORY, MARKET_STAT,creation_Date, 'API' type\n" +
+                    "      from DSGC_APIS\n" +
+                    "      UNION ALL\n" +
+                    "      select SERV_ID            API_ID,\n" +
+                    "             SERV_NAME          API_NAME,\n" +
+                    "             SERV_DESC          API_DESC,\n" +
+                    "             SUBORDINATE_SYSTEM APP_CODE,\n" +
+                    "             MARKET_CATEGORY,\n" +
+                    "             MARKET_STAT,\n" +
+                    "             creation_Date,\n" +
+                    "             '集成服务'             type\n" +
+                    "      from DSGC_SERVICES) t\n" +
+                    "       left join DSGC_MARKET_CATEGORY y on t.MARKET_CATEGORY = y.CATE_CODE");
+        }
+        if("ESB".equals(type)){
+            query .sql("select t.API_ID,\n" +
+                    "       t.API_NAME,\n" +
+                    "       t.APP_CODE,\n" +
+                    "       t.API_DESC,\n" +
+                    "       t.MARKET_CATEGORY,\n" +
+                    "       t.MARKET_STAT,\n" +
+                    "       t.type,\n" +
+                    "       y.CATE_NAME,\n" +
+                    "       t.creation_Date\n" +
+                    "from (select API_ID, API_NAME, API_DESC, APP_CODE, MARKET_CATEGORY, MARKET_STAT,creation_Date, '集成服务' type\n" +
+                    "      from DSGC_SERVICES  ) t " +
+                    "       left join DSGC_MARKET_CATEGORY y on t.MARKET_CATEGORY = y.CATE_CODE");
+        }
+
+        if("API".equals(type)){
+            query .sql("select t.API_ID,\n" +
+                    "       t.API_NAME,\n" +
+                    "       t.APP_CODE,\n" +
+                    "       t.API_DESC,\n" +
+                    "       t.MARKET_CATEGORY,\n" +
+                    "       t.MARKET_STAT,\n" +
+                    "       t.type,\n" +
+                    "       y.CATE_NAME,\n" +
+                    "       t.creation_Date\n" +
+                    "from (select API_ID, API_NAME, API_DESC, APP_CODE, MARKET_CATEGORY, MARKET_STAT,creation_Date, 'API' type\n" +
+                    "      from DSGC_APIS ) t " +
+                    "       left join DSGC_MARKET_CATEGORY y on t.MARKET_CATEGORY = y.CATE_CODE");
+        }
+
         if(!"ALL".equals(q.getShareType().trim())){
+//            String shareTypNoSpace = q.getShareType().trim();
+//            query.and().eq("type",shareTypNoSpace);
             String shareTypNoSpace = q.getShareType().trim();
-            query.and().eq("type",shareTypNoSpace);
+
+            switch (shareTypNoSpace){
+                case "已上架":
+                    query.and().eq("MARKET_STAT","Y");
+                    break;
+                    case  "未上架":
+                        query.and().eq("MARKET_STAT","N");
+                        break;
+            }
         }
         if (q.getCon0() != null && q.getCon0().trim().length() > 0) {
             String[] conArray = q.getCon0().trim().split(" ");
@@ -129,7 +171,7 @@ public class MarketDao {
                 "                t.market_stat marketStat ,t.market_category  marketCategory,t.creation_date creationDate,(case when r.total_times >1 then r.total_times  else 0 end ) totalTimes \n" +
                 "                from DSGC_SERVICES t \n" +
                 "                left join rp_serv_total r on t.serv_no=r.serv_no \n" +
-                "                 left join dsgc_system_entities e on t.subordinate_system=e.sys_code )");
+                "                 left join dsgc_system_entities e on t.subordinate_system=e.sys_code ) s");
 
         if(mapVlue.get("searchValue")!=null) {
             String searchValue = (String) mapVlue.get("searchValue");
@@ -156,7 +198,7 @@ public class MarketDao {
                 "t.market_category marketCategory,t.market_stat marketStat,t.creation_date creationDate ,(case when r.total_times >1 then r.total_times  else 0 end )\n" +
                 "totalTimes from DSGC_APIS t \n" +
                 "left join rp_serv_total r   on t.api_code=r.serv_no\n" +
-                " left join dsgc_system_entities e   on t.app_code=e.sys_code)");
+                " left join dsgc_system_entities e   on t.app_code=e.sys_code) s ");
 
         if(mapVlue.get("searchValue")!=null){
             String searchValue= (String) mapVlue.get("searchValue");

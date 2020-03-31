@@ -77,7 +77,7 @@ public class  ApiMngDao {
                 "       select dr.DR_ID,dr.ROUTE_CODE,dr.ROUTE_PATH,dr.ROUTE_METHOD,dr.BS_CODE,\n" +
                 "       (select SYS_NAME  from DSGC_SYSTEM_ENTITIES dse where dse.SYS_CODE = dr.APP_CODE) APP_CODE,dr.APP_CODE SYS_CODE from DAG_ROUTES dr\n" +
                 "       order by dr.creation_date desc\n" +
-                ")");
+                ") s ");
         if ("SystemLeader".equals(userRole)) {
             if (sysCodeList.size() != 0) {
                 if (sysCodeList.size() <= 1) {

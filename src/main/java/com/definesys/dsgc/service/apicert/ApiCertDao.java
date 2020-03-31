@@ -31,7 +31,7 @@ public class ApiCertDao {
         StringBuffer sqlStr = new StringBuffer(" select * from( select c.*,e.sys_name as app_name,info.env_name as env_name from dag_certs c\n" +
                 "            left join dsgc_system_entities e on e.sys_code=c.app_code\n" +
                 "            left join DSGC_ENV_INFO_CFG info on info.env_code=c.env_code\n" +
-                "            where info.env_type='DAG' order by c.creation_date desc) where 1=1");
+                "            where info.env_type='DAG' order by c.creation_date desc) s where 1=1");
         MpaasQuery mq = sw.buildQuery();
         if ("SystemLeader".equals(userRole)&&sysCodeList.size()>0) {
             sqlStr.append(" and app_code in ( ");

@@ -118,8 +118,16 @@ public class ConsumersController {
           return Response.ok().setData(consumersService.checkCsmCodeIsExsit(param));
         }catch (Exception e){
             e.printStackTrace();
-            return Response.error("检测消费者是否存在失败！");
+            return Response.error("检测消费者代码是否存在失败！");
         }
     }
-
+    @RequestMapping(value = "checkCsmNameIsExsit")
+    public Response checkCsmNameIsExsit(@RequestBody() CommonReqBean param){
+        try {
+            return Response.ok().setData(consumersService.checkCsmNameIsExsit(param));
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("检测消费者名称是否存在失败！");
+        }
+    }
 }

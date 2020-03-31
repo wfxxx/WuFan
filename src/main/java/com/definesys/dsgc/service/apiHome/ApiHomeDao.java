@@ -142,7 +142,7 @@ public class ApiHomeDao {
         return  sw.buildQuery().sql("select sys_name as name,count(sys_name) as value,sys_name as legend_name  from\n" +
                 "  (select a.api_code,a.api_name,e.sys_code,e.sys_name\n" +
                 "  from dsgc_apis a \n" +
-                "  left join dsgc_system_entities e on a.app_code=e.sys_code)\n" +
+                "  left join dsgc_system_entities e on a.app_code=e.sys_code) t \n" +
                 "  group by sys_code,sys_name").doQuery(ApiHomeHisto.class);
     }
 
