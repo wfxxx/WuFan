@@ -39,7 +39,7 @@ public class ApiHomeService {
         ApiHomeHisto totalA=apiHomeDao.getTotalA();
         apiTotal.setDataAdd(todayA.getValue());
         apiTotal.setDayRate(rate(todayA.getValue(),yestodayA.getValue()));
-        apiTotal.setTotal(totalA.getValue());
+        apiTotal.setTotal(todayA.getValue());
         apiTotal.setWeekRate(rate(nowWeekA.getValue(),lastWeekA.getValue()));
         result.put("apiTotal",apiTotal);
         ApiHomeCard sysTotal=new ApiHomeCard();

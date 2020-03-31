@@ -70,20 +70,20 @@ public class ApiHomeDao {
 
     //查找dsgc_user表统计
     public ApiHomeHisto getTotalU(){
-        return sw.buildQuery().sql("SELECT COUNT(1) as value FROM dsgc_user t ").doQueryFirst(ApiHomeHisto.class);
+        return sw.buildQuery().sql("SELECT COUNT(1) as value FROM dsgc_consumer_entities t ").doQueryFirst(ApiHomeHisto.class);
     }
     public ApiHomeHisto getTodyTotalU(){
-        return sw.buildQuery().sql("SELECT COUNT(1) as value FROM dsgc_user t WHERE TO_CHAR(t.creation_date,'YYYY-MM-DD')=TO_CHAR(SYSDATE,'YYYY-MM-DD')").doQueryFirst(ApiHomeHisto.class);
+        return sw.buildQuery().sql("SELECT COUNT(1) as value FROM dsgc_consumer_entities t WHERE TO_CHAR(t.creation_date,'YYYY-MM-DD')=TO_CHAR(SYSDATE,'YYYY-MM-DD')").doQueryFirst(ApiHomeHisto.class);
     }
     public ApiHomeHisto getYestodayTotalU(){
-        return sw.buildQuery().sql("SELECT COUNT(1) as value FROM dsgc_user t WHERE TO_CHAR(t.creation_date,'YYYY-MM-DD')=TO_CHAR(SYSDATE-1,'YYYY-MM-DD')").doQueryFirst(ApiHomeHisto.class);
+        return sw.buildQuery().sql("SELECT COUNT(1) as value FROM dsgc_consumer_entities t WHERE TO_CHAR(t.creation_date,'YYYY-MM-DD')=TO_CHAR(SYSDATE-1,'YYYY-MM-DD')").doQueryFirst(ApiHomeHisto.class);
     }
     public ApiHomeHisto getLastWeekTotalU(){
-        return sw.buildQuery().sql("  SELECT COUNT(1) as value FROM dsgc_user  t WHERE t.creation_date>=TRUNC(NEXT_DAY(SYSDATE-7,1)-6) and  t.creation_date<=TRUNC(NEXT_DAY(SYSDATE-7,1))").doQueryFirst(ApiHomeHisto.class);
+        return sw.buildQuery().sql("  SELECT COUNT(1) as value FROM dsgc_consumer_entities  t WHERE t.creation_date>=TRUNC(NEXT_DAY(SYSDATE-7,1)-6) and  t.creation_date<=TRUNC(NEXT_DAY(SYSDATE-7,1))").doQueryFirst(ApiHomeHisto.class);
 
     }
     public ApiHomeHisto getNowWeekTotalU(){
-        return sw.buildQuery().sql("  SELECT COUNT(1) as value FROM dsgc_user  t WHERE t.creation_date>=TRUNC(NEXT_DAY(SYSDATE,1)-6) and  t.creation_date<=TRUNC(NEXT_DAY(SYSDATE,1))").doQueryFirst(ApiHomeHisto.class);
+        return sw.buildQuery().sql("  SELECT COUNT(1) as value FROM dsgc_consumer_entities  t WHERE t.creation_date>=TRUNC(NEXT_DAY(SYSDATE,1)-6) and  t.creation_date<=TRUNC(NEXT_DAY(SYSDATE,1))").doQueryFirst(ApiHomeHisto.class);
 
     }
 
@@ -179,7 +179,7 @@ public class ApiHomeDao {
     public PageQueryResult<ApiHomeHisto> querySortVist(String startTime,String endTime,String limitTime){
         List<ApiHomeHisto> result=new ArrayList<ApiHomeHisto>();
         MpaasQuery resulSql =sw.buildQuery();
-        if(startTime!=null&&endTime!=null) {
+        if(startTime!=null&&endTime!=null&&limitTime==null) {
             resulSql.sql("select t.serv_no as name ,sum(t.total_times)  over(partition by t.serv_no) as value from rp_api_day t \n" +
                     "                    where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')<=to_date(#endTime,'yyyy-mm-dd') and to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')>to_date(#startTime,'yyyy-mm-dd') order by value desc")
                     .setVar("endTime",endTime).setVar("startTime",startTime);
@@ -206,7 +206,7 @@ public class ApiHomeDao {
 
         List<ApiHomeHisto> result=new ArrayList<ApiHomeHisto>();
         MpaasQuery resulSql =sw.buildQuery();
-        if(startTime!=null&&endTime!=null) {
+        if(startTime!=null&&endTime!=null&&limitTime==null) {
             resulSql.sql("select t.serv_no as name ,sum(t.total_times)  over(partition by t.serv_no) as value from rp_api_day t \n" +
                     "                    where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')<=to_date(#endTime,'yyyy-mm-dd') and to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')>to_date(#startTime,'yyyy-mm-dd') order by value desc")
                     .setVar("endTime",endTime).setVar("startTime",startTime);
@@ -233,7 +233,7 @@ public class ApiHomeDao {
     public PageQueryResult<ApiHomeHisto> querySortWait(String startTime, String endTime, String limitTime){
         List<ApiHomeHisto> result=new ArrayList<ApiHomeHisto>();
         MpaasQuery resulSql =sw.buildQuery();
-        if(startTime!=null&&endTime!=null) {
+        if(startTime!=null&&endTime!=null&&limitTime==null) {
             resulSql.sql("select t.serv_no as name ,sum(t.total_times)  over(partition by t.serv_no) as value from rp_api_day t \n" +
                     "                    where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')<=to_date(#endTime,'yyyy-mm-dd') and to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')>to_date(#startTime,'yyyy-mm-dd') order by value desc")
                     .setVar("endTime",endTime).setVar("startTime",startTime);

@@ -10,7 +10,7 @@ package com.definesys.dsgc.service.apiHome.bean;
 public class ApiHomeHisto {
 
     private String name;
-    private Integer value;
+    private Integer value=0;
     private String legendName;
 
     public String getName() {
