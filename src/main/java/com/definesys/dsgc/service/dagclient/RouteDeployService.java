@@ -3,10 +3,18 @@ package com.definesys.dsgc.service.dagclient;
 import com.definesys.dsgc.service.dagclient.bean.DAGEnvBean;
 import com.definesys.dsgc.service.dagclient.bean.DAGRouteHostsBean;
 import com.definesys.dsgc.service.dagclient.bean.DAGRouteInfoBean;
+import com.definesys.dsgc.service.dagclient.proxy.ConsumerProxy;
+import com.definesys.dsgc.service.dagclient.proxy.PluginsProxy;
 import com.definesys.dsgc.service.dagclient.proxy.RouteProxy;
 import com.definesys.dsgc.service.dagclient.proxy.ServiceProxy;
+import com.definesys.dsgc.service.dagclient.proxy.bean.PluginSettingVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class RouteDeployService {
@@ -17,7 +25,10 @@ public class RouteDeployService {
     private DAGDeployLogDao dagDeployLogDao;
 
     @Autowired
-    DAGEnvDao dagEnvDao;
+    private DAGEnvDao dagEnvDao;
+
+    @Autowired
+    private PluginDeployService pluginDeployService;
 
     public String deployDAGRoute(String vid,String envCode,String deployDesc,String uid) {
 
@@ -40,6 +51,13 @@ public class RouteDeployService {
             if (!sp.isFound()) {
                 return "后端服务未部署，请先部署后端服务！";
             } else {
+
+                //检查插件配置信息是否正确
+                String pluginCheckRes = this.pluginDeployService.validPluginConfig(envCode,vid);
+                if(!"Y".equals(pluginCheckRes)){
+                    return pluginCheckRes;
+                }
+
                 String[] hosts = this.routeDeployDao.getRouteHostNames(vid);
                 RouteProxy.RouteSetVO proxyReq = new RouteProxy.RouteSetVO();
                 proxyReq.hosts = hosts;
@@ -56,6 +74,9 @@ public class RouteDeployService {
                 RouteProxy rp = new RouteProxy(env.getAdminLocation(),route.getRouteCode());
                 boolean dplRes = rp.setRoute(proxyReq);
                 if (dplRes) {
+                    //部署路由使用的插件
+                    this.pluginDeployService.deployPlugins(envCode,vid,PluginsProxy.PLUGIN_TARGET_ROUTE,rp.getId());
+
                     //部署成功，更新部署日志；
                     this.dagDeployLogDao.logDAGDeploy(vid,envCode,deployDesc,uid);
                     return "S";

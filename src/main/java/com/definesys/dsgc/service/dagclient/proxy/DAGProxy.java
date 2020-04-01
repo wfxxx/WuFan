@@ -9,7 +9,11 @@ public abstract class DAGProxy {
     protected Object entityProxy;
 
     public DAGProxy(String adminUrl,String refId) {
-        this.adminUrl = adminUrl;
+        if(adminUrl != null && adminUrl.endsWith("/")){
+            this.adminUrl = adminUrl.substring(0,adminUrl.length()-1);
+        } else {
+            this.adminUrl = adminUrl;
+        }
         try {
             this.retrieve(refId);
         } catch (HttpClientErrorException.NotFound e) {
