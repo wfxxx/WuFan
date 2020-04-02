@@ -45,6 +45,8 @@ public class PluginDeployService {
 
         List<PluginSettingVO> psetingList = this.pluginDeployDao.loadPluginConfig(vid);
 
+        Map<String,PluginSettingVO> pluginSettingMap = new HashMap<String,PluginSettingVO>();
+
         if (psetingList != null && psetingList.size() > 0) {
             //从网关获取consumer的id
             Map<String,String> consumerKeyMap = this.getConsumerKey(env,psetingList);
@@ -54,8 +56,6 @@ public class PluginDeployService {
             if (!"Y".equals(checkRes)) {
                 return "插件关联的消费者在部署目标环境不存在，无法完成部署，请先部署消费者：" + checkRes;
             }
-
-            Map<String,PluginSettingVO> pluginSettingMap = new HashMap<String,PluginSettingVO>();
 
             Iterator<PluginSettingVO> iters = psetingList.iterator();
             while (iters.hasNext()) {
@@ -68,10 +68,9 @@ public class PluginDeployService {
                     pluginSettingMap.put(key,ps);
                 }
             }
-
-            PluginsProxy pp = new PluginsProxy(env.getAdminLocation(),targetType,targetId);
-            pp.setPlugins(pluginSettingMap,true);
         }
+        PluginsProxy pp = new PluginsProxy(env.getAdminLocation(),targetType,targetId);
+        pp.setPlugins(pluginSettingMap,true);
         return "Y";
     }
 
