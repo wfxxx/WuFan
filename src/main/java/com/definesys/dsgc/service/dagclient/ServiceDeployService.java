@@ -2,6 +2,7 @@ package com.definesys.dsgc.service.dagclient;
 
 import com.definesys.dsgc.service.dagclient.bean.DAGEnvBean;
 import com.definesys.dsgc.service.dagclient.bean.DAGServiceInfoBean;
+import com.definesys.dsgc.service.dagclient.proxy.PluginsProxy;
 import com.definesys.dsgc.service.dagclient.proxy.ServiceProxy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,8 +16,10 @@ public class ServiceDeployService {
     private DAGDeployLogDao dagDeployLogDao;
 
     @Autowired
-    DAGEnvDao dagEnvDao;
+    private DAGEnvDao dagEnvDao;
 
+    @Autowired
+    private PluginDeployService pluginDeployService;
 
     public String deployDAGService(String vid,String envCode,String deployDesc,String uid) {
 
@@ -32,6 +35,12 @@ public class ServiceDeployService {
 
         if (bsInfo.getHostName() == null || bsInfo.getHostName().trim().length() == 0) {
             return "后端地址不正确！";
+        }
+
+        //检查插件配置信息是否正确
+        String pluginCheckRes = this.pluginDeployService.validPluginConfig(envCode,vid);
+        if(!"Y".equals(pluginCheckRes)){
+            return pluginCheckRes;
         }
 
         ServiceProxy sp = new ServiceProxy(env.getAdminLocation(),bsInfo.getBsCode());
@@ -62,6 +71,9 @@ public class ServiceDeployService {
         boolean res = sp.setService(req);
 
         if (res) {
+            //部署路由使用的插件
+            this.pluginDeployService.deployPlugins(envCode,vid,PluginsProxy.PLUGIN_TARGET_SERVICE,sp.getId());
+
             //部署成功，更新部署日志；
             this.dagDeployLogDao.logDAGDeploy(vid,envCode,deployDesc,uid);
         } else {
