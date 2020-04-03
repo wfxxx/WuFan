@@ -162,7 +162,8 @@ public class DSGCServiceStatisticsReportService {
             ca1.set(Calendar.SECOND, 0);
             Date date1 = ca1.getTime();
             ca2.setTime(eTime);
-            ca2.set(Calendar.HOUR_OF_DAY, 0);
+           // ca2.set(Calendar.HOUR_OF_DAY, 0);
+            ca2.set(Calendar.HOUR, 0);
             ca2.set(Calendar.MINUTE, 0);
             ca2.set(Calendar.SECOND, 0);
             Date date2 = ca2.getTime();

@@ -192,7 +192,10 @@ public class AppsService {
         }
         if(userList != null && userList.size()>0){
             appsDao.delSytemUser(systemEntitireDTO.getSysCode());
-            appsDao.addSystemUser(userList);
+            for (DSGCSystemUser item:userList) {
+                appsDao.addSystemUser(item);
+            }
+
         }else {
             appsDao.delSytemUser(systemEntitireDTO.getSysCode());
         }

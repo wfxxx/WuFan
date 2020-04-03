@@ -103,8 +103,8 @@ public class ApiAuthDao {
 
     public PageQueryResult<DSGCApisBean> queryApiAuthList(CommonReqBean q, int pageIndex, int pageSize, String userId, String userRole, List<String> sysCodeList) {
         MpaasQuery query = sw.buildQuery()
-                .sql("select * from (select da.API_CODE,da.API_NAME,(select dse.SYS_NAME from DSGC_SYSTEM_ENTITIES dse where da.APP_CODE = dse.SYS_CODE) \n" +
-                        "APP_CODE,da.APP_CODE sys_code,da.INFO_FULL,daa.CSM_CODE,da.creation_date from DSGC_APIS da,DSGC_APIS_ACCESS daa where da.APP_CODE = daa.API_CODE(+)\n" +
+                .sql("select * from (select da.API_CODE,da.API_NAME,(select dse.SYS_NAME from DSGC_SYSTEM_ENTITIES dse where da.APP_CODE = dse.SYS_CODE) " +
+                        "APP_CODE,da.APP_CODE sys_code,da.INFO_FULL,daa.CSM_CODE,da.creation_date from DSGC_APIS da left join DSGC_APIS_ACCESS daa on da.APP_CODE = daa.API_CODE " +
                         "order by creation_date desc) s ");
         if(q.getSelectSystemList().size() != 0){
             if(q.getSelectSystemList().size()<=1){
@@ -141,7 +141,7 @@ public class ApiAuthDao {
     }
 
     public String queryAuthSystemCount(String apiCode) {
-        Map<String, Object> map = sw.buildQuery().sql("select count(*) count from (select daa.* from DSGC_APIS da,DSGC_APIS_ACCESS daa where da.API_CODE = daa.API_CODE and da.API_CODE = #apiCode)")
+        Map<String, Object> map = sw.buildQuery().sql("select count(*) COUNT from (select daa.* from DSGC_APIS da,DSGC_APIS_ACCESS daa where da.API_CODE = daa.API_CODE and da.API_CODE = #apiCode) t")
                 .setVar("apiCode", apiCode).doQueryFirst();
         return map.get("COUNT").toString();
     }

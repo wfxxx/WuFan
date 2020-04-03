@@ -38,6 +38,19 @@ public class BpmService {
         result.setResult(bpmInstanceDTOList);
         return result;
     }
+    public PageQueryResult<BpmInstanceDTO> getServTaskList(BpmCommonReqBean param,String userId,int pageSize,int pageIndex){
+        PageQueryResult<BpmInstanceBean> beanPageQueryResult = bpmdao.getServTaskList(param,userId,pageSize,pageIndex);
+        List<BpmInstanceDTO> bpmInstanceDTOList = new ArrayList<>();
+        long count = beanPageQueryResult.getCount();
+        List<BpmInstanceBean> bpmInstanceBeanList = beanPageQueryResult.getResult();
+
+        instanceBeanListMapping(bpmInstanceBeanList,bpmInstanceDTOList);
+
+        PageQueryResult<BpmInstanceDTO> result = new PageQueryResult<>();
+        result.setCount(count);
+        result.setResult(bpmInstanceDTOList);
+        return result;
+    }
 
     public PageQueryResult<BpmInstanceDTO> myApply(BpmCommonReqBean param,String userId,int pageSize,int pageIndex){
         PageQueryResult<BpmInstanceBean> beanPageQueryResult = bpmdao.myApply(param,userId,pageSize,pageIndex);

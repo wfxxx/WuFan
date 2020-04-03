@@ -10,9 +10,12 @@ import com.definesys.mpaas.query.annotation.SQLQuery;
 
 @SQLQuery(value = {
         @SQL(view = "DSGC_TOPOLOGY_V",
-                    sql = "select sys.serv_no,ser.serv_name,ser.subordinate_system,sys.sys_code ,ser.serv_desc\n" +
-                            "from dsgc_system_access sys,dsgc_services ser \n" +
-                            "where ser.serv_no (+) = sys.serv_no"
+//                    sql = "select sys.serv_no,ser.serv_name,ser.subordinate_system,sys.sys_code ,ser.serv_desc\n" +
+//                            "from dsgc_system_access sys,dsgc_services ser \n" +
+//                            "where ser.serv_no (+) = sys.serv_no"
+                sql = "select sys.serv_no,ser.serv_name,ser.subordinate_system,sys.sys_code ,ser.serv_desc\n" +
+                        "                            from dsgc_system_access sys left join dsgc_services ser \n" +
+                        "                            on ser.serv_no = sys.serv_no"
         )
 })
 public class TopologyVO {

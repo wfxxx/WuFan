@@ -12,6 +12,7 @@ import com.definesys.mpaas.query.MpaasQuery;
 import com.definesys.mpaas.query.MpaasQueryFactory;
 import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -31,6 +32,8 @@ public class DSGCSystemDao {
     @Autowired
     private SWordLogger logger;
 
+    @Value("${database.type}")
+    private String dbType;
     /**
      * 查询所有
      */
@@ -71,8 +74,16 @@ public class DSGCSystemDao {
 //                .like("sysCode", systemEntities.getSysCode())
 //                .like("sysName", systemEntities.getSysName())
 //                .doPageQuery(pageIndex, pageSize, DSGCSystemEntities.class);
+        StringBuffer strSql = null;
+        if("oracle".equals(dbType)){
+            strSql = new StringBuffer("select * from( select ent.id,ent.sys_code, ent.sys_name, ent.pwd, t.user_name owner from DSGC_SYSTEM_ENTITIES ent, (select listagg(u.user_name, ',') within GROUP(order by su.sys_code) user_name, su.sys_code from DSGC_SYSTEM_user su, dsgc_user u where su.user_id = u.user_id group by su.sys_code) t where t.sys_code(+) = ent.sys_code)  WHERE 1 = 1 ");
 
-        StringBuffer strSql = new StringBuffer("select * from( select ent.id,ent.sys_code, ent.sys_name, ent.pwd, t.user_name owner from DSGC_SYSTEM_ENTITIES ent, (select listagg(u.user_name, ',') within GROUP(order by su.sys_code) user_name, su.sys_code from DSGC_SYSTEM_user su, dsgc_user u where su.user_id = u.user_id group by su.sys_code) t where t.sys_code(+) = ent.sys_code)  WHERE 1 = 1 ");
+        }
+        if ("mysql".equals(dbType)){
+            strSql = new StringBuffer("SELECT *  FROM ( SELECT ent.id,ent.sys_code,ent.sys_name,ent.pwd,t.user_name OWNER FROM DSGC_SYSTEM_ENTITIES ent RIGHT JOIN\n" +
+                    "(SELECT group_concat( u.user_name order by su.sys_code, ',' )user_name,su.sys_code FROM DSGC_SYSTEM_user su,dsgc_user u WHERE\n" +
+                    "su.user_id = u.user_id GROUP BY su.sys_code ) t on t.sys_code  = ent.sys_code ) s WHERE 1 = 1 ");
+        }
 
         MpaasQuery mq = sw.buildQuery();
         if(StringUtil.isNotBlank(systemEntities.getSysCode())){

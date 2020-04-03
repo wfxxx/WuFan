@@ -5,6 +5,7 @@ import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.mpaas.query.MpaasQuery;
 import com.definesys.mpaas.query.MpaasQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -13,6 +14,8 @@ import java.util.List;
 public class EnvInfoDao {
     @Autowired
     private MpaasQueryFactory sw;
+    @Value("${database.type}")
+    private String dbType;
 
   public void addApiInfoCfg(DsgcEnvInfoCfgBean dsgcEnvInfoCfgBean){
       sw.buildQuery().doInsert(dsgcEnvInfoCfgBean);
@@ -43,8 +46,16 @@ public class EnvInfoDao {
     }
 
     public List<DsgcEnvInfoCfgBean> queryApiEnvCfgList(CommonReqBean q){
-      MpaasQuery sql=sw.buildQuery()
-              .sql("select de.*,row_number() over(partition by de.ENV_TYPE order by de.ENV_SEQ asc)  row_number from DSGC_ENV_INFO_CFG de ");
+        String str = null;
+        if("oracle".equals(dbType)){
+            str = "select de.*,row_number() over(partition by de.ENV_TYPE order by de.ENV_SEQ asc)  row_number from DSGC_ENV_INFO_CFG de ";
+
+        }
+        if("mysql".equals(dbType)){
+            str = "SELECT de.*,IF(@temp=de.ENV_TYPE, @rank:=@rank+1, @rank:=1) row_number,@temp:=de.ENV_TYPE FROM dsgc.DSGC_ENV_INFO_CFG de ORDER BY de.ENV_TYPE, de.ENV_SEQ ASC ";
+        }
+        MpaasQuery sql=sw.buildQuery()
+              .sql(str);
       if(q.getCon0()!=null&&!q.getCon0().equals("")){
           sql.eq("env_type",q.getCon0());
       }

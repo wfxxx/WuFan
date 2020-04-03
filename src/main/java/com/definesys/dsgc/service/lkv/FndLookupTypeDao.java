@@ -12,6 +12,7 @@ import com.definesys.mpaas.query.db.PageQueryResult;
 import com.definesys.mpaas.query.util.MpaasQueryUtil;
 //import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -27,6 +28,9 @@ public class FndLookupTypeDao {
 
     @Autowired
     private MpaasQueryConfig config;
+
+    @Value("${database.type}")
+    private String dbType;
 
     public List getLookupValuesByType(FndLookupType lookupType) {
         FndLookupType resultlookupType = this.sw.buildQuery()
@@ -85,16 +89,38 @@ public class FndLookupTypeDao {
     }
 
     public PageQueryResult<Map<String, Object>> query(FndLookupType fndLookupType,int pageSize,int pageIndex,String orOrAnd) {
-        String sql = "select * from (select t.*,rownum rn from (SELECT distinct t.lookup_type,t.lookup_id,t.lookup_name,t.lookup_description,m.module_name,m.module_id  FROM FND_LOOKUP_TYPES T, FND_LOOKUP_VALUES V,FND_MODULES m  WHERE T.LOOKUP_ID = V.LOOKUP_ID(+) and t.module_id = m.module_id and ( UPPER(lookup_type) like'%#lookup_type%' and UPPER(lookup_name) like'%#lookup_name%' and UPPER(lookup_description)  like'%#lookup_description%'))t where rownum<=#pageEnd) where rn>#pageStart";
+        String sql = null;
+        if("oracle".equals(dbType)){
+            sql = "select * from (select t.*,rownum rn from (SELECT distinct t.lookup_type,t.lookup_id,t.lookup_name,t.lookup_description,m.module_name,m.module_id  FROM FND_LOOKUP_TYPES T, FND_LOOKUP_VALUES V,FND_MODULES m  WHERE T.LOOKUP_ID = V.LOOKUP_ID(+) and t.module_id = m.module_id and ( UPPER(lookup_type) like'%#lookup_type%' and UPPER(lookup_name) like'%#lookup_name%' and UPPER(lookup_description)  like'%#lookup_description%'))t where rownum<=#pageEnd) where rn>#pageStart";
+        }
+        if ("mysql".equals(dbType)){
+            sql = "SELECT * FROM ( SELECT t.* ,@rownum := @rownum +1 AS rn FROM ( SELECT DISTINCT t.lookup_type LOOKUP_TYPE,t.lookup_id LOOUP_ID,t.lookup_name LOOKUP_NAME,t.lookup_description LOOKUP_DESCRIPTION,m.module_name MODULE_NAME,m.module_id MODULE_ID FROM FND_LOOKUP_TYPES T left join FND_LOOKUP_VALUES V on T.LOOKUP_ID = V.LOOKUP_ID " +
+                    "left join FND_MODULES m on  t.module_id = m.module_id WHERE( UPPER( t.lookup_type ) LIKE '%#lookup_type%' AND UPPER( t.lookup_name ) LIKE '%#lookup_name%' AND UPPER( t.lookup_description ) LIKE '%#lookup_description%' ) ) t ,(SELECT @rownum := 0) r " +
+                    "WHERE @rownum <= #pageEnd) s where rn>#pageStart";
+        }
+      //  String sql = "select * from (select t.*,rownum rn from (SELECT distinct t.lookup_type,t.lookup_id,t.lookup_name,t.lookup_description,m.module_name,m.module_id  FROM FND_LOOKUP_TYPES T, FND_LOOKUP_VALUES V,FND_MODULES m  WHERE T.LOOKUP_ID = V.LOOKUP_ID(+) and t.module_id = m.module_id and ( UPPER(lookup_type) like'%#lookup_type%' and UPPER(lookup_name) like'%#lookup_name%' and UPPER(lookup_description)  like'%#lookup_description%'))t where rownum<=#pageEnd) where rn>#pageStart";
         if("or".equals(orOrAnd)){
-            sql = "select * from (select t.*,rownum rn from (SELECT distinct t.lookup_type,t.lookup_id,t.lookup_name,t.lookup_description,m.module_name,m.module_id  FROM FND_LOOKUP_TYPES T, FND_LOOKUP_VALUES V,FND_MODULES m  WHERE T.LOOKUP_ID = V.LOOKUP_ID(+) and t.module_id = m.module_id and ( UPPER(lookup_type) like'%#lookup_type%' or UPPER(lookup_name) like'%#lookup_name%' or UPPER(lookup_description)  like'%#lookup_description%'))t where rownum<=#pageEnd) where rn>#pageStart";
+            if ("oracle".equals(dbType)){
+                sql = "select * from (select t.*,rownum rn from (SELECT distinct t.lookup_type,t.lookup_id,t.lookup_name,t.lookup_description,m.module_name,m.module_id  FROM FND_LOOKUP_TYPES T, FND_LOOKUP_VALUES V,FND_MODULES m  WHERE T.LOOKUP_ID = V.LOOKUP_ID(+) and t.module_id = m.module_id and ( UPPER(lookup_type) like'%#lookup_type%' or UPPER(lookup_name) like'%#lookup_name%' or UPPER(lookup_description)  like'%#lookup_description%'))t where rownum<=#pageEnd) where rn>#pageStart";
+            }
+            if ("mysql".equals(dbType)){
+                sql = "select * from (select t.*,@rownum := @rownum +1 AS rn from (SELECT distinct t.lookup_type LOOKUP_TYPE,t.lookup_id LOOKUP_ID,t.lookup_name LOOKUP_NAME,t.lookup_description LOOKUP_DESCRIPTION,m.module_name MODULE_NAME,m.module_id MODULE_ID FROM FND_LOOKUP_TYPES T LEFT JOIN FND_LOOKUP_VALUES V on T.LOOKUP_ID = V.LOOKUP_ID LEFT JOIN FND_MODULES m on t.module_id = m.module_id WHERE ( UPPER(lookup_type) like'%#lookup_type%' or UPPER(lookup_name) like'%#lookup_name%' or UPPER(lookup_description)  like'%#lookup_description%'))t, (SELECT @rownum := 0) r where  @rownum<=#pageEnd) s where rn>#pageStart";
+            }
+          //  sql = "select * from (select t.*,rownum rn from (SELECT distinct t.lookup_type,t.lookup_id,t.lookup_name,t.lookup_description,m.module_name,m.module_id  FROM FND_LOOKUP_TYPES T, FND_LOOKUP_VALUES V,FND_MODULES m  WHERE T.LOOKUP_ID = V.LOOKUP_ID(+) and t.module_id = m.module_id and ( UPPER(lookup_type) like'%#lookup_type%' or UPPER(lookup_name) like'%#lookup_name%' or UPPER(lookup_description)  like'%#lookup_description%'))t where rownum<=#pageEnd) where rn>#pageStart";
         }
         sql = sql.replace("#lookup_name", fndLookupType.getLookupName().toUpperCase());
         sql = sql.replace("#lookup_type", fndLookupType.getLookupType().toUpperCase());
         sql = sql.replace("#lookup_description", fndLookupType.getLookupDescription().toUpperCase());
         sql = sql.replace("#pageStart", new Integer((pageIndex-1)*pageSize).toString());
         sql = sql.replace("#pageEnd", new Integer(pageIndex*pageSize).toString());
-        String sql1 = "SELECT COUNT(1) AS resultCount from (SELECT distinct t.lookup_type,t.lookup_id,t.lookup_name,t.lookup_description,m.module_name,m.module_id  FROM FND_LOOKUP_TYPES T, FND_LOOKUP_VALUES V,FND_MODULES m  WHERE T.LOOKUP_ID = V.LOOKUP_ID(+) and t.module_id = m.module_id and UPPER(T.lookup_type) like'%#lookup_type%')";
+        String sql1 = null;
+        if("oracle".equals(dbType)){
+            sql1 = "SELECT COUNT(1) AS RESULTCOUNT from (SELECT distinct t.lookup_type,t.lookup_id,t.lookup_name,t.lookup_description,m.module_name,m.module_id  FROM FND_LOOKUP_TYPES T, FND_LOOKUP_VALUES V,FND_MODULES m  WHERE T.LOOKUP_ID = V.LOOKUP_ID(+) and t.module_id = m.module_id and UPPER(T.lookup_type) like'%#lookup_type%')";
+        }
+        if ("mysql".equals(dbType)){
+            sql1 = "SELECT COUNT(1) AS RESULTCOUNT from (SELECT distinct t.lookup_type lookupType,t.lookup_id lookupId,t.lookup_name lookupName,t.lookup_description lookupDescription,m.module_name moduleName,m.module_id moduleId  FROM FND_LOOKUP_TYPES T left join FND_LOOKUP_VALUES V on T.LOOKUP_ID = V.LOOKUP_ID LEFT JOIN FND_MODULES m on t.module_id = m.module_id WHERE UPPER(T.lookup_type) like'%#lookup_type%') s";
+        }
+        // String sql1 = "SELECT COUNT(1) AS resultCount from (SELECT distinct t.lookup_type,t.lookup_id,t.lookup_name,t.lookup_description,m.module_name,m.module_id  FROM FND_LOOKUP_TYPES T, FND_LOOKUP_VALUES V,FND_MODULES m  WHERE T.LOOKUP_ID = V.LOOKUP_ID(+) and t.module_id = m.module_id and UPPER(T.lookup_type) like'%#lookup_type%')";
         sql1 = sql1.replace("#lookup_type", fndLookupType.getLookupType().toUpperCase());
         PageQueryResult<Map<String, Object>> pageQueryResult = new PageQueryResult();
         List<Map<String, Object>> result = sw.buildQuery()

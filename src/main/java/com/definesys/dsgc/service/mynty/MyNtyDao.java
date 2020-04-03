@@ -10,6 +10,7 @@ import com.definesys.mpaas.query.MpaasQuery;
 import com.definesys.mpaas.query.MpaasQueryFactory;
 import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +26,9 @@ public class MyNtyDao {
 
     @Autowired
     private FndLookupTypeDao lkvDao;
+
+    @Value("${database.type}")
+    private String dbType;
 
 
     public PageQueryResult<MyNtyQueryListBean> queryMNRules(String uid,UserHelper uh,MyNtyQueryParamVO reqParam,int pageSize,int pageIndex) {
@@ -83,7 +87,7 @@ public class MyNtyDao {
         }
 
         if (queryAnd != null && queryAnd.trim().length() > 0) {
-            sql = "select * from (" + sql + ") where 1 = 1 " + queryAnd;
+            sql = "select * from (" + sql + ") g where 1 = 1 " + queryAnd;
         }
 
         return sw.buildQuery().sql(sql).doPageQuery(pageIndex,pageSize,MyNtyQueryListBean.class);
@@ -509,7 +513,14 @@ public class MyNtyDao {
      */
     private String initServExcptSubcribute(String userId) {
         String ruleId = null;
-        List<Map<String,Object>> isExist = sw.buildQuery().sql("select r.rule_id from dsgc_mn_subcribes s,dsgc_mn_rules r where s.mn_rule = r.rule_id and r.rule_type = 'SE' and s.scb_user = #userId and rownum  = 1")
+        String sql = null;
+        if("oracle".equals(dbType)){
+            sql = "select r.rule_id from dsgc_mn_subcribes s,dsgc_mn_rules r where s.mn_rule = r.rule_id and r.rule_type = 'SE' and s.scb_user = #userId and rownum  = 1";
+        }
+        if("mysql".equals(dbType)){
+            sql = " select r.rule_id from dsgc_mn_subcribes s,dsgc_mn_rules r where s.mn_rule = r.rule_id and r.rule_type = 'SE' and s.scb_user = #userId  limit 1";
+        }
+        List<Map<String,Object>> isExist = sw.buildQuery().sql(sql)
                 .setVar("userId",userId).doQuery();
         if (isExist.size() == 0 || isExist.get(0).size() == 0) {
             //添加订阅规则

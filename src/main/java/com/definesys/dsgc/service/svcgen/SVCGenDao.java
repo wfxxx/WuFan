@@ -274,7 +274,7 @@ public class SVCGenDao {
         String sql = "";
 
         if (uh.isAdmin() || uh.isSuperAdministrator() || uh.isSystemMaintainer()) {
-            sql = "select * from (" + baseSql + ") where 1 = 1 ";
+            sql = "select * from (" + baseSql + ") t where 1 = 1 ";
             if (uh.isSystemMaintainer()) {
                 //查询系统范围内的对象,或者自己创建还未绑定接口的资源对象
                 sql = "select * from (" + baseSql + ") " +

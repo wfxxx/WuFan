@@ -29,7 +29,8 @@ public class DSGCProjDirManagerDao {
 
 
     public PageQueryResult<SysProfileDirVO> querySysProfileDirListPage(int pageIndex, int pageSize, SysProfileDirVO sysProfileDirVO) {
-        StringBuffer strSql = new StringBuffer("SELECT *  FROM ( SELECT pd.proj_id, pd.proj_name, pd.proj_desc, pd.sys_code, ss.sys_name FROM DSGC_SVCGEN_PROJ_INFO pd, DSGC_SYSTEM_ENTITIES ss WHERE pd.sys_code = ss.sys_code(+) )  WHERE 1 = 1 ");
+//        StringBuffer strSql = new StringBuffer("SELECT *  FROM ( SELECT pd.proj_id, pd.proj_name, pd.proj_desc, pd.sys_code, ss.sys_name FROM DSGC_SVCGEN_PROJ_INFO pd, DSGC_SYSTEM_ENTITIES ss WHERE pd.sys_code = ss.sys_code(+) )  WHERE 1 = 1 ");
+        StringBuffer strSql = new StringBuffer("SELECT * FROM (SELECT pd.proj_id, pd.proj_name, pd.proj_desc, pd.sys_code, ss.sys_name FROM DSGC_SVCGEN_PROJ_INFO pd LEFT JOIN DSGC_SYSTEM_ENTITIES ss on pd.sys_code = ss.sys_code ) s WHERE 1 = 1 ");
 
         MpaasQuery mq = sw.buildQuery();
         if(StringUtil.isNotBlank(sysProfileDirVO.getProjName())){

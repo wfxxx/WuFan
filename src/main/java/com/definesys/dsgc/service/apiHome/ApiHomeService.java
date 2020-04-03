@@ -108,10 +108,13 @@ public class ApiHomeService {
     public Map<String,Object> queryMyTask(String userId){
         List<Map<String,Object>> result1=apiHomeDao.queryTaskTotal(userId);
         List<Map<String,Object>> result2=apiHomeDao.queryTaskdayIncrease(userId);
-        BigDecimal bigDecimal1= (BigDecimal) result1.get(0).get("COUNT(1)");
-        Integer taskTotal=Integer.parseInt(bigDecimal1.toString());
-        BigDecimal bigDecimal2= (BigDecimal) result2.get(0).get("COUNT(1)");
-        Integer dayIncrease=Integer.parseInt(bigDecimal2.toString());
+      //  BigDecimal bigDecimal1= (BigDecimal) result1.get(0).get("COUNT(1)");
+       // BigDecimal bigDecimal1=  new BigDecimal((String)result1.get(0).get("COUNT(1)"));
+        Integer taskTotal=Integer.parseInt((result1.get(0).get("COUNT(1)").toString()));
+      //  BigDecimal bigDecimal2= (BigDecimal) result2.get(0).get("COUNT(1)");
+       // BigDecimal bigDecimal2=  new BigDecimal((String)result2.get(0).get("COUNT(1)"));
+       // bigDecimal2.toString()
+        Integer dayIncrease=Integer.parseInt(result2.get(0).get("COUNT(1)").toString());
         double dayRate=0.0;
         if(taskTotal!=0){
             dayRate=dayIncrease/taskTotal*100;

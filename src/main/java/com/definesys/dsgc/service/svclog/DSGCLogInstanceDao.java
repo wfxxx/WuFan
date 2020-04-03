@@ -10,6 +10,7 @@ import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
 import com.definesys.dsgc.service.svclog.bean.DSGCLogAudit;
 import com.definesys.dsgc.service.svclog.bean.DSGCLogInstance;
 import com.definesys.dsgc.service.svclog.bean.DSGCLogOutBound;
+import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.dsgc.service.utils.StringUtils;
 import com.definesys.mpaas.log.SWordLogger;
 import com.definesys.mpaas.query.MpaasQuery;
@@ -17,6 +18,7 @@ import com.definesys.mpaas.query.MpaasQueryFactory;
 import com.definesys.mpaas.query.db.PageQueryResult;
 import com.definesys.mpaas.query.session.MpaasSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.sql.Clob;
@@ -33,6 +35,9 @@ public class DSGCLogInstanceDao {
 
     @Autowired
     private SWordLogger logger;
+
+    @Value("${database.type}")
+    private String dbType;
 
     public PageQueryResult<DSGCLogInstance> query(List<Object> keyword, String isAdmin, String uid, DSGCLogInstance instance, int pageSize, int pageIndex,List<String> sysNoList) throws Exception {
         logger.debug(instance.toString());
@@ -186,11 +191,23 @@ public class DSGCLogInstanceDao {
 
     public List<String> getLogPartition() {
         List<String> list = new ArrayList<>();
+        String sql = null;
+        if("oracle".equals(dbType)){
+            sql = "select PARTITION_NAME from USER_TAB_PARTITIONS where TABLE_NAME = 'DSGC_LOG_INSTANCE'";
+
+        }
+        if("mysql".equals(dbType)){
+            sql = "SELECT PARTITION_NAME FROM INFORMATION_SCHEMA.PARTITIONS WHERE TABLE_SCHEMA='dsgc' AND TABLE_NAME = 'DSGC_LOG_INSTANCE'";
+
+        }
         List<Map<String, Object>> result = sw.buildQuery()
-                .sql("select PARTITION_NAME from USER_TAB_PARTITIONS where TABLE_NAME = 'DSGC_LOG_INSTANCE'")
+                .sql(sql)
                 .doQuery();
         for (Map<String, Object> item : result) {
-            list.add((String) item.get("PARTITION_NAME"));
+            if(item != null &&!item.isEmpty() && item.get("PARTITION_NAME") != null){
+                list.add((String) item.get("PARTITION_NAME"));
+            }
+
         }
         return list;
     }

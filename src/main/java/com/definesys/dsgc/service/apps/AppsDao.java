@@ -10,6 +10,7 @@ import com.definesys.mpaas.query.MpaasQuery;
 import com.definesys.mpaas.query.MpaasQueryFactory;
 import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -18,6 +19,8 @@ import java.util.List;
 public class AppsDao {
     @Autowired
     private MpaasQueryFactory sw;
+    @Value("${database.type}")
+    private String dbType;
 
     public PageQueryResult<DSGCUser> queryUserList(CommonReqBean commonReqBean, int pageSize, int pageIndex){
       MpaasQuery mpaasQuery =  sw.buildQuery();
@@ -45,7 +48,15 @@ public class AppsDao {
     }
 
     public PageQueryResult<DSGCSystemEntities> queryAppsList(CommonReqBean commonReqBean, int pageSize, int pageIndex,String userName,String userRole){
-        StringBuffer strSql = new StringBuffer("select * from( select ent.id,ent.sys_code, ent.sys_name, ent.sys_desc,ent.creation_date, t.user_name owner  from DSGC_SYSTEM_ENTITIES ent, (select listagg(u.user_description, ',') within GROUP(order by su.sys_code) user_name, su.sys_code from DSGC_SYSTEM_user su, dsgc_user u where su.user_id = u.user_id group by su.sys_code) t where t.sys_code(+) = ent.sys_code and (ent.attribue1 != 'N'or ent.attribue1 is null))  WHERE 1 = 1 ");
+        String sql = null;
+        if ("oracle".equals(dbType)){
+            sql = "select * from( select ent.id,ent.sys_code, ent.sys_name, ent.sys_desc,ent.creation_date, t.user_name owner  from DSGC_SYSTEM_ENTITIES ent, (select listagg(u.user_description, ',') within GROUP(order by su.sys_code) user_name, su.sys_code from DSGC_SYSTEM_user su, dsgc_user u where su.user_id = u.user_id group by su.sys_code) t where t.sys_code(+) = ent.sys_code and (ent.attribue1 != 'N'or ent.attribue1 is null))  WHERE 1 = 1 ";
+        }
+        if ("mysql".equals(dbType)) {
+        sql = "select * from( select ent.id,ent.sys_code, ent.sys_name, ent.sys_desc,ent.creation_date, t.user_name owner  from DSGC_SYSTEM_ENTITIES ent left JOIN (select group_concat(u.user_description order by su.sys_code, ',') user_name, su.sys_code from DSGC_SYSTEM_user su, dsgc_user u where su.user_id = u.user_id group by su.sys_code) t on t.sys_code = ent.sys_code and (ent.attribue1 != 'N'or ent.attribue1 is null)) g WHERE 1 = 1 ";
+        }
+
+        StringBuffer strSql = new StringBuffer(sql);
         MpaasQuery mq = sw.buildQuery();
 
         if (StringUtil.isNotBlank(commonReqBean.getCon0())) {
@@ -115,9 +126,9 @@ public class AppsDao {
                 .eq("id",dsgcSystemEntities.getId())
                 .doUpdate(DSGCSystemEntities.class);
     }
-    public void addSystemUser(List<DSGCSystemUser> userList){
+    public void addSystemUser(DSGCSystemUser user){
         sw.buildQuery()
-                .doBatchInsert(userList);
+                .doInsert(user);
     }
     public Boolean checkSystemCodeIsExist(String sysCode){
         DSGCSystemEntities dsgcSystemEntities = sw.buildQuery().eq("sys_code",sysCode).doQueryFirst(DSGCSystemEntities.class);

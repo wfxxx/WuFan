@@ -9,6 +9,7 @@ import com.definesys.mpaas.query.MpaasQuery;
 import com.definesys.mpaas.query.MpaasQueryFactory;
 import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -18,15 +19,28 @@ import java.util.Map;
 public class ApiBsDao {
     @Autowired
     private MpaasQueryFactory sw;
+    @Value("${database.type}")
+    private String dbType;
     public PageQueryResult queryApiBsList(CommonReqBean param, int pageSize, int pageIndex, String userRole,List<String> sysCodeList){
-        StringBuffer sqlStr = new StringBuffer("select t1.*,t2.env_code from \n" +
-                "        (select db.*,dse.sys_name appName from dag_bs db,dsgc_system_entities dse where 1=1 and db.app_code = dse.sys_code) t1,\n" +
-                "        (select * from( \n" +
-                "select t.*,row_number() over(partition by sour_code order by env_code) as rowrid   from(    \n" +
-                "  select v.vid,v.sour_code,stat.env_code \n" +
-                "  from dag_code_version v \n" +
-                "  left join (select t.vid,to_char(wm_concat(t.env_code)) as env_code from DAG_DEPLOY_STAT t  group by t.vid)  stat on stat.vid=v.vid  ) t) s where s.rowrid=1) t2\n" +
-                "        where 1=1 and  t1.bs_code=t2.sour_code");
+        StringBuffer sqlStr = null;
+        if("oracle".equals(dbType)){
+             sqlStr = new StringBuffer("select t1.*,t2.env_code from \n" +
+                    "        (select db.*,dse.sys_name appName from dag_bs db,dsgc_system_entities dse where 1=1 and db.app_code = dse.sys_code) t1,\n" +
+                    "        (select * from( \n" +
+                    "select t.*,row_number() over(partition by sour_code order by env_code) as rowrid   from(    \n" +
+                    "  select v.vid,v.sour_code,stat.env_code \n" +
+                    "  from dag_code_version v \n" +
+                    "  left join (select t.vid,to_char(wm_concat(t.env_code)) as env_code from DAG_DEPLOY_STAT t  group by t.vid)  stat on stat.vid=v.vid  ) t) s where s.rowrid=1) t2\n" +
+                    "        where 1=1 and  t1.bs_code=t2.sour_code ");
+        }
+    if ("mysql".equals(dbType)){
+        sqlStr = new StringBuffer("SELECT t1.*,t2.env_code FROM (" +
+                "SELECT db.*,dse.sys_name appName FROM dag_bs db,dsgc_system_entities dse WHERE 1 = 1 AND db.app_code = dse.sys_code ) t1," +
+                "(SELECT * FROM(SELECT t.*,@row_number :=CASE WHEN @customer_no = t.sour_code THEN @row_number + 1 ELSE 1 END AS rowrid," +
+                "@customer_no := t.sour_code temp FROM (SELECT v.vid,v.sour_code,stat.env_code FROM dag_code_version v " +
+                "LEFT JOIN ( SELECT t.vid, CONVERT( group_concat( t.env_code ),char ) AS env_code FROM DAG_DEPLOY_STAT t GROUP BY t.vid ) stat ON stat.vid = v.vid ) t, ( SELECT @row_number := 0, @customer_no := 0 ) AS m ) s WHERE s.rowrid = 1 ) t2 " +
+                "WHERE 1 = 1 AND t1.bs_code = t2.sour_code ");
+    }
         MpaasQuery mq = sw.buildQuery();
         if ("SystemLeader".equals(userRole)&&sysCodeList.size()>0) {
             sqlStr.append(" and t1.app_code in ( ");
@@ -58,8 +72,12 @@ public class ApiBsDao {
                 }
             }
         }
-        System.out.println(sqlStr.toString());
-        mq.sql(sqlStr.toString()+" order by t1.creation_date desc");
+        if("oracle".equals(dbType)){
+            mq.sql(sqlStr.toString()+" order by t1.creation_date desc");
+        }
+        if ("mysql".equals(dbType)){
+            mq.sql(sqlStr.toString()+" GROUP BY bs_id   HAVING COUNT(1)>1  order by t1.creation_date desc");
+        }
         return mq.doPageQuery(pageIndex, pageSize, DagBsbean.class);
     }
 

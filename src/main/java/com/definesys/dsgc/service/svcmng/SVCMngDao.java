@@ -6,6 +6,7 @@ import com.definesys.mpaas.query.MpaasQuery;
 import com.definesys.mpaas.query.MpaasQueryFactory;
 import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,14 +16,12 @@ import java.util.Map;
 public class SVCMngDao {
     @Autowired
     private MpaasQueryFactory sw;
+    @Value("${database.type}")
+    private String dbType;
     public PageQueryResult<DSGCService> querySvcMngServList(SVCCommonReqBean param, int pageIndex, int pageSize,String userRole, List<String> sysCodeList,String servIsOnline){
-        StringBuffer sqlStr;
+        StringBuffer sqlStr = null;
         MpaasQuery mq = sw.buildQuery();
-//        sqlStr = new StringBuffer("select distinct  ds.serv_no servNo,ds.serv_name servName,dse.sys_name attribue1,dse.sys_code subordinateSystem,ds.share_type shareType, " +
-//                "NVL(ds.info_full,0) infoFull,ds.is_prod isProd,ds.instance_id instanceId,ds.deployed_node deployedNode,dbn.node_name attribue2 " +
-//                "from dsgc_services ds,dsgc_system_entities dse,dsgc_bpm_instance dbi,dsgc_bpm_nodes dbn " +
-//                " where ds.subordinate_system = dse.sys_code  "+
-//                " and ds.instance_id = dbi.inst_id(+) and dbi.cur_node = dbn.node_id(+) ");
+        if("oracle".equals(dbType)){
             sqlStr = new StringBuffer("select distinct  ds.serv_no servNo,ds.serv_name servName,dse.sys_name attribue1,dse.sys_code subordinateSystem,ds.share_type shareType, ds.ibUri,ds.httpMethod, " +
                     "NVL(ds.info_full,0) infoFull,ds.is_prod isProd,ds.instance_id instanceId,ds.deployed_node deployedNode,dbn.node_name attribue2 " +
                     "from " +
@@ -30,51 +29,90 @@ public class SVCMngDao {
                     " from dsgc_services_uri dsu) e where px = 1) t on ds.serv_no = t.serv_no ) ds,"+
                     "dsgc_system_entities dse,dsgc_bpm_instance dbi,dsgc_bpm_nodes dbn " +
                     " where ds.subordinate_system = dse.sys_code  "+
-             " and ds.instance_id = dbi.inst_id(+) and dbi.cur_node = dbn.node_id(+) ");
+                    " and ds.instance_id = dbi.inst_id(+) and dbi.cur_node = dbn.node_id(+) ");
 
-        if(StringUtil.isNotBlank(servIsOnline)){
-        sqlStr.append(" and ds.is_prod = #servIsOnline ");
-        mq.setVar("servIsOnline",servIsOnline);
-        }
-        if(!"ALL".equals(param.getQueryType())){
-            sqlStr.append(" and ds.share_type = #queryType ");
-            mq.setVar("queryType",param.getQueryType());
-        }
-        if ("SystemLeader".equals(userRole)){
-            sqlStr.append(" and ds.subordinate_system in ( ");
-            for (int i = 0;i<sysCodeList.size();i++){
-                if(i<sysCodeList.size()-1){
-                    sqlStr.append("'"+sysCodeList.get(i)+"',");
-                }else {
-                    sqlStr.append("'"+sysCodeList.get(i)+"') ");
+            if(StringUtil.isNotBlank(servIsOnline)){
+                sqlStr.append(" and ds.is_prod = #servIsOnline ");
+                mq.setVar("servIsOnline",servIsOnline);
+            }
+            if(!"ALL".equals(param.getQueryType())){
+                sqlStr.append(" and ds.share_type = #queryType ");
+                mq.setVar("queryType",param.getQueryType());
+            }
+            if ("SystemLeader".equals(userRole)){
+                sqlStr.append(" and ds.subordinate_system in ( ");
+                for (int i = 0;i<sysCodeList.size();i++){
+                    if(i<sysCodeList.size()-1){
+                        sqlStr.append("'"+sysCodeList.get(i)+"',");
+                    }else {
+                        sqlStr.append("'"+sysCodeList.get(i)+"') ");
+                    }
                 }
             }
-        }
-//        if (StringUtil.isNotBlank(param.getCon0()) && StringUtil.isBlank(servIsOnline) ){
-//            sqlStr.append(" and ds.is_prod = 'N' ");
-//            sqlStr.append(" and( upper(ds.serv_no) like #con0 or upper(ds.serv_name) like #con0 or upper(dse.sys_name) like #con0 or upper(dbn.node_name) like #con0 )  ");
-//            //or upper(dbn.node_name) like #con0
-//            mq.setVar("con0", "%" + param.getCon0().toUpperCase() + "%");
-//        }
 
 
-        if (StringUtil.isNotBlank(param.getCon0())) {
-           // sqlStr.append(" and ds.is_prod = 'N' ");
-            String[] conArray = param.getCon0().trim().split(" ");
-            for (String s : conArray) {
-                if (s != null && s.length() > 0) {
-                    sqlStr.append(this.generateLikeAndCluse(s));
+
+            if (StringUtil.isNotBlank(param.getCon0())) {
+                // sqlStr.append(" and ds.is_prod = 'N' ");
+                String[] conArray = param.getCon0().trim().split(" ");
+                for (String s : conArray) {
+                    if (s != null && s.length() > 0) {
+                        sqlStr.append(this.generateLikeAndCluse(s));
+                    }
                 }
             }
+
+            if("Y".equals(param.getIsComplete())){
+                sqlStr.append(" and ( ds.info_full != 100 or ds.info_full is null) ");
+            }
+
+
+
         }
+      else  if ("mysql".equals(dbType)){
+            sqlStr = new StringBuffer("SELECT g.*,dbn.node_name attribue2 FROM " +
+                    " ( SELECT DISTINCT ds.serv_no servNo,ds.serv_name servName, " +
+                    " dse.sys_name attribue1,dse.sys_code subordinateSystem,ds.share_type shareType, " +
+                    " ds.ibUri,ds.httpMethod,ifnull( ds.info_full, 0 ) infoFull,ds.is_prod isProd,ds.instance_id instanceId, " +
+                    " ds.deployed_node deployedNode FROM ( SELECT ds.*,t.ib_uri ibUri,t.http_method httpMethod " +
+                    " FROM dsgc_services ds LEFT JOIN ( SELECT * FROM ( SELECT dsu.*,@row_number :=CASE WHEN @customer_no = dsu.serv_no THEN " +
+                    " @row_number + 1 ELSE 1 END AS px,@customer_no := dsu.serv_no temp FROM dsgc_services_uri dsu,( SELECT @row_number := 0, @customer_no := 0 ) AS t ) e " +
+                    " WHERE px = 1 ) t ON ds.serv_no = t.serv_no ) ds,dsgc_system_entities dse WHERE ds.subordinate_system = dse.sys_code ) g LEFT JOIN dsgc_bpm_instance dbi ON g.instanceId = dbi.inst_id LEFT JOIN dsgc_bpm_nodes dbn ON dbi.cur_node = dbn.node_id where 1=1 ");
+            if(StringUtil.isNotBlank(servIsOnline)){
+                sqlStr.append(" and g.isProd = #servIsOnline ");
+                mq.setVar("servIsOnline",servIsOnline);
+            }
+            if(!"ALL".equals(param.getQueryType())){
+                sqlStr.append(" and g.shareType = #queryType ");
+                mq.setVar("queryType",param.getQueryType());
+            }
+            if ("SystemLeader".equals(userRole)){
+                sqlStr.append(" and g.subordinateSystem in ( ");
+                for (int i = 0;i<sysCodeList.size();i++){
+                    if(i<sysCodeList.size()-1){
+                        sqlStr.append("'"+sysCodeList.get(i)+"',");
+                    }else {
+                        sqlStr.append("'"+sysCodeList.get(i)+"') ");
+                    }
+                }
+            }
 
 
 
+            if (StringUtil.isNotBlank(param.getCon0())) {
+                // sqlStr.append(" and ds.is_prod = 'N' ");
+                String[] conArray = param.getCon0().trim().split(" ");
+                for (String s : conArray) {
+                    if (s != null && s.length() > 0) {
+                        sqlStr.append(this.generateLikeAndCluse1(s));
+                    }
+                }
+            }
 
+            if("Y".equals(param.getIsComplete())){
+                sqlStr.append(" and ( g.infoFull != 100 or g.infoFull is null) ");
+            }
 
-
-        if("Y".equals(param.getIsComplete())){
-            sqlStr.append(" and ( ds.info_full != 100 or ds.info_full is null) ");
         }
         mq.sql(sqlStr.toString());
         return mq.doPageQuery(pageIndex,pageSize,DSGCService.class);
@@ -85,6 +123,15 @@ public class SVCMngDao {
         String conAnd = " and  (UPPER(ds.serv_no) like '%" + conUpper + "%'";
         conAnd += " or UPPER(ds.serv_name) like '%" + conUpper + "%'";
         conAnd += " or UPPER(dse.sys_name) like '%" + conUpper + "%'";
+        conAnd += " or UPPER(dbn.node_name) like '%" + conUpper + "%' )";
+
+        return conAnd;
+    }
+    private String generateLikeAndCluse1(String con) {
+        String conUpper = con.toUpperCase();
+        String conAnd = " and  (UPPER(g.servNo) like '%" + conUpper + "%'";
+        conAnd += " or UPPER(g.servName) like '%" + conUpper + "%'";
+        conAnd += " or UPPER(g.attribue1) like '%" + conUpper + "%'";
         conAnd += " or UPPER(dbn.node_name) like '%" + conUpper + "%' )";
 
         return conAnd;

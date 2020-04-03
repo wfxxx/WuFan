@@ -6,6 +6,7 @@ import com.definesys.mpaas.query.MpaasQuery;
 import com.definesys.mpaas.query.MpaasQueryFactory;
 import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -24,11 +25,18 @@ import java.util.Map;
 public class ApiHomeDao {
     @Autowired
     private MpaasQueryFactory sw;
-
+    @Value("${database.type}")
+    private String dbType;
 
     public List<MarketEntiy> queryApiIcrease(){
-       return  sw.buildQuery().sql("SELECT t.api_code servNo,t.api_name servName,t.creation_date creationDate FROM dsgc_apis t " +
-               "WHERE TO_CHAR(t.creation_date,'YYYY-MM')=TO_CHAR(SYSDATE,'YYYY-MM') order by t.creation_date desc")
+        String sql = null;
+        if("oracle".equals(dbType)){
+            sql = "SELECT t.api_code servNo,t.api_name servName,t.creation_date creationDate FROM dsgc_apis t WHERE TO_CHAR(t.creation_date,'YYYY-MM')=TO_CHAR(SYSDATE,'YYYY-MM') order by t.creation_date desc";
+        }
+        if ("mysql".equals(dbType)){
+            sql = "SELECT t.api_code servNo,t.api_name servName,t.creation_date creationDate FROM dsgc_apis t WHERE date_format(t.creation_date,'%Y-%m')=date_format(CURRENT_TIMESTAMP,'%Y-%m') order by t.creation_date desc";
+        }
+       return  sw.buildQuery().sql(sql)
                 .doQuery(MarketEntiy.class);
     }
     ///查找dsgc_apis表统计
@@ -36,16 +44,44 @@ public class ApiHomeDao {
             return sw.buildQuery().sql("SELECT COUNT(1) as value FROM dsgc_apis t ").doQueryFirst(ApiHomeHisto.class);
         }
         public ApiHomeHisto getTodyTotalA(){
-        return sw.buildQuery().sql("SELECT COUNT(1) as value FROM dsgc_apis t WHERE TO_CHAR(t.creation_date,'YYYY-MM-DD')=TO_CHAR(SYSDATE,'YYYY-MM-DD')").doQueryFirst(ApiHomeHisto.class);
+            String sql = null;
+            if("oracle".equals(dbType)){
+                sql = "SELECT COUNT(1) as value FROM dsgc_apis t WHERE TO_CHAR(t.creation_date,'YYYY-MM-DD')=TO_CHAR(SYSDATE,'YYYY-MM-DD')";
+            }
+            if ("mysql".equals(dbType)){
+                sql = "SELECT COUNT(1) as value FROM dsgc_apis t WHERE date_format(t.creation_date,'%Y-%m-%d')=date_format(CURRENT_TIMESTAMP,'%Y-%m-%d')";
+            }
+        return sw.buildQuery().sql(sql).doQueryFirst(ApiHomeHisto.class);
         }
         public ApiHomeHisto getYestodayTotalA(){
-        return sw.buildQuery().sql("SELECT COUNT(1) as value FROM dsgc_apis t WHERE TO_CHAR(t.creation_date,'YYYY-MM-DD')=TO_CHAR(SYSDATE-1,'YYYY-MM-DD')").doQueryFirst(ApiHomeHisto.class);
+            String sql = null;
+            if("oracle".equals(dbType)){
+               sql = "SELECT COUNT(1) as value FROM dsgc_apis t WHERE TO_CHAR(t.creation_date,'YYYY-MM-DD')=TO_CHAR(SYSDATE-1,'YYYY-MM-DD')";
+            }
+            if ("mysql".equals(dbType)){
+                sql = "SELECT COUNT(1) as value FROM dsgc_apis t WHERE date_format(t.creation_date,'%Y-%m-%d')=date_format(CURRENT_TIMESTAMP-1,'%Y-%m-%d')";
+            }
+        return sw.buildQuery().sql(sql).doQueryFirst(ApiHomeHisto.class);
         }
         public ApiHomeHisto getLastWeekTotalA(){
-        return sw.buildQuery().sql("  SELECT COUNT(1) as value FROM dsgc_apis  t WHERE t.creation_date>=TRUNC(NEXT_DAY(SYSDATE-7,1)-6) and  t.creation_date<=TRUNC(NEXT_DAY(SYSDATE-7,1))").doQueryFirst(ApiHomeHisto.class);
+            String sql = null;
+            if("oracle".equals(dbType)){
+                sql = "SELECT COUNT(1) as value FROM dsgc_apis  t WHERE t.creation_date>=TRUNC(NEXT_DAY(SYSDATE-7,1)-6) and  t.creation_date<=TRUNC(NEXT_DAY(SYSDATE-7,1))";
+            }
+            if ("mysql".equals(dbType)){
+                sql = "SELECT COUNT(1) as value FROM dsgc_apis  t WHERE t.creation_date>= DATE_FORMAT(date_sub(CURRENT_TIMESTAMP-7,interval+1 day)-6,'%Y-%m-%d %H:%i:%s') and  t.creation_date<=DATE_FORMAT(date_sub(CURRENT_TIMESTAMP-7,interval+1 day),'%Y-%m-%d %H:%i:%s')";
+            }
+        return sw.buildQuery().sql(sql).doQueryFirst(ApiHomeHisto.class);
         }
         public ApiHomeHisto getNowWeekTotalA(){
-        return sw.buildQuery().sql("  SELECT COUNT(1) as value FROM dsgc_apis t WHERE t.creation_date>=TRUNC(NEXT_DAY(SYSDATE,1)-6) and  t.creation_date<=TRUNC(NEXT_DAY(SYSDATE,1))").doQueryFirst(ApiHomeHisto.class);
+            String sql = null;
+            if("oracle".equals(dbType)){
+                sql = " SELECT COUNT(1) as value FROM dsgc_apis t WHERE t.creation_date>=TRUNC(NEXT_DAY(SYSDATE,1)-6) and  t.creation_date<=TRUNC(NEXT_DAY(SYSDATE,1))";
+            }
+            if ("mysql".equals(dbType)){
+                sql = " SELECT COUNT(1) as value FROM dsgc_apis t WHERE t.creation_date >= DATE_FORMAT(date_sub(CURRENT_TIMESTAMP,interval+1 day)-6,'%Y-%m-%d %H:%i:%s') and  t.creation_date<=DATE_FORMAT(date_sub(CURRENT_TIMESTAMP,interval+1 day),'%Y-%m-%d %H:%i:%s')";
+            }
+        return sw.buildQuery().sql(sql).doQueryFirst(ApiHomeHisto.class);
         }
 
 
@@ -54,17 +90,45 @@ public class ApiHomeDao {
         return sw.buildQuery().sql("SELECT COUNT(1) as value FROM dsgc_system_entities t ").doQueryFirst(ApiHomeHisto.class);
     }
     public ApiHomeHisto getTodyTotalE(){
-        return sw.buildQuery().sql("SELECT COUNT(1) as value FROM dsgc_system_entities t WHERE TO_CHAR(t.creation_date,'YYYY-MM-DD')=TO_CHAR(SYSDATE,'YYYY-MM-DD')").doQueryFirst(ApiHomeHisto.class);
+        String sql = null;
+        if("oracle".equals(dbType)) {
+            sql = "SELECT COUNT(1) as value FROM dsgc_system_entities t WHERE TO_CHAR(t.creation_date,'YYYY-MM-DD')=TO_CHAR(SYSDATE,'YYYY-MM-DD')";
+        }
+        if ("mysql".equals(dbType)){
+            sql = "SELECT COUNT(1) as value FROM dsgc_system_entities t WHERE DATE_FORMAT(t.creation_date,'%Y-%m-%d')=DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d')";
+        }
+        return sw.buildQuery().sql(sql).doQueryFirst(ApiHomeHisto.class);
     }
     public ApiHomeHisto getYestodayTotalE(){
-        return sw.buildQuery().sql("SELECT COUNT(1) as value FROM dsgc_system_entities t WHERE TO_CHAR(t.creation_date,'YYYY-MM-DD')=TO_CHAR(SYSDATE-1,'YYYY-MM-DD')").doQueryFirst(ApiHomeHisto.class);
+        String sql = null;
+        if("oracle".equals(dbType)) {
+            sql = "SELECT COUNT(1) as value FROM dsgc_system_entities t WHERE TO_CHAR(t.creation_date,'YYYY-MM-DD')=TO_CHAR(SYSDATE-1,'YYYY-MM-DD')";
+        }
+        if ("mysql".equals(dbType)){
+            sql = "SELECT COUNT(1) as value FROM dsgc_system_entities t WHERE DATE_FORMAT(t.creation_date,'%Y-%m-%d')=DATE_FORMAT(CURRENT_TIMESTAMP-1,'%Y-%m-%d')";
+        }
+        return sw.buildQuery().sql(sql).doQueryFirst(ApiHomeHisto.class);
     }
     public ApiHomeHisto getLastWeekTotalE(){
-        return sw.buildQuery().sql("  SELECT COUNT(1) as value FROM dsgc_system_entities  t WHERE t.creation_date>=TRUNC(NEXT_DAY(SYSDATE-7,1)-6) and  t.creation_date<=TRUNC(NEXT_DAY(SYSDATE-7,1))").doQueryFirst(ApiHomeHisto.class);
+        String sql = null;
+        if("oracle".equals(dbType)) {
+            sql = "SELECT COUNT(1) as value FROM dsgc_system_entities  t WHERE t.creation_date>=TRUNC(NEXT_DAY(SYSDATE-7,1)-6) and  t.creation_date<=TRUNC(NEXT_DAY(SYSDATE-7,1))";
+        }
+        if ("mysql".equals(dbType)){
+            sql = "SELECT COUNT(1) as value FROM dsgc_system_entities  t WHERE t.creation_date>=DATE_FORMAT(date_sub(CURRENT_TIMESTAMP-7,interval+1 day)-6,'%Y-%m-%d %H:%i:%s') and  t.creation_date<=DATE_FORMAT(date_sub(CURRENT_TIMESTAMP-7,interval+1 day),'%Y-%m-%d %H:%i:%s')";
+        }
+        return sw.buildQuery().sql(sql).doQueryFirst(ApiHomeHisto.class);
 
     }
     public ApiHomeHisto getNowWeekTotalE(){
-        return sw.buildQuery().sql("  SELECT COUNT(1) as value FROM dsgc_system_entities  t WHERE t.creation_date>=TRUNC(NEXT_DAY(SYSDATE,1)-6) and  t.creation_date<=TRUNC(NEXT_DAY(SYSDATE,1))").doQueryFirst(ApiHomeHisto.class);
+        String sql = null;
+        if("oracle".equals(dbType)) {
+            sql = "SELECT COUNT(1) as value FROM dsgc_system_entities  t WHERE t.creation_date>=TRUNC(NEXT_DAY(SYSDATE,1)-6) and  t.creation_date<=TRUNC(NEXT_DAY(SYSDATE,1))";
+        }
+        if ("mysql".equals(dbType)){
+            sql = "SELECT COUNT(1) as value FROM dsgc_system_entities  t WHERE t.creation_date>=DATE_FORMAT(date_sub(CURRENT_TIMESTAMP,interval+1 day)-6,'%Y-%m-%d %H:%i:%s') and  t.creation_date<=DATE_FORMAT(date_sub(CURRENT_TIMESTAMP,interval+1 day),'%Y-%m-%d %H:%i:%s')";
+        }
+        return sw.buildQuery().sql(sql).doQueryFirst(ApiHomeHisto.class);
 
     }
 
@@ -73,17 +137,45 @@ public class ApiHomeDao {
         return sw.buildQuery().sql("SELECT COUNT(1) as value FROM dsgc_consumer_entities t ").doQueryFirst(ApiHomeHisto.class);
     }
     public ApiHomeHisto getTodyTotalU(){
-        return sw.buildQuery().sql("SELECT COUNT(1) as value FROM dsgc_consumer_entities t WHERE TO_CHAR(t.creation_date,'YYYY-MM-DD')=TO_CHAR(SYSDATE,'YYYY-MM-DD')").doQueryFirst(ApiHomeHisto.class);
+        String sql = null;
+        if("oracle".equals(dbType)) {
+            sql = "SELECT COUNT(1) as value FROM dsgc_consumer_entities t WHERE TO_CHAR(t.creation_date,'YYYY-MM-DD')=TO_CHAR(SYSDATE,'YYYY-MM-DD')";
+        }
+        if ("mysql".equals(dbType)){
+           sql = "SELECT COUNT(1) as value FROM dsgc_consumer_entities t WHERE DATE_FORMAT(t.creation_date,'%Y-%m-%d')=DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d')";
+        }
+        return sw.buildQuery().sql(sql).doQueryFirst(ApiHomeHisto.class);
     }
     public ApiHomeHisto getYestodayTotalU(){
-        return sw.buildQuery().sql("SELECT COUNT(1) as value FROM dsgc_consumer_entities t WHERE TO_CHAR(t.creation_date,'YYYY-MM-DD')=TO_CHAR(SYSDATE-1,'YYYY-MM-DD')").doQueryFirst(ApiHomeHisto.class);
+        String sql = null;
+        if("oracle".equals(dbType)) {
+            sql = "SELECT COUNT(1) as value FROM dsgc_consumer_entities t WHERE TO_CHAR(t.creation_date,'YYYY-MM-DD')=TO_CHAR(SYSDATE-1,'YYYY-MM-DD')";
+        }
+        if ("mysql".equals(dbType)){
+            sql = "SELECT COUNT(1) as value FROM dsgc_consumer_entities t WHERE DATE_FORMAT(t.creation_date,'%Y-%m-%d')=DATE_FORMAT(CURRENT_TIMESTAMP-1,'%Y-%m-%d')";
+        }
+        return sw.buildQuery().sql(sql).doQueryFirst(ApiHomeHisto.class);
     }
     public ApiHomeHisto getLastWeekTotalU(){
-        return sw.buildQuery().sql("  SELECT COUNT(1) as value FROM dsgc_consumer_entities  t WHERE t.creation_date>=TRUNC(NEXT_DAY(SYSDATE-7,1)-6) and  t.creation_date<=TRUNC(NEXT_DAY(SYSDATE-7,1))").doQueryFirst(ApiHomeHisto.class);
+        String sql = null;
+        if("oracle".equals(dbType)) {
+            sql = "SELECT COUNT(1) as value FROM dsgc_consumer_entities  t WHERE t.creation_date>=TRUNC(NEXT_DAY(SYSDATE-7,1)-6) and  t.creation_date<=TRUNC(NEXT_DAY(SYSDATE-7,1))";
+        }
+        if ("mysql".equals(dbType)){
+            sql = "SELECT COUNT(1) as value FROM dsgc_consumer_entities  t WHERE t.creation_date>=DATE_FORMAT(date_sub(CURRENT_TIMESTAMP-7,interval+1 day)-6,'%Y-%m-%d %H:%i:%s') and  t.creation_date<=DATE_FORMAT(date_sub(CURRENT_TIMESTAMP-7,interval+1 day),'%Y-%m-%d %H:%i:%s')";
+        }
+        return sw.buildQuery().sql(sql).doQueryFirst(ApiHomeHisto.class);
 
     }
     public ApiHomeHisto getNowWeekTotalU(){
-        return sw.buildQuery().sql("  SELECT COUNT(1) as value FROM dsgc_consumer_entities  t WHERE t.creation_date>=TRUNC(NEXT_DAY(SYSDATE,1)-6) and  t.creation_date<=TRUNC(NEXT_DAY(SYSDATE,1))").doQueryFirst(ApiHomeHisto.class);
+        String sql = null;
+        if("oracle".equals(dbType)) {
+         sql = "SELECT COUNT(1) as value FROM dsgc_consumer_entities  t WHERE t.creation_date>=TRUNC(NEXT_DAY(SYSDATE,1)-6) and  t.creation_date<=TRUNC(NEXT_DAY(SYSDATE,1))";
+        }
+        if ("mysql".equals(dbType)){
+           sql = "SELECT COUNT(1) as value FROM dsgc_consumer_entities  t WHERE t.creation_date>=DATE_FORMAT(date_sub(CURRENT_TIMESTAMP,interval+1 day)-6,'%Y-%m-%d %H:%i:%s') and  t.creation_date<=DATE_FORMAT(date_sub(CURRENT_TIMESTAMP,interval+1 day),'%Y-%m-%d %H:%i:%s')";
+        }
+        return sw.buildQuery().sql(sql).doQueryFirst(ApiHomeHisto.class);
 
     }
 
@@ -92,17 +184,45 @@ public class ApiHomeDao {
         return sw.buildQuery().sql("SELECT SUM(T.TOTAL_TIMES) as value FROM rp_api_year t ").doQueryFirst(ApiHomeHisto.class);
     }
     public ApiHomeHisto getTodyTotalV(){
-        return sw.buildQuery().sql("SELECT SUM(T.TOTAL_TIMES) as value FROM rp_api_day t where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd')").doQueryFirst(ApiHomeHisto.class);
+        String sql = null;
+        if("oracle".equals(dbType)) {
+           sql = "SELECT SUM(T.TOTAL_TIMES) as value FROM rp_api_day t where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd')";
+        }
+        if ("mysql".equals(dbType)){
+            sql ="SELECT SUM(T.TOTAL_TIMES) as value FROM rp_api_day t where str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d'),'%Y-%m-%d')";
+        }
+        return sw.buildQuery().sql(sql).doQueryFirst(ApiHomeHisto.class);
     }
     public ApiHomeHisto getYestodayTotalV(){
-        return sw.buildQuery().sql("SELECT SUM(T.TOTAL_TIMES) as value FROM rp_api_day t WHERE  to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate-1,'yyyy-mm-dd'),'yyyy-mm-dd')").doQueryFirst(ApiHomeHisto.class);
+        String sql = null;
+        if("oracle".equals(dbType)) {
+          sql = "SELECT SUM(T.TOTAL_TIMES) as value FROM rp_api_day t WHERE  to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate-1,'yyyy-mm-dd'),'yyyy-mm-dd')";
+        }
+        if ("mysql".equals(dbType)){
+            sql = "SELECT SUM(T.TOTAL_TIMES) as value FROM rp_api_day t WHERE  str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP-1,'%Y-%m-%d'),'%Y-%m-%d')";
+        }
+        return sw.buildQuery().sql(sql).doQueryFirst(ApiHomeHisto.class);
     }
     public ApiHomeHisto getLastWeekTotalV(){
-        return sw.buildQuery().sql("  SELECT SUM(T.TOTAL_TIMES) as value FROM rp_api_day  t WHERE to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')>=TRUNC(NEXT_DAY(SYSDATE-7,1)-6) and  to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')<=TRUNC(NEXT_DAY(SYSDATE-7,1))").doQueryFirst(ApiHomeHisto.class);
+        String sql = null;
+        if("oracle".equals(dbType)) {
+            sql = "SELECT SUM(T.TOTAL_TIMES) as value FROM rp_api_day  t WHERE to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')>=TRUNC(NEXT_DAY(SYSDATE-7,1)-6) and  to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')<=TRUNC(NEXT_DAY(SYSDATE-7,1))";
+        }
+        if ("mysql".equals(dbType)){
+            sql = "SELECT SUM(T.TOTAL_TIMES) as value FROM rp_api_day  t WHERE str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')>=DATE_FORMAT(date_sub(CURRENT_TIMESTAMP-7,interval+1 day)-6,'%Y-%m-%d %H:%i:%s') and  str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')<=DATE_FORMAT(date_sub(CURRENT_TIMESTAMP-7,interval+1 day),'%Y-%m-%d %H:%i:%s')";
+        }
+        return sw.buildQuery().sql(sql).doQueryFirst(ApiHomeHisto.class);
 
     }
     public ApiHomeHisto getNowWeekTotalV(){
-        return sw.buildQuery().sql("  SELECT SUM(T.TOTAL_TIMES) as value FROM rp_api_day  t WHERE to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')>=TRUNC(NEXT_DAY(SYSDATE,1)-6) and  to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')<=TRUNC(NEXT_DAY(SYSDATE,1))").doQueryFirst(ApiHomeHisto.class);
+        String sql = null;
+        if("oracle".equals(dbType)) {
+            sql = " SELECT SUM(T.TOTAL_TIMES) as value FROM rp_api_day  t WHERE to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')>=TRUNC(NEXT_DAY(SYSDATE,1)-6) and  to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')<=TRUNC(NEXT_DAY(SYSDATE,1))";
+        }
+        if ("mysql".equals(dbType)){
+            sql = " SELECT SUM(T.TOTAL_TIMES) as value FROM rp_api_day  t WHERE str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')>=DATE_FORMAT(date_sub(CURRENT_TIMESTAMP,interval+1 day)-6,'%Y-%m-%d %H:%i:%s') and  str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')<=DATE_FORMAT(date_sub(CURRENT_TIMESTAMP,interval+1 day),'%Y-%m-%d %H:%i:%s')";
+        }
+        return sw.buildQuery().sql(sql).doQueryFirst(ApiHomeHisto.class);
 
     }
 
@@ -112,7 +232,7 @@ public class ApiHomeDao {
 
     //查询任务总数
     public List<Map<String,Object>> queryTaskTotal(String userId){
-        return  sw.buildQuery().sql("select count(1) from\n"+
+        return  sw.buildQuery().sql("select COUNT(1) from\n"+
                 "    dsgc_bpm_instance dbi,\n"+
                 "    dsgc_bpm_task dbt\n"+
                 "    where dbt.approver = #userId\n"+
@@ -125,11 +245,14 @@ public class ApiHomeDao {
 
     //查询新增任务
     public List<Map<String,Object>> queryTaskdayIncrease(String userId){
-        return  sw.buildQuery().sql("select count(1) from\n"+
-                "    dsgc_bpm_instance dbi,\n"+
-                "    dsgc_bpm_task dbt\n"+
-                "    where dbt.approver = #userId\n"+
-                "    and dbt.node_id = dbi.cur_node and dbt.inst_id = dbi.inst_id  and to_char(dbt.creation_date,'YYYY-MM-DD')=to_char(sysdate,'YYYY-MM-DD')")
+        String sql = null;
+        if("oracle".equals(dbType)) {
+            sql = "select count(1) from dsgc_bpm_instance dbi,dsgc_bpm_task dbt where dbt.approver = #userId and dbt.node_id = dbi.cur_node and dbt.inst_id = dbi.inst_id  and to_char(dbt.creation_date,'YYYY-MM-DD')=to_char(sysdate,'YYYY-MM-DD')";
+        }
+        if ("mysql".equals(dbType)){
+            sql = "select COUNT(1) from dsgc_bpm_instance dbi,dsgc_bpm_task dbt where dbt.approver = #userId and dbt.node_id = dbi.cur_node and dbt.inst_id = dbi.inst_id  and DATE_FORMAT(dbt.creation_date,'%Y-%m-%d')=DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d')";
+        }
+        return  sw.buildQuery().sql(sql)
                 .setVar("userId",userId)
                 .doQuery();
 
@@ -180,22 +303,57 @@ public class ApiHomeDao {
         List<ApiHomeHisto> result=new ArrayList<ApiHomeHisto>();
         MpaasQuery resulSql =sw.buildQuery();
         if(startTime!=null&&endTime!=null&&limitTime==null) {
-            resulSql.sql("select t.serv_no as name ,sum(t.total_times)  over(partition by t.serv_no) as value from rp_api_day t \n" +
-                    "                    where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')<=to_date(#endTime,'yyyy-mm-dd') and to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')>to_date(#startTime,'yyyy-mm-dd') order by value desc")
+            String sql = null;
+            if("oracle".equals(dbType)) {
+                sql = "select t.serv_no as name ,sum(t.total_times)  over(partition by t.serv_no) as value from rp_api_day t " +
+                        "  where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')<=to_date(#endTime,'yyyy-mm-dd') and to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')>to_date(#startTime,'yyyy-mm-dd') order by value desc";
+            }
+            if ("mysql".equals(dbType)){
+                sql = "select t.serv_no as name ,sum(t.total_times) as value from rp_api_day t where str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')<=str_to_date('','%Y-%m-%d') and str_to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')>str_to_date('','%Y-%m-%d') order by t.serv_no,value desc";
+            }
+            resulSql.sql(sql)
                     .setVar("endTime",endTime).setVar("startTime",startTime);
         }
         else if(limitTime.equals("year")){
-            resulSql .sql("select t.serv_no as name ,sum(t.total_times)  over(partition by t.serv_no) as value from rp_api_year t\n" +
-                    " where to_date(t.year,'yyyy')=to_date(to_char(sysdate,'yyyy'),'yyyy') order by value desc");
+            String sql = null;
+            if("oracle".equals(dbType)) {
+                sql = "select t.serv_no as name ,sum(t.total_times)  over(partition by t.serv_no) as value from rp_api_year t " +
+                        " where to_date(t.year,'yyyy')=to_date(to_char(sysdate,'yyyy'),'yyyy') order by value desc";
+            }
+            if ("mysql".equals(dbType)){
+                sql = "select t.serv_no as name ,sum(t.total_times) as value   from rp_api_year t where str_to_date(t.year,'%Y')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y'),'%Y') order by t.serv_no,value desc";
+            }
+            resulSql .sql(sql);
         }else if(limitTime.equals("month")){
-            resulSql .sql("select t.serv_no as name ,sum(t.total_times)  over(partition by t.serv_no) as value from rp_api_month t\n" +
-                    " where to_date(t.year||'-'||t.month,'yyyy-mm')=to_date(to_char(sysdate,'yyyy-mm'),'yyyy-mm') order by value desc");
+            String sql = null;
+            if("oracle".equals(dbType)) {
+                sql = "select t.serv_no as name ,sum(t.total_times)  over(partition by t.serv_no) as value from rp_api_month t " +
+                        " where to_date(t.year||'-'||t.month,'yyyy-mm')=to_date(to_char(sysdate,'yyyy-mm'),'yyyy-mm') order by value desc";
+            }
+            if ("mysql".equals(dbType)){
+                sql = "select t.serv_no as name ,sum(t.total_times)  as value from rp_api_month t where str_to_date(t.year||'-'||t.month,'%Y-%m')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m'),'%Y-%m') order by t.serv_no,value desc";
+            }
+            resulSql .sql(sql);
         }else if(limitTime.equals("week")){
-            resulSql.sql("select t.serv_no as name ,sum(t.total_times)  over(partition by t.serv_no) as value from rp_api_day t\n" +
-                    "  where to_char(to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd'),'iw')=to_char(sysdate,'iw') and t.year=to_char(sysdate,'yyyy') order by value desc ");
+            String sql = null;
+            if("oracle".equals(dbType)) {
+                sql = "select t.serv_no as name ,sum(t.total_times)  over(partition by t.serv_no) as value from rp_api_day t" +
+                        " where to_char(to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd'),'iw')=to_char(sysdate,'iw') and t.year=to_char(sysdate,'yyyy') order by value desc ";
+            }
+            if ("mysql".equals(dbType)){
+                sql = "select t.serv_no as name ,sum(t.total_times) as value from rp_api_day t where DATE_FORMAT(str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d'),'iw')=DATE_FORMAT(CURRENT_TIMESTAMP,'iw') and t.year=DATE_FORMAT(CURRENT_TIMESTAMP,'%Y') order by t.serv_no,value desc ";
+            }
+            resulSql.sql(sql);
         }else if(limitTime.equals("day")){
-            resulSql .sql("select t.serv_no as name ,sum(t.total_times)  over(partition by t.serv_no) as value from rp_api_day t\n" +
-                    " where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') order by value desc");
+            String sql = null;
+            if("oracle".equals(dbType)) {
+                sql = "select t.serv_no as name ,sum(t.total_times)  over(partition by t.serv_no) as value from rp_api_day t" +
+                        " where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') order by value desc";
+            }
+            if ("mysql".equals(dbType)){
+                sql = "select t.serv_no as name ,sum(t.total_times) as value from rp_api_day t where str_to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d'),'%Y-%m-%d') order by t.serv_no,value desc";
+            }
+            resulSql .sql(sql);
         }
         return resulSql.doPageQuery(1,10,ApiHomeHisto.class);
     }
@@ -207,22 +365,57 @@ public class ApiHomeDao {
         List<ApiHomeHisto> result=new ArrayList<ApiHomeHisto>();
         MpaasQuery resulSql =sw.buildQuery();
         if(startTime!=null&&endTime!=null&&limitTime==null) {
-            resulSql.sql("select t.serv_no as name ,sum(t.total_times)  over(partition by t.serv_no) as value from rp_api_day t \n" +
-                    "                    where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')<=to_date(#endTime,'yyyy-mm-dd') and to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')>to_date(#startTime,'yyyy-mm-dd') order by value desc")
+            String sql = null;
+            if("oracle".equals(dbType)) {
+                sql = "select t.serv_no as name ,sum(t.total_times)  over(partition by t.serv_no) as value from rp_api_day t " +
+                        " where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')<=to_date(#endTime,'yyyy-mm-dd') and to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')>to_date(#startTime,'yyyy-mm-dd') order by value desc";
+            }
+            if ("mysql".equals(dbType)){
+                sql = "select t.serv_no as name ,sum(t.total_times)  as value from rp_api_day t  where str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')<=str_to_date(#endTime,'%Y-%m-%d') and str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')>str_to_date(#startTime,'%Y-%m-%d') order by t.serv_no,value desc";
+            }
+            resulSql.sql(sql)
                     .setVar("endTime",endTime).setVar("startTime",startTime);
         }
         else if(limitTime.equals("year")){
-            resulSql .sql("select t.serv_no as name,max(t.total_times) over(partition by t.serv_no )  as value from rp_api_day t\n" +
-                    " where to_date(t.year,'yyyy')=to_date(to_char(sysdate,'yyyy'),'yyyy') order by value desc");
+            String sql = null;
+            if("oracle".equals(dbType)) {
+                sql = "select t.serv_no as name,max(t.total_times) over(partition by t.serv_no )  as value from rp_api_day t " +
+                        " where to_date(t.year,'yyyy')=to_date(to_char(sysdate,'yyyy'),'yyyy') order by value desc";
+            }
+            if ("mysql".equals(dbType)){
+                sql = "select t.serv_no as name,max(t.total_times)  as value from rp_api_day t where str_to_date(t.year,'%Y')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y'),'%Y') order by t.serv_no,value desc";
+            }
+            resulSql .sql(sql);
         }else if(limitTime.equals("month")){
-            resulSql .sql("select t.serv_no as name,max(t.total_times) over(partition by t.serv_no )  as value from rp_api_day t \n" +
-                    " where to_date(t.year||'-'||t.month,'yyyy-mm')=to_date(to_char(sysdate,'yyyy-mm'),'yyyy-mm') order by value desc");
+            String sql = null;
+            if("oracle".equals(dbType)) {
+                sql = "select t.serv_no as name,max(t.total_times) over(partition by t.serv_no )  as value from rp_api_day t " +
+                        " where to_date(t.year||'-'||t.month,'yyyy-mm')=to_date(to_char(sysdate,'yyyy-mm'),'yyyy-mm') order by value desc";
+            }
+            if ("mysql".equals(dbType)){
+                sql = "select t.serv_no as name,max(t.total_times) as value from rp_api_day t where str_to_date(t.year||'-'||t.month,'%Y-%m')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m'),'%Y-%m') order by t.serv_no,value desc";
+            }
+            resulSql .sql(sql);
         }else if(limitTime.equals("week")){
-            resulSql.sql("select t.serv_no as name,max(t.total_times) over(partition by t.serv_no )  as value from rp_api_day t \n" +
-                    "  where to_char(to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd'),'iw')=to_char(sysdate,'iw') and t.year=to_char(sysdate,'yyyy') order by value desc");
+            String sql = null;
+            if("oracle".equals(dbType)) {
+               sql = "select t.serv_no as name,max(t.total_times) over(partition by t.serv_no )  as value from rp_api_day t " +
+                       "  where to_char(to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd'),'iw')=to_char(sysdate,'iw') and t.year=to_char(sysdate,'yyyy') order by value desc";
+            }
+            if ("mysql".equals(dbType)){
+                sql = "select t.serv_no as name,max(t.total_times)  as value from rp_api_day t where DATE_FORMAT(str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d'),'iw')=DATE_FORMAT(CURRENT_TIMESTAMP,'iw') and t.year=DATE_FORMAT(CURRENT_TIMESTAMP,'%Y') order by t.serv_no,value desc";
+            }
+            resulSql.sql(sql);
         }else if(limitTime.equals("day")){
-            resulSql .sql("select t.serv_no as name,max(t.total_times) over(partition by t.serv_no )  as value from rp_api_day t \n" +
-                    " where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') order by value desc");
+            String sql = null;
+            if("oracle".equals(dbType)) {
+                sql = "select t.serv_no as name,max(t.total_times) over(partition by t.serv_no )  as value from rp_api_day t " +
+                        " where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') order by value desc";
+            }
+            if ("mysql".equals(dbType)){
+                sql = "select t.serv_no as name,max(t.total_times) as value from rp_api_day t where str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d'),'%Y-%m-%d') order by t.serv_no,value desc";
+            }
+            resulSql .sql(sql);
         }
         return resulSql.doPageQuery(1,10,ApiHomeHisto.class);
 
@@ -234,23 +427,58 @@ public class ApiHomeDao {
         List<ApiHomeHisto> result=new ArrayList<ApiHomeHisto>();
         MpaasQuery resulSql =sw.buildQuery();
         if(startTime!=null&&endTime!=null&&limitTime==null) {
-            resulSql.sql("select t.serv_no as name ,sum(t.total_times)  over(partition by t.serv_no) as value from rp_api_day t \n" +
-                    "                    where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')<=to_date(#endTime,'yyyy-mm-dd') and to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')>to_date(#startTime,'yyyy-mm-dd') order by value desc")
+            String sql = null;
+            if("oracle".equals(dbType)) {
+                sql = "select t.serv_no as name ,sum(t.total_times)  over(partition by t.serv_no) as value from rp_api_day t " +
+                        " where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')<=to_date(#endTime,'yyyy-mm-dd') and to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')>to_date(#startTime,'yyyy-mm-dd') order by value desc";
+            }
+            if ("mysql".equals(dbType)){
+                sql = "select t.serv_no as name ,sum(t.total_times) as value from rp_api_day t where str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')<=str_to_date(#endTime,'%Y-%m-%d') and str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')>str_to_date(#startTime,'%Y-%m-%d') order by t.serv_no,value desc";
+            }
+            resulSql.sql(sql)
                     .setVar("endTime",endTime).setVar("startTime",startTime);
 
         }
         else if(limitTime.equals("year")){
-            resulSql .sql("select t.serv_no as name ,avg(t.avg_cost)  over(partition by t.serv_no) as value from rp_api_year t\n" +
-                    "                     where to_date(t.year,'yyyy')=to_date(to_char(sysdate,'yyyy'),'yyyy') order by value desc");
+            String sql = null;
+            if("oracle".equals(dbType)) {
+                sql = "select t.serv_no as name ,avg(t.avg_cost)  over(partition by t.serv_no) as value from rp_api_year t" +
+                        " where to_date(t.year,'yyyy')=to_date(to_char(sysdate,'yyyy'),'yyyy') order by value desc";
+            }
+            if ("mysql".equals(dbType)){
+                sql = "select t.serv_no as name ,avg(t.avg_cost)  as value from rp_api_year t where str_to_date(t.year,'%Y')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y'),'%Y') order by t.serv_no,value desc";
+            }
+            resulSql .sql(sql);
         }else if(limitTime.equals("month")){
-            resulSql .sql("select t.serv_no as name ,avg(t.avg_cost)  over(partition by t.serv_no) as value from rp_api_month t\n" +
-                    " where to_date(t.year||'-'||t.month,'yyyy-mm')=to_date(to_char(sysdate,'yyyy-mm'),'yyyy-mm')  order by value desc");
+            String sql = null;
+            if("oracle".equals(dbType)) {
+             sql = "select t.serv_no as name ,avg(t.avg_cost)  over(partition by t.serv_no) as value from rp_api_month t" +
+                     " where to_date(t.year||'-'||t.month,'yyyy-mm')=to_date(to_char(sysdate,'yyyy-mm'),'yyyy-mm')  order by value desc";
+            }
+            if ("mysql".equals(dbType)){
+                sql = "select t.serv_no as name ,avg(t.avg_cost)  as value from rp_api_month t where str_to_date(t.year||'-'||t.month,'%Y-%m')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m'),'%Y-%m')  order by t.serv_no,value desc";
+            }
+            resulSql .sql(sql);
         }else if(limitTime.equals("week")){
-            resulSql.sql("select t.serv_no as name ,avg(t.avg_cost)  over(partition by t.serv_no) as value from rp_api_day t\n" +
-                    "  where to_char(to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd'),'iw')=to_char(sysdate,'iw') and t.year=to_char(sysdate,'yyyy') order by value desc");
+            String sql = null;
+            if("oracle".equals(dbType)) {
+                sql = "select t.serv_no as name ,avg(t.avg_cost)  over(partition by t.serv_no) as value from rp_api_day t " +
+                        "  where to_char(to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd'),'iw')=to_char(sysdate,'iw') and t.year=to_char(sysdate,'yyyy') order by value desc";
+            }
+            if ("mysql".equals(dbType)){
+                sql = "select t.serv_no as name ,avg(t.avg_cost) as value from rp_api_day t  where DATE_FORMAT(str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d'),'iw')=DATE_FORMAT(CURRENT_TIMESTAMP,'iw') and t.year=DATE_FORMAT(CURRENT_TIMESTAMP,'%Y') order by t.serv_no,value desc";
+            }
+            resulSql.sql(sql);
         }else if(limitTime.equals("day")){
-            resulSql .sql("select t.serv_no as name ,avg(t.avg_cost)  over(partition by t.serv_no) as value from rp_api_day t\n" +
-                    " where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') order by value desc");
+            String sql = null;
+            if("oracle".equals(dbType)) {
+                sql = "select t.serv_no as name ,avg(t.avg_cost)  over(partition by t.serv_no) as value from rp_api_day t " +
+                        " where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') order by value desc";
+            }
+            if ("mysql".equals(dbType)){
+                sql = "select t.serv_no as name ,avg(t.avg_cost) as value from rp_api_day t  where str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d'),'%Y-%m-%d') order by t.serv_no,value desc";
+            }
+            resulSql .sql(sql);
         }
 
         return resulSql.doPageQuery(1,10,ApiHomeHisto.class);
@@ -259,31 +487,59 @@ public class ApiHomeDao {
 
     //查询当天运行次数流量
     public List<ApiHomeHisto> queryTrafficRuntimes(){
-       return sw.buildQuery().sql("select to_char(t.creation_date,'hh24:mi') as name ,sum(t.total_times)  over(partition by t.hour) as value from rp_api_hour t \n" +
-               "                where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') order by t.creation_date   ")
+        String sql = null;
+        if("oracle".equals(dbType)) {
+            sql = "select to_char(t.creation_date,'hh24:mi') as name ,sum(t.total_times)  over(partition by t.hour) as value from rp_api_hour t " +
+                    " where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') order by t.creation_date ";
+        }
+        if ("mysql".equals(dbType)){
+            sql = "select DATE_FORMAT(t.creation_date,'%Y-%m') as name ,sum(t.total_times)  as value from rp_api_hour t  where str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d'),'%Y-%m-%d') order by t.hour,t.creation_date ";
+        }
+       return sw.buildQuery().sql(sql)
                 .doQuery(ApiHomeHisto.class);
     }
 
     //查询当天平均响应时间
     public List<ApiHomeHisto> queryTrafficCost(){
-        return  sw.buildQuery().sql("        select to_char(t.creation_date,'hh24:mi') as name ,avg(t.avg_cost)   over(partition by t.hour) as value from rp_api_hour t\n" +
-                "        where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') order by t.creation_date")
+        String sql = null;
+        if("oracle".equals(dbType)) {
+            sql = "select to_char(t.creation_date,'hh24:mi') as name ,avg(t.avg_cost)   over(partition by t.hour) as value from rp_api_hour t " +
+                    " where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') order by t.creation_date";
+        }
+        if ("mysql".equals(dbType)){
+            sql = "select DATE_FORMAT(t.creation_date,'%Y-%m') as name ,avg(t.avg_cost)  as value from rp_api_hour t where str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d'),'%Y-%m-%d') order by t.hour,t.creation_date";
+        }
+        return  sw.buildQuery().sql(sql)
 
                 .doQuery(ApiHomeHisto.class);
     }
 
     //查询当天错误次数流量
      public List<ApiHomeHisto> queryTrafficError(){
-         return   sw.buildQuery().sql("select to_char(t.creation_date,'hh24:mi') as name,sum(t.total_1xx+t.total_2xx+t.total_3xx+t.total_4xx+t.total_5xx)  over(partition by t.hour) as value from rp_api_hour t \n" +
-                 "                where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') order by t.creation_date")
+         String sql = null;
+         if("oracle".equals(dbType)) {
+             sql="select to_char(t.creation_date,'hh24:mi') as name,sum(t.total_1xx+t.total_2xx+t.total_3xx+t.total_4xx+t.total_5xx)  over(partition by t.hour) as value from rp_api_hour t " +
+                     " where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') order by t.creation_date";
+         }
+         if ("mysql".equals(dbType)){
+             sql ="select DATE_FORMAT(t.creation_date,'%Y-%m') as name,sum(t.total_1xx+t.total_2xx+t.total_3xx+t.total_4xx+t.total_5xx)  as value from rp_api_hour t where str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d'),'%Y-%m-%d') order by t.hour,t.creation_date";
+         }
+         return   sw.buildQuery().sql(sql)
                  .doQuery(ApiHomeHisto.class);
      }
 
 
     //查询近一小时运行次数流量
     public ApiHomeHisto queryTrafficRuntimesNow(){
-        return sw.buildQuery().sql("select count(1)   as value from dsgc_log_instance t \n" +
-                "where sysdate>to_date(to_char(sysdate,'yyyy-mm-dd hh24'),'yyyy-mm-dd hh24') order by t.creation_date   ")
+        String sql = null;
+        if("oracle".equals(dbType)) {
+            sql = "select count(1)   as value from dsgc_log_instance t " +
+                    " where sysdate>to_date(to_char(sysdate,'yyyy-mm-dd hh24'),'yyyy-mm-dd hh24') order by t.creation_date ";
+        }
+        if ("mysql".equals(dbType)){
+            sql = "select count(1)   as value from dsgc_log_instance t where CURRENT_TIMESTAMP>str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d %H'),'%Y-%m-%d %H') order by t.creation_date ";
+        }
+        return sw.buildQuery().sql(sql)
                 .doQueryFirst(ApiHomeHisto.class);
     }
 
@@ -294,8 +550,15 @@ public class ApiHomeDao {
 
     //查询近一小时错误次数流量
     public ApiHomeHisto queryTrafficErrorNow(){
-        return   sw.buildQuery().sql("select count(1)   as value from dsgc_log_instance t \n" +
-                "                where sysdate>to_date(to_char(sysdate,'yyyy-mm-dd hh24'),'yyyy-mm-dd hh24') and t.inst_status='0' order by t.creation_date  ")
+        String sql = null;
+        if("oracle".equals(dbType)) {
+            sql = "select count(1)   as value from dsgc_log_instance t " +
+                    "  where sysdate>to_date(to_char(sysdate,'yyyy-mm-dd hh24'),'yyyy-mm-dd hh24') and t.inst_status='0' order by t.creation_date  ";
+        }
+        if ("mysql".equals(dbType)){
+            sql = "select count(1)   as value from dsgc_log_instance t where CURRENT_TIMESTAMP>str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d %H'),'%Y-%m-%d %H') and t.inst_status='0' order by t.creation_date";
+        }
+        return   sw.buildQuery().sql(sql)
                 .doQueryFirst(ApiHomeHisto.class);
     }
 

@@ -14,6 +14,7 @@ import java.util.List;
 
 @SQLQuery(value = {
         @SQL(view = "query_all_user", sql = " select us.user_id, us.user_name, us.user_dept, us.user_mail, us.user_phone, us.is_admin, us.user_description, us.created_by, us.creation_date, us.last_updated_by, us.last_update_date, us.user_role, us.is_locked, us.work_number, lookup.meaning role_name from dsgc_user us,( select vl.lookup_code, vl.meaning from fnd_lookup_values vl where vl.lookup_id in ( select tp.lookup_id from fnd_lookup_types tp where tp.lookup_type = 'plateFormRole') ) lookup where us.user_role = lookup.lookup_code(+) "),
+        @SQL(view = "mysql_query_all_user",sql = "select us.user_id, us.user_name, us.user_dept, us.user_mail, us.user_phone, us.is_admin, us.user_description, us.created_by, us.creation_date, us.last_updated_by, us.last_update_date, us.user_role, us.is_locked, us.work_number, lookup.meaning role_name from dsgc_user us left join( select vl.lookup_code, vl.meaning from fnd_lookup_values vl where vl.lookup_id in ( select tp.lookup_id from fnd_lookup_types tp where tp.lookup_type = 'plateFormRole') ) lookup on us.user_role = lookup.lookup_code "),
         @SQL(view = "query_all_sys_user", sql = "select us.user_id, us.user_name, us.user_role, us.is_locked, us.work_number from dsgc_user us where us.user_role in('Administrators','SuperAdministrators','SuperAdministrators') and us.user_id not in ( select sysu.user_id from dsgc_system_user sysu)")
 })
 @Table(value = "dsgc_user")

@@ -12,6 +12,7 @@ import com.definesys.mpaas.query.MpaasQuery;
 import com.definesys.mpaas.query.MpaasQueryFactory;
 import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -25,6 +26,9 @@ public class DSGCUserDao {
 
     @Autowired
     private SWordLogger logger;
+
+    @Value("${database.type}")
+    private String dbType;
 
     public DSGCUser login(DSGCUser user) {
         DSGCUser u = sw.buildQuery()
@@ -85,16 +89,31 @@ public class DSGCUserDao {
 
     public PageQueryResult<DSGCUser> query(DSGCUser user, int pageSize, int pageIndex) {
         logger.debug(user.toString());
-        return sw.buildViewQuery("query_all_user")
+        if("oracle".equals(dbType)){
+            return sw.buildViewQuery("query_all_user")
 //                .sql("select * from (select us.user_id, us.user_name, us.user_dept, us.user_mail, us.user_phone, us.is_admin, us.user_description, us.created_by, us.creation_date, us.last_updated_by, us.last_update_date, us.user_role, us.is_locked, us.work_number, lookup.meaning role_name from dsgc_user us,( select vl.lookup_code, vl.meaning from fnd_lookup_values vl where vl.lookup_id in ( select tp.lookup_id from fnd_lookup_types tp where tp.lookup_type = 'plateFormRole') ) lookup where us.user_role = lookup.lookup_code(+) )")
-                .or()
-                .likeNocase("user_name", user.getUserDescription())
-                .likeNocase("user_mail", user.getUserDescription())
-                .likeNocase("user_dept", user.getUserDescription())
-                .likeNocase("user_phone", user.getUserDescription())
-                .likeNocase("role_name", user.getUserDescription())
-                .likeNocase("user_description", user.getUserDescription())
-                .doPageQuery(pageIndex, pageSize, DSGCUser.class);
+                    .or()
+                    .likeNocase("user_name", user.getUserDescription())
+                    .likeNocase("user_mail", user.getUserDescription())
+                    .likeNocase("user_dept", user.getUserDescription())
+                    .likeNocase("user_phone", user.getUserDescription())
+                    .likeNocase("role_name", user.getUserDescription())
+                    .likeNocase("user_description", user.getUserDescription())
+                    .doPageQuery(pageIndex, pageSize, DSGCUser.class);
+        }
+        if("mysql".equals(dbType)){
+            return sw.buildViewQuery("mysql_query_all_user")
+                    .or()
+                    .likeNocase("user_name", user.getUserDescription())
+                    .likeNocase("user_mail", user.getUserDescription())
+                    .likeNocase("user_dept", user.getUserDescription())
+                    .likeNocase("user_phone", user.getUserDescription())
+                    .likeNocase("role_name", user.getUserDescription())
+                    .likeNocase("user_description", user.getUserDescription())
+                    .doPageQuery(pageIndex, pageSize, DSGCUser.class);
+
+        }
+        return null;
     }
 
     public DSGCUser findUserById(DSGCUser user) {

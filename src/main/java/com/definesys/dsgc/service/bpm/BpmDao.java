@@ -44,10 +44,35 @@ public class BpmDao {
 //                  .setVar("userId",userId)
 //                  .doPageQuery(pageIndex,pageSize,BpmInstanceBean.class);
     }
-    public PageQueryResult<BpmInstanceBean> myApply(BpmCommonReqBean param, String userId, int pageSize, int pageIndex){
-        StringBuffer sqlStr = new StringBuffer("select * from (select distinct dbi.INST_ID,dbi.INST_TITLE,dbi.PROCESS_ID,dbi.CUR_NODE,dbi.CREATION_DATE,dbi.INST_STAT,(select du.USER_NAME from DSGC_USER du where du.USER_ID = dbt.APPROVER) APPROVER,dbp.PROCESS_NAME\n" +
-                "from dsgc_bpm_instance dbi,DSGC_BPM_TASK dbt,DSGC_BPM_PROCESS dbp where dbi.INST_ID = dbt.INST_ID(+) and dbi.PROCESS_ID = dbp.PROCESS_ID(+) and dbi.CREATED_BY = #userId) order by  CREATION_DATE desc\n");
+    public PageQueryResult<BpmInstanceBean> getServTaskList(BpmCommonReqBean param, String userId, int pageSize, int pageIndex){
+        StringBuffer sqlStr = new StringBuffer("select dbi.* from dsgc_bpm_instance dbi,dsgc_bpm_task dbt,dsgc_client_auth_apply dca " +
+                " where dbt.approver = #userId and dbt.node_id = dbi.cur_node and dbt.inst_id = dbi.inst_id and dbi.inst_id = dca.inst_id and dca.apply_ser_type = 'servSource' ");
         MpaasQuery mq = sw.buildQuery();
+        mq.setVar("userId",userId);
+        if(!"ALL".equals(param.getQueryType())){
+            sqlStr.append(" and dbi.process_id = #queryType ");
+            mq.setVar("queryType",param.getQueryType());
+        }
+        if (StringUtil.isNotBlank(param.getCon0())) {
+            sqlStr.append(" and( upper(dbi.inst_title) like #con0 or upper(dbi.inst_stat) like #con0)");
+            mq.setVar("con0", "%" + param.getCon0().toUpperCase() + "%");
+        }
+        mq.sql(sqlStr.toString());
+        return mq.doPageQuery(pageIndex,pageSize,BpmInstanceBean.class);
+    }
+
+    public PageQueryResult<BpmInstanceBean> myApply(BpmCommonReqBean param, String userId, int pageSize, int pageIndex){
+//        StringBuffer sqlStr = new StringBuffer("select * from (select distinct dbi.INST_ID,dbi.INST_TITLE,dbi.PROCESS_ID,dbi.CUR_NODE,dbi.CREATION_DATE,dbi.INST_STAT,(select du.USER_NAME from DSGC_USER du where du.USER_ID = dbt.APPROVER) APPROVER,dbp.PROCESS_NAME\n" +
+//                "from dsgc_bpm_instance dbi,DSGC_BPM_TASK dbt,DSGC_BPM_PROCESS dbp where dbi.INST_ID = dbt.INST_ID(+) and dbi.PROCESS_ID = dbp.PROCESS_ID(+) and dbi.CREATED_BY = #userId) order by  CREATION_DATE desc\n");
+        StringBuffer sqlStr = new StringBuffer("SELECT * FROM ( SELECT DISTINCT dbi.INST_ID,dbi.INST_TITLE,dbi.PROCESS_ID,dbi.CUR_NODE,dbi.CREATION_DATE,dbi.INST_STAT," +
+                " ( SELECT du.USER_NAME FROM DSGC_USER du WHERE du.USER_ID = dbt.APPROVER ) APPROVER,dbp.PROCESS_NAME  " +
+                " FROM dsgc_bpm_instance dbi LEFT JOIN  " +
+                " DSGC_BPM_TASK dbt ON dbi.INST_ID = dbt.INST_ID " +
+                " LEFT JOIN  " +
+                " DSGC_BPM_PROCESS dbp ON dbi.PROCESS_ID = dbp.PROCESS_ID " +
+                " WHERE dbi.CREATED_BY = #userId ) T ");
+        MpaasQuery mq = sw.buildQuery();
+        mq.sql(sqlStr.toString());
         mq.setVar("userId",userId);
         if(!"ALL".equals(param.getQueryType().trim())){
 //            sqlStr.append(" and dbi.process_id = #queryType ");
@@ -68,7 +93,7 @@ public class BpmDao {
                 }
             }
         }
-        mq.sql(sqlStr.toString());
+        mq.orderBy("CREATION_DATE","desc");
         return mq.doPageQuery(pageIndex,pageSize,BpmInstanceBean.class);
 //        return sw.buildQuery().sql("select * from dsgc_bpm_instance dbi" +
 //                " where dbi.created_by = #userId")

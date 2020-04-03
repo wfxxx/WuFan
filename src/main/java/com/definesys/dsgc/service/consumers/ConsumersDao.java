@@ -8,6 +8,7 @@ import com.definesys.mpaas.query.MpaasQuery;
 import com.definesys.mpaas.query.MpaasQueryFactory;
 import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import javax.swing.event.ListDataEvent;
@@ -19,22 +20,54 @@ public class ConsumersDao {
     @Autowired
     private MpaasQueryFactory sw;
 
+    @Value("${database.type}")
+    private String dbType;
+
     public PageQueryResult<DSGCConsumerEntities> queryconsumersList(CommonReqBean commonReqBean, int pageSize, int pageIndex, String userName, String userRole){
-        StringBuffer strSql = new StringBuffer(" select * " +
-                "  from (select cnt.dce_id," +
-                "               cnt.csm_code," +
-                "               cnt.csm_name," +
-                "               cnt.csm_desc," +
-                "               cnt.deploy_env," +
-                "               t.user_name owner " +
-                "          from DSGC_CONSUMER_ENTITIES cnt," +
-                "               (select listagg(u.user_name, ',') within GROUP(order by cu.csm_code) user_name," +
-                "                       cu.csm_code" +
-                "                  from DSGC_consumer_users cu, dsgc_user u " +
-                "                 where cu.user_id = u.user_id " +
-                "                 group by cu.csm_code) t " +
-                "         where t.csm_code(+) = cnt.csm_code) " +
-                " WHERE 1 = 1 ");
+        StringBuffer strSql = null;
+        if("oracle".equals(dbType)){
+            strSql = new StringBuffer(" select * " +
+                    "  from (select cnt.dce_id," +
+                    "               cnt.csm_code," +
+                    "               cnt.csm_name," +
+                    "               cnt.csm_desc," +
+                    "               cnt.deploy_env," +
+                    "               t.user_name owner " +
+                    "          from DSGC_CONSUMER_ENTITIES cnt," +
+                    "               (select listagg(u.user_name, ',') within GROUP(order by cu.csm_code) user_name," +
+                    "                       cu.csm_code" +
+                    "                  from DSGC_consumer_users cu, dsgc_user u " +
+                    "                 where cu.user_id = u.user_id " +
+                    "                 group by cu.csm_code) t " +
+                    "         where t.csm_code(+) = cnt.csm_code) " +
+                    " WHERE 1 = 1 ");
+        }
+        if("mysql".equals(dbType)){
+            strSql = new StringBuffer("SELECT * FROM( SELECT\n" +
+                    "cnt.dce_id,\n" +
+                    "cnt.csm_code,\n" +
+                    "cnt.csm_name,\n" +
+                    "cnt.csm_desc,\n" +
+                    "cnt.deploy_env,\n" +
+                    "t.user_name OWNER \n" +
+                    "FROM\n" +
+                    "DSGC_CONSUMER_ENTITIES cnt left JOIN (\n" +
+                    "SELECT\n" +
+                    "group_concat( u.user_name ORDER BY cu.csm_code, ',' ) user_name,\n" +
+                    "cu.csm_code \n" +
+                    "FROM\n" +
+                    "DSGC_consumer_users cu,\n" +
+                    "dsgc_user u \n" +
+                    "WHERE\n" +
+                    "cu.user_id = u.user_id \n" +
+                    "GROUP BY\n" +
+                    "cu.csm_code \n" +
+                    ") t on\n" +
+                    "t.csm_code = cnt.csm_code \n" +
+                    ") g WHERE 1 = 1 ");
+
+        }
+
         MpaasQuery mq = sw.buildQuery();
         if (StringUtil.isNotBlank(commonReqBean.getCon0())) {
             String[] conArray = commonReqBean.getCon0().trim().split(" ");
@@ -48,7 +81,7 @@ public class ConsumersDao {
             strSql.append(" and upper(owner) like upper(#userName) ");
             mq.setVar("userName","%"+userName+"%");
         }
-        if(!"ALL".equals(commonReqBean.getQueryType())){
+        if(!"ALL".equals(commonReqBean.getQueryType()) && commonReqBean.getQueryType() != null){
             strSql.append(" and upper(deploy_env) like '%"+commonReqBean.getQueryType().toUpperCase()+"%' ");
         }
         mq.sql(strSql.toString());
