@@ -294,6 +294,7 @@ public class SVCGenDao {
      *
      * @param scc
      * @param uriList
+     * @deprecated
      */
     public int bindingSgObjToNewServ(SVCCreateBean scc,List<SVCUriBean> uriList) {
         //查询服务编号是否重复
@@ -332,7 +333,7 @@ public class SVCGenDao {
      * @param obj
      * @param uid
      * @param uh
-     * @return -1无选贤操作 1 删除成功 0 不能立即删除，先被disable掉
+     * @return -1无权限操作 1 删除成功 0 不能立即删除，先被disable掉
      */
     public int deleteSvcGenObj(SvcGenObjJsonBean obj,String uid,UserHelper uh) throws Exception{
         int res = 0;
