@@ -1,5 +1,6 @@
 package com.definesys.dsgc.service.apiauth;
 
+import com.definesys.dsgc.service.apiauth.bean.APIAuthConsumersBean;
 import com.definesys.dsgc.service.apiauth.bean.CommonReqBean;
 import com.definesys.dsgc.service.apiauth.bean.DSGCApisAccess;
 import com.definesys.dsgc.service.apiauth.bean.DSGCApisBean;
@@ -53,6 +54,44 @@ public class ApiAuthDao {
                 "order by lastUpdateDate desc")
                 .setVar("apiCode",commonReqBean.getApiCode())
                 .doPageQuery(pageIndex,pageSize, DSGCConsumerEntities.class);
+    }
+
+    public List<APIAuthConsumersBean> queryApiAuthConsumerListByVid(String vid) {
+        if (vid != null) {
+            Map<String,Object> vidDtl = sw.buildQuery().sql("select v.sour_code ,v.sour_type from dag_code_version v where v.vid = #vid").setVar("vid",vid).doQueryFirst();
+            String stype = null;
+            String sCode = null;
+            if (vidDtl != null) {
+                stype = vidDtl.get("SOUR_TYPE") == null ? null : vidDtl.get("SOUR_TYPE").toString();
+                sCode = vidDtl.get("SOUR_CODE") == null ? null : vidDtl.get("SOUR_CODE").toString();
+            }
+
+            if (stype != null && sCode != null) {
+                if ("route".equals(stype)) {
+                    //找出所有该路由对应的api的已授权消费者
+                    return sw.buildQuery().sql("select e.csm_code,e.csm_name from dsgc_apis_access a, dsgc_consumer_entities e \n" +
+                            " where a.csm_code = e.csm_code \n" +
+                            "   and a.API_CODE in (select p.API_CODE from DSGC_APIS p,DSGC_SERVICES_URI u,DAG_ROUTES r where p.API_CODE = u.SERV_NO and u.PROVIDER = r.ROUTE_CODE and r.ROUTE_CODE = #routeCode)").setVar("routeCode",sCode).doQuery(APIAuthConsumersBean.class);
+                } else if ("bs".equals(stype)) {
+                    //找出所有该后端服务产生的路由对应的api的已授权消费者
+                    return sw.buildQuery().sql("select e.csm_code,e.csm_name from dsgc_apis_access a, dsgc_consumer_entities e\n" +
+                            " where a.csm_code = e.csm_code\n" +
+                            "   and a.API_CODE in (select p.API_CODE from DSGC_APIS p,DSGC_SERVICES_URI u,DAG_ROUTES r, dag_bs b where p.API_CODE = u.SERV_NO and u.PROVIDER = r.ROUTE_CODE and r.BS_CODE = b.BS_CODE and b.BS_CODE = #bsCode)").setVar("bsCode",sCode).doQuery(APIAuthConsumersBean.class);
+
+                } else {
+                    return null;
+                }
+            } else {
+                return null;
+            }
+
+        } else {
+            return null;
+        }
+    }
+
+    public List<APIAuthConsumersBean> queryApiAuthConsumerList(String apiCode){
+        return sw.buildQuery().sql("select e.csm_code,e.csm_name from dsgc_apis_access a, dsgc_consumer_entities e where a.csm_code = e.csm_code and a.api_code = #apiCode").setVar("apiCode",apiCode).doQuery(APIAuthConsumersBean.class);
     }
 
     public Boolean checkConsumerEntitieIsExist(String csmCode){
