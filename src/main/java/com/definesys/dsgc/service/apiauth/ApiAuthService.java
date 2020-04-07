@@ -1,9 +1,6 @@
 package com.definesys.dsgc.service.apiauth;
 
-import com.definesys.dsgc.service.apiauth.bean.APIInfoListBean;
-import com.definesys.dsgc.service.apiauth.bean.CommonReqBean;
-import com.definesys.dsgc.service.apiauth.bean.DSGCApisAccess;
-import com.definesys.dsgc.service.apiauth.bean.DSGCApisBean;
+import com.definesys.dsgc.service.apiauth.bean.*;
 import com.definesys.dsgc.service.consumers.bean.DSGCConsumerEntities;
 import com.definesys.dsgc.service.dagclient.ConsumerDeployService;
 import com.definesys.dsgc.service.svcAuth.bean.SVCHisBean;
@@ -36,6 +33,18 @@ public class ApiAuthService {
     public PageQueryResult<DSGCConsumerEntities> queryApiAuthConsumerList(CommonReqBean commonReqBean, int pageIndex, int pageSize){
         return apiAuthDao.queryApiAuthConsumerList(commonReqBean,pageIndex,pageSize);
     }
+
+    public List<APIAuthConsumersBean> queryApiAuthConsumerList(CommonReqBean commonReqBean){
+        if(commonReqBean.getApiCode() != null && commonReqBean.getApiCode().trim().length() >0 ) {
+            return this.apiAuthDao.queryApiAuthConsumerList(commonReqBean.getApiCode());
+        } else if(commonReqBean.getVid() != null && commonReqBean.getVid().trim().length() >0){
+            return this.apiAuthDao.queryApiAuthConsumerListByVid(commonReqBean.getVid());
+        } else {
+            return null;
+        }
+    }
+
+
 
     @Transactional(rollbackFor = Exception.class)
     public String addApiAuthConsumer(CommonReqBean param, String userName){

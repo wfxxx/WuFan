@@ -26,6 +26,11 @@ public class ApiAuthController {
         return Response.ok().setData(apiAuthService.queryApiAuthConsumerList(svcBaseInfoBean,pageIndex,pageSize));
     }
 
+    @RequestMapping(value = "/queryApiAuthConsumerLov",method = RequestMethod.POST)
+    public Response queryApiAuthConsumerLov(@RequestBody CommonReqBean reqBean){
+        return Response.ok().setData(this.apiAuthService.queryApiAuthConsumerList(reqBean));
+    }
+
     @RequestMapping(value = "/addApiAuthConsumer",method = RequestMethod.POST)
     public Response addApiAuthConsumer(@RequestBody CommonReqBean param, HttpServletRequest request){
         String userName = request.getHeader("userName");

@@ -83,7 +83,7 @@ public class PluginsProxy {
                 int splitIdx = key.indexOf(":");
                 if (splitIdx != -1) {
                     pluginName = key.substring(0,splitIdx);
-                    consumerId = key.substring(splitIdx);
+                    consumerId = key.substring(splitIdx+1);
                 }
 
                 String id = this.getPluginId(pluginName,consumerId);
