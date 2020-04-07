@@ -83,4 +83,14 @@ public class ApiMngController {
         apiMngService.addDsgcApi(dsgcApisBean, dsgcServicesUri);
         return Response.ok();
     }
+    @RequestMapping(value = "/checkApiCodeIsExist",method = RequestMethod.POST)
+    public Response checkApiCodeIsExist(@RequestBody CommonReqBean param) {
+        try {
+            Boolean isExist = apiMngService.checkApiCodeIsExist(param);
+            return Response.ok().setData(isExist);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.error("验证API编号失败！");
+        }
+    }
 }

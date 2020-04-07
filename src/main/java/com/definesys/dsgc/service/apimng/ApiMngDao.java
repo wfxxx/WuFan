@@ -116,4 +116,13 @@ public class  ApiMngDao {
     public void addDsgcUri(DSGCServicesUri dsgcServicesUri){
         sw.buildQuery().doInsert(dsgcServicesUri);
     }
+
+    public Boolean checkApiCodeIsExist(String routeCode){
+        DSGCApisBean dagRoutesBean = sw.buildQuery().eq("api_code",routeCode).doQueryFirst(DSGCApisBean.class);
+        if (dagRoutesBean == null){
+            return false;
+        }else {
+            return true;
+        }
+    }
 }
