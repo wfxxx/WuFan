@@ -197,12 +197,48 @@ public class PluginDeployDao {
 
 
     public CorrIdPluginCfgVO getCorrelationIdConfig(String dpuId) {
-        return null;
+        CorrIdPluginCfgVO cic = new CorrIdPluginCfgVO();
+
+        if(dpuId != null){
+            Map<String,Object> res = sw.buildQuery().sql("select HEADER_NAME,GENERATOR,ECHO_DOWNSTREAM from PLUGIN_CORRELATION_ID where DPU_ID = #dpuId").setVar("dpuId",dpuId).doQueryFirst();
+            if(res != null){
+                if(res.get("HEADER_NAME") != null) {
+                    cic.setHeader_name(res.get("HEADER_NAME").toString());
+                }
+
+                if(res.get("GENERATOR") != null){
+                    cic.setGenerator(res.get("GENERATOR").toString());
+                }
+
+                if(res.get("ECHO_DOWNSTREAM") != null){
+                    if("Y".equals(res.get("ECHO_DOWNSTREAM").toString())){
+                        cic.setEcho_downstream(true);
+                    } else{
+                        cic.setEcho_downstream(false);
+                    }
+                }
+            }
+        }
+        return cic;
     }
 
 
     public ReqSizePluginCfgVO getReqSizeLimitingConfig(String dpuId) {
-        return null;
+
+        ReqSizePluginCfgVO rspc = new ReqSizePluginCfgVO();
+
+        if(dpuId != null) {
+            Map<String,Object> res = sw.buildQuery().sql("select ALLOWED_PAYLOAD_SIZE,SIZE_UNIT from PLUGIN_REQ_SIZE_LIMITING where DPU_ID = #dpuId").setVar("dpuId",dpuId).doQueryFirst();
+            if(res != null){
+                if(res.get("SIZE_UNIT") != null){
+                    rspc.setSize_unit(res.get("SIZE_UNIT").toString());
+                }
+                if(res.get("ALLOWED_PAYLOAD_SIZE") != null){
+                    rspc.setAllowed_payload_size(Long.valueOf(res.get("ALLOWED_PAYLOAD_SIZE").toString()));
+                }
+            }
+        }
+        return rspc;
     }
 
 
