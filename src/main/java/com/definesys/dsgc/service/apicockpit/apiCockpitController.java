@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import com.definesys.mpaas.common.http.Response;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @ClassName apiCockpitController
@@ -16,7 +17,7 @@ import java.util.List;
  * @Version 1.0
  **/
 @RestController
-@RequestMapping("/api/cockpit")
+@RequestMapping("/dsgc/apicockpit")
 public class apiCockpitController {
 
     @Autowired
@@ -88,4 +89,19 @@ public class apiCockpitController {
             return Response.error(e.getMessage());
         }
     }
+
+    //定时获取
+    @PostMapping("/dash")
+    public Response dash(){
+        try{
+            Map<String,Object> reslt=apiCockpitService.dash();
+            return Response.ok().setData(reslt);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error(e.getMessage());
+        }
+    }
+
+
+
 }
