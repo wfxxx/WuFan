@@ -40,7 +40,10 @@ public class PluginDeployDao {
             while (iter.hasNext()) {
                 DAGPluginUsingBean puCfg = iter.next();
                 if (puCfg != null) {
-                    cfgList.add(this.getPluginConfigDtl(puCfg));
+                    PluginSettingVO pCfg = this.getPluginConfigDtl(puCfg);
+                    if(pCfg != null && pCfg.getConfig() != null) {
+                        cfgList.add(pCfg);
+                    }
                 }
             }
         }
@@ -135,6 +138,18 @@ public class PluginDeployDao {
 
 
     public RateLimitPluginCfgVO getRateLimitingConfig(String dpuId) {
+        if(dpuId != null) {
+            RateLimitPluginCfgVO rlc = sw.buildQuery().sql("select P_SECOND,P_MINUTE,P_HOUR,P_DAY,P_MONTH,P_YEAR from  PLUGIN_RATE_LIMITING where DPU_ID = #dpuID").setVar("dpuID",dpuId).doQueryFirst(RateLimitPluginCfgVO.class);
+            if (rlc != null) {
+                rlc.setSecond(rlc.getSecond() != null && rlc.getSecond().intValue() == 0 ? null : rlc.getSecond());
+                rlc.setMinute(rlc.getMinute() != null && rlc.getMinute().intValue() == 0 ? null : rlc.getMinute());
+                rlc.setHour(rlc.getHour() != null && rlc.getHour().intValue() == 0 ? null : rlc.getHour());
+                rlc.setDay(rlc.getDay() != null && rlc.getDay().intValue() == 0 ? null : rlc.getDay());
+                rlc.setMonth(rlc.getMonth() != null && rlc.getMonth().intValue() == 0 ? null : rlc.getMonth());
+                rlc.setYear(rlc.getYear() != null && rlc.getYear().intValue() == 0 ? null : rlc.getYear());
+            }
+            return rlc;
+        }
         return null;
     }
 
