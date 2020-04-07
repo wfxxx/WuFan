@@ -11,6 +11,8 @@ public class TempQueryLogCondition {
     private String env;
     private String userName;
 
+    private  String trackId;
+
     public DSGCLogInstance getLogInstance() {
         return logInstance;
     }
@@ -49,6 +51,14 @@ public class TempQueryLogCondition {
 
     public void setEnv(String env) {
         this.env = env;
+    }
+
+    public String getTrackId() {
+        return trackId;
+    }
+
+    public void setTrackId(String trackId) {
+        this.trackId = trackId;
     }
 
     @Override

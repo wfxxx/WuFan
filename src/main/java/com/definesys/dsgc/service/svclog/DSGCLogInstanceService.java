@@ -80,6 +80,22 @@ public class DSGCLogInstanceService {
 //        }
 //    }
 
+    public JSONObject findLogByTraceId(DSGCLogInstance u){
+        DSGCLogInstance log = findLogById(u);
+        List<DSGCLogAudit> audits = getAuditLog(u.getTrackId());
+        List<DSGCLogOutBound> logOutBounds =getStackLog(u.getTrackId());
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("logInstance", log);
+        if(audits !=null && audits.size() >0){
+            jsonObject.put("auditLogs", audits);
+        }
+        if(logOutBounds !=null && logOutBounds.size() >0){
+            jsonObject.put("trackLogs", logOutBounds);
+        }
+        return jsonObject;
+    }
+
     public DSGCLogInstance findLogById(DSGCLogInstance instance) {
         return this.dsgcLogInstanceDao.findLogById(instance);
     }
@@ -214,6 +230,52 @@ public class DSGCLogInstanceService {
                     jsonObject.put("logInstance",JSON.toJSONString(logInstance));
                     jsonObject.put("pageSize",JSON.toJSONString(pageSize));
                     jsonObject.put("pageIndex",JSON.toJSONString(pageIndex));
+                    try {
+                        resultvo = HttpReqUtil.sendPostRequest(logPath,jsonObject,request);
+
+                    }catch(JSONException jex){
+                        jex.printStackTrace();
+                        throw new JSONException("参数解析异常，请检查请求参数是否正确！");
+                    }catch (HttpClientErrorException hcex){
+                        hcex.printStackTrace();
+                        throw new HttpClientErrorException(HttpStatus.resolve(404));
+                    }catch (IllegalArgumentException ex){
+                        ex.printStackTrace();
+                        throw new IllegalArgumentException("环境信息配置的uri不能为空！");
+                    }
+                    break;
+                }
+            }
+            return resultvo.getData();
+        }
+    }
+
+
+    public Response httpRestFindLogByIdSwitch( TempQueryLogCondition tempQueryLogCondition, HttpServletRequest request)throws Exception{
+        String env = tempQueryLogCondition.getEnv();
+        String trackId = tempQueryLogCondition.getTrackId();
+        if(StringUtil.isBlank(tempQueryLogCondition.getEnv())){
+            throw new Exception("请求参数错误！");
+        }
+        FndProperties fndProperties =dsgcLogInstanceDao.findFndPropertiesByKey("DSGC_CURRENT_ENV");
+        if(fndProperties == null){
+            throw new Exception("请配置当前环境代码！");
+        }
+        List<DSGCEnvInfoCfg> envList = svcLogDao.queryEsbEnv();
+        if ( fndProperties.getPropertyValue().equals(tempQueryLogCondition.getEnv())){
+            DSGCLogInstance u = new DSGCLogInstance();
+            u.setTrackId(trackId);
+            JSONObject result =  findLogByTraceId(u);
+            return Response.ok().setData(result);
+        }else {
+            ResultVO<Response> resultvo = new ResultVO<>();
+            for (int i = 0; i < envList.size(); i++) {
+                if(tempQueryLogCondition.getEnv().equals(envList.get(i).getEnvCode())){
+                    String logPath =envList.get(i).getDsgcAdmin();
+                    logPath += "/dsgc/logInstance/httpRestFindLogByIdSwitch";
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("trackId", trackId);
+                    jsonObject.put("env",env);
                     try {
                         resultvo = HttpReqUtil.sendPostRequest(logPath,jsonObject,request);
 

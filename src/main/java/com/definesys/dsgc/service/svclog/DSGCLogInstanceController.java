@@ -136,87 +136,105 @@ public class DSGCLogInstanceController {
 
 
     @RequestMapping(value="/httpRestFindLogByIdSwitch",method = RequestMethod.POST)
-    public void httpRestFindLogByIdSwitch(@RequestBody String reqJson,HttpServletRequest request,HttpServletResponse response){
-        JSONObject req = JSONObject.parseObject(reqJson);
-        String httpReqUrl = req.getString("httpReqChildUrl");
-        String trackId = req.getString("trackId");
+    public Response httpRestFindLogByIdSwitch(@RequestBody TempQueryLogCondition param,HttpServletRequest request,HttpServletResponse response){
 
-        com.alibaba.fastjson.JSONObject trackPram = new com.alibaba.fastjson.JSONObject();
-
-        JSONObject res = new JSONObject();
-        JSONObject json = null;
-        PrintWriter out = null;
-        String resultVO = null;
-        try{
-            trackPram.put("trackId",trackId);
-            resultVO = HttpReqUtil.sendPostRequestCallStr(httpReqUrl,trackPram,request);
-
-            json = JSONObject.parseObject(resultVO);
-            res.put("data",json);
-            res.put("code","ok");
-            response.setContentType("text/xml;charset=UTF-8");
-            out = response.getWriter();
+        try {
+            return logService.httpRestFindLogByIdSwitch(param,request);
         }catch(JSONException jex){
             jex.printStackTrace();
-            logger.error("%s", jex.getMessage());
-            res.put("code","error");
-            res.put("message","参数解析异常，请检查请求参数是否正确！"+jex.getMessage());
-
+            return Response.error(jex.getMessage());
         }catch (HttpClientErrorException hcex){
             hcex.printStackTrace();
-            logger.error("%s", hcex.getMessage());
-            res.put("code","error");
-            res.put("message","404，请求的url不存在，请检查要访问的远程外部接口URL配置是否正确！"+hcex.getMessage());
-
+            return Response.error(hcex.getMessage());
         }catch (IllegalArgumentException ex){
             ex.printStackTrace();
-            logger.error("%s", ex.getMessage());
-            res.put("code","error");
-            res.put("message","请求的uri不能为空！"+ex.getMessage());
-
-        }catch (HttpServerErrorException hssee){
-            hssee.printStackTrace();
-            logger.error("%s", hssee.getMessage());
-            res.put("code","error");
-            res.put("message","返还数据时，转换出错！出错信息为："+hssee.getMessage());
-
-        }catch (IOException ioex){
-            ioex.printStackTrace();
-            logger.error("%s", ioex.getMessage());
-            res.put("code","error");
-            res.put("message","返还数据时，转换出错！出错信息为："+ioex.getMessage());
-
-        }finally {
-            out.print(res);
-            out.flush();
-            out.close();
+            return Response.error(ex.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.error("查询数据失败！");
         }
+
+//        String reqJson
+//        JSONObject req = JSONObject.parseObject(reqJson);
+//        String httpReqUrl = req.getString("httpReqChildUrl");
+//        String trackId = req.getString("trackId");
+
+//        com.alibaba.fastjson.JSONObject trackPram = new com.alibaba.fastjson.JSONObject();
+//
+//        JSONObject res = new JSONObject();
+//        JSONObject json = null;
+//        PrintWriter out = null;
+//        String resultVO = null;
+//        try{
+//            trackPram.put("trackId",trackId);
+      //      resultVO = HttpReqUtil.sendPostRequestCallStr(httpReqUrl,trackPram,request);
+//
+//            json = JSONObject.parseObject(resultVO);
+//            res.put("data",json);
+//            res.put("code","ok");
+//            response.setContentType("text/xml;charset=UTF-8");
+//            out = response.getWriter();
+//        }catch(JSONException jex){
+//            jex.printStackTrace();
+//            logger.error("%s", jex.getMessage());
+//            res.put("code","error");
+//            res.put("message","参数解析异常，请检查请求参数是否正确！"+jex.getMessage());
+//
+//        }catch (HttpClientErrorException hcex){
+//            hcex.printStackTrace();
+//            logger.error("%s", hcex.getMessage());
+//            res.put("code","error");
+//            res.put("message","404，请求的url不存在，请检查要访问的远程外部接口URL配置是否正确！"+hcex.getMessage());
+//
+//        }catch (IllegalArgumentException ex){
+//            ex.printStackTrace();
+//            logger.error("%s", ex.getMessage());
+//            res.put("code","error");
+//            res.put("message","请求的uri不能为空！"+ex.getMessage());
+//
+//        }catch (HttpServerErrorException hssee){
+//            hssee.printStackTrace();
+//            logger.error("%s", hssee.getMessage());
+//            res.put("code","error");
+//            res.put("message","返还数据时，转换出错！出错信息为："+hssee.getMessage());
+//
+//        }catch (IOException ioex){
+//            ioex.printStackTrace();
+//            logger.error("%s", ioex.getMessage());
+//            res.put("code","error");
+//            res.put("message","返还数据时，转换出错！出错信息为："+ioex.getMessage());
+//
+//        }finally {
+//            out.print(res);
+//            out.flush();
+//            out.close();
+//        }
 
     }
 
     @RequestMapping(value="/findLogByTraceId",method = RequestMethod.POST)
-    public String findLogByTraceId (@RequestBody com.alibaba.fastjson.JSONObject reqJson,HttpServletRequest request)  {
+    public Response findLogByTraceId (@RequestBody com.alibaba.fastjson.JSONObject reqJson,HttpServletRequest request)  {
         DSGCLogInstance u = new DSGCLogInstance();
         u.setTrackId(reqJson.getString("trackId"));
-
-        DSGCLogInstance log = this.logService.findLogById(u);
-        List<DSGCLogAudit> audits = this.logService.getAuditLog(u.getTrackId());
-        List<DSGCLogOutBound> logOutBounds = this.logService.getStackLog(u.getTrackId());
-
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("logInstance", log);
-        if(audits !=null && audits.size() >0){
-            jsonObject.put("auditLogs", audits);
-        }
-        if(logOutBounds !=null && logOutBounds.size() >0){
-            jsonObject.put("trackLogs", logOutBounds);
-        }
-
-        String jsonStr = jsonObject.toString();
+        JSONObject result =  logService.findLogByTraceId(u);
+//        DSGCLogInstance log = this.logService.findLogById(u);
+//        List<DSGCLogAudit> audits = this.logService.getAuditLog(u.getTrackId());
+//        List<DSGCLogOutBound> logOutBounds = this.logService.getStackLog(u.getTrackId());
+//
+//        JSONObject jsonObject = new JSONObject();
+//        jsonObject.put("logInstance", log);
+//        if(audits !=null && audits.size() >0){
+//            jsonObject.put("auditLogs", audits);
+//        }
+//        if(logOutBounds !=null && logOutBounds.size() >0){
+//            jsonObject.put("trackLogs", logOutBounds);
+//        }
+//
+//        String jsonStr = jsonObject.toString();
 
 //        ResultVO resultVo = new ResultVO();
 //        resultVo.setData(jsonObject);
-        return jsonStr;
+        return Response.ok().setData(result);
     }
 
 
