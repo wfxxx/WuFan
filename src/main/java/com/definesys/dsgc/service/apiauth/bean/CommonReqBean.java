@@ -8,6 +8,7 @@ public class CommonReqBean {
     private String sysCode;
     private String queryType;
     private List<String> selectSystemList;
+    private String vid;
 
     public String getApiCode() {
         return apiCode;
@@ -47,5 +48,13 @@ public class CommonReqBean {
 
     public void setSelectSystemList(List<String> selectSystemList) {
         this.selectSystemList = selectSystemList;
+    }
+
+    public String getVid() {
+        return vid;
+    }
+
+    public void setVid(String vid) {
+        this.vid = vid;
     }
 }

@@ -94,4 +94,9 @@ public class ApiMngService {
         apiMngDao.addDsgcApi(dsgcApisBean);
         apiMngDao.addDsgcUri(dsgcServicesUri);
     }
+
+    public Boolean checkApiCodeIsExist(CommonReqBean param){
+        Boolean isExist =  apiMngDao.checkApiCodeIsExist(param.getCon0());
+        return isExist;
+    }
 }

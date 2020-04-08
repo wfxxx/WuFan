@@ -62,7 +62,7 @@ public class PluginDeployService {
                 PluginSettingVO ps = iters.next();
                 String key = ps.getPluginCode();
                 if (ps.getCsmCode() != null && ps.getCsmCode().trim().length() != 0) {
-                    key = ps.getPluginCode() + ":" + ps.getCsmCode();
+                    key = ps.getPluginCode() + ":" + consumerKeyMap.get(ps.getCsmCode());
                 }
                 if (!pluginSettingMap.containsKey(key)) {
                     pluginSettingMap.put(key,ps);

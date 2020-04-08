@@ -40,7 +40,10 @@ public class PluginDeployDao {
             while (iter.hasNext()) {
                 DAGPluginUsingBean puCfg = iter.next();
                 if (puCfg != null) {
-                    cfgList.add(this.getPluginConfigDtl(puCfg));
+                    PluginSettingVO pCfg = this.getPluginConfigDtl(puCfg);
+                    if(pCfg != null && pCfg.getConfig() != null) {
+                        cfgList.add(pCfg);
+                    }
                 }
             }
         }
@@ -121,6 +124,43 @@ public class PluginDeployDao {
     }
 
     public IpRestPluginCfgVO getIpRestrictionConfig(String dpuId) {
+        Map<String,Object> ipCfgMap = sw.buildQuery().sql("select WHITE_LIST,BLACK_LIST from PLUGIN_IP_RESTRICTION where DPU_ID = #dpuId").setVar("dpuId",dpuId).doQueryFirst();
+        if(ipCfgMap != null){
+           String whiteList = ipCfgMap.get("WHITE_LIST") != null ? ipCfgMap.get("WHITE_LIST").toString() : null;
+           String blackList = ipCfgMap.get("BLACK_LIST") != null ? ipCfgMap.get("BLACK_LIST").toString() : null;
+
+           if(whiteList != null && whiteList.trim().length() >0 || blackList != null && blackList.trim().length() >0 ){
+               IpRestPluginCfgVO ipr = new IpRestPluginCfgVO();
+               if(whiteList != null && whiteList.trim().length() >0){
+                   String[] whiteArray = whiteList.trim().split(",");
+                   List<String> wList = new ArrayList<String>();
+                   for(String w: whiteArray){
+                       if(w != null && w.trim().length() >0){
+                           wList.add(w.trim());
+                       }
+                   }
+                   if(wList.size() > 0) {
+                       ipr.setWhitelist(wList);
+                   }
+               }
+
+               if(blackList != null && blackList.trim().length() >0){
+                   String[] blackArray = blackList.trim().split(",");
+                   List<String> bList = new ArrayList<String>();
+                   for(String b : blackArray){
+                       if(b != null && b.trim().length() >0){
+                           bList.add(b.trim());
+                       }
+                   }
+                   if(bList.size() > 0){
+                       ipr.setBlacklist(bList);
+                   }
+               }
+
+               return ipr;
+           }
+
+        }
         return null;
     }
 
@@ -135,6 +175,18 @@ public class PluginDeployDao {
 
 
     public RateLimitPluginCfgVO getRateLimitingConfig(String dpuId) {
+        if(dpuId != null) {
+            RateLimitPluginCfgVO rlc = sw.buildQuery().sql("select P_SECOND,P_MINUTE,P_HOUR,P_DAY,P_MONTH,P_YEAR from  PLUGIN_RATE_LIMITING where DPU_ID = #dpuId").setVar("dpuId",dpuId).doQueryFirst(RateLimitPluginCfgVO.class);
+            if (rlc != null) {
+                rlc.setSecond(rlc.getSecond() != null && rlc.getSecond().intValue() == 0 ? null : rlc.getSecond());
+                rlc.setMinute(rlc.getMinute() != null && rlc.getMinute().intValue() == 0 ? null : rlc.getMinute());
+                rlc.setHour(rlc.getHour() != null && rlc.getHour().intValue() == 0 ? null : rlc.getHour());
+                rlc.setDay(rlc.getDay() != null && rlc.getDay().intValue() == 0 ? null : rlc.getDay());
+                rlc.setMonth(rlc.getMonth() != null && rlc.getMonth().intValue() == 0 ? null : rlc.getMonth());
+                rlc.setYear(rlc.getYear() != null && rlc.getYear().intValue() == 0 ? null : rlc.getYear());
+            }
+            return rlc;
+        }
         return null;
     }
 
@@ -145,12 +197,48 @@ public class PluginDeployDao {
 
 
     public CorrIdPluginCfgVO getCorrelationIdConfig(String dpuId) {
-        return null;
+        CorrIdPluginCfgVO cic = new CorrIdPluginCfgVO();
+
+        if(dpuId != null){
+            Map<String,Object> res = sw.buildQuery().sql("select HEADER_NAME,GENERATOR,ECHO_DOWNSTREAM from PLUGIN_CORRELATION_ID where DPU_ID = #dpuId").setVar("dpuId",dpuId).doQueryFirst();
+            if(res != null){
+                if(res.get("HEADER_NAME") != null) {
+                    cic.setHeader_name(res.get("HEADER_NAME").toString());
+                }
+
+                if(res.get("GENERATOR") != null){
+                    cic.setGenerator(res.get("GENERATOR").toString());
+                }
+
+                if(res.get("ECHO_DOWNSTREAM") != null){
+                    if("Y".equals(res.get("ECHO_DOWNSTREAM").toString())){
+                        cic.setEcho_downstream(true);
+                    } else{
+                        cic.setEcho_downstream(false);
+                    }
+                }
+            }
+        }
+        return cic;
     }
 
 
     public ReqSizePluginCfgVO getReqSizeLimitingConfig(String dpuId) {
-        return null;
+
+        ReqSizePluginCfgVO rspc = new ReqSizePluginCfgVO();
+
+        if(dpuId != null) {
+            Map<String,Object> res = sw.buildQuery().sql("select ALLOWED_PAYLOAD_SIZE,SIZE_UNIT from PLUGIN_REQ_SIZE_LIMITING where DPU_ID = #dpuId").setVar("dpuId",dpuId).doQueryFirst();
+            if(res != null){
+                if(res.get("SIZE_UNIT") != null){
+                    rspc.setSize_unit(res.get("SIZE_UNIT").toString());
+                }
+                if(res.get("ALLOWED_PAYLOAD_SIZE") != null){
+                    rspc.setAllowed_payload_size(Long.valueOf(res.get("ALLOWED_PAYLOAD_SIZE").toString()));
+                }
+            }
+        }
+        return rspc;
     }
 
 

@@ -51,12 +51,14 @@ public class PluginsProxy {
             while (iter.hasNext()) {
                 PluginVO p = iter.next();
                 if (p != null && p.name != null && p.name.equals(pluginName)) {
-                    if (consumerId != null && consumerId.trim().length() > 0) {
+                    if (consumerId != null) {
                         if (p.consumer != null && consumerId.equals(p.consumer.getId())) {
                             return p.id;
                         }
                     } else {
-                        return p.id;
+                        if(p.consumer == null) {
+                            return p.id;
+                        }
                     }
                 }
             }
@@ -83,7 +85,7 @@ public class PluginsProxy {
                 int splitIdx = key.indexOf(":");
                 if (splitIdx != -1) {
                     pluginName = key.substring(0,splitIdx);
-                    consumerId = key.substring(splitIdx);
+                    consumerId = key.substring(splitIdx+1);
                 }
 
                 String id = this.getPluginId(pluginName,consumerId);

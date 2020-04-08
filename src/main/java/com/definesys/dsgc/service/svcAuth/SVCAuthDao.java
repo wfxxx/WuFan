@@ -87,12 +87,12 @@ public class SVCAuthDao {
             sqlStr = new StringBuffer("select * from ( select  ds.serv_no servNo,ds.serv_name servName,dse.sys_name attribue1,dse.sys_code subordinateSystem,ds.share_type shareType " +
                     "from dsgc_services ds,dsgc_system_entities dse where ds.subordinate_system = dse.sys_code ) t where 1=1 ");
         }else {
-            sqlStr = new StringBuffer("select t.*,dse.sys_name attribue1 from (select ds.serv_no  servNo, " +
+            sqlStr = new StringBuffer("select t.*,dse.sys_name attribue1 from (select distinct ds.serv_no  servNo, " +
                     " ds.serv_name  servName," +
                     " ds.share_type shareType, " +
-                    " ds.subordinate_system subordinateSystem " +
+                    " ds.subordinate_system subordinateSystem,ds.creation_date " +
                     "  from dsgc_services ds, dsgc_system_access dsa " +
-                    " where ds.serv_no = dsa.serv_no and (dsa.sys_code in ( ");
+                    " where ds.serv_no = dsa.serv_no and ds.share_type != 'public' and (dsa.sys_code in ( ");
             for (int i = 0;i<param.getSelectSystemList().size();i++){
                 if(i<param.getSelectSystemList().size()-1){
                     sqlStr.append("'"+param.getSelectSystemList().get(i)+"',");
@@ -100,7 +100,7 @@ public class SVCAuthDao {
                     sqlStr.append("'"+param.getSelectSystemList().get(i)+"') ");
                 }
             }
-            sqlStr.append(" ) ) t,dsgc_system_entities dse where t.subordinateSystem = dse.sys_code ");
+            sqlStr.append(" ) order by creation_date desc ) t,dsgc_system_entities dse where t.subordinateSystem = dse.sys_code ");
         }
 
         if(!"ALL".equals(param.getQueryType())){
