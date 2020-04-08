@@ -75,7 +75,6 @@ public class ApiRouteDao {
             sqlStr.append(" GROUP BY dr_id   HAVING COUNT(1)>1  order by t1.creation_date desc ");
         }
 
-        System.out.println(sqlStr.toString());
         mq.sql(sqlStr.toString());
 
         return mq.doPageQuery(pageIndex, pageSize, DagRoutesBean.class);

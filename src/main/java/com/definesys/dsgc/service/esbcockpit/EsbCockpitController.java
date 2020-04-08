@@ -1,38 +1,48 @@
-package com.definesys.dsgc.service.apicockpit;
+package com.definesys.dsgc.service.esbcockpit;
 
-import com.definesys.dsgc.service.apicockpit.bean.CommonReqBean;
-import com.definesys.dsgc.service.apicockpit.bean.eChartsBean;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import com.definesys.dsgc.service.esbcockpit.bean.CommonReqBean;
+import com.definesys.dsgc.service.esbcockpit.bean.eChartsBean;
 import com.definesys.mpaas.common.http.Response;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 /**
- * @ClassName apiCockpitController
+ * @ClassName EsbCockpitController
  * @Description TODO
  * @Author Xueyunlong
- * @Date 2020-3-30 10:40
+ * @Date 2020-4-7 10:40
  * @Version 1.0
  **/
 @RestController
-@RequestMapping("/dsgc/apicockpit")
-public class apiCockpitController {
+@RequestMapping("/dsgc/esbcockpit")
+public class EsbCockpitController {
 
     @Autowired
-    private  apiCockpitService  apiCockpitService;
+    private EsbCockpitService esbCockpitService;
 
     //api一段时间内总调用次数
     /**
-     * @param commonReqBean
      * @return result
      */
     @PostMapping("/queryTotalRunTimes")
-    public Response queryTotalRunTimes(@RequestBody CommonReqBean commonReqBean){
+    public Response queryTotalRunTimes(){
         eChartsBean result=null;
         try{
-            result= apiCockpitService.queryTotalRunTimes(commonReqBean.getStartTime(),commonReqBean.getEndTime());
+            Calendar cal = Calendar.getInstance();
+            cal.set(1000, cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
+            Date beginOfDate = cal.getTime();
+            cal=Calendar.getInstance();
+            cal.set( cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH), 23, 59, 59);
+            Date endOfDate = cal.getTime();
+            result= esbCockpitService.queryTotalRunTimes(beginOfDate,endOfDate);
             return Response.ok().setData(result);
         }catch (Exception e){
             e.printStackTrace();
@@ -48,7 +58,7 @@ public class apiCockpitController {
     public Response queryTotalapp(){
         eChartsBean result=null;
         try{
-            result= apiCockpitService.queryTotalapp();
+            result= esbCockpitService.queryTotalapp();
             return Response.ok().setData(result);
         }catch (Exception e){
             e.printStackTrace();
@@ -65,7 +75,7 @@ public class apiCockpitController {
     public Response queryAppDistri(@RequestBody CommonReqBean commonReqBean){
         List<eChartsBean> result=null;
         try{
-            result= apiCockpitService.queryAppDistri(commonReqBean.getStartTime(),commonReqBean.getEndTime());
+            result= esbCockpitService.queryAppDistri(commonReqBean.getStartTime(),commonReqBean.getEndTime());
             return Response.ok().setData(result);
         }catch (Exception e){
             e.printStackTrace();
@@ -82,7 +92,7 @@ public class apiCockpitController {
     public Response queryAppExecute(@RequestBody CommonReqBean commonReqBean){
         eChartsBean result=null;
         try{
-            result= apiCockpitService.queryAppExecute(commonReqBean.getStartTime(),commonReqBean.getEndTime());
+            result= esbCockpitService.queryAppExecute(commonReqBean.getStartTime(),commonReqBean.getEndTime());
             return Response.ok().setData(result);
         }catch (Exception e){
             e.printStackTrace();
@@ -94,7 +104,7 @@ public class apiCockpitController {
     @PostMapping("/dash")
     public Response dash(){
         try{
-            Map<String,Object> reslt=apiCockpitService.dash();
+            Map<String,Object> reslt=esbCockpitService.dash();
             return Response.ok().setData(reslt);
         }catch (Exception e){
             e.printStackTrace();
