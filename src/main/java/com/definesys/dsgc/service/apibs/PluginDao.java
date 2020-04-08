@@ -115,5 +115,12 @@ public PlHttpLog queryPlHttpLogById(String id){ return  sw.buildQuery().eq("dpuI
     public void delPlHttpLogById(String id){ sw.buildQuery().eq("dpuId",id).doDelete(PlHttpLog.class); }
     public void updatePlHttpLog(PlHttpLog plHttpLog){ sw.buildQuery().eq("hlId",plHttpLog.getHlId()).doUpdate(plHttpLog); }
 
+    //     PlJwt;  14
+    public PlJwt queryPlJwtById(String id){ return  sw.buildQuery().eq("dpuId",id).doQueryFirst(PlJwt.class); }
+    public void addPlJwt(PlJwt plJwt){sw.buildQuery().doInsert(plJwt); }
+    public void delPlJwtById(String id){ sw.buildQuery().eq("dpuId",id).doDelete(PlJwt.class); }
+    public void updatePlJwt(PlJwt plJwt){ sw.buildQuery().eq("jwtId",plJwt.getJwtId()).doUpdate(plJwt); }
+
+
 
 }

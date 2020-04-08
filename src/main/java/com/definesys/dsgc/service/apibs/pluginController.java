@@ -724,6 +724,61 @@ public class pluginController {
         return Response.ok();
     }
 
+    //     PlJwt;  14
+
+    @RequestMapping(value = "/addPlJwt",method = RequestMethod.POST)
+    public Response addPlJwt(@RequestBody PlJwt plJwt){
+        try {
+//            String dupId=plHttpLog.getVid();
+//            PlHttpLog value=pluginService.queryPlHttpLogById(dupId);
+//            if(value!=null&&value.getHlId()!=null){
+//                return Response.error("服务违反插件唯一性约束");
+//            }
+            pluginService.addPlJwt(plJwt);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("添加插件错误!");
+        }
+        return Response.ok();
+    }
+
+
+    @RequestMapping(value = "/updatePlJwt",method = RequestMethod.POST)
+    public Response updatePlJwt(@RequestBody PlJwt plJwt){
+        try {
+            pluginService.updatePlJwt(plJwt);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("更新插件错误!");
+        }
+        return Response.ok();
+    }
+
+    @RequestMapping(value = "/queryPlJwtById",method = RequestMethod.POST)
+    public Response queryPlJwtById(@RequestBody CommonReqBean param, HttpServletRequest request){
+        PlJwt result =null;
+        try {
+            String dupId=param.getCon0();
+            result=pluginService.queryPlJwtById(dupId);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("查询插件错误!");
+        }
+        return Response.ok().setData(result);
+    }
+
+    @RequestMapping(value = "/delPlJwtById",method = RequestMethod.POST)
+    public Response delPlJwtById(@RequestBody CommonReqBean param, HttpServletRequest request){
+        try {
+            String dupId=param.getCon0();
+            pluginService.delPlJwtById(dupId);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("删除插件错误!");
+        }
+        return Response.ok();
+    }
+
 }
 
 
