@@ -170,7 +170,121 @@ public class PluginDeployDao {
 
 
     public ReqTransPluginCfgVO getReqTransConfig(String dpuId) {
+        if(dpuId != null){
+            ReqTransPluginCfgBean res =  sw.buildQuery().sql("select HTTP_METHOD,\n" +
+                    "       REMOVE_BODY,\n" +
+                    "       REMOVE_HEADERS,\n" +
+                    "       REMOVE_QUERYSTRING,\n" +
+                    "       RENAME_BODY,\n" +
+                    "       RENAME_HEADERS,\n" +
+                    "       RENAME_QUERYSTRING,\n" +
+                    "       REPLACE_BODY,\n" +
+                    "       REPLACE_HEADERS,\n" +
+                    "       REPALCE_QUERYSTRING,\n" +
+                    "       REPLACE_URL,\n" +
+                    "       ADD_BODY,\n" +
+                    "       ADD_HEADERS,\n" +
+                    "       ADD_QUERYSTRING,\n" +
+                    "       APPEND_BODY,\n" +
+                    "       APPEND_HEADERS,\n" +
+                    "       APPEND_QUERYSTRING\n" +
+                    "from PLUGIN_REQ_TRANS\n" +
+                    "where DPU_ID = #dpuId\n").setVar("dpuId",dpuId).doQueryFirst(ReqTransPluginCfgBean.class);
+            if(res != null){
+                boolean hasValue = false;
+                ReqTransPluginCfgVO reqTransCfg = new ReqTransPluginCfgVO();
+                if(res.getHttpMethod() != null && res.getHttpMethod().trim().length() > 0){
+                    hasValue = true;
+                    reqTransCfg.setHttp_method(res.getHttpMethod().trim());
+                }
+
+
+                TransCommonVO remove= new TransCommonVO();
+                remove.setBody(this.covertToListBySplit(res.getRemoveBody()));
+                remove.setHeaders(this.covertToListBySplit(res.getRemoveHeaders()));
+                remove.setQuerystring(this.covertToListBySplit(res.getRemoveQuerystring()));
+
+                if(remove.getBody() != null && remove.getBody().size() >0
+                    || remove.getHeaders() != null &&  remove.getHeaders().size() >0
+                    || remove.getQuerystring() != null && remove.getQuerystring().size() >0){
+                    hasValue = true;
+                    reqTransCfg.setRemove(remove);
+                }
+
+                TransCommonVO rename = new TransCommonVO();
+                rename.setBody(this.covertToListBySplit(res.getRenameBody()));
+                rename.setHeaders(this.covertToListBySplit(res.getRenameHeaders()));
+                rename.setQuerystring(this.covertToListBySplit(res.getRenameQuerystring()));
+
+                if(rename.getBody() != null && rename.getBody().size() >0
+                        || rename.getHeaders() != null &&  rename.getHeaders().size() >0
+                        || rename.getQuerystring() != null && rename.getQuerystring().size() >0){
+                    hasValue = true;
+                    reqTransCfg.setRename(rename);
+                }
+
+                TransCommonVO add= new TransCommonVO();
+                add.setBody(this.covertToListBySplit(res.getAddBody()));
+                add.setHeaders(this.covertToListBySplit(res.getAddHeaders()));
+                add.setQuerystring(this.covertToListBySplit(res.getAddQuerystring()));
+
+                if(add.getBody() != null && add.getBody().size() >0
+                        || add.getHeaders() != null &&  add.getHeaders().size() >0
+                        || add.getQuerystring() != null && add.getQuerystring().size() >0){
+                    hasValue = true;
+                    reqTransCfg.setAdd(add);
+                }
+
+                TransCommonVO append= new TransCommonVO();
+                append.setBody(this.covertToListBySplit(res.getAppendBody()));
+                append.setHeaders(this.covertToListBySplit(res.getAppendHeaders()));
+                append.setQuerystring(this.covertToListBySplit(res.getAppendQuerystring()));
+
+                if(append.getBody() != null && append.getBody().size() >0
+                        || append.getHeaders() != null &&  append.getHeaders().size() >0
+                        || append.getQuerystring() != null && append.getQuerystring().size() >0){
+                    hasValue = true;
+                    reqTransCfg.setAppend(append);
+                }
+
+
+                TransReplaceVO replace= new TransReplaceVO();
+                replace.setBody(this.covertToListBySplit(res.getReplaceBody()));
+                replace.setHeaders(this.covertToListBySplit(res.getReplaceHeaders()));
+                replace.setQuerystring(this.covertToListBySplit(res.getReplaceQuerystring()));
+                if(res.getReplaceUrl() != null) {
+                    replace.setUri(res.getReplaceUrl().trim());
+                }
+                if(replace.getBody() != null && replace.getBody().size() >0
+                        || replace.getHeaders() != null &&  replace.getHeaders().size() >0
+                        || replace.getQuerystring() != null && replace.getQuerystring().size() >0
+                        || replace.getUri() != null && replace.getUri().length() >0){
+                    hasValue = true;
+                    reqTransCfg.setReplace(replace);
+                }
+
+                return hasValue ? reqTransCfg :null;
+            }
+        }
         return null;
+    }
+
+    private List<String> covertToListBySplit(String str){
+        List<String> res = new ArrayList<String>();
+        if(str != null ){
+            String[]  arr = str.split(",");
+            for(String a:arr){
+                if(a != null && a.trim().length() >0){
+                    res.add(a.trim());
+                }
+            }
+        }
+
+        if(res.size() > 0){
+            return res;
+        } else{
+            return null;
+        }
     }
 
 
@@ -194,6 +308,9 @@ public class PluginDeployDao {
     public Oauth2PluginCfgVO getOauth2Config(String dpuId) {
         return null;
     }
+
+
+
 
 
     public CorrIdPluginCfgVO getCorrelationIdConfig(String dpuId) {
