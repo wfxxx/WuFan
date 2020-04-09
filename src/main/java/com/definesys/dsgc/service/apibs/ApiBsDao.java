@@ -176,7 +176,10 @@ public class ApiBsDao {
     }
 
     public DagPlugStoreBean queryPluginStoreByCode(String code){
-        return sw.buildQuery().eq("plugin_code",code).doQueryFirst(DagPlugStoreBean.class);
+        return sw.buildQuery()
+                .eq("plugin_code",code)
+                .orderBy("dps_Id","asc")
+                .doQueryFirst(DagPlugStoreBean.class);
     }
 
     public List<Map<String,Object>> queryPluginStoreTypeTotal(){
