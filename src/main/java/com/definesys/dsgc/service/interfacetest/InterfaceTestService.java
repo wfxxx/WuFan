@@ -1,6 +1,11 @@
 package com.definesys.dsgc.service.interfacetest;
 
 import com.alibaba.fastjson.JSONObject;
+import com.definesys.dsgc.service.apiplugin.ApiPlugInDao;
+import com.definesys.dsgc.service.apiplugin.bean.DagPluginUsingBean;
+import com.definesys.dsgc.service.apiroute.ApiRouteDao;
+import com.definesys.dsgc.service.apiroute.bean.DagDeployStatBean;
+import com.definesys.dsgc.service.apiroute.bean.DagRoutesBean;
 import com.definesys.dsgc.service.consumers.ConsumersDao;
 import com.definesys.dsgc.service.consumers.bean.DSGCConsumerAuth;
 import com.definesys.dsgc.service.interfacetest.bean.CommonReqBean;
@@ -37,6 +42,12 @@ public class InterfaceTestService {
     @Autowired
     private ConsumersDao consumersDao;
 
+    @Autowired
+    private ApiRouteDao apiRouteDao;
+
+    @Autowired
+    private ApiPlugInDao apiPlugInDao;
+
     public InterfaceBaseInfoVO queryInterfaceInfo(CommonReqBean param) throws Exception{
         if(StringUtil.isBlank(param.getCon0()) || StringUtil.isBlank(param.getQueryType())){
             throw new Exception("请求参数错误");
@@ -62,6 +73,23 @@ public class InterfaceTestService {
     public Map<String,String> doRestTest(DoTestVO param) throws Exception{
         List<Map<String,String>> paramterList = param.getParamters();
         String url = param.getUrl();
+        if(StringUtil.isNotBlank(param.getApiOrServ()) && param.getApiOrServ() == "0"){
+            String routeUri = param.getUri();
+            DagRoutesBean dagRoutesBean = apiRouteDao.queryRouteByUri(routeUri);
+            DagDeployStatBean dagDeployStatBean = apiRouteDao.queryDeployVid(dagRoutesBean.getRouteCode(),param.getEnvCode());
+            List<DagPluginUsingBean> pluginUsingBeans = apiPlugInDao.queryPlugInsByVid(dagDeployStatBean.getVid());
+            int temp = 0;
+            for (int i = 0; i < pluginUsingBeans.size(); i++) {
+                if("basic-auth".equals(pluginUsingBeans.get(i).getPluginCode()) && "Y".equals(pluginUsingBeans.get(i).getIsEnable())){
+                    temp = 1;
+                }
+                if("jwt-auth".equals(pluginUsingBeans.get(i).getPluginCode()) && "Y".equals(pluginUsingBeans.get(i).getIsEnable())){
+                    temp = 2;
+                }
+
+            }
+
+        }
         DSGCConsumerAuth dsgcConsumerAuth =consumersDao.queryConsumerDataByCsmCodeAndEnv(param.getConsumerCode(),param.getEnvCode());
         String auth = "";
 //        if(dsgcConsumerAuth != null){

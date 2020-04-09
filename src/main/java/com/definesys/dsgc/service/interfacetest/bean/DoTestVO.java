@@ -7,10 +7,20 @@ public class DoTestVO {
     private String envCode;
     private String consumerCode;
     private String url;
+    private String uri;
     private String methodType;
     private String requestBody;
     private List<Map<String ,String>> paramters;
     private List<Map<String ,String>> headers;
+    private String apiOrServ;
+
+    public String getUri() {
+        return uri;
+    }
+
+    public void setUri(String uri) {
+        this.uri = uri;
+    }
 
     public String getEnvCode() {
         return envCode;
@@ -66,5 +76,13 @@ public class DoTestVO {
 
     public void setHeaders(List<Map<String, String>> headers) {
         this.headers = headers;
+    }
+
+    public String getApiOrServ() {
+        return apiOrServ;
+    }
+
+    public void setApiOrServ(String apiOrServ) {
+        this.apiOrServ = apiOrServ;
     }
 }

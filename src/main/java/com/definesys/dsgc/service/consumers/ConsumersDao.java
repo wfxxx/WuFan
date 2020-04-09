@@ -230,4 +230,8 @@ public class ConsumersDao {
               mq.sql(sql.toString());
             return   mq.doPageQuery(pageIndex,pageSize,DagConsumerToken.class);
     }
+    public DSGCConsumerEntities queryConsumerDeployEnv(String dceId){
+        return sw.buildQuery().eq("dce_id",dceId).doQueryFirst(DSGCConsumerEntities.class);
+    }
+
 }

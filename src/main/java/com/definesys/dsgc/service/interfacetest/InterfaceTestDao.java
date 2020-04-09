@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 public class InterfaceTestDao {
     @Autowired
     private MpaasQueryFactory sw;
+
 }

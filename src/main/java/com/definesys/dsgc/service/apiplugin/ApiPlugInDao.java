@@ -2,6 +2,7 @@ package com.definesys.dsgc.service.apiplugin;
 
 import com.definesys.dsgc.service.apiplugin.bean.CommonReqBean;
 import com.definesys.dsgc.service.apiplugin.bean.DAGPluginListVO;
+import com.definesys.dsgc.service.apiroute.bean.DagPluginUsingBean;
 import com.definesys.dsgc.service.esbenv.bean.DSGCEnvInfoCfg;
 import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.mpaas.query.MpaasQueryFactory;
@@ -133,6 +134,9 @@ public class ApiPlugInDao {
         conAnd += " or UPPER(sour_type) like '%" + conUpper + "%'";
         conAnd += " or UPPER(app_name) like '%" + conUpper + "%' )";
         return conAnd;
+    }
+    public List<com.definesys.dsgc.service.apiplugin.bean.DagPluginUsingBean> queryPlugInsByVid(String vid){
+        return sw.buildQuery().eq("vid",vid).doQuery(com.definesys.dsgc.service.apiplugin.bean.DagPluginUsingBean.class);
     }
 
 }

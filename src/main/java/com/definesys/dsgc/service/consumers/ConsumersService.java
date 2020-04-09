@@ -398,8 +398,13 @@ public class ConsumersService {
                 String iatStr = secondToDate(Long.parseLong(dagConsumerToken.getIatTime()), "yyyy-MM-dd HH:mm:ss");
                 consumerTokenVO.setIatTime(iatStr);
                 Long duration = Long.parseLong(dagConsumerToken.getExpTime()) - Instant.now().getEpochSecond();
-                DecimalFormat df = new DecimalFormat("0.00");
-                String durationMinute = duration/3600 + "时" + (duration%3600)/60 + "分" + (duration%3600)%60 + "秒";
+                String durationMinute = null;
+                if(duration < 86400){
+                    durationMinute = duration/3600 + "小时" + (duration%3600)/60 + "分" + (duration%3600)%60 + "秒";
+                }else {
+                    durationMinute = duration/86400 +"天" + (duration%86400)/3600 + "小时";
+                }
+
                // String durationMinute = df.format(duration / (60 * 60));
                 consumerTokenVO.setDuration(durationMinute);
                 list.add(consumerTokenVO);
@@ -407,6 +412,28 @@ public class ConsumersService {
             result.setResult(list);
         }
         return result;
+    }
+
+    public List<DagEnvInfoCfgVO> queryConsumerDeployEnv(String dceId){
+        DSGCConsumerEntities dsgcConsumerEntities = consumersDao.queryConsumerDeployEnv(dceId);
+        String envStr = dsgcConsumerEntities.getDeployEnv();
+        List<DagEnvInfoCfgVO> result = new ArrayList<>();
+        if(StringUtil.isNotBlank(envStr)){
+            List<DSGCEnvInfoCfg> list =consumersDao.queryApiEnv();
+            String[] deployEnvArr = envStr.split(",");
+            for (int i = 0; i <deployEnvArr.length ; i++) {
+                for (int j = 0; j < list.size(); j++) {
+                    if(deployEnvArr[i].equals(list.get(j).getEnvCode())){
+                        DagEnvInfoCfgVO dagEnvInfoCfgVO = new DagEnvInfoCfgVO();
+                        dagEnvInfoCfgVO.setEnvCode(list.get(j).getEnvCode());
+                        dagEnvInfoCfgVO.setEnvName(list.get(j).getEnvName());
+                        result.add(dagEnvInfoCfgVO);
+                    }
+                }
+            }
+        }
+    return result;
+
     }
 
     /**

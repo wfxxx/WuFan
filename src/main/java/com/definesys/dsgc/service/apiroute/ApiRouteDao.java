@@ -114,8 +114,8 @@ public class ApiRouteDao {
     public DagCodeVersionBean queryCodeVersionById(CommonReqBean param){
         return sw.buildQuery().eq("vid",param.getCon0()).doQueryFirst(DagCodeVersionBean.class);
     }
-    public List<DagCodeVersionBean> queryRouteConfigListBySourCode(CommonReqBean param){
-        return sw.buildQuery().eq("sour_code",param.getCon0()).eq("sour_type",param.getQueryType()).doQuery(DagCodeVersionBean.class);
+    public List<DagCodeVersionBean> queryRouteConfigListBySourCode(String sourCode,String sourType){
+        return sw.buildQuery().eq("sour_code",sourCode).eq("sour_type",sourType).doQuery(DagCodeVersionBean.class);
     }
     public void addRouteConfig(DagCodeVersionBean dagCodeVersionBean){
         sw.buildQuery().doInsert(dagCodeVersionBean);
@@ -209,5 +209,16 @@ public class ApiRouteDao {
     public List<DSGCEnvInfoCfg> queryDeplogDev(String envCode){
         String[] conArray = envCode.trim().split(",");
         return sw.buildQuery().in("ENV_CODE",conArray).doQuery(DSGCEnvInfoCfg.class);
+    }
+
+    public DagRoutesBean queryRouteByUri(String uri){
+        return sw.buildQuery().eq("route_path",uri).doQueryFirst(DagRoutesBean.class);
+    }
+
+    public DagDeployStatBean queryDeployVid(String sourCode,String envCode){
+       return sw.buildQuery().sql("select dds.* from dag_deploy_stat dds,dag_code_version dcv where dds.vid = dcv.vid and dcv.sour_type = 'route' and dcv.sour_code = #sourCode and dds.env_code = #envCode")
+                .setVar("sourCode",sourCode).setVar("envCode",envCode)
+                .doQueryFirst(DagDeployStatBean.class);
+
     }
 }

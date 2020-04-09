@@ -144,7 +144,7 @@ public class ApiRouteService {
 
     }
 public List<RouteConfigDTO> queryRouteConfigList(CommonReqBean param){
-    List<DagCodeVersionBean> list = apiRouteDao.queryRouteConfigListBySourCode(param);
+    List<DagCodeVersionBean> list = apiRouteDao.queryRouteConfigListBySourCode(param.getCon0(),param.getQueryType());
     List<DSGCEnvInfoCfg> envList = apiRouteDao.queryApiEnv();
     List<RouteConfigDTO> result = new ArrayList<>();
     Iterator<DagCodeVersionBean> iterator = list.iterator();

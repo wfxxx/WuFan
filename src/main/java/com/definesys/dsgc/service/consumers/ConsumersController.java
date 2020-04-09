@@ -165,4 +165,15 @@ public class ConsumersController {
             return Response.error("查询token失败！");
         }
     }
+    @RequestMapping(value = "queryConsumerDeployEnv")
+    public Response queryConsumerDeployEnv(@RequestBody() CommonReqBean param){
+        try {
+            return Response.ok().setData(consumersService.queryConsumerDeployEnv(param.getCon0()));
+
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("查询token失败！");
+        }
+    }
+
 }
