@@ -302,17 +302,18 @@ public class ConsumersService {
     @Transactional(rollbackFor = Exception.class)
     public void createToken(CreateTokenVO param) {
         DSGCConsumerEntities dsgcConsumerEntities = consumersDao.queryConsumerEntById(param.getDceId());
-        String iss = dsgcConsumerEntities.getCsmCode();
-        LocalDateTime dateTime = LocalDateTime.parse(param.getExp(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        Long expSecond = dateTime.toEpochSecond(ZoneOffset.of("+8"));
-        long currSecond = LocalDateTime.now().toEpochSecond(ZoneOffset.of("+8"));
+        if(dsgcConsumerEntities != null) {
+            String iss = dsgcConsumerEntities.getCsmCode();
+            LocalDateTime dateTime = LocalDateTime.parse(param.getExp(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            Long expSecond = dateTime.toEpochSecond(ZoneOffset.of("+8"));
+            long currSecond = LocalDateTime.now().toEpochSecond(ZoneOffset.of("+8"));
 //        LocalDateTime now = LocalDateTime.now();
 //        Duration duration = Duration.between(now, dateTime);
 //        Long second = duration.getSeconds();
-        //      Long second = expSecond-currSecond;
-        String token = JwtTokenUtil.generateToken(iss, expSecond, dsgcConsumerEntities.getCsmCode());
-        if (StringUtils.isNotEmpty(token)) {
-            saveJwtInfo(iss,token,param.getEnvCode(),dsgcConsumerEntities.getCsmCode(),expSecond,currSecond);
+            //      Long second = expSecond-currSecond;
+            String token = JwtTokenUtil.generateToken(iss, expSecond, dsgcConsumerEntities.getCsmCode());
+            if (StringUtils.isNotEmpty(token)) {
+                saveJwtInfo(iss, token, param.getEnvCode(), dsgcConsumerEntities.getCsmCode(), expSecond, currSecond);
 //            DagConsumerJwt dagConsumerJwt = new DagConsumerJwt();
 //            dagConsumerJwt.setAlgorithm("HS256");
 //            dagConsumerJwt.setCsmCode(dsgcConsumerEntities.getCsmCode());
@@ -329,8 +330,11 @@ public class ConsumersService {
 //            dagConsumerToken.setIatTime(String.valueOf(currSecond));
 //            dagConsumerToken.setExpTime(String.valueOf(expSecond));
 //            consumersDao.saveConsumerToken(dagConsumerToken);
-        } else {
-            throw new RuntimeException("生成token失败");
+            } else {
+                throw new RuntimeException("生成token失败");
+            }
+        }else {
+            throw new RuntimeException("消费者不存在！");
         }
     }
 
