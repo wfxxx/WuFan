@@ -69,6 +69,10 @@ public class PluginDeployDao {
 
             ps.setConfig(this.getKeyAuthConfig(pluginUsing.getDpuId()));
 
+        } else if ("jwt".equals(pluginUsing.getPluginCode())) {
+
+            ps.setConfig(this.getJWTConfig(pluginUsing.getDpuId()));
+
         } else if ("oauth2".equals(pluginUsing.getPluginCode())) {
 
             ps.setConfig(this.getOauth2Config(pluginUsing.getDpuId()));
@@ -114,6 +118,60 @@ public class PluginDeployDao {
     }
 
     public KeyAuthPluginCfgVO getKeyAuthConfig(String dpuId) {
+        return null;
+    }
+
+    public JWTPluginCfgVO getJWTConfig(String dpuId){
+
+        if(dpuId != null){
+            JWTPlguinCfbBean res = sw.buildQuery().sql("select URL_NAMES,\n" +
+                    "       COOKIE_NAMES,\n" +
+                    "       KEY_CLAIM_NAME,\n" +
+                    "       IS_BASE64,\n" +
+                    "       CLAIMS_VERIFY,\n" +
+                    "       ANONYMOUS,\n" +
+                    "       IS_PREFLIGHT,\n" +
+                    "       MAX_ALIVE,\n" +
+                    "       HEADER_NAMES\n" +
+                    "from PLUGIN_JWT\n" +
+                    "where DPU_ID = #dpuId").setVar("dpuId",dpuId).doQueryFirst(JWTPlguinCfbBean.class);
+            if(res != null){
+                JWTPluginCfgVO cfg = new JWTPluginCfgVO();
+                if(res.getAnonymous() != null && res.getAnonymous().trim().length() >0){
+                    cfg.setAnonymous(res.getAnonymous().trim());
+                }
+
+                cfg.setClaims_to_verify(this.covertToListBySplit(res.getClaimsVerify()));
+                if(cfg.getClaims_to_verify() == null){
+                    cfg.setClaims_to_verify(new ArrayList<String>());
+                }
+
+                cfg.setCookie_names(this.covertToListBySplit(res.getCookieNames()));
+                if(cfg.getCookie_names() == null ){
+                    cfg.setCookie_names(new ArrayList<String>());
+                }
+                cfg.setHeader_names(this.covertToListBySplit(res.getHeaderNames()));
+                if(cfg.getHeader_names() == null){
+                    cfg.setHeader_names(new ArrayList<String>());
+                }
+
+                if(res.getKeyClaimName() != null && res.getKeyClaimName().trim().length() >0){
+                    cfg.setKey_claim_name(res.getKeyClaimName().trim());
+                }
+
+                cfg.setMaximum_expiration(res.getMaxAlive());
+
+                cfg.setUri_param_names(this.covertToListBySplit(res.getUrlNames()));
+                if(cfg.getUri_param_names() == null){
+                    cfg.setUri_param_names(new ArrayList<String>());
+                }
+
+                cfg.setSecret_is_base64("Y".equals(res.getIsBase64()));
+                cfg.setRun_on_preflight("Y".equals(res.getIsPreflight()));
+
+                return cfg;
+            }
+        }
         return null;
     }
 
