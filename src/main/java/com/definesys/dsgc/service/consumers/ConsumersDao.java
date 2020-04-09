@@ -209,4 +209,25 @@ public class ConsumersDao {
                 .doQueryFirst(DSGCConsumerAuth.class);
 
     }
+    public void saveConsumerJwtInfo(DagConsumerJwt dagConsumerJwt){
+        sw.buildQuery().doInsert(dagConsumerJwt);
+    }
+
+    public void saveConsumerToken(DagConsumerToken dagConsumerToken){
+        sw.buildQuery().doInsert(dagConsumerToken);
+    }
+
+    public PageQueryResult<DagConsumerToken> queryTokenList(String envCode,String csmCode,int pageIndex,int pageSize){
+        StringBuffer sql = new StringBuffer("select dct.*,eic.env_name from dag_consumer_token dct,dsgc_env_info_cfg eic where dct.env_code = eic.env_code and dct.csm_code = #csmCode ");
+        MpaasQuery mq = sw.buildQuery();
+              //  .sql("select dct.*,eic.env_name from dag_consumer_token dct left join dsgc_env_info_cfg eic on dct.env_code = eic.env_code and dct.csm_code = #csmCode");
+        mq.setVar("csmCode",csmCode);
+              if (!"ALL".equals(envCode)){
+                  sql.append(" and dct.env_code = #envCode");
+                  mq.setVar("envCode",envCode);
+              }
+              sql.append(" order by dct.creation_date desc");
+              mq.sql(sql.toString());
+            return   mq.doPageQuery(pageIndex,pageSize,DagConsumerToken.class);
+    }
 }

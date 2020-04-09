@@ -45,7 +45,24 @@ public class PluginsProxy {
     }
 
 
+    /**
+     * 从dag中获取插件对象的id
+     * @param pluginName
+     * @param consumerId
+     * @return
+     */
     private String getPluginId(String pluginName,String consumerId) {
+        PluginVO p = this.getPluginObj(pluginName,consumerId);
+        return p != null ? p.id : null;
+    }
+
+    /**
+     * 从dag中获取插件对象
+     * @param pluginName
+     * @param consumerId
+     * @return
+     */
+    private PluginVO getPluginObj(String pluginName,String consumerId) {
         if (this.pluginList != null && this.pluginList.getData() != null) {
             Iterator<PluginVO> iter = this.pluginList.getData().iterator();
             while (iter.hasNext()) {
@@ -53,11 +70,11 @@ public class PluginsProxy {
                 if (p != null && p.name != null && p.name.equals(pluginName)) {
                     if (consumerId != null) {
                         if (p.consumer != null && consumerId.equals(p.consumer.getId())) {
-                            return p.id;
+                            return p;
                         }
                     } else {
                         if(p.consumer == null) {
-                            return p.id;
+                            return p;
                         }
                     }
                 }
@@ -117,6 +134,26 @@ public class PluginsProxy {
 
     }
 
+    /**
+     * 更新插件是否启用状态
+     * @param ps
+     */
+    public void updatePluginEnableStat(PluginSettingVO ps){
+        if(ps !=null && ps.getPluginCode() != null){
+            PluginVO p =  this.getPluginObj(ps.getPluginCode(),ps.getCsmCode());
+            this.updatePluginEnableStat(p,ps.isEnabled());
+        }
+    }
+
+    private void updatePluginEnableStat(PluginVO p,boolean isEnable){
+        if(p != null && p.enabled != isEnable){
+            if(p.id != null && p.id.length() >0){
+                String jsonText = "{\"enabled\":"+isEnable+"}";
+                HttpReqUtil.putJsonText(this.adminUrl + "/plugins/" + p.id,jsonText);
+            }
+        }
+    }
+
     private void applyPlugin(String pluginName,String consumerId,PluginSettingVO cfg) {
         if (cfg != null) {
             PluginVO p = this.generatePluginVO(pluginName,null,consumerId,cfg);
@@ -130,6 +167,10 @@ public class PluginsProxy {
             HttpReqUtil.putObject(this.adminUrl + "/plugins/" + pluginId,p,String.class);
         }
     }
+
+
+
+
 
     private PluginVO generatePluginVO(String pluginName,String pluginId,String consumerId,PluginSettingVO cfg) {
         PluginVO p = new PluginVO();

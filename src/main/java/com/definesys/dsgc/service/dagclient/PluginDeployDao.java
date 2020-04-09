@@ -69,6 +69,10 @@ public class PluginDeployDao {
 
             ps.setConfig(this.getKeyAuthConfig(pluginUsing.getDpuId()));
 
+        } else if ("jwt".equals(pluginUsing.getPluginCode())) {
+
+            ps.setConfig(this.getJWTConfig(pluginUsing.getDpuId()));
+
         } else if ("oauth2".equals(pluginUsing.getPluginCode())) {
 
             ps.setConfig(this.getOauth2Config(pluginUsing.getDpuId()));
@@ -114,6 +118,60 @@ public class PluginDeployDao {
     }
 
     public KeyAuthPluginCfgVO getKeyAuthConfig(String dpuId) {
+        return null;
+    }
+
+    public JWTPluginCfgVO getJWTConfig(String dpuId){
+
+        if(dpuId != null){
+            JWTPlguinCfbBean res = sw.buildQuery().sql("select URL_NAMES,\n" +
+                    "       COOKIE_NAMES,\n" +
+                    "       KEY_CLAIM_NAME,\n" +
+                    "       IS_BASE64,\n" +
+                    "       CLAIMS_VERIFY,\n" +
+                    "       ANONYMOUS,\n" +
+                    "       IS_PREFLIGHT,\n" +
+                    "       MAX_ALIVE,\n" +
+                    "       HEADER_NAMES\n" +
+                    "from PLUGIN_JWT\n" +
+                    "where DPU_ID = #dpuId").setVar("dpuId",dpuId).doQueryFirst(JWTPlguinCfbBean.class);
+            if(res != null){
+                JWTPluginCfgVO cfg = new JWTPluginCfgVO();
+                if(res.getAnonymous() != null && res.getAnonymous().trim().length() >0){
+                    cfg.setAnonymous(res.getAnonymous().trim());
+                }
+
+                cfg.setClaims_to_verify(this.covertToListBySplit(res.getClaimsVerify()));
+                if(cfg.getClaims_to_verify() == null){
+                    cfg.setClaims_to_verify(new ArrayList<String>());
+                }
+
+                cfg.setCookie_names(this.covertToListBySplit(res.getCookieNames()));
+                if(cfg.getCookie_names() == null ){
+                    cfg.setCookie_names(new ArrayList<String>());
+                }
+                cfg.setHeader_names(this.covertToListBySplit(res.getHeaderNames()));
+                if(cfg.getHeader_names() == null){
+                    cfg.setHeader_names(new ArrayList<String>());
+                }
+
+                if(res.getKeyClaimName() != null && res.getKeyClaimName().trim().length() >0){
+                    cfg.setKey_claim_name(res.getKeyClaimName().trim());
+                }
+
+                cfg.setMaximum_expiration(res.getMaxAlive());
+
+                cfg.setUri_param_names(this.covertToListBySplit(res.getUrlNames()));
+                if(cfg.getUri_param_names() == null){
+                    cfg.setUri_param_names(new ArrayList<String>());
+                }
+
+                cfg.setSecret_is_base64("Y".equals(res.getIsBase64()));
+                cfg.setRun_on_preflight("Y".equals(res.getIsPreflight()));
+
+                return cfg;
+            }
+        }
         return null;
     }
 
@@ -165,12 +223,205 @@ public class PluginDeployDao {
     }
 
     public ResTransPluginCfgVO getResTransConfig(String dpuId) {
+
+        if(dpuId != null){
+            ResTransPluginCfgBean res = sw.buildQuery().sql("select REMOVE_JSON,\n" +
+                    "       REMOVE_HEADERS,\n" +
+                    "       RENAME_HEADERS,\n" +
+                    "       REPLACE_JSON,\n" +
+                    "       REPLACE_JSON_TYPE,\n" +
+                    "       REPLACE_HEADERS,\n" +
+                    "       ADD_JSON,\n" +
+                    "       ADD_JSON_TYPES,\n" +
+                    "       ADD_HEADERS,\n" +
+                    "       APPEND_JSON,\n" +
+                    "       APPEND_JSON_TYPE,\n" +
+                    "       APPEND_HEADERS\n" +
+                    "from PLUGIN_RES_TRANS\n" +
+                    "where DPU_ID = #dpuId").setVar("dpuId",dpuId).doQueryFirst(ResTransPluginCfgBean.class);
+            if(res != null){
+                boolean hasValue = false;
+                ResTransPluginCfgVO resTransCfg = new ResTransPluginCfgVO();
+
+                TransResRemoveVO remove= new TransResRemoveVO();
+                remove.setJson(this.covertToListBySplit(res.getRemoveJson()));
+                remove.setHeaders(this.covertToListBySplit(res.getRemoveHeaders()));
+
+                if(remove.getJson() != null && remove.getJson().size() >0
+                        || remove.getHeaders() != null &&  remove.getHeaders().size() >0){
+                    hasValue = true;
+                    resTransCfg.setRemove(remove);
+                }
+
+                TransResRenameVO rename = new TransResRenameVO();
+                rename.setHeaders(this.covertToListBySplit(res.getRenameHeaders()));
+
+                if(rename.getHeaders() != null &&  rename.getHeaders().size() >0){
+                    hasValue = true;
+                    resTransCfg.setRename(rename);
+                }
+
+                TransResCommonVO add= new TransResCommonVO();
+                add.setJson(this.covertToListBySplit(res.getAddJson()));
+                add.setJson_types(this.covertToListBySplit(res.getAddJsonTypes()));
+                add.setHeaders(this.covertToListBySplit(res.getAddHeaders()));
+
+                if(add.getJson() != null && add.getJson().size() >0
+                        || add.getJson_types() != null && add.getJson_types().size() >0
+                        || add.getHeaders() != null &&  add.getHeaders().size() >0){
+                    hasValue = true;
+                    resTransCfg.setAdd(add);
+                }
+
+                TransResCommonVO append= new TransResCommonVO();
+                append.setJson(this.covertToListBySplit(res.getAppendJson()));
+                append.setJson_types(this.covertToListBySplit(res.getAppendJsonType()));
+                append.setHeaders(this.covertToListBySplit(res.getAppendHeaders()));
+
+                if(append.getJson() != null && append.getJson().size() >0
+                        || append.getJson_types() != null && append.getJson_types().size() >0
+                        || append.getHeaders() != null &&  append.getHeaders().size() >0){
+                    hasValue = true;
+                    resTransCfg.setAppend(append);
+                }
+
+
+                TransResCommonVO replace= new TransResCommonVO();
+                replace.setJson(this.covertToListBySplit(res.getReplaceJson()));
+                replace.setJson_types(this.covertToListBySplit(res.getReplaceJsonType()));
+                replace.setHeaders(this.covertToListBySplit(res.getReplaceHeaders()));
+
+                if(replace.getJson() != null && replace.getJson().size() >0
+                        || replace.getJson_types() != null && replace.getJson_types().size() > 0
+                        || replace.getHeaders() != null &&  replace.getHeaders().size() >0){
+                    hasValue = true;
+                    resTransCfg.setReplace(replace);
+                }
+
+                return hasValue ? resTransCfg :null;
+            }
+        }
+
         return null;
     }
 
 
     public ReqTransPluginCfgVO getReqTransConfig(String dpuId) {
+        if(dpuId != null){
+            ReqTransPluginCfgBean res =  sw.buildQuery().sql("select HTTP_METHOD,\n" +
+                    "       REMOVE_BODY,\n" +
+                    "       REMOVE_HEADERS,\n" +
+                    "       REMOVE_QUERYSTRING,\n" +
+                    "       RENAME_BODY,\n" +
+                    "       RENAME_HEADERS,\n" +
+                    "       RENAME_QUERYSTRING,\n" +
+                    "       REPLACE_BODY,\n" +
+                    "       REPLACE_HEADERS,\n" +
+                    "       REPALCE_QUERYSTRING,\n" +
+                    "       REPLACE_URL,\n" +
+                    "       ADD_BODY,\n" +
+                    "       ADD_HEADERS,\n" +
+                    "       ADD_QUERYSTRING,\n" +
+                    "       APPEND_BODY,\n" +
+                    "       APPEND_HEADERS,\n" +
+                    "       APPEND_QUERYSTRING\n" +
+                    "from PLUGIN_REQ_TRANS\n" +
+                    "where DPU_ID = #dpuId\n").setVar("dpuId",dpuId).doQueryFirst(ReqTransPluginCfgBean.class);
+            if(res != null){
+                boolean hasValue = false;
+                ReqTransPluginCfgVO reqTransCfg = new ReqTransPluginCfgVO();
+                if(res.getHttpMethod() != null && res.getHttpMethod().trim().length() > 0){
+                    hasValue = true;
+                    reqTransCfg.setHttp_method(res.getHttpMethod().trim());
+                }
+
+
+                TransReqCommonVO remove= new TransReqCommonVO();
+                remove.setBody(this.covertToListBySplit(res.getRemoveBody()));
+                remove.setHeaders(this.covertToListBySplit(res.getRemoveHeaders()));
+                remove.setQuerystring(this.covertToListBySplit(res.getRemoveQuerystring()));
+
+                if(remove.getBody() != null && remove.getBody().size() >0
+                    || remove.getHeaders() != null &&  remove.getHeaders().size() >0
+                    || remove.getQuerystring() != null && remove.getQuerystring().size() >0){
+                    hasValue = true;
+                    reqTransCfg.setRemove(remove);
+                }
+
+                TransReqCommonVO rename = new TransReqCommonVO();
+                rename.setBody(this.covertToListBySplit(res.getRenameBody()));
+                rename.setHeaders(this.covertToListBySplit(res.getRenameHeaders()));
+                rename.setQuerystring(this.covertToListBySplit(res.getRenameQuerystring()));
+
+                if(rename.getBody() != null && rename.getBody().size() >0
+                        || rename.getHeaders() != null &&  rename.getHeaders().size() >0
+                        || rename.getQuerystring() != null && rename.getQuerystring().size() >0){
+                    hasValue = true;
+                    reqTransCfg.setRename(rename);
+                }
+
+                TransReqCommonVO add= new TransReqCommonVO();
+                add.setBody(this.covertToListBySplit(res.getAddBody()));
+                add.setHeaders(this.covertToListBySplit(res.getAddHeaders()));
+                add.setQuerystring(this.covertToListBySplit(res.getAddQuerystring()));
+
+                if(add.getBody() != null && add.getBody().size() >0
+                        || add.getHeaders() != null &&  add.getHeaders().size() >0
+                        || add.getQuerystring() != null && add.getQuerystring().size() >0){
+                    hasValue = true;
+                    reqTransCfg.setAdd(add);
+                }
+
+                TransReqCommonVO append= new TransReqCommonVO();
+                append.setBody(this.covertToListBySplit(res.getAppendBody()));
+                append.setHeaders(this.covertToListBySplit(res.getAppendHeaders()));
+                append.setQuerystring(this.covertToListBySplit(res.getAppendQuerystring()));
+
+                if(append.getBody() != null && append.getBody().size() >0
+                        || append.getHeaders() != null &&  append.getHeaders().size() >0
+                        || append.getQuerystring() != null && append.getQuerystring().size() >0){
+                    hasValue = true;
+                    reqTransCfg.setAppend(append);
+                }
+
+
+                TransReqReplaceVO replace= new TransReqReplaceVO();
+                replace.setBody(this.covertToListBySplit(res.getReplaceBody()));
+                replace.setHeaders(this.covertToListBySplit(res.getReplaceHeaders()));
+                replace.setQuerystring(this.covertToListBySplit(res.getReplaceQuerystring()));
+                if(res.getReplaceUrl() != null) {
+                    replace.setUri(res.getReplaceUrl().trim());
+                }
+                if(replace.getBody() != null && replace.getBody().size() >0
+                        || replace.getHeaders() != null &&  replace.getHeaders().size() >0
+                        || replace.getQuerystring() != null && replace.getQuerystring().size() >0
+                        || replace.getUri() != null && replace.getUri().length() >0){
+                    hasValue = true;
+                    reqTransCfg.setReplace(replace);
+                }
+
+                return hasValue ? reqTransCfg :null;
+            }
+        }
         return null;
+    }
+
+    private List<String> covertToListBySplit(String str){
+        List<String> res = new ArrayList<String>();
+        if(str != null ){
+            String[]  arr = str.split(",");
+            for(String a:arr){
+                if(a != null && a.trim().length() >0){
+                    res.add(a.trim());
+                }
+            }
+        }
+
+        if(res.size() > 0){
+            return res;
+        } else{
+            return null;
+        }
     }
 
 
@@ -194,6 +445,9 @@ public class PluginDeployDao {
     public Oauth2PluginCfgVO getOauth2Config(String dpuId) {
         return null;
     }
+
+
+
 
 
     public CorrIdPluginCfgVO getCorrelationIdConfig(String dpuId) {
