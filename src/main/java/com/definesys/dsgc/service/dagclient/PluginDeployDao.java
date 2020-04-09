@@ -165,6 +165,85 @@ public class PluginDeployDao {
     }
 
     public ResTransPluginCfgVO getResTransConfig(String dpuId) {
+
+        if(dpuId != null){
+            ResTransPluginCfgBean res = sw.buildQuery().sql("select REMOVE_JSON,\n" +
+                    "       REMOVE_HEADERS,\n" +
+                    "       RENAME_HEADERS,\n" +
+                    "       REPLACE_JSON,\n" +
+                    "       REPLACE_JSON_TYPE,\n" +
+                    "       REPLACE_HEADERS,\n" +
+                    "       ADD_JSON,\n" +
+                    "       ADD_JSON_TYPES,\n" +
+                    "       ADD_HEADERS,\n" +
+                    "       APPEND_JSON,\n" +
+                    "       APPEND_JSON_TYPE,\n" +
+                    "       APPEND_HEADERS\n" +
+                    "from PLUGIN_RES_TRANS\n" +
+                    "where DPU_ID = #dpuId").setVar("dpuId",dpuId).doQueryFirst(ResTransPluginCfgBean.class);
+            if(res != null){
+                boolean hasValue = false;
+                ResTransPluginCfgVO resTransCfg = new ResTransPluginCfgVO();
+
+                TransResRemoveVO remove= new TransResRemoveVO();
+                remove.setJson(this.covertToListBySplit(res.getRemoveJson()));
+                remove.setHeaders(this.covertToListBySplit(res.getRemoveHeaders()));
+
+                if(remove.getJson() != null && remove.getJson().size() >0
+                        || remove.getHeaders() != null &&  remove.getHeaders().size() >0){
+                    hasValue = true;
+                    resTransCfg.setRemove(remove);
+                }
+
+                TransResRenameVO rename = new TransResRenameVO();
+                rename.setHeaders(this.covertToListBySplit(res.getRenameHeaders()));
+
+                if(rename.getHeaders() != null &&  rename.getHeaders().size() >0){
+                    hasValue = true;
+                    resTransCfg.setRename(rename);
+                }
+
+                TransResCommonVO add= new TransResCommonVO();
+                add.setJson(this.covertToListBySplit(res.getAddJson()));
+                add.setJson_types(this.covertToListBySplit(res.getAddJsonTypes()));
+                add.setHeaders(this.covertToListBySplit(res.getAddHeaders()));
+
+                if(add.getJson() != null && add.getJson().size() >0
+                        || add.getJson_types() != null && add.getJson_types().size() >0
+                        || add.getHeaders() != null &&  add.getHeaders().size() >0){
+                    hasValue = true;
+                    resTransCfg.setAdd(add);
+                }
+
+                TransResCommonVO append= new TransResCommonVO();
+                append.setJson(this.covertToListBySplit(res.getAppendJson()));
+                append.setJson_types(this.covertToListBySplit(res.getAppendJsonType()));
+                append.setHeaders(this.covertToListBySplit(res.getAppendHeaders()));
+
+                if(append.getJson() != null && append.getJson().size() >0
+                        || append.getJson_types() != null && append.getJson_types().size() >0
+                        || append.getHeaders() != null &&  append.getHeaders().size() >0){
+                    hasValue = true;
+                    resTransCfg.setAppend(append);
+                }
+
+
+                TransResCommonVO replace= new TransResCommonVO();
+                replace.setJson(this.covertToListBySplit(res.getReplaceJson()));
+                replace.setJson_types(this.covertToListBySplit(res.getReplaceJsonType()));
+                replace.setHeaders(this.covertToListBySplit(res.getReplaceHeaders()));
+
+                if(replace.getJson() != null && replace.getJson().size() >0
+                        || replace.getJson_types() != null && replace.getJson_types().size() > 0
+                        || replace.getHeaders() != null &&  replace.getHeaders().size() >0){
+                    hasValue = true;
+                    resTransCfg.setReplace(replace);
+                }
+
+                return hasValue ? resTransCfg :null;
+            }
+        }
+
         return null;
     }
 
@@ -199,7 +278,7 @@ public class PluginDeployDao {
                 }
 
 
-                TransCommonVO remove= new TransCommonVO();
+                TransReqCommonVO remove= new TransReqCommonVO();
                 remove.setBody(this.covertToListBySplit(res.getRemoveBody()));
                 remove.setHeaders(this.covertToListBySplit(res.getRemoveHeaders()));
                 remove.setQuerystring(this.covertToListBySplit(res.getRemoveQuerystring()));
@@ -211,7 +290,7 @@ public class PluginDeployDao {
                     reqTransCfg.setRemove(remove);
                 }
 
-                TransCommonVO rename = new TransCommonVO();
+                TransReqCommonVO rename = new TransReqCommonVO();
                 rename.setBody(this.covertToListBySplit(res.getRenameBody()));
                 rename.setHeaders(this.covertToListBySplit(res.getRenameHeaders()));
                 rename.setQuerystring(this.covertToListBySplit(res.getRenameQuerystring()));
@@ -223,7 +302,7 @@ public class PluginDeployDao {
                     reqTransCfg.setRename(rename);
                 }
 
-                TransCommonVO add= new TransCommonVO();
+                TransReqCommonVO add= new TransReqCommonVO();
                 add.setBody(this.covertToListBySplit(res.getAddBody()));
                 add.setHeaders(this.covertToListBySplit(res.getAddHeaders()));
                 add.setQuerystring(this.covertToListBySplit(res.getAddQuerystring()));
@@ -235,7 +314,7 @@ public class PluginDeployDao {
                     reqTransCfg.setAdd(add);
                 }
 
-                TransCommonVO append= new TransCommonVO();
+                TransReqCommonVO append= new TransReqCommonVO();
                 append.setBody(this.covertToListBySplit(res.getAppendBody()));
                 append.setHeaders(this.covertToListBySplit(res.getAppendHeaders()));
                 append.setQuerystring(this.covertToListBySplit(res.getAppendQuerystring()));
@@ -248,7 +327,7 @@ public class PluginDeployDao {
                 }
 
 
-                TransReplaceVO replace= new TransReplaceVO();
+                TransReqReplaceVO replace= new TransReqReplaceVO();
                 replace.setBody(this.covertToListBySplit(res.getReplaceBody()));
                 replace.setHeaders(this.covertToListBySplit(res.getReplaceHeaders()));
                 replace.setQuerystring(this.covertToListBySplit(res.getReplaceQuerystring()));

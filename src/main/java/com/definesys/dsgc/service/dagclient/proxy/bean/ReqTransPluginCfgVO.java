@@ -1,26 +1,26 @@
 package com.definesys.dsgc.service.dagclient.proxy.bean;
 
 public class ReqTransPluginCfgVO {
-    private TransCommonVO remove;
-    private TransReplaceVO replace;
+    private TransReqCommonVO remove;
+    private TransReqReplaceVO replace;
     private String http_method;
-    private TransCommonVO add;
-    private TransCommonVO append;
-    private TransCommonVO rename;
+    private TransReqCommonVO add;
+    private TransReqCommonVO append;
+    private TransReqCommonVO rename;
 
-    public TransCommonVO getRemove() {
+    public TransReqCommonVO getRemove() {
         return remove;
     }
 
-    public void setRemove(TransCommonVO remove) {
+    public void setRemove(TransReqCommonVO remove) {
         this.remove = remove;
     }
 
-    public TransReplaceVO getReplace() {
+    public TransReqReplaceVO getReplace() {
         return replace;
     }
 
-    public void setReplace(TransReplaceVO replace) {
+    public void setReplace(TransReqReplaceVO replace) {
         this.replace = replace;
     }
 
@@ -32,27 +32,27 @@ public class ReqTransPluginCfgVO {
         this.http_method = http_method;
     }
 
-    public TransCommonVO getAdd() {
+    public TransReqCommonVO getAdd() {
         return add;
     }
 
-    public void setAdd(TransCommonVO add) {
+    public void setAdd(TransReqCommonVO add) {
         this.add = add;
     }
 
-    public TransCommonVO getAppend() {
+    public TransReqCommonVO getAppend() {
         return append;
     }
 
-    public void setAppend(TransCommonVO append) {
+    public void setAppend(TransReqCommonVO append) {
         this.append = append;
     }
 
-    public TransCommonVO getRename() {
+    public TransReqCommonVO getRename() {
         return rename;
     }
 
-    public void setRename(TransCommonVO rename) {
+    public void setRename(TransReqCommonVO rename) {
         this.rename = rename;
     }
 }

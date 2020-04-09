@@ -2,7 +2,7 @@ package com.definesys.dsgc.service.dagclient.proxy.bean;
 
 import java.util.List;
 
-public class TransReplaceVO {
+public class TransReqReplaceVO {
     private List<String> querystring;
     private List<String> headers;
     private List<String> body;
