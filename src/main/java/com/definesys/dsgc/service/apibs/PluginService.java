@@ -55,6 +55,9 @@ public class PluginService {
             case"correlation-id":
                 pluginDao.delPlCorrelationIdById(budId);
                 break;
+            case"jwt":
+                pluginDao.delPlJwtById(budId);
+                break;
 //            case"11":
 //                pluginDao.delPluginTcpLog(id);
 //                break;
@@ -256,6 +259,22 @@ public class PluginService {
     public void updatePlHttpLog(PlHttpLog plHttpLog){
         apiBsService.updatePluginUsingConsumer(plHttpLog.getConsumer(),plHttpLog.getDpuId());
         pluginDao.updatePlHttpLog( plHttpLog); }
+
+    //     PlJwt;  14
+    public PlJwt queryPlJwtById(String id){
+        DagPlugUsingBean consumerValue = apiBsService.queryPluginUsingByid(id);
+        PlJwt result = pluginDao.queryPlJwtById(id);
+        if(consumerValue!=null){
+            result.setConsumer(consumerValue.getConsumer());
+        }
+        return result;
+    }
+    public void addPlJwt(PlJwt plJwt){pluginDao.addPlJwt( plJwt); }
+    public void delPlJwtById(String id){ pluginDao.delPlJwtById(id); }
+    @Transactional
+    public void updatePlJwt(PlJwt plJwt){
+        apiBsService.updatePluginUsingConsumer(plJwt.getConsumer(),plJwt.getDpuId());
+        pluginDao.updatePlJwt(plJwt); }
 
 
 

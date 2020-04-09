@@ -130,4 +130,39 @@ public class ConsumersController {
             return Response.error("检测消费者名称是否存在失败！");
         }
     }
+    @RequestMapping(value = "createToken")
+    public Response createToken(@RequestBody() CreateTokenVO param){
+        try {
+            consumersService.createToken(param);
+            return Response.ok();
+
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("新增token失败！");
+        }
+    }
+    @RequestMapping(value = "createTokenByCode")
+    public Response createTokenByCode(@RequestBody() CreateTokenVO param){
+        try {
+            consumersService.createTokenByCode(param);
+            return Response.ok();
+
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("新增token失败！");
+        }
+    }
+    @RequestMapping(value = "queryTokenList")
+    public Response queryTokenList(@RequestBody() CreateTokenVO param,
+                                   @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
+                                   @RequestParam(value = "pageIndex", required = false, defaultValue = "1") int pageIndex){
+        try {
+            PageQueryResult<ConsumerTokenVO> result = consumersService.queryTokenList(param,pageIndex,pageSize);
+            return Response.ok().setData(result);
+
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("查询token失败！");
+        }
+    }
 }

@@ -17,7 +17,7 @@ import java.util.List;
  * @Version 1.0
  **/
 @Repository
-public class apiCockpitDao {
+public class ApiCockpitDao {
 
         @Autowired
         private MpaasQueryFactory sw;
@@ -62,10 +62,13 @@ public class apiCockpitDao {
                         startDate=new Date();
                 }
                 return sw.buildQuery()
-                        .sql("select * from (select t.serv_no as name, sum(t.total_times) as value1,sum(t.total_200) as value2\n" +
-                                " from RP_API_DAY t \n" +
-                                " where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd') between #startDate  and #endDate group by t.serv_no " +
-                                " ) where rownum<8 order by value1 desc ")
+                        .sql("select * from (select e.sys_name as name, sum(t.total_times) as value1,sum(t.total_200) as value2\n" +
+                                "                                 from RP_API_DAY t \n" +
+                                "                                 left join  dsgc_apis a on a.api_code=t.serv_no\n" +
+                                "                                 left join  dsgc_system_entities e on e.sys_code=a.app_code\n" +
+                                "                                   where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd') between #startDate  and #endDate\n" +
+                                "                                  group by e.sys_code,e.sys_name  \n" +
+                                "                                 ) where rownum<8 order by value1 desc  ")
                         .setVar("startDate",startDate)
                         .setVar("endDate",endDate)
                         .doQuery(eChartsBean.class);
@@ -117,31 +120,51 @@ public class apiCockpitDao {
 
 
         //查询年分月段执行次数
-        public List<eChartsBean> queryMonthRuntimes(){
-                return sw.buildQuery().sql("select * from (\n" +
-                        "                        select  t.month as name ,sum(t.total_times) over(partition by t.month) as value1    from rp_api_month t\n" +
-                        "                        where t.year=to_char(sysdate,'yyyy') order by t.month\n" +
-                        "                        ) group by (name,value1) order by  name")
+        public List<eChartsBean> queryMonthRuntimes(String appId){
+                return sw.buildQuery().sql("      select e.sys_code,e.sys_name,t.month,sum(t.total_times) as value1 from rp_api_month t\n" +
+                        "      left join  dsgc_apis a on a.api_code=t.serv_no\n" +
+                        "      left join  dsgc_system_entities e on e.sys_code=a.app_code\n" +
+                        "      where t.year=to_char(sysdate,'yyyy') \n" +
+                        "      and e.sys_code=#appId\n" +
+                        "      group by e.sys_code,e.sys_name,t.month\n" +
+                        "       order by t.month")
+                        .setVar("appId",appId)
                         .doQuery(eChartsBean.class);
         }
 
         //查询年分月段成功次数
-        public List<eChartsBean> queryMonthSucess(){
-                return sw.buildQuery().sql("select * from (\n" +
-                        "                        select  t.month as name ,sum(t.total_200) over(partition by t.month) as value1    from rp_api_month t\n" +
-                        "                        where t.year=to_char(sysdate,'yyyy') order by t.month\n" +
-                        "                        ) group by (name,value1) order by name")
+        public List<eChartsBean> queryMonthSucess(String appId){
+                return sw.buildQuery().sql("      select e.sys_code,e.sys_name,t.month,sum(t.total_200) as value1 from rp_api_month t\n" +
+                        "      left join  dsgc_apis a on a.api_code=t.serv_no\n" +
+                        "      left join  dsgc_system_entities e on e.sys_code=a.app_code\n" +
+                        "      where t.year=to_char(sysdate,'yyyy') \n" +
+                        "      and e.sys_code=#appId\n" +
+                        "      group by e.sys_code,e.sys_name,t.month\n" +
+                        "       order by t.month")
+                        .setVar("appId",appId)
                         .doQuery(eChartsBean.class);
         }
 
         //查询年分月段消费者
-        public List<eChartsBean> queryMonthConsumer(){
-                return sw.buildQuery().sql("select mon as name ,count(1) as value1 from (\n" +
-                        "                        select to_char(t.creation_date,'mm') as mon,t.csm_code as id,t.csm_name as name\n" +
-                        "                         from dsgc_consumer_entities t \n" +
-                        "                         where to_char(t.creation_date,'yyyy')=to_char(sysdate,'yyyy')\n" +
-                        "                        order by mon)\n" +
-                        "                         group by mon order by mon")
+        public List<eChartsBean> queryMonthConsumer(String appId){
+                //一定要根据月份从小到大排序
+                return sw.buildQuery().sql("select count(1) as value1,to_char(a.timecol,'mm') as name from (\n" +
+                        "                         select  add_months(to_date(to_char(sysdate,'yyyy')||'/12/31','yyyy/mm/dd'),-12+rownum) as timecol\n" +
+                        "                          from dual \n" +
+                        "                          connect by rownum <=12 )a\n" +
+                        "                        left join\n" +
+                        "                          (\n" +
+                        "                                select e.sys_code, e.sys_name,ce.csm_code ,ce.csm_name,ce.creation_date from dsgc_system_entities e\n" +
+                        "                                left join dsgc_apis a  on e.sys_code=a.app_code\n" +
+                        "                                left join dsgc_apis_access aa on aa.api_code=a.api_code\n" +
+                        "                                left join dsgc_consumer_entities ce on aa.csm_code=ce.csm_code \n" +
+                        "                                where e.sys_code=#appId and ce.csm_code is not null\n" +
+                        "                                group by  e.sys_code, e.sys_name,ce.csm_code ,ce.csm_name,ce.creation_date\n" +
+                        "                          ) t on t.creation_date<a.timecol\n" +
+                        "                          where t.csm_code is not null\n" +
+                        "                          group by a.timecol\n" +
+                        "                          order by a.timecol     ")
+                        .setVar("appId",appId)
                         .doQuery(eChartsBean.class);
         }
 
@@ -155,10 +178,16 @@ public class apiCockpitDao {
         }
 
 
-        //累计一段时间内消费者数量
+        //累计一段时间内api消费者数量
         public eChartsBean queryConsumerTotalDate(Date startDate, Date endDate){
-                return sw.buildQuery().sql("select count(1)  as value1 from dsgc_consumer_entities \n" +
-                        " where creation_date between #startDate  and #endDate")
+                return sw.buildQuery().sql("  select count(1) as value1 from (                      \n" +
+                        "     select e.csm_code   as value1 from dsgc_consumer_entities e\n" +
+                        "                 left join dsgc_apis_access aa on aa.csm_code=e.csm_code\n" +
+                        "                 left join dsgc_apis a on a.api_code=aa.api_code\n" +
+                        "                 where a.api_code is not null\n" +
+                        "                     and e.creation_date between #startDate  and #endDate\n" +
+                        "                   group by e.csm_code\n" +
+                        "                   ) ")
                         .setVar("startDate",startDate)
                         .setVar("endDate",endDate)
                         .doQueryFirst(eChartsBean.class);
@@ -189,12 +218,16 @@ public class apiCockpitDao {
         //过去七天消费者状况，dsgc_consumer_entities
         public List<eChartsBean> queryConsumerSeven(){
                 return sw.buildQuery().sql("select a.time as name,nvl(b.num,0) as value1 from (\n" +
-                        "select  sysdate-7+rownum as currentDate,to_char(sysdate-7 + rownum ,  'day') as time\n" +
-                        "from dual \n" +
-                        "connect by rownum <=7 )a\n" +
-                        "left join\n" +
-                        "  (select time,count(time) as num from (SELECT to_char(creation_date,'yyyy-mm-dd') as time FROM dsgc_consumer_entities   \n" +
-                        "                where creation_date >sysdate-6) group by time order by time)b on a.time = b.time order by a.currentDate")
+                        "          select  sysdate-7+rownum as currentDate,to_char(sysdate-7 + rownum ,  'day') as time\n" +
+                        "          from dual \n" +
+                        "          connect by rownum <=7 )a\n" +
+                        "          left join\n" +
+                        "            (select time,count(time) as num from (SELECT to_char(creation_date,'yyyy-mm-dd') as time FROM \n" +
+                        "                 (   select distinct e.csm_code,e.creation_date,e.csm_name   as value1 from dsgc_consumer_entities e\n" +
+                        "                                         left join dsgc_apis_access aa on aa.csm_code=e.csm_code\n" +
+                        "                                         left join dsgc_apis a on a.api_code=aa.api_code\n" +
+                        "                                         where a.api_code is not null)   \n" +
+                        "                           where creation_date >sysdate-6) group by time order by time)b on a.time = b.time order by a.currentDate")
                         .doQuery(eChartsBean.class);
         }
 
