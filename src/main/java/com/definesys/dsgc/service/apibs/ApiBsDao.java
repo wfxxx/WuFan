@@ -223,6 +223,9 @@ public class ApiBsDao {
     }
 
     public void updatePluginUsingConsumer(String consumer,String dupId){
+        if(consumer==null){
+            consumer="";
+        }
         sw.buildQuery()
                 .update("consumer",consumer)
                 .eq("dpu_id",dupId)
