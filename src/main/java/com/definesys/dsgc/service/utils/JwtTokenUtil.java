@@ -12,21 +12,13 @@ import java.util.Date;
 
 public class JwtTokenUtil {
 
-    private static String secretKey;
-    private static Long accessTokenExpireTime;
-
-    public static void setTokenSettings(TokenSettings tokenSettings){
-        secretKey=tokenSettings.getSecretKey();
-        accessTokenExpireTime=tokenSettings.getAccessTokenExpireTime();
-    }
-
     /**
      * 签发token
      * @Author:      xzy
      * @UpdateUser:
      * @Version:     0.0.1
      * @param issuer 签发人
-     * @param expScond 有效时间(毫秒)
+     * @param expScond 有效时间(秒)
      * @return       java.lang.String
      * @throws
      */
@@ -44,13 +36,7 @@ public class JwtTokenUtil {
         if (!StringUtils.isEmpty(issuer)) {
             builder.setIssuer(issuer);
         }
-//        if(nbfSecond >= 0){
-//            Date nbf = new Date(nbfSecond);
-//            builder.setNotBefore(nbf);
-//        }
-       // builder.setIssuedAt(now);
         if (expScond >= 0) {
-         //   long expMillis = nowMillis + ttlMillis;
             Date exp = new Date(expScond);
             builder.setExpiration(exp);
         }
@@ -70,7 +56,7 @@ public class JwtTokenUtil {
     public static Claims getClaimsFromToken(String token) {
         Claims claims;
         try {
-            claims = Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(secretKey)).parseClaimsJws(token).getBody();
+            claims = Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary("test")).parseClaimsJws(token).getBody();
         } catch (Exception e) {
             claims = null;
         }

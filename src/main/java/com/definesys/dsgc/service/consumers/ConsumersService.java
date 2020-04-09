@@ -304,16 +304,11 @@ public class ConsumersService {
     public void createToken(CreateTokenVO param) {
         DSGCConsumerEntities dsgcConsumerEntities = consumersDao.queryConsumerEntById(param.getDceId());
         if (dsgcConsumerEntities != null) {
-            String iss = dsgcConsumerEntities.getCsmCode() + System.currentTimeMillis();
+            String iss =UUID.randomUUID().toString();
             LocalDateTime dateTime = LocalDateTime.parse(param.getExp(),DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             Long expSecond = dateTime.toEpochSecond(ZoneOffset.of("+8"));
             long currSecond = LocalDateTime.now().toEpochSecond(ZoneOffset.of("+8"));
-//        LocalDateTime now = LocalDateTime.now();
-//        Duration duration = Duration.between(now, dateTime);
-//        Long second = duration.getSeconds();
-            //      Long second = expSecond-currSecond;
-            String completeSecretKey = secretKey + dsgcConsumerEntities.getCsmCode();
-
+            String completeSecretKey = UUID.randomUUID().toString();
             //同步在网关中新建jwt auth信息
             JWTAuthBean jb = new JWTAuthBean();
             jb.setIssKey(iss);
@@ -327,29 +322,10 @@ public class ConsumersService {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
             if (deployRes) {
-
                 String token = JwtTokenUtil.generateToken(iss,expSecond,completeSecretKey);
                 if (StringUtils.isNotEmpty(token)) {
                     saveJwtInfo(iss,completeSecretKey,token,param.getEnvCode(),dsgcConsumerEntities.getCsmCode(),expSecond,currSecond);
-//            DagConsumerJwt dagConsumerJwt = new DagConsumerJwt();
-//            dagConsumerJwt.setAlgorithm("HS256");
-//            dagConsumerJwt.setCsmCode(dsgcConsumerEntities.getCsmCode());
-//            dagConsumerJwt.setIssKey(iss);
-//            dagConsumerJwt.setEnvCode(param.getEnvCode());
-//            String key = secretKey + dsgcConsumerEntities.getCsmCode();
-//            dagConsumerJwt.setSecretKey(key);
-//            consumersDao.saveConsumerJwtInfo(dagConsumerJwt);
-//            DagConsumerToken dagConsumerToken = new DagConsumerToken();
-//            dagConsumerToken.setCsmCode(dsgcConsumerEntities.getCsmCode());
-//            dagConsumerToken.setEnvCode(param.getEnvCode());
-//            dagConsumerToken.setToken(token);
-//            dagConsumerToken.setDcjId(dagConsumerJwt.getDcjId());
-//            dagConsumerToken.setIatTime(String.valueOf(currSecond));
-//            dagConsumerToken.setExpTime(String.valueOf(expSecond));
-//            consumersDao.saveConsumerToken(dagConsumerToken);
-
                 } else {
                     throw new RuntimeException("生成token失败");
                 }
@@ -386,9 +362,8 @@ public class ConsumersService {
             if (dsgcConsumerEntities == null) {
                 long currSecond = LocalDateTime.now().toEpochSecond(ZoneOffset.of("+8"));
                 Long expSecond = currSecond + Long.parseLong(accessTokenExpireTime);
-                String iss = param.getCsmCode() + System.currentTimeMillis();
-                String completeSecretKey = secretKey + dsgcConsumerEntities.getCsmCode();
-
+                String iss = UUID.randomUUID().toString();
+                String completeSecretKey = UUID.randomUUID().toString();
                 //同步在网关中新建jwt auth信息
                 JWTAuthBean jb = new JWTAuthBean();
                 jb.setIssKey(iss);
@@ -402,7 +377,6 @@ public class ConsumersService {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
                 if (deployRes) {
                     String token = JwtTokenUtil.generateToken(iss,expSecond,completeSecretKey);
                     if (StringUtils.isNotEmpty(token)) {
