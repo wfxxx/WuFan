@@ -2,11 +2,14 @@ package com.definesys.dsgc.service.dagclient;
 
 import com.definesys.dsgc.service.dagclient.bean.DAGEnvBean;
 import com.definesys.dsgc.service.dagclient.proxy.ConsumerProxy;
+import com.definesys.dsgc.service.dagclient.proxy.bean.JWTAuthBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ConsumerDeployService {
@@ -48,9 +51,25 @@ public class ConsumerDeployService {
                     res = cp.setBasicAuth(basicAuthPd);
                 }
 
+                //设置jwt token
+                List<JWTAuthBean> jaList = this.consumerDeployDao.getJwtAuthList(consumerCode,envCode);
+                Map<String,JWTAuthBean> jaMap = new HashMap<String,JWTAuthBean>();
+                if(jaList != null && jaList.size() >0){
+                    Iterator<JWTAuthBean> iter = jaList.iterator();
+                    while(iter.hasNext()){
+                        JWTAuthBean jb = iter.next();
+                        if(jb != null && jb.getIssKey() != null && jb.getIssKey().trim().length() >0){
+                            jb.setIssKey(jb.getIssKey().trim());
+                            jaMap.put(jb.getIssKey(),jb);
+                        }
+                    }
+                }
+                cp.setAllTokenAuth(jaMap,true);
+
                 //设置groups
                 List<String> groups = this.consumerDeployDao.getConsumerGroups(consumerCode);
                 res = cp.setGroups(groups);
+
             }
 
         } else if ("ESB".equals(env.getEnvType()) && "OSB".equals(env.getTechType())) {
@@ -176,12 +195,15 @@ public class ConsumerDeployService {
         boolean res = true;
 
         if ("DAG".equals(env.getEnvType())) {
-            //网关环境添加用户
+            //网关环境查找用户
             ConsumerProxy cp = new ConsumerProxy(env.getAdminLocation(),consumerCode);
-            if (!cp.isFound()) {
-                res = cp.add(consumerCode,null);
-            }
-            if (res) {
+//            if (!cp.isFound()) {
+//                res = cp.add(consumerCode,null);
+//            }
+//            if (res) {
+//                res = cp.setBasicAuth(newPd);
+//            }
+            if (cp.isFound()) {
                 res = cp.setBasicAuth(newPd);
             }
         } else if ("ESB".equals(env.getEnvType()) && "OSB".equals(env.getTechType())) {
@@ -189,6 +211,61 @@ public class ConsumerDeployService {
         }
 
         return res;
+    }
+
+    /**
+     * 删除jwtauth认证
+     * @param dcjId
+     * @return
+     */
+    public boolean deleteJWTAuth(String dcjId) {
+        JWTAuthBean jb = this.consumerDeployDao.getJwtAuth(dcjId);
+        if (jb != null) {
+            DAGEnvBean env = this.dagEnvDao.getDAGEnvInfoByEnvCode(jb.getEnvCode());
+
+            if (env == null || env.getAdminLocation() == null) {
+                return false;
+            }
+            if ("DAG".equals(env.getEnvType())) {
+                //网关环境查找用户
+                ConsumerProxy cp = new ConsumerProxy(env.getAdminLocation(),jb.getCsmCode());
+                if (cp.isFound()) {
+                    cp.deleteTokenAuth(jb.getIssKey());
+                }
+
+            } else if ("ESB".equals(env.getEnvType()) && "OSB".equals(env.getTechType())) {
+                //OSB总线环境添加用户
+            }
+
+        }
+        return true;
+    }
+
+    /**
+     * 添加JWT Token
+     * @param jb
+     * @return
+     */
+    public boolean addJWTAuth(JWTAuthBean jb) {
+        if (jb != null) {
+            DAGEnvBean env = this.dagEnvDao.getDAGEnvInfoByEnvCode(jb.getEnvCode());
+
+            if (env == null || env.getAdminLocation() == null) {
+                return false;
+            }
+            if ("DAG".equals(env.getEnvType())) {
+                //网关环境查找用户
+                ConsumerProxy cp = new ConsumerProxy(env.getAdminLocation(),jb.getCsmCode());
+                if (cp.isFound()) {
+                    cp.addTokenAuth(jb);
+                }
+
+            } else if ("ESB".equals(env.getEnvType()) && "OSB".equals(env.getTechType())) {
+                //OSB总线环境添加用户
+            }
+
+        }
+        return true;
     }
 
 

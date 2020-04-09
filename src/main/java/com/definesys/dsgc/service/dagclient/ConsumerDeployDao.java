@@ -1,5 +1,6 @@
 package com.definesys.dsgc.service.dagclient;
 
+import com.definesys.dsgc.service.dagclient.proxy.bean.JWTAuthBean;
 import com.definesys.mpaas.query.MpaasQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -29,6 +30,37 @@ public class ConsumerDeployDao {
         return null;
     }
 
+    public List<JWTAuthBean> getJwtAuthList(String consumerCode,String envCode) {
+        return sw.buildQuery().sql("select CSM_CODE,\n" +
+                "       ISS_KEY,\n" +
+                "       SECRET_KEY,\n" +
+                "       ALGORITHM,\n" +
+                "       RSA_PUBLIC_KEY,\n" +
+                "       ENV_CODE\n" +
+                "from DAG_CONSUMER_JWT\n" +
+                "where CSM_CODE = #csmCode\n" +
+                "  and ENV_CODE = #envCode")
+                .setVar("csmCode",consumerCode)
+                .setVar("envCode",envCode)
+                .doQuery(JWTAuthBean.class);
+    }
+
+    public JWTAuthBean getJwtAuth(String dcjId) {
+        if(dcjId != null) {
+            return sw.buildQuery().sql("select CSM_CODE,\n" +
+                    "       ISS_KEY,\n" +
+                    "       SECRET_KEY,\n" +
+                    "       ALGORITHM,\n" +
+                    "       RSA_PUBLIC_KEY,\n" +
+                    "       ENV_CODE\n" +
+                    "from DAG_CONSUMER_JWT\n" +
+                    "where DCJ_ID = #dcjId")
+                    .setVar("dcjId",dcjId)
+                    .doQueryFirst(JWTAuthBean.class);
+        } else {
+            return null;
+        }
+    }
 
 
     public List<String> getConsumerGroups(String consumerCode){
@@ -81,5 +113,7 @@ public class ConsumerDeployDao {
         }
 
     }
+
+
 
 }

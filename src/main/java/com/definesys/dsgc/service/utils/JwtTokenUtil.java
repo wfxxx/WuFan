@@ -36,7 +36,7 @@ public class JwtTokenUtil {
 
         long nowMillis = System.currentTimeMillis();
         Date now = new Date(nowMillis);
-        String completeSecretKey = secretKey+secret;
+        String completeSecretKey = secret;
         byte[] signingKey = DatatypeConverter.parseBase64Binary(completeSecretKey);
 
         JwtBuilder builder = Jwts.builder();
