@@ -141,16 +141,16 @@ public class PluginDeployDao {
                     cfg.setAnonymous(res.getAnonymous().trim());
                 }
 
-                cfg.setClaims_to_verify(this.covertToListBySplit(res.getClaimsVerify()));
+                cfg.setClaims_to_verify(DAGDeployUtils.covertToListBySplit(res.getClaimsVerify()));
                 if(cfg.getClaims_to_verify() == null){
                     cfg.setClaims_to_verify(new ArrayList<String>());
                 }
 
-                cfg.setCookie_names(this.covertToListBySplit(res.getCookieNames()));
+                cfg.setCookie_names(DAGDeployUtils.covertToListBySplit(res.getCookieNames()));
                 if(cfg.getCookie_names() == null ){
                     cfg.setCookie_names(new ArrayList<String>());
                 }
-                cfg.setHeader_names(this.covertToListBySplit(res.getHeaderNames()));
+                cfg.setHeader_names(DAGDeployUtils.covertToListBySplit(res.getHeaderNames()));
                 if(cfg.getHeader_names() == null){
                     cfg.setHeader_names(new ArrayList<String>());
                 }
@@ -161,7 +161,7 @@ public class PluginDeployDao {
 
                 cfg.setMaximum_expiration(res.getMaxAlive());
 
-                cfg.setUri_param_names(this.covertToListBySplit(res.getUrlNames()));
+                cfg.setUri_param_names(DAGDeployUtils.covertToListBySplit(res.getUrlNames()));
                 if(cfg.getUri_param_names() == null){
                     cfg.setUri_param_names(new ArrayList<String>());
                 }
@@ -244,8 +244,8 @@ public class PluginDeployDao {
                 ResTransPluginCfgVO resTransCfg = new ResTransPluginCfgVO();
 
                 TransResRemoveVO remove= new TransResRemoveVO();
-                remove.setJson(this.covertToListBySplit(res.getRemoveJson()));
-                remove.setHeaders(this.covertToListBySplit(res.getRemoveHeaders()));
+                remove.setJson(DAGDeployUtils.covertToListBySplit(res.getRemoveJson()));
+                remove.setHeaders(DAGDeployUtils.covertToListBySplit(res.getRemoveHeaders()));
 
                 if(remove.getJson() != null && remove.getJson().size() >0
                         || remove.getHeaders() != null &&  remove.getHeaders().size() >0){
@@ -254,7 +254,7 @@ public class PluginDeployDao {
                 }
 
                 TransResRenameVO rename = new TransResRenameVO();
-                rename.setHeaders(this.covertToListBySplit(res.getRenameHeaders()));
+                rename.setHeaders(DAGDeployUtils.covertToListBySplit(res.getRenameHeaders()));
 
                 if(rename.getHeaders() != null &&  rename.getHeaders().size() >0){
                     hasValue = true;
@@ -262,9 +262,9 @@ public class PluginDeployDao {
                 }
 
                 TransResCommonVO add= new TransResCommonVO();
-                add.setJson(this.covertToListBySplit(res.getAddJson()));
-                add.setJson_types(this.covertToListBySplit(res.getAddJsonTypes()));
-                add.setHeaders(this.covertToListBySplit(res.getAddHeaders()));
+                add.setJson(DAGDeployUtils.covertToListBySplit(res.getAddJson()));
+                add.setJson_types(DAGDeployUtils.covertToListBySplit(res.getAddJsonTypes()));
+                add.setHeaders(DAGDeployUtils.covertToListBySplit(res.getAddHeaders()));
 
                 if(add.getJson() != null && add.getJson().size() >0
                         || add.getJson_types() != null && add.getJson_types().size() >0
@@ -274,9 +274,9 @@ public class PluginDeployDao {
                 }
 
                 TransResCommonVO append= new TransResCommonVO();
-                append.setJson(this.covertToListBySplit(res.getAppendJson()));
-                append.setJson_types(this.covertToListBySplit(res.getAppendJsonType()));
-                append.setHeaders(this.covertToListBySplit(res.getAppendHeaders()));
+                append.setJson(DAGDeployUtils.covertToListBySplit(res.getAppendJson()));
+                append.setJson_types(DAGDeployUtils.covertToListBySplit(res.getAppendJsonType()));
+                append.setHeaders(DAGDeployUtils.covertToListBySplit(res.getAppendHeaders()));
 
                 if(append.getJson() != null && append.getJson().size() >0
                         || append.getJson_types() != null && append.getJson_types().size() >0
@@ -287,9 +287,9 @@ public class PluginDeployDao {
 
 
                 TransResCommonVO replace= new TransResCommonVO();
-                replace.setJson(this.covertToListBySplit(res.getReplaceJson()));
-                replace.setJson_types(this.covertToListBySplit(res.getReplaceJsonType()));
-                replace.setHeaders(this.covertToListBySplit(res.getReplaceHeaders()));
+                replace.setJson(DAGDeployUtils.covertToListBySplit(res.getReplaceJson()));
+                replace.setJson_types(DAGDeployUtils.covertToListBySplit(res.getReplaceJsonType()));
+                replace.setHeaders(DAGDeployUtils.covertToListBySplit(res.getReplaceHeaders()));
 
                 if(replace.getJson() != null && replace.getJson().size() >0
                         || replace.getJson_types() != null && replace.getJson_types().size() > 0
@@ -337,9 +337,9 @@ public class PluginDeployDao {
 
 
                 TransReqCommonVO remove= new TransReqCommonVO();
-                remove.setBody(this.covertToListBySplit(res.getRemoveBody()));
-                remove.setHeaders(this.covertToListBySplit(res.getRemoveHeaders()));
-                remove.setQuerystring(this.covertToListBySplit(res.getRemoveQuerystring()));
+                remove.setBody(DAGDeployUtils.covertToListBySplit(res.getRemoveBody()));
+                remove.setHeaders(DAGDeployUtils.covertToListBySplit(res.getRemoveHeaders()));
+                remove.setQuerystring(DAGDeployUtils.covertToListBySplit(res.getRemoveQuerystring()));
 
                 if(remove.getBody() != null && remove.getBody().size() >0
                     || remove.getHeaders() != null &&  remove.getHeaders().size() >0
@@ -349,9 +349,9 @@ public class PluginDeployDao {
                 }
 
                 TransReqCommonVO rename = new TransReqCommonVO();
-                rename.setBody(this.covertToListBySplit(res.getRenameBody()));
-                rename.setHeaders(this.covertToListBySplit(res.getRenameHeaders()));
-                rename.setQuerystring(this.covertToListBySplit(res.getRenameQuerystring()));
+                rename.setBody(DAGDeployUtils.covertToListBySplit(res.getRenameBody()));
+                rename.setHeaders(DAGDeployUtils.covertToListBySplit(res.getRenameHeaders()));
+                rename.setQuerystring(DAGDeployUtils.covertToListBySplit(res.getRenameQuerystring()));
 
                 if(rename.getBody() != null && rename.getBody().size() >0
                         || rename.getHeaders() != null &&  rename.getHeaders().size() >0
@@ -361,9 +361,9 @@ public class PluginDeployDao {
                 }
 
                 TransReqCommonVO add= new TransReqCommonVO();
-                add.setBody(this.covertToListBySplit(res.getAddBody()));
-                add.setHeaders(this.covertToListBySplit(res.getAddHeaders()));
-                add.setQuerystring(this.covertToListBySplit(res.getAddQuerystring()));
+                add.setBody(DAGDeployUtils.covertToListBySplit(res.getAddBody()));
+                add.setHeaders(DAGDeployUtils.covertToListBySplit(res.getAddHeaders()));
+                add.setQuerystring(DAGDeployUtils.covertToListBySplit(res.getAddQuerystring()));
 
                 if(add.getBody() != null && add.getBody().size() >0
                         || add.getHeaders() != null &&  add.getHeaders().size() >0
@@ -373,9 +373,9 @@ public class PluginDeployDao {
                 }
 
                 TransReqCommonVO append= new TransReqCommonVO();
-                append.setBody(this.covertToListBySplit(res.getAppendBody()));
-                append.setHeaders(this.covertToListBySplit(res.getAppendHeaders()));
-                append.setQuerystring(this.covertToListBySplit(res.getAppendQuerystring()));
+                append.setBody(DAGDeployUtils.covertToListBySplit(res.getAppendBody()));
+                append.setHeaders(DAGDeployUtils.covertToListBySplit(res.getAppendHeaders()));
+                append.setQuerystring(DAGDeployUtils.covertToListBySplit(res.getAppendQuerystring()));
 
                 if(append.getBody() != null && append.getBody().size() >0
                         || append.getHeaders() != null &&  append.getHeaders().size() >0
@@ -386,9 +386,9 @@ public class PluginDeployDao {
 
 
                 TransReqReplaceVO replace= new TransReqReplaceVO();
-                replace.setBody(this.covertToListBySplit(res.getReplaceBody()));
-                replace.setHeaders(this.covertToListBySplit(res.getReplaceHeaders()));
-                replace.setQuerystring(this.covertToListBySplit(res.getReplaceQuerystring()));
+                replace.setBody(DAGDeployUtils.covertToListBySplit(res.getReplaceBody()));
+                replace.setHeaders(DAGDeployUtils.covertToListBySplit(res.getReplaceHeaders()));
+                replace.setQuerystring(DAGDeployUtils.covertToListBySplit(res.getReplaceQuerystring()));
                 if(res.getReplaceUrl() != null) {
                     replace.setUri(res.getReplaceUrl().trim());
                 }
@@ -406,23 +406,6 @@ public class PluginDeployDao {
         return null;
     }
 
-    private List<String> covertToListBySplit(String str){
-        List<String> res = new ArrayList<String>();
-        if(str != null ){
-            String[]  arr = str.split(",");
-            for(String a:arr){
-                if(a != null && a.trim().length() >0){
-                    res.add(a.trim());
-                }
-            }
-        }
-
-        if(res.size() > 0){
-            return res;
-        } else{
-            return null;
-        }
-    }
 
 
     public RateLimitPluginCfgVO getRateLimitingConfig(String dpuId) {

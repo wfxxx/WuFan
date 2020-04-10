@@ -31,6 +31,7 @@ public class DagCertbean extends MpaasBasePojo implements Serializable {
     @Column(type = ColumnType.JAVA)
     private String appName;
     private String envCode;
+    private String refId;
     @Column(type = ColumnType.JAVA)
     private String envName;
     @SystemColumn(SystemColumnType.CREATE_BY)
@@ -172,5 +173,13 @@ public class DagCertbean extends MpaasBasePojo implements Serializable {
 
     public void setObjectVersionNumber(Integer objectVersionNumber) {
         this.objectVersionNumber = objectVersionNumber;
+    }
+
+    public String getRefId() {
+        return refId;
+    }
+
+    public void setRefId(String refId) {
+        this.refId = refId;
     }
 }

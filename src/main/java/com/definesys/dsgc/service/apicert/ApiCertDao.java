@@ -3,6 +3,7 @@ package com.definesys.dsgc.service.apicert;
 
 import com.definesys.dsgc.service.apibs.bean.DagBsbean;
 import com.definesys.dsgc.service.apicert.bean.CommonReqBean;
+import com.definesys.dsgc.service.apicert.bean.DagCertRefIDbean;
 import com.definesys.dsgc.service.apicert.bean.DagCertbean;
 import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.mpaas.query.MpaasQuery;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @ClassName ApiCertDao
@@ -90,5 +92,13 @@ public class ApiCertDao {
         conAnd += " or UPPER(app_name) like '%" + conUpper + "%'";
         conAnd += " or UPPER(cert_sni) like '%" + conUpper + "%' )";
         return conAnd;
+    }
+
+
+    public DagCertRefIDbean getRefIdByKeyId(String dcId){
+      if(dcId != null) {
+          return sw.buildQuery().sql("select REF_ID,ENV_CODE from DAG_CERTS where dc_id = #dcId").setVar("dcId",dcId).doQueryFirst(DagCertRefIDbean.class);
+      }
+        return null;
     }
 }

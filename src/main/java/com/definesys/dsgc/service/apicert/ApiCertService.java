@@ -1,6 +1,7 @@
 package com.definesys.dsgc.service.apicert;
 
 import com.definesys.dsgc.service.apicert.bean.CommonReqBean;
+import com.definesys.dsgc.service.apicert.bean.DagCertRefIDbean;
 import com.definesys.dsgc.service.apicert.bean.DagCertbean;
 import com.definesys.dsgc.service.svclog.SVCLogDao;
 import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
@@ -58,5 +59,9 @@ public class ApiCertService {
         return apiCertDao.checkSameName(certName);
     }
 
+
+    public DagCertRefIDbean getRefIdByKeyId(String dcId){
+        return this.apiCertDao.getRefIdByKeyId(dcId);
+    }
 
 }
