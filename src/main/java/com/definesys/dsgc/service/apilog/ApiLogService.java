@@ -237,10 +237,15 @@ public class ApiLogService {
             Iterator<DagLogBodyPayloadBean> iterator = dagLogBodyPayloadBeans.iterator();
             while (iterator.hasNext()){
                 DagLogBodyPayloadBean dagLogBodyPayloadBean = iterator.next();
-                if (dagLogBodyPayloadBean.getPayloadId().indexOf("IB") != -1){
+                if (dagLogBodyPayloadBean.getPayload() != null && dagLogBodyPayloadBean.getPayloadId().indexOf("IB") != -1){
                     logInstPayloadDTO.setReqPayload(dagLogBodyPayloadBean.getPayload().trim().replaceAll("\\s*",""));
-                }else if(dagLogBodyPayloadBean.getPayloadId().indexOf("OB") != -1){
+                }else {
+                    logInstPayloadDTO.setReqPayload("");
+                }
+                if(dagLogBodyPayloadBean.getPayload() != null && dagLogBodyPayloadBean.getPayloadId().indexOf("OB") != -1){
                     logInstPayloadDTO.setResPayload(dagLogBodyPayloadBean.getPayload().trim().replaceAll("\\s*",""));
+                }else {
+                    logInstPayloadDTO.setResPayload("");
                 }
             }
            return Response.ok().setData(logInstPayloadDTO);

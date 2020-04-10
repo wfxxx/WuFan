@@ -175,6 +175,11 @@ public class SVCMngDao {
         sw.buildQuery().eq("serv_no",servNo).table("dsgc_services_uri").doDelete();
 
     }
+
+    public void updateServUri(DSGCServicesUri servicesUri){
+        sw.buildQuery().eq("serv_no", servicesUri.getServNo()).update("ib_uri",servicesUri.getIbUri())
+                .doUpdate(DSGCServicesUri.class);
+    }
     public void delServUriParamter(String servNo){
         sw.buildQuery().eq("res_code",servNo).doDelete(DSGCUriParamsBean.class);
     }

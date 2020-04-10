@@ -31,9 +31,6 @@ public class ConsumersService {
     @Autowired
     private SVCAuthDao svcAuthDao;
 
-    @Value("${jwt.secretKey}")
-    private String secretKey;
-
     @Value("${jwt.accessTokenExpireTime}")
     private String accessTokenExpireTime;
 
