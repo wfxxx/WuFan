@@ -66,7 +66,6 @@ public class EsbCockpitService {
     }
 
     //查询所有应用和每个应用持有的消费者
-
     public  List<Map<String,Object>> queryAppInfo(){
         List result=new ArrayList<String>();
         List<eChartsBean> appValue=esbCockpitDao.queryApp();
@@ -93,6 +92,7 @@ public class EsbCockpitService {
 
     //获取资源发布总数
     public  Map<String,Object> querySourceDate (){
+        //添加数据顺序和querySourceFlow()中一致
         Map<String,Object> result=new HashMap<String,Object>();
         Calendar cal=Calendar.getInstance();
         cal.set(1000,1,1);
@@ -145,12 +145,28 @@ public class EsbCockpitService {
         return result;
     }
 
-    //获取一周内资源发布情况
+    //获取近来资源发布情况
     public  Map<String,Object> querySourceFlow (){
+        //添加数据顺序和querySourceDate()中一致
         Map<String,Object> result=new HashMap<String,Object>();
-        result.put("apiSeven",esbCockpitDao.queryEsbSeven());
-        result.put("consumerSeven",esbCockpitDao.queryConsumerSeven());
-        result.put("appSeven",esbCockpitDao.queryAppSeven());
+        Map<String,Object> weekData=new HashMap<String,Object>();
+        Map<String,Object> monthData=new HashMap<String,Object>();
+        Map<String,Object> yearData=new HashMap<String,Object>();
+        weekData.put("ESB",esbCockpitDao.queryEsbSeven());
+        weekData.put("消费者",esbCockpitDao.queryConsumerSeven());
+        weekData.put("应用",esbCockpitDao.queryAppSeven());
+
+        monthData.put("ESB",esbCockpitDao.queryEsbMonth());
+        monthData.put("消费者",esbCockpitDao.queryConsumerMonth());
+        monthData.put("应用",esbCockpitDao.queryAppMonth());
+
+        yearData.put("ESB",esbCockpitDao.queryEsbyear());
+        yearData.put("消费者",esbCockpitDao.queryConsumerYear());
+        yearData.put("应用",esbCockpitDao.queryAppYear());
+
+        result.put("sourceWeek",weekData);
+        result.put("sourceMonth",monthData);
+        result.put("sourceYear",yearData);
         return result;
     }
 
@@ -183,7 +199,7 @@ public class EsbCockpitService {
         result.put("appConsumer", queryAppInfo());//app消费者
 //        result.put("appFlow", queryTrafficAnalysis());//整合进app消费者数据中
         result.put("sourceTotal", querySourceDate());//资源总数
-        result.put("appFlowSeven", querySourceFlow());//资源周增长
+        result.put("appSourceAnalysis", querySourceFlow());//资源周增长
         result.put("apiInfoByApp", queryEsbInfoByAppALL());//esb按应用分类
         result.put("apiInfoByType", queryEsbInfoByTypeALL());//esb按类型分类
         return result;
