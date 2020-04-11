@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 public class HttpURLClient {
-    public static Map<String,String> doGet(String httpurl,String auth) throws Exception {
+    public static Map<String,String> doGet(String httpurl,List<Map<String,String>> headers,String auth) throws Exception {
         Map<String,String> map = new HashMap<>();
         HttpURLConnection connection = null;
         InputStream is = null;
@@ -33,9 +33,18 @@ public class HttpURLClient {
             connection.setConnectTimeout(15000);
             // 设置读取远程返回的数据时间：60000毫秒
             connection.setReadTimeout(60000);
-            byte[] rel = Base64.encodeBase64(auth.getBytes());
-            String res = new String(rel);
-        //    connection.setRequestProperty("Authorization","Basic " + res);
+            if(StringUtils.isNotEmpty(auth)){
+                byte[] rel = Base64.encodeBase64(auth.getBytes());
+                String res = new String(rel);
+                connection.setRequestProperty("Authorization","Basic " + res);
+            }
+            if(headers !=null && headers.size() > 0){
+                Iterator<Map<String,String>> iterator = headers.iterator();
+                while (iterator.hasNext()){
+                    Map<String,String> item = iterator.next();
+                    connection.setRequestProperty(item.get("headerName"),item.get("headerValue"));
+                }
+            }
             // 发送请求
             connection.connect();
             // 通过connection连接，获取输入流
@@ -108,9 +117,11 @@ public class HttpURLClient {
             // 默认值为：true，当前向远程服务读取数据时，设置为true，该参数可有可无
             connection.setDoInput(true);
           //  String auth = "123"+":"+"94248c5e3d6754c58c69846cc7935c21f31c65c2";
-            byte[] rel = Base64.encodeBase64(auth.getBytes());
-            String res = new String(rel);
-         //   connection.setRequestProperty("Authorization","Basic " + res);
+            if(StringUtil.isNotBlank(auth)){
+                byte[] rel = Base64.encodeBase64(auth.getBytes());
+                String res = new String(rel);
+                   connection.setRequestProperty("Authorization","Basic " + res);
+            }
             connection.setRequestProperty("Content-Type", "application/json;charset=utf-8");//设置参数类型是json格式
             Iterator<Map<String,String>> iterator = headers.iterator();
             while (iterator.hasNext()){
@@ -145,7 +156,9 @@ public class HttpURLClient {
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }catch (IOException e) {
-            throw new Exception(e.getCause());
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
         finally {
             // 关闭资源

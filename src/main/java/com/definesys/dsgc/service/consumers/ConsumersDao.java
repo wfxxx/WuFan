@@ -32,7 +32,7 @@ public class ConsumersDao {
                     "               cnt.csm_name," +
                     "               cnt.csm_desc," +
                     "               cnt.deploy_env," +
-                    "               t.user_name owner " +
+                    "               t.user_name owner,cnt.creation_date creationDate " +
                     "          from DSGC_CONSUMER_ENTITIES cnt," +
                     "               (select listagg(u.user_name, ',') within GROUP(order by cu.csm_code) user_name," +
                     "                       cu.csm_code" +
@@ -40,7 +40,7 @@ public class ConsumersDao {
                     "                 where cu.user_id = u.user_id " +
                     "                 group by cu.csm_code) t " +
                     "         where t.csm_code(+) = cnt.csm_code) " +
-                    " WHERE 1 = 1 ");
+                    " WHERE 1 = 1 order by creationDate desc ");
         }
         if("mysql".equals(dbType)){
             strSql = new StringBuffer("SELECT * FROM( SELECT\n" +
@@ -49,7 +49,7 @@ public class ConsumersDao {
                     "cnt.csm_name,\n" +
                     "cnt.csm_desc,\n" +
                     "cnt.deploy_env,\n" +
-                    "t.user_name OWNER \n" +
+                    "t.user_name OWNER,cnt.creation_date \n" +
                     "FROM\n" +
                     "DSGC_CONSUMER_ENTITIES cnt left JOIN (\n" +
                     "SELECT\n" +
@@ -64,7 +64,7 @@ public class ConsumersDao {
                     "cu.csm_code \n" +
                     ") t on\n" +
                     "t.csm_code = cnt.csm_code \n" +
-                    ") g WHERE 1 = 1 ");
+                    ") g WHERE 1 = 1 order by creation_date desc ");
 
         }
 
@@ -234,4 +234,7 @@ public class ConsumersDao {
         return sw.buildQuery().eq("dce_id",dceId).doQueryFirst(DSGCConsumerEntities.class);
     }
 
+    public List<DagConsumerToken> queryConsumerToken(String envCode,String csmCode){
+        return sw.buildQuery().eq("env_code",envCode).eq("csm_code",csmCode).doQuery(DagConsumerToken.class);
+    }
 }

@@ -93,6 +93,7 @@ public class ApiMngService {
     public void addDsgcApi(DSGCApisBean dsgcApisBean, DSGCServicesUri dsgcServicesUri){
         apiMngDao.addDsgcApi(dsgcApisBean);
         apiMngDao.addDsgcUri(dsgcServicesUri);
+
     }
 
     public Boolean checkApiCodeIsExist(CommonReqBean param){

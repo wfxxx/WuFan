@@ -393,6 +393,7 @@ public PageQueryResult<SVCLogListBean> querySvcLogRecordListByCon(SVCLogQueryBea
           EsbEnvInfoCfgDTO dto = new EsbEnvInfoCfgDTO();
           dto.setEnvCode(dsgcEnvInfoCfg.getEnvCode());
           dto.setEnvName(dsgcEnvInfoCfg.getEnvName());
+          dto.setDsgcUri(dsgcEnvInfoCfg.getDsgcAdmin());
           result.add(dto);
       }
       map.put("envList",result);

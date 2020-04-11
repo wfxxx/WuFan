@@ -422,25 +422,30 @@ public class SVCMngService {
         List<DSGCServicesUri> uris = svcMngDao.queryServUri(vo.getServNo());
         List<DSGCUriParamsBean> params = svcMngDao.queryServUriParamter(vo.getServNo());
         if(uris != null && uris.size() > 0){
-            svcMngDao.delServUri(vo.getServNo());
+            DSGCServicesUri dsgcServicesUri = uris.get(0);
+            if(vo.getUriList() != null && vo.getUriList().size() > 0){
+                dsgcServicesUri.setIbUri(vo.getUriList().get(0).getIbUri());
+            }
+            svcMngDao.updateServUri(dsgcServicesUri);
+           // svcMngDao.delServUri(vo.getServNo());
         }
         if(params != null && params.size() > 0){
             svcMngDao.delServUriParamter(vo.getServNo());
         }
-        List<DSGCServicesUri> servicesUriList = new ArrayList<>();
-        Iterator<ServUriDTO> servUriDTOIterator = vo.getUriList().iterator();
-        while (servUriDTOIterator.hasNext()){
-            ServUriDTO temp = servUriDTOIterator.next();
-            DSGCServicesUri dsgcServicesUri = new DSGCServicesUri();
-            dsgcServicesUri.setIbUri(temp.getIbUri());
-            dsgcServicesUri.setUriType(temp.getUriType());
-            dsgcServicesUri.setServNo(vo.getServNo());
-            if(StringUtil.isNotBlank(temp.getHttpMethod())){
-                dsgcServicesUri.setHttpMethod(temp.getHttpMethod());
-            }
-            svcMngDao.addServUri(dsgcServicesUri);
-          //  servicesUriList.add(dsgcServicesUri);
-        }
+//        Iterator<ServUriDTO> servUriDTOIterator = vo.getUriList().iterator();
+//        while (servUriDTOIterator.hasNext()){
+//            ServUriDTO temp = servUriDTOIterator.next();
+//            DSGCServicesUri dsgcServicesUri = new DSGCServicesUri();
+//            dsgcServicesUri.setIbUri(temp.getIbUri());
+//            dsgcServicesUri.setUriType(temp.getUriType());
+//            dsgcServicesUri.setServNo(vo.getServNo());
+//            dsgcServicesUri.setProvider(routeCode);
+//            dsgcServicesUri.setHttpMethod(httpMethod);
+//            if(StringUtil.isNotBlank(temp.getHttpMethod())){
+//                dsgcServicesUri.setHttpMethod(temp.getHttpMethod());
+//            }
+//            svcMngDao.addServUri(dsgcServicesUri);
+//        }
         if(vo.getParamterList() != null && vo.getUriList().size() > 0){
             List<DSGCUriParamsBean> list = new ArrayList<>();
             Iterator<ServUriParamterDTO>  paramterDTOIterator = vo.getParamterList().iterator();

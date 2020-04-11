@@ -8,6 +8,7 @@ import com.definesys.dsgc.service.apiroute.bean.DagDeployStatBean;
 import com.definesys.dsgc.service.apiroute.bean.DagRoutesBean;
 import com.definesys.dsgc.service.consumers.ConsumersDao;
 import com.definesys.dsgc.service.consumers.bean.DSGCConsumerAuth;
+import com.definesys.dsgc.service.consumers.bean.DagConsumerToken;
 import com.definesys.dsgc.service.interfacetest.bean.CommonReqBean;
 import com.definesys.dsgc.service.interfacetest.bean.DoTestVO;
 import com.definesys.dsgc.service.interfacetest.bean.InterfaceBaseInfoVO;
@@ -20,10 +21,13 @@ import com.definesys.dsgc.service.svcmng.bean.ServUriParamterDTO;
 import com.definesys.dsgc.service.utils.HttpURLClient;
 import com.definesys.dsgc.service.utils.SoapClient;
 import com.definesys.dsgc.service.utils.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -73,31 +77,50 @@ public class InterfaceTestService {
     public Map<String,String> doRestTest(DoTestVO param) throws Exception{
         List<Map<String,String>> paramterList = param.getParamters();
         String url = param.getUrl();
-        if(StringUtil.isNotBlank(param.getApiOrServ()) && param.getApiOrServ() == "0"){
+        int authType = 1;
+        if(StringUtils.isNotBlank(param.getApiOrServ()) &&"API".equals( param.getApiOrServ())){
             String routeUri = param.getUri();
             DagRoutesBean dagRoutesBean = apiRouteDao.queryRouteByUri(routeUri);
             DagDeployStatBean dagDeployStatBean = apiRouteDao.queryDeployVid(dagRoutesBean.getRouteCode(),param.getEnvCode());
             List<DagPluginUsingBean> pluginUsingBeans = apiPlugInDao.queryPlugInsByVid(dagDeployStatBean.getVid());
-            int temp = 0;
             for (int i = 0; i < pluginUsingBeans.size(); i++) {
                 if("basic-auth".equals(pluginUsingBeans.get(i).getPluginCode()) && "Y".equals(pluginUsingBeans.get(i).getIsEnable())){
-                    temp = 1;
+                    authType = 1;
+                    break;
                 }
                 if("jwt-auth".equals(pluginUsingBeans.get(i).getPluginCode()) && "Y".equals(pluginUsingBeans.get(i).getIsEnable())){
-                    temp = 2;
+                    authType = 2;
+                    break;
                 }
 
             }
 
         }
-        DSGCConsumerAuth dsgcConsumerAuth =consumersDao.queryConsumerDataByCsmCodeAndEnv(param.getConsumerCode(),param.getEnvCode());
         String auth = "";
+        if(authType == 1){
+            DSGCConsumerAuth dsgcConsumerAuth =consumersDao.queryConsumerDataByCsmCodeAndEnv(param.getConsumerCode(),param.getEnvCode());
 //        if(dsgcConsumerAuth != null){
 //            auth = dsgcConsumerAuth.getCsmCode() + ":"+dsgcConsumerAuth.getCaAttr1();
 //
 //        }else {
 //            throw new Exception("消费者basic认证信息错误");
 //        }
+        }
+        if(authType == 2){
+            List<DagConsumerToken> dagConsumerTokenList = consumersDao.queryConsumerToken(param.getEnvCode(),param.getConsumerCode());
+            for (int i = 0; i <dagConsumerTokenList.size() ; i++) {
+                long currSecond = LocalDateTime.now().toEpochSecond(ZoneOffset.of("+8"));
+                if (Long.parseLong(dagConsumerTokenList.get(i).getExpTime())>currSecond){
+                    String  token = dagConsumerTokenList.get(i).getToken();
+                    Map<String,String> map = new HashMap<>();
+                    map.put("headerName","Authorization");
+                    map.put("headerValue","Bearer "+token);
+                    param.getHeaders().add(map);
+                    break;
+                }
+            }
+        }
+
         if(param.getParamters().size()>0){
             StringBuffer urlParams = new StringBuffer("?");
             Iterator<Map<String,String>> iterator = paramterList.iterator();
@@ -122,7 +145,7 @@ public class InterfaceTestService {
                 result = HttpURLClient.doPost(url,param.getRequestBody(),param.getHeaders(),auth);
             }
             if("GET".equals(param.getMethodType())){
-                result = HttpURLClient.doGet(url,auth);
+                result = HttpURLClient.doGet(url,param.getHeaders(),auth);
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -148,13 +171,13 @@ public class InterfaceTestService {
         DSGCConsumerAuth dsgcConsumerAuth =consumersDao.queryConsumerDataByCsmCodeAndEnv(param.getConsumerCode(),param.getEnvCode());
         String userName = "";
         String password = "";
-//        if(dsgcConsumerAuth != null){
-//            userName = dsgcConsumerAuth.getCsmCode();
-//            password = dsgcConsumerAuth.getCaAttr1();
-//
-//        }else {
-//            throw new Exception("消费者basic认证信息错误");
-//        }
+        if(dsgcConsumerAuth != null){
+            userName = dsgcConsumerAuth.getCsmCode();
+            password = dsgcConsumerAuth.getCaAttr1();
+
+        }else {
+            throw new RuntimeException("消费者basic认证信息错误");
+        }
 
         Map<String,String> result = new HashMap<>();
         try {

@@ -7,7 +7,10 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.util.StringUtils;
 
 import javax.xml.bind.DatatypeConverter;
+import java.security.Key;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class JwtTokenUtil {
@@ -30,17 +33,21 @@ public class JwtTokenUtil {
         Date now = new Date(nowMillis);
         String completeSecretKey = secret;
         byte[] signingKey = DatatypeConverter.parseBase64Binary(completeSecretKey);
-
         JwtBuilder builder = Jwts.builder();
+        Map headerMap = new HashMap();
 
+        Map<String, Object> header = new HashMap<>(2);
+        header.put("typ", "JWT");
+        header.put("alg", "HS256");
+        builder.setHeader(header);
         if (!StringUtils.isEmpty(issuer)) {
             builder.setIssuer(issuer);
         }
         if (expScond >= 0) {
-            Date exp = new Date(expScond);
+            Date exp = new Date(expScond*1000);
             builder.setExpiration(exp);
         }
-        builder.signWith(signatureAlgorithm, signingKey);
+        builder.signWith(signatureAlgorithm, completeSecretKey.getBytes());
         return builder.compact();
     }
 
