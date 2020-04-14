@@ -245,7 +245,10 @@ public class ApiBsService {
         List<DagPlugUsingBean> reuslt=apiBsDao.queryPluginUsing(vid);
         for(DagPlugUsingBean item: reuslt){
             DagPlugStoreBean dagPlugStoreBean=apiBsDao.queryPluginStoreByCode(item.getPluginCode());
-            item.setPluginName(dagPlugStoreBean.getPluginName());
+            if(dagPlugStoreBean!=null){
+                item.setPluginName(dagPlugStoreBean.getPluginName());
+            }
+
         }
         return reuslt;
     }

@@ -205,12 +205,34 @@ public class ApiCockpitDao {
         //过去七天API状况
         public List<eChartsBean> queryApiSeven(){
                 return sw.buildQuery().sql("select a.time as name,nvl(b.num,0) as value1 from (\n" +
-                        "select  sysdate-7+rownum as currentDate,to_char(sysdate-7 + rownum ,  'day') as time\n" +
-                        "from dual \n" +
-                        "connect by rownum <=7 )a\n" +
-                        "left join\n" +
-                        "  (select time,count(time) as num from (SELECT to_char(creation_date,'yyyy-mm-dd') as time FROM dsgc_apis   \n" +
-                        "                where creation_date >sysdate-6) group by time order by time)b on a.time = b.time order by a.currentDate")
+                        "                        select  sysdate-7+rownum as currentDate,to_char(sysdate-7 + rownum ,  'day') as time\n" +
+                        "                        from dual \n" +
+                        "                        connect by rownum <=7 )a\n" +
+                        "                        left join\n" +
+                        "                          (select time,count(time) as num from (SELECT to_char(creation_date,'day') as time FROM dsgc_apis   \n" +
+                        "                                        where creation_date >sysdate-6) group by time order by time)b on a.time = b.time order by a.currentDate")
+                        .doQuery(eChartsBean.class);
+        }
+        //过去30天API状况
+        public List<eChartsBean> queryApiMonth(){
+                return sw.buildQuery().sql("select a.time as name,nvl(b.num,0) as value1 from (\n" +
+                        "                              select  sysdate-30+rownum as currentDate,to_char( sysdate-30+rownum ,  'dd') as time\n" +
+                        "                              from dual \n" +
+                        "                              connect by rownum <=30 )a\n" +
+                        "                              left join\n" +
+                        "                                (select time,count(time) as num from (SELECT to_char(creation_date,'dd') as time FROM dsgc_apis   \n" +
+                        "                                              where creation_date >sysdate-29) group by time order by time)b on a.time = b.time order by a.currentDate")
+                        .doQuery(eChartsBean.class);
+        }
+        //过去一年API状况
+        public List<eChartsBean> queryApiyear(){
+                return sw.buildQuery().sql("select a.time as name,nvl(b.num,0) as value1 from (\n" +
+                        "    select add_months(sysdate,-12+rownum) as currentDate,to_char( add_months(sysdate,-12+rownum) ,  'mm') as time\n" +
+                        "    from dual \n" +
+                        "    connect by rownum <=12 )a\n" +
+                        "    left join\n" +
+                        "      (select time,count(time) as num from (SELECT to_char(creation_date,'mm') as time FROM dsgc_apis   \n" +
+                        "                    where creation_date >add_months(sysdate,-12)) group by time order by time)b on a.time = b.time order by a.currentDate")
                         .doQuery(eChartsBean.class);
         }
 
@@ -218,16 +240,42 @@ public class ApiCockpitDao {
         //过去七天消费者状况，dsgc_consumer_entities
         public List<eChartsBean> queryConsumerSeven(){
                 return sw.buildQuery().sql("select a.time as name,nvl(b.num,0) as value1 from (\n" +
-                        "          select  sysdate-7+rownum as currentDate,to_char(sysdate-7 + rownum ,  'day') as time\n" +
-                        "          from dual \n" +
-                        "          connect by rownum <=7 )a\n" +
-                        "          left join\n" +
-                        "            (select time,count(time) as num from (SELECT to_char(creation_date,'yyyy-mm-dd') as time FROM \n" +
-                        "                 (   select distinct e.csm_code,e.creation_date,e.csm_name   as value1 from dsgc_consumer_entities e\n" +
-                        "                                         left join dsgc_apis_access aa on aa.csm_code=e.csm_code\n" +
-                        "                                         left join dsgc_apis a on a.api_code=aa.api_code\n" +
-                        "                                         where a.api_code is not null)   \n" +
-                        "                           where creation_date >sysdate-6) group by time order by time)b on a.time = b.time order by a.currentDate")
+                        "                                  select  sysdate-7+rownum as currentDate,to_char(sysdate-7 + rownum ,  'day') as time\n" +
+                        "                                  from dual \n" +
+                        "                                  connect by rownum <=7 )a\n" +
+                        "                                  left join\n" +
+                        "                                    (select time,count(time) as num from (SELECT to_char(creation_date,'day') as time FROM \n" +
+                        "                                         (   select distinct e.csm_code,e.creation_date,e.csm_name   as value1 from dsgc_consumer_entities e\n" +
+                        "                                                                 left join dsgc_apis_access aa on aa.csm_code=e.csm_code\n" +
+                        "                                                                 left join dsgc_apis a on a.api_code=aa.api_code\n" +
+                        "                                                                 where a.api_code is not null)   \n" +
+                        "                                                   where creation_date >sysdate-6) group by time order by time)b on a.time = b.time order by a.currentDate")
+                        .doQuery(eChartsBean.class);
+        }
+        //过去30天消费者状况，dsgc_consumer_entities
+        public List<eChartsBean> queryConsumerMonth(){
+                return sw.buildQuery().sql("select a.time as name,nvl(b.num,0) as value1 from (\n" +
+                        "                                  select  sysdate-30+rownum as currentDate,to_char(sysdate-30 + rownum ,  'dd') as time\n" +
+                        "                                  from dual \n" +
+                        "                                  connect by rownum <=30 )a\n" +
+                        "                                  left join\n" +
+                        "                                    (select time,count(time) as num from (SELECT to_char(creation_date,'dd') as time FROM \n" +
+                        "                                         (   select distinct e.csm_code,e.creation_date,e.csm_name   as value1 from dsgc_consumer_entities e\n" +
+                        "                                                                 left join dsgc_apis_access aa on aa.csm_code=e.csm_code\n" +
+                        "                                                                 left join dsgc_apis a on a.api_code=aa.api_code\n" +
+                        "                                                                 where a.api_code is not null)   \n" +
+                        "                                                   where creation_date >sysdate-29) group by time order by time)b on a.time = b.time order by a.currentDate")
+                        .doQuery(eChartsBean.class);
+        }
+        //过去一年消费者状况，dsgc_consumer_entities
+        public List<eChartsBean> queryConsumerYear(){
+                return sw.buildQuery().sql("select a.time as name,nvl(b.num,0) as value1 from (\n" +
+                        "                        select add_months(sysdate,-12+rownum) as currentDate,to_char(add_months(sysdate,-12+rownum) ,  'mm') as time\n" +
+                        "                        from dual \n" +
+                        "                        connect by rownum <=12 )a\n" +
+                        "                        left join\n" +
+                        "                          (select time,count(time) as num from (SELECT to_char(creation_date,'mm') as time FROM dsgc_system_entities   \n" +
+                        "                                        where creation_date > add_months(sysdate,-12)) group by time order by time)b on a.time = b.time order by a.currentDate")
                         .doQuery(eChartsBean.class);
         }
 
@@ -235,12 +283,36 @@ public class ApiCockpitDao {
         //过去七天应用状况，dsgc_system_entities
         public List<eChartsBean> queryAppSeven(){
                 return sw.buildQuery().sql("select a.time as name,nvl(b.num,0) as value1 from (\n" +
-                        "select  sysdate-7+rownum as currentDate,to_char(sysdate-7 + rownum ,  'day') as time\n" +
-                        "from dual \n" +
-                        "connect by rownum <=7 )a\n" +
-                        "left join\n" +
-                        "  (select time,count(time) as num from (SELECT to_char(creation_date,'yyyy-mm-dd') as time FROM dsgc_system_entities   \n" +
-                        "                where creation_date >sysdate-6) group by time order by time)b on a.time = b.time order by a.currentDate")
+                        "                        select  sysdate-7+rownum as currentDate,to_char(sysdate-7 + rownum ,  'day') as time\n" +
+                        "                        from dual \n" +
+                        "                        connect by rownum <=7 )a\n" +
+                        "                        left join\n" +
+                        "                          (select time,count(time) as num from (SELECT to_char(creation_date,'day') as time FROM dsgc_system_entities   \n" +
+                        "                                        where creation_date >sysdate-6) group by time order by time)b on a.time = b.time order by a.currentDate")
+                        .doQuery(eChartsBean.class);
+        }
+
+        //过去30天应用状况，dsgc_system_entities
+        public List<eChartsBean> queryAppMonth(){
+                return sw.buildQuery().sql("select a.time as name,nvl(b.num,0) as value1 from (\n" +
+                        "                        select  sysdate-30+rownum as currentDate,to_char(sysdate-30 + rownum ,  'dd') as time\n" +
+                        "                        from dual \n" +
+                        "                        connect by rownum <=30 )a\n" +
+                        "                        left join\n" +
+                        "                          (select time,count(time) as num from (SELECT to_char(creation_date,'dd') as time FROM dsgc_system_entities   \n" +
+                        "                                        where creation_date > sysdate-30) group by time order by time)b on a.time = b.time order by a.currentDate")
+                        .doQuery(eChartsBean.class);
+        }
+
+        //过去一年应用状况，dsgc_system_entities
+        public List<eChartsBean> queryAppYear(){
+                return sw.buildQuery().sql("select a.time as name,nvl(b.num,0) as value1 from (\n" +
+                        "                        select add_months(sysdate,-12+rownum) as currentDate,to_char(add_months(sysdate,-12+rownum) ,  'mm') as time\n" +
+                        "                        from dual \n" +
+                        "                        connect by rownum <=12 )a\n" +
+                        "                        left join\n" +
+                        "                          (select time,count(time) as num from (SELECT to_char(creation_date,'mm') as time FROM dsgc_system_entities   \n" +
+                        "                                        where creation_date > add_months(sysdate,-12)) group by time order by time)b on a.time = b.time order by a.currentDate")
                         .doQuery(eChartsBean.class);
         }
 

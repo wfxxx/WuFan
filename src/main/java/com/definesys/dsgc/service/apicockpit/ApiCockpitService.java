@@ -145,12 +145,27 @@ public class ApiCockpitService {
         return result;
     }
 
-    //获取一周内资源发布情况
+    //获取近来资源发布情况
     public  Map<String,Object> querySourceFlow (){
         Map<String,Object> result=new HashMap<String,Object>();
-        result.put("apiSeven",apiCockpitDao.queryApiSeven());
-        result.put("consumerSeven",apiCockpitDao.queryConsumerSeven());
-        result.put("appSeven",apiCockpitDao.queryAppSeven());
+        Map<String,Object> weekData=new HashMap<String,Object>();
+        Map<String,Object> monthData=new HashMap<String,Object>();
+        Map<String,Object> yearData=new HashMap<String,Object>();
+        weekData.put("API",apiCockpitDao.queryApiSeven());
+        weekData.put("消费者",apiCockpitDao.queryConsumerSeven());
+        weekData.put("应用",apiCockpitDao.queryAppSeven());
+
+        monthData.put("API",apiCockpitDao.queryApiMonth());
+        monthData.put("消费者",apiCockpitDao.queryConsumerMonth());
+        monthData.put("应用",apiCockpitDao.queryAppMonth());
+
+        yearData.put("API",apiCockpitDao.queryApiyear());
+        yearData.put("消费者",apiCockpitDao.queryConsumerYear());
+        yearData.put("应用",apiCockpitDao.queryAppYear());
+
+        result.put("sourceWeek",weekData);
+        result.put("sourceMonth",monthData);
+        result.put("sourceYear",yearData);
         return result;
     }
 
@@ -183,7 +198,7 @@ public class ApiCockpitService {
         result.put("appConsumer", queryAppInfo());//app消费者
 //        result.put("appFlow", queryTrafficAnalysis());//整合进app消费者数据中
         result.put("sourceTotal", querySourceDate());//资源总数
-        result.put("appFlowSeven", querySourceFlow());//资源周增长
+        result.put("appSourceAnalysis", querySourceFlow());//资源周增长
         result.put("apiInfoByApp", queryApiInfoByAppALL());//api按应用分类
         result.put("apiInfoByType", queryApiInfoByTypeALL());//api按类型分类
         return result;
