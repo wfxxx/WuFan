@@ -400,6 +400,7 @@ public class ServiceGenerateProxy {
         this.setObjAttrValue(param,"textAttr1",cfg.getSapConn());
         this.setObjAttrValue(param,"textAttr2",cfg.getRfcName());
         this.setObjAttrValue(param,"servNameCode",cfg.getServNameCode());
+        this.setObjAttrValue(param,"sysCode",cfg.getAppCode());
         this.setObjAttrValue(param,"needUpdStore",true,boolean.class);
     }
 
@@ -414,6 +415,7 @@ public class ServiceGenerateProxy {
         this.setObjAttrValue(param,"psUri",cfg.getRestPSUri());
         this.setObjAttrValue(param,"plName",cfg.getServNameCode() + "Pipeline");
         this.setObjAttrValue(param,"servNameCode",cfg.getServNameCode());
+        this.setObjAttrValue(param,"sysCode",cfg.getAppCode());
         this.setObjAttrValue(param,"isProfile","N");
         this.setObjAttrValue(param,"provider",cfg.getToSystem());
         this.setObjAttrValue(param,"saCode",cfg.getSaCode());
@@ -445,6 +447,7 @@ public class ServiceGenerateProxy {
         this.setObjAttrValue(param,"psUri",cfg.getSoapPSUri());
         this.setObjAttrValue(param,"plName",cfg.getServNameCode() + "Pipeline");
         this.setObjAttrValue(param,"servNameCode",cfg.getServNameCode());
+        this.setObjAttrValue(param,"sysCode",cfg.getAppCode());
         this.setObjAttrValue(param,"isProfile","N");
         this.setObjAttrValue(param,"provider",cfg.getToSystem());
         this.setObjAttrValue(param,"saCode",cfg.getSaCode());
@@ -465,6 +468,7 @@ public class ServiceGenerateProxy {
         this.setObjAttrValue(param,"isProfile","N");
         this.setObjAttrValue(param,"sysCode",cfg.getToSystem());
         this.setObjAttrValue(param,"servNameCode",cfg.getServNameCode());
+        this.setObjAttrValue(param,"sysCode",cfg.getAppCode());
         this.setObjAttrValue(param,"sgObjDesc",cfg.getServDesc());
         this.setObjAttrValue(param,"needUpdStore",needUpdStore,boolean.class);
     }

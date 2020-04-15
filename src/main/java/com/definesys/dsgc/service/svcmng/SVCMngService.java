@@ -20,6 +20,7 @@ import com.definesys.dsgc.service.lkv.bean.FndLookupValue;
 import com.definesys.dsgc.service.esbenv.DSGCBusCfgDao;
 import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.dsgc.service.utils.StringUtils;
+import com.definesys.dsgc.service.utils.UserHelper;
 import com.definesys.mpaas.query.db.PageQueryResult;
 
 
@@ -55,6 +56,9 @@ public class SVCMngService {
 
     @Autowired
     private SVCAuthService svcAuthService;
+
+    @Autowired
+    private UserHelper userHelper;
 
 
 
@@ -918,8 +922,9 @@ public void addRestServ(AddRestServVO addRestServVO){
             svcMngDao.addServUri(dsgcServicesUri);
         }
     }
-    public PageQueryResult<SourceUriListDTO> querySvcSourceList(SVCCommonReqBean param,int pageIndex,int pageSize){
-        PageQueryResult<DSGCSvcgenUriBean> pageQueryResult =  svcMngDao.querySvcSourceList(param,pageIndex,pageSize);
+    public PageQueryResult<SourceUriListDTO> querySvcSourceList(String uid,SVCCommonReqBean param,int pageIndex,int pageSize){
+        UserHelper uh = this.userHelper.user(uid);
+        PageQueryResult<DSGCSvcgenUriBean> pageQueryResult =  svcMngDao.querySvcSourceList(uh,param,pageIndex,pageSize);
         PageQueryResult<SourceUriListDTO> result = new PageQueryResult<>();
         List<SourceUriListDTO> listDTOS = new ArrayList<>();
         result.setCount(pageQueryResult.getCount());
@@ -932,6 +937,12 @@ public void addRestServ(AddRestServVO addRestServVO){
             sourceUriListDTO.setSourceUri(dsgcSvcgenUriBean.getIbUri());
             sourceUriListDTO.setHttpMethod(dsgcSvcgenUriBean.getHttpMethod());
             sourceUriListDTO.setSoapOper(dsgcSvcgenUriBean.getSoapOper());
+            sourceUriListDTO.setObjName(dsgcSvcgenUriBean.getObjName());
+            sourceUriListDTO.setObjDesc(dsgcSvcgenUriBean.getObjDesc());
+            sourceUriListDTO.setUpdateUser(dsgcSvcgenUriBean.getUpdateUser());
+            sourceUriListDTO.setUpdateDate(dsgcSvcgenUriBean.getLastUpdateDate());
+            sourceUriListDTO.setAppCode(dsgcSvcgenUriBean.getAppCode());
+            sourceUriListDTO.setAppName(dsgcSvcgenUriBean.getAppName());
             listDTOS.add(sourceUriListDTO);
         }
         result.setResult(listDTOS);

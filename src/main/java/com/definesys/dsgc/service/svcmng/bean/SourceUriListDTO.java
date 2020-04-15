@@ -1,11 +1,26 @@
 package com.definesys.dsgc.service.svcmng.bean;
 
+import com.definesys.mpaas.query.json.MpaasDateDeserializer;
+import com.definesys.mpaas.query.json.MpaasDateSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import java.util.Date;
+
 public class SourceUriListDTO {
     private String sourceName;
+    private String objName;
+    private String objDesc;
+    private String updateUser;
+    @JsonSerialize(using = MpaasDateSerializer.class)
+    @JsonDeserialize(using = MpaasDateDeserializer.class)
+    private Date updateDate;
     private String sourceUri;
     private String sourceType;
     private String soapOper;
     private String httpMethod;
+    private String appCode;
+    private String appName;
 
     public String getSourceName() {
         return sourceName;
@@ -45,5 +60,53 @@ public class SourceUriListDTO {
 
     public void setHttpMethod(String httpMethod) {
         this.httpMethod = httpMethod;
+    }
+
+    public String getObjName() {
+        return objName;
+    }
+
+    public void setObjName(String objName) {
+        this.objName = objName;
+    }
+
+    public String getObjDesc() {
+        return objDesc;
+    }
+
+    public void setObjDesc(String objDesc) {
+        this.objDesc = objDesc;
+    }
+
+    public String getUpdateUser() {
+        return updateUser;
+    }
+
+    public void setUpdateUser(String updateUser) {
+        this.updateUser = updateUser;
+    }
+
+    public Date getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(Date updateDate) {
+        this.updateDate = updateDate;
+    }
+
+    public String getAppCode() {
+        return appCode;
+    }
+
+    public void setAppCode(String appCode) {
+        this.appCode = appCode;
+    }
+
+    public String getAppName() {
+        return appName;
+    }
+
+    public void setAppName(String appName) {
+        this.appName = appName;
     }
 }

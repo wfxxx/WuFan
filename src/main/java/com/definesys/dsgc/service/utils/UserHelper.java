@@ -12,6 +12,7 @@ import java.util.Map;
 @Component
 public class UserHelper {
     private UserInfoBean uib = null;
+    private String userId;
 
     @Autowired
     private MpaasQueryFactory sw ;
@@ -30,11 +31,16 @@ public class UserHelper {
 
     public UserHelper user(String uid) {
         UserHelper uh = new UserHelper(this.sw);
+        uh.userId = uid;
         uh.uib = new UserInfoBean(uid);
         uh.loadUserBasicInfo();
         uh.loadUserRoleInfo();
         uh.loadUserSystemInfo();
         return uh;
+    }
+
+    public String getUID(){
+        return this.userId;
     }
 
 

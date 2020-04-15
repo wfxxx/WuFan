@@ -12,6 +12,7 @@ public class TmplConfigBean {
     private String projDir;
     private String servDir;
     private String servNameCode;
+    private String appCode;
     private String toSystem;
     private String bsUri;
     private String soapPSUri;
@@ -32,11 +33,11 @@ public class TmplConfigBean {
     private String resolveDenpendencies;
     private List<String> toResolveFileList = new ArrayList<>();
 
-    //创建服务代码并同时创建服务资产信息
-    private String servAssetNo;
-    private String servName;
-    private String servSystem;
-    private String servShareType;
+//    //创建服务代码并同时创建服务资产信息
+//    private String servAssetNo;
+//    private String servName;
+//    private String servSystem;
+//    private String servShareType;
 
     public String getDpName() {
         return dpName;
@@ -100,6 +101,14 @@ public class TmplConfigBean {
 
     public void setServNameCode(String servNameCode) {
         this.servNameCode = servNameCode;
+    }
+
+    public String getAppCode() {
+        return appCode;
+    }
+
+    public void setAppCode(String appCode) {
+        this.appCode = appCode;
     }
 
     public String getToSystem() {
@@ -255,35 +264,35 @@ public class TmplConfigBean {
         this.saForWsdl = saForWsdl;
     }
 
-    public String getServAssetNo() {
-        return servAssetNo;
-    }
-
-    public void setServAssetNo(String servAssetNo) {
-        this.servAssetNo = servAssetNo;
-    }
-
-    public String getServName() {
-        return servName;
-    }
-
-    public void setServName(String servName) {
-        this.servName = servName;
-    }
-
-    public String getServSystem() {
-        return servSystem;
-    }
-
-    public void setServSystem(String servSystem) {
-        this.servSystem = servSystem;
-    }
-
-    public String getServShareType() {
-        return servShareType;
-    }
-
-    public void setServShareType(String servShareType) {
-        this.servShareType = servShareType;
-    }
+//    public String getServAssetNo() {
+//        return servAssetNo;
+//    }
+//
+//    public void setServAssetNo(String servAssetNo) {
+//        this.servAssetNo = servAssetNo;
+//    }
+//
+//    public String getServName() {
+//        return servName;
+//    }
+//
+//    public void setServName(String servName) {
+//        this.servName = servName;
+//    }
+//
+//    public String getServSystem() {
+//        return servSystem;
+//    }
+//
+//    public void setServSystem(String servSystem) {
+//        this.servSystem = servSystem;
+//    }
+//
+//    public String getServShareType() {
+//        return servShareType;
+//    }
+//
+//    public void setServShareType(String servShareType) {
+//        this.servShareType = servShareType;
+//    }
 }

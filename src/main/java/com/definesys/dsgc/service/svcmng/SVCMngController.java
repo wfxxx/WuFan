@@ -170,9 +170,10 @@ public class SVCMngController {
     }
     @RequestMapping(value = "/querySvcSourceList",method = RequestMethod.POST)
     public Response querySvcSourceList(@RequestBody SVCCommonReqBean param, @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
-                                       @RequestParam(value = "pageIndex", required = false, defaultValue = "1") int pageIndex){
+                                       @RequestParam(value = "pageIndex", required = false, defaultValue = "1") int pageIndex ,HttpServletRequest request){
         try {
-           return Response.ok().setData(svcMngService.querySvcSourceList(param,pageIndex,pageSize)) ;
+            String userId = request.getHeader("uid");
+           return Response.ok().setData(svcMngService.querySvcSourceList(userId,param,pageIndex,pageSize)) ;
         }catch (Exception e){
             e.printStackTrace();
             return Response.error("查询资源失败");

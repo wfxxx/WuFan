@@ -214,16 +214,16 @@ public class SVCGenService {
      */
     public Response generateServiceCodeAsset(String loginUser,TmplConfigBean tcb) throws Exception {
         Response genRes = this.generateServiceCode(loginUser,tcb);
-        if(Response.CODE_OK.equals(genRes.getCode())){
-            //绑定服务资产信息
-            SVCCreateBean scc = new SVCCreateBean();
-            scc.setServNo(tcb.getServAssetNo());
-            scc.setServName(tcb.getServName());
-            scc.setServShareType(tcb.getServShareType());
-            scc.setServSystem(tcb.getServSystem());
-            scc.setSgObjCode(tcb.getServNo());
-            this.bindingSgObjToNewServ(scc);
-        }
+//        if(Response.CODE_OK.equals(genRes.getCode())){
+//            //绑定服务资产信息
+//            SVCCreateBean scc = new SVCCreateBean();
+//            scc.setServNo(tcb.getServAssetNo());
+//            scc.setServName(tcb.getServName());
+//            scc.setServShareType(tcb.getServShareType());
+//            scc.setServSystem(tcb.getServSystem());
+//            scc.setSgObjCode(tcb.getServNo());
+//            this.bindingSgObjToNewServ(scc);
+//        }
         return genRes;
     }
 

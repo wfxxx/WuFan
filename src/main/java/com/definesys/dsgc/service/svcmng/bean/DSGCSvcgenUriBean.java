@@ -15,6 +15,11 @@ import java.util.Date;
 @Table(value = "dsgc_svcgen_uri")
 public class DSGCSvcgenUriBean extends MpaasBasePojo {
     private String objCode;
+    private String objName;
+    private String objDesc;
+    private String appCode;
+    private String appName;
+    private String updateUser;
     private String ibUri;
     private String uriType;
     private String soapOper;
@@ -117,5 +122,45 @@ public class DSGCSvcgenUriBean extends MpaasBasePojo {
 
     public void setLastUpdateDate(Date lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
+    }
+
+    public String getObjName() {
+        return objName;
+    }
+
+    public void setObjName(String objName) {
+        this.objName = objName;
+    }
+
+    public String getObjDesc() {
+        return objDesc;
+    }
+
+    public void setObjDesc(String objDesc) {
+        this.objDesc = objDesc;
+    }
+
+    public String getUpdateUser() {
+        return updateUser;
+    }
+
+    public void setUpdateUser(String updateUser) {
+        this.updateUser = updateUser;
+    }
+
+    public String getAppCode() {
+        return appCode;
+    }
+
+    public void setAppCode(String appCode) {
+        this.appCode = appCode;
+    }
+
+    public String getAppName() {
+        return appName;
+    }
+
+    public void setAppName(String appName) {
+        this.appName = appName;
     }
 }
