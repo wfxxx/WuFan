@@ -561,7 +561,7 @@ public class SVCMngService {
               //  dto.setRequired("Y".equals(temp.getParamNeed())?true:false);
                 dto.setNodeValue(temp.getParamSample());
                 dto.setDataType(temp.getParamType());
-                dto.setNodeType("custom");
+                dto.setNodeType("generate");
                 paramDTOS.add(dto);
             }
         }
@@ -659,7 +659,7 @@ public class SVCMngService {
         }
 
 
-        if (param.getParamList() != null && param.getParamList().size() > 0) {
+     //   if (param.getParamList() != null && param.getParamList().size() > 0) {
             SVCCommonReqBean svcCommonReqBean = new SVCCommonReqBean();
             svcCommonReqBean.setCon0(param.getServNo());
             svcCommonReqBean.setQueryType(param.getParamType());
@@ -670,7 +670,6 @@ public class SVCMngService {
                 dsgcPayloadParamsBean.setReqOrRes(param.getParamType());
                 svcMngDao.delServPayloadParam(dsgcPayloadParamsBean);
             }
-            List<DSGCPayloadParamsBean> payloadParamsBeans = new ArrayList<>();
             Iterator<SVCMngIoParameterDTO> iterator = param.getParamList().iterator();
             while (iterator.hasNext()) {
                 SVCMngIoParameterDTO dto = iterator.next();
@@ -696,7 +695,7 @@ public class SVCMngService {
             }
             completionThread(param.getServNo());
 
-        }
+      //  }
     }
 
 
