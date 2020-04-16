@@ -2,6 +2,7 @@ package com.definesys.dsgc.service.svcmng;
 
 import com.definesys.dsgc.service.svcmng.bean.*;
 import com.definesys.dsgc.service.utils.StringUtil;
+import com.definesys.dsgc.service.utils.UserHelper;
 import com.definesys.mpaas.query.MpaasQuery;
 import com.definesys.mpaas.query.MpaasQueryFactory;
 import com.definesys.mpaas.query.db.PageQueryResult;
@@ -299,10 +300,46 @@ public Boolean checkServNoIsExsit(String servNo){
     }
 }
 
-public PageQueryResult<DSGCSvcgenUriBean> querySvcSourceList(SVCCommonReqBean param,int pageIndex,int pageSize){
+public PageQueryResult<DSGCSvcgenUriBean> querySvcSourceList(UserHelper uh,SVCCommonReqBean param,int pageIndex,int pageSize){
    MpaasQuery mq = sw.buildQuery();
-    StringBuffer stringBuffer = new StringBuffer("select v.* from (select dsu.* from dsgc_svcgen_uri dsu where dsu.uri_type = 'SOAP' or (dsu.uri_type = 'REST' and dsu.ib_uri not in(select ib_uri from dsgc_services_uri where uri_type = 'REST' and http_method  in ('GET','POST')  group by ib_uri " +
-            " having count(ib_uri) > 1))) v where not exists(select ib_uri,soap_oper from dsgc_services_uri n where n.uri_type = 'SOAP' and v.ib_uri = n.ib_uri and n.soap_oper is not null)");
+
+   String baseSql = "select u.OBJ_CODE,\n" +
+           "       o.obj_name,\n" +
+           "       o.obj_desc,\n" +
+           "       u.IB_URI,\n" +
+           "       u.URI_TYPE,\n" +
+           "       u.SOAP_OPER,\n" +
+           "       u.TRANSPORT_TYPE,\n" +
+           "       u.HTTP_METHOD,\n" +
+           "       o.SYS_CODE app_code,\n" +
+           "       (select e.SYS_NAME from DSGC_SYSTEM_ENTITIES e where e.SYS_CODE = o.sys_code) app_name,\n" +
+           "       o.last_update_date,\n" +
+           "       (select s.user_name\n" +
+           "        from dsgc_user s\n" +
+           "        where s.user_id = u.last_updated_by) update_user\n" +
+           "from dsgc_svcgen_uri u, dsgc_svcgen_obj o\n" +
+           "where u.obj_code = o.obj_code\n" +
+           "  and (soap_oper is not null and\n" +
+           "       (ib_uri, soap_oper) not in\n" +
+           "       (select t.ib_uri, t.soap_oper\n" +
+           "        from dsgc_services_uri t\n" +
+           "        where t.soap_oper is not null) or\n" +
+           "       soap_oper is null and\n" +
+           "       (ib_uri) not in\n" +
+           "       (select b.ib_uri from dsgc_services_uri b where b.soap_oper is null))";
+
+   if(!(uh.isAdmin() || uh.isSuperAdministrator())){
+       if(uh.isSystemMaintainer()){
+          baseSql = baseSql + " and o.SYS_CODE in (select  s.SYS_CODE from DSGC_SYSTEM_USER  s where s.USER_ID = '"+uh.getUID()+"')";
+       } else {
+           baseSql = baseSql + " and 1 <> 1";
+       }
+   }
+
+   baseSql = baseSql + " order by o.LAST_UPDATE_DATE desc";
+
+
+    StringBuffer stringBuffer = new StringBuffer("select v.* from ("+baseSql+") v where 1 =1 ");
    if(StringUtil.isNotBlank(param.getQueryType())){
         stringBuffer.append(" and v.uri_type = #uriType");
        mq.setVar("uriType",param.getQueryType());
