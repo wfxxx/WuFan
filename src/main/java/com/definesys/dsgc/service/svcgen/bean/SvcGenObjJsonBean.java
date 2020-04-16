@@ -53,8 +53,8 @@ public class SvcGenObjJsonBean {
             "(SELECT fv.meaning FROM fnd_lookup_types ft,fnd_lookup_values fv WHERE ft.lookup_id = fv.lookup_id " +
             "AND ( ft.lookup_type = 'SVCGEN_TMPL_LIST' OR ft.lookup_type = 'SVCGEN_CMPT_TMPL_LIST' ) AND fv.lookup_code = h.tmpl_code || '' " +
             ") tmpl_code_meaning FROM dsgc_svcgen_obj t left join dsgc_svcgen_tmpl p on t.obj_code = p.serv_no left join dsgc_services s " +
-            "on t.serv_no = s.serv_no left join dsgc_svcgen_files_header h on t.obj_code = h.serv_no left join dsgc_svcgen_vc v " +
-            "on h.vid = v.vid AND p.is_profile = 'N' AND h.is_enable  = 'Y' ";
+            "on t.serv_no = s.serv_no left join dsgc_svcgen_files_header h on t.obj_code = h.serv_no and h.is_enable = 'Y' left join dsgc_svcgen_vc v " +
+            "on h.vid = v.vid AND p.is_profile = 'N' ";
 
     private String objId;
     private String objType;
