@@ -158,7 +158,7 @@ public class EsbHomeService {
         if(todayV != null && todayV.containsKey("value")){
             esbVisitTotal.setDataAdd(Integer.parseInt(String.valueOf(todayV.get("value"))));
         }else {
-            failTotal.setDataAdd(0);
+            esbVisitTotal.setDataAdd(0);
         }
        // esbVisitTotal.setDataAdd(todayV.getValue());
         if(todayV !=null && todayV.containsKey("value")&& yestodayV !=null && yestodayV.containsKey("value")){
@@ -174,7 +174,7 @@ public class EsbHomeService {
         if(totalV != null && totalV.containsKey("value")){
             esbVisitTotal.setTotal(Integer.parseInt(String.valueOf(totalV.get("value"))));
         }else {
-            failTotal.setTotal(0);
+            esbVisitTotal.setTotal(0);
         }
         result.put("esbVisitTotal",esbVisitTotal);
         return result;

@@ -39,8 +39,8 @@ public class ConsumersDao {
                     "                  from DSGC_consumer_users cu, dsgc_user u " +
                     "                 where cu.user_id = u.user_id " +
                     "                 group by cu.csm_code) t " +
-                    "         where t.csm_code(+) = cnt.csm_code) " +
-                    " WHERE 1 = 1 order by creationDate desc ");
+                    "         where t.csm_code(+) = cnt.csm_code) g " +
+                    " WHERE 1 = 1 ");
         }
         if("mysql".equals(dbType)){
             strSql = new StringBuffer("SELECT * FROM( SELECT\n" +
@@ -64,7 +64,7 @@ public class ConsumersDao {
                     "cu.csm_code \n" +
                     ") t on\n" +
                     "t.csm_code = cnt.csm_code \n" +
-                    ") g WHERE 1 = 1 order by creation_date desc ");
+                    ") g WHERE 1 = 1 ");
 
         }
 
@@ -84,6 +84,7 @@ public class ConsumersDao {
         if(!"ALL".equals(commonReqBean.getQueryType()) && commonReqBean.getQueryType() != null){
             strSql.append(" and upper(deploy_env) like '%"+commonReqBean.getQueryType().toUpperCase()+"%' ");
         }
+        strSql.append(" order by g.creationDate desc ");
         mq.sql(strSql.toString());
         return mq.doPageQuery(pageIndex,pageSize,DSGCConsumerEntities.class);
     }
