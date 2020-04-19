@@ -180,10 +180,10 @@ public class ApiHomeDao {
     }
 
     //查找访问量
-    public ApiHomeHisto getTotalV(){
-        return sw.buildQuery().sql("SELECT SUM(T.TOTAL_TIMES) as value FROM rp_api_year t ").doQueryFirst(ApiHomeHisto.class);
+    public Map<String, Object> getTotalV(){
+        return sw.buildQuery().sql("SELECT SUM(T.TOTAL_TIMES) as value FROM rp_api_year t ").doQueryFirst();
     }
-    public ApiHomeHisto getTodyTotalV(){
+    public Map<String, Object> getTodyTotalV(){
         String sql = null;
         if("oracle".equals(dbType)) {
            sql = "SELECT SUM(T.TOTAL_TIMES) as value FROM rp_api_day t where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd')";
@@ -191,9 +191,9 @@ public class ApiHomeDao {
         if ("mysql".equals(dbType)){
             sql ="SELECT SUM(T.TOTAL_TIMES) as value FROM rp_api_day t where str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d'),'%Y-%m-%d')";
         }
-        return sw.buildQuery().sql(sql).doQueryFirst(ApiHomeHisto.class);
+        return sw.buildQuery().sql(sql).doQueryFirst();
     }
-    public ApiHomeHisto getYestodayTotalV(){
+    public Map<String, Object> getYestodayTotalV(){
         String sql = null;
         if("oracle".equals(dbType)) {
           sql = "SELECT SUM(T.TOTAL_TIMES) as value FROM rp_api_day t WHERE  to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate-1,'yyyy-mm-dd'),'yyyy-mm-dd')";
@@ -201,9 +201,10 @@ public class ApiHomeDao {
         if ("mysql".equals(dbType)){
             sql = "SELECT SUM(T.TOTAL_TIMES) as value FROM rp_api_day t WHERE  str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP-1,'%Y-%m-%d'),'%Y-%m-%d')";
         }
-        return sw.buildQuery().sql(sql).doQueryFirst(ApiHomeHisto.class);
+        return sw.buildQuery().sql(sql).doQueryFirst();
     }
-    public ApiHomeHisto getLastWeekTotalV(){
+    //ApiHomeHisto
+    public Map<String, Object> getLastWeekTotalV(){
         String sql = null;
         if("oracle".equals(dbType)) {
             sql = "SELECT SUM(T.TOTAL_TIMES) as value FROM rp_api_day  t WHERE to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')>=TRUNC(NEXT_DAY(SYSDATE-7,1)-6) and  to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')<=TRUNC(NEXT_DAY(SYSDATE-7,1))";
@@ -211,10 +212,10 @@ public class ApiHomeDao {
         if ("mysql".equals(dbType)){
             sql = "SELECT SUM(T.TOTAL_TIMES) as value FROM rp_api_day  t WHERE str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')>=DATE_FORMAT(date_sub(CURRENT_TIMESTAMP-7,interval+1 day)-6,'%Y-%m-%d %H:%i:%s') and  str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')<=DATE_FORMAT(date_sub(CURRENT_TIMESTAMP-7,interval+1 day),'%Y-%m-%d %H:%i:%s')";
         }
-        return sw.buildQuery().sql(sql).doQueryFirst(ApiHomeHisto.class);
+        return sw.buildQuery().sql(sql).doQueryFirst();
 
     }
-    public ApiHomeHisto getNowWeekTotalV(){
+    public Map<String, Object> getNowWeekTotalV(){
         String sql = null;
         if("oracle".equals(dbType)) {
             sql = " SELECT SUM(T.TOTAL_TIMES) as value FROM rp_api_day  t WHERE to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')>=TRUNC(NEXT_DAY(SYSDATE,1)-6) and  to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')<=TRUNC(NEXT_DAY(SYSDATE,1))";
@@ -222,7 +223,7 @@ public class ApiHomeDao {
         if ("mysql".equals(dbType)){
             sql = " SELECT SUM(T.TOTAL_TIMES) as value FROM rp_api_day  t WHERE str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')>=DATE_FORMAT(date_sub(CURRENT_TIMESTAMP,interval+1 day)-6,'%Y-%m-%d %H:%i:%s') and  str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')<=DATE_FORMAT(date_sub(CURRENT_TIMESTAMP,interval+1 day),'%Y-%m-%d %H:%i:%s')";
         }
-        return sw.buildQuery().sql(sql).doQueryFirst(ApiHomeHisto.class);
+        return sw.buildQuery().sql(sql).doQueryFirst();
 
     }
 
