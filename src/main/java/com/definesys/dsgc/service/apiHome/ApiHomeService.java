@@ -29,6 +29,61 @@ public class ApiHomeService {
 //获取api首页卡片
 
     public Map<String,Object> queryCardsData(){
+//        Map<String,Object> result=new HashMap<String,Object>();
+//        //获取上周总数，获取这周总数，获取昨天总数，获取今天总数; API  应用， 用户  api访问量
+//        ApiHomeCard apiTotal=new ApiHomeCard();
+//        ApiHomeHisto lastWeekA=apiHomeDao.getLastWeekTotalA();
+//        ApiHomeHisto nowWeekA=apiHomeDao.getNowWeekTotalA();
+//        ApiHomeHisto todayA=apiHomeDao.getTodyTotalA();
+//        ApiHomeHisto yestodayA=apiHomeDao.getYestodayTotalA();
+//        ApiHomeHisto totalA=apiHomeDao.getTotalA();
+//        apiTotal.setDataAdd(todayA.getValue());
+//        apiTotal.setDayRate(rate(todayA.getValue(),yestodayA.getValue()));
+//        apiTotal.setTotal(totalA.getValue());
+//        apiTotal.setWeekRate(rate(nowWeekA.getValue(),lastWeekA.getValue()));
+//        result.put("apiTotal",apiTotal);
+//        ApiHomeCard sysTotal=new ApiHomeCard();
+//        ApiHomeHisto lastWeekE=apiHomeDao.getLastWeekTotalE();
+//        ApiHomeHisto nowWeekE=apiHomeDao.getNowWeekTotalE();
+//        ApiHomeHisto todayE=apiHomeDao.getTodyTotalE();
+//        ApiHomeHisto yestodayE=apiHomeDao.getYestodayTotalE();
+//        ApiHomeHisto totalE=apiHomeDao.getTotalE();
+//        sysTotal.setDataAdd(todayE.getValue());
+//        sysTotal.setDayRate(rate(todayE.getValue(),yestodayE.getValue()));
+//        sysTotal.setTotal(totalE.getValue());
+//        sysTotal.setWeekRate(rate(nowWeekE.getValue(),lastWeekE.getValue()));
+//        result.put("sysTotal",sysTotal);
+//        ApiHomeCard userTotal=new ApiHomeCard();
+//        ApiHomeHisto lastWeekU=apiHomeDao.getLastWeekTotalU();
+//        ApiHomeHisto nowWeekU=apiHomeDao.getNowWeekTotalU();
+//        ApiHomeHisto todayU=apiHomeDao.getTodyTotalU();
+//        ApiHomeHisto yestodayU=apiHomeDao.getYestodayTotalU();
+//        ApiHomeHisto totalU=apiHomeDao.getTotalU();
+//        userTotal.setDataAdd(todayU.getValue());
+//        userTotal.setDayRate(rate(todayU.getValue(),yestodayU.getValue()));
+//        userTotal.setTotal(totalU.getValue());
+//        userTotal.setWeekRate(rate(nowWeekU.getValue(),lastWeekU.getValue()));
+//        result.put("userTotal",userTotal);
+//        //TODO
+//        ApiHomeCard apiVisitTotal=new ApiHomeCard();
+//        ApiHomeHisto lastWeekV=apiHomeDao.getLastWeekTotalV();
+//        lastWeekV=lastWeekV==null?new ApiHomeHisto():lastWeekV;
+//        ApiHomeHisto nowWeekV=apiHomeDao.getNowWeekTotalV();
+//        nowWeekV=nowWeekV==null?new ApiHomeHisto():nowWeekV;
+//        ApiHomeHisto todayV=apiHomeDao.getTodyTotalV();
+//        todayV=todayV==null?new ApiHomeHisto():todayV;
+//        ApiHomeHisto yestodayV=apiHomeDao.getYestodayTotalV();
+//        yestodayV=yestodayV==null?new ApiHomeHisto():yestodayV;
+//        ApiHomeHisto totalV=apiHomeDao.getTotalV();
+//        totalV=totalV==null?new ApiHomeHisto():totalV;
+//        apiVisitTotal.setDataAdd(todayV.getValue());
+//        apiVisitTotal.setDayRate(rate(todayV.getValue(),yestodayV.getValue()));
+//        apiVisitTotal.setTotal(totalV.getValue());
+//        apiVisitTotal.setWeekRate(rate(nowWeekV.getValue(),lastWeekV.getValue()));
+//        result.put("apiVisitTotal",apiVisitTotal);
+//        return result;
+
+
         Map<String,Object> result=new HashMap<String,Object>();
         //获取上周总数，获取这周总数，获取昨天总数，获取今天总数; API  应用， 用户  api访问量
         ApiHomeCard apiTotal=new ApiHomeCard();
@@ -66,22 +121,46 @@ public class ApiHomeService {
         result.put("userTotal",userTotal);
         //TODO
         ApiHomeCard apiVisitTotal=new ApiHomeCard();
-        ApiHomeHisto lastWeekV=apiHomeDao.getLastWeekTotalV();
-        lastWeekV=lastWeekV==null?new ApiHomeHisto():lastWeekV;
-        ApiHomeHisto nowWeekV=apiHomeDao.getNowWeekTotalV();
-        nowWeekV=nowWeekV==null?new ApiHomeHisto():nowWeekV;
-        ApiHomeHisto todayV=apiHomeDao.getTodyTotalV();
-        todayV=todayV==null?new ApiHomeHisto():todayV;
-        ApiHomeHisto yestodayV=apiHomeDao.getYestodayTotalV();
-        yestodayV=yestodayV==null?new ApiHomeHisto():yestodayV;
-        ApiHomeHisto totalV=apiHomeDao.getTotalV();
-        totalV=totalV==null?new ApiHomeHisto():totalV;
-        apiVisitTotal.setDataAdd(todayV.getValue());
-        apiVisitTotal.setDayRate(rate(todayV.getValue(),yestodayV.getValue()));
-        apiVisitTotal.setTotal(totalV.getValue());
-        apiVisitTotal.setWeekRate(rate(nowWeekV.getValue(),lastWeekV.getValue()));
+        Map<String,Object> lastWeekV=apiHomeDao.getLastWeekTotalV();
+        Map<String,Object> nowWeekV=apiHomeDao.getNowWeekTotalV();
+        if(nowWeekV !=null && nowWeekV.containsKey("value")&& lastWeekV !=null && lastWeekV.containsKey("value")){
+            apiVisitTotal.setWeekRate(rate(Integer.parseInt(String.valueOf(nowWeekV.get("value"))),Integer.parseInt(String.valueOf(lastWeekV.get("value")))));
+        }else if((nowWeekV ==null || !nowWeekV.containsKey("value"))&& lastWeekV !=null && lastWeekV.containsKey("value")){
+            apiVisitTotal.setWeekRate(rate(Integer.parseInt(String.valueOf(nowWeekV.get("value"))),0));
+        }else if(nowWeekV !=null && nowWeekV.containsKey("value")&& (lastWeekV ==null || !lastWeekV.containsKey("value"))){
+            apiVisitTotal.setWeekRate(rate(0,Integer.parseInt(String.valueOf(lastWeekV.get("value")))));
+        }
+        else {
+            apiVisitTotal.setWeekRate(rate(0,0));
+        }
+
+        Map<String,Object> todayV=apiHomeDao.getTodyTotalV();
+        Map<String,Object> yestodayV=apiHomeDao.getYestodayTotalV();
+        if(todayV!=null && todayV.containsKey("value")){
+            apiVisitTotal.setDataAdd(Integer.parseInt(String.valueOf(todayV.get("value"))));
+        }else {
+            apiVisitTotal.setDataAdd(0);
+        }
+        if(todayV !=null && todayV.containsKey("value")&& yestodayV !=null && yestodayV.containsKey("value")){
+            apiVisitTotal.setDayRate(rate(Integer.parseInt(String.valueOf(todayV.get("value"))),Integer.parseInt(String.valueOf(yestodayV.get("value")))));
+        }else if((todayV ==null || !todayV.containsKey("value"))&& yestodayV !=null && yestodayV.containsKey("value")){
+            apiVisitTotal.setDayRate(rate(Integer.parseInt(String.valueOf(todayV.get("value"))),0));
+        }else if(todayV !=null && todayV.containsKey("value")&& (yestodayV ==null || !yestodayV.containsKey("value"))){
+            apiVisitTotal.setDayRate(rate(0,Integer.parseInt(String.valueOf(yestodayV.get("value")))));
+        }
+        else {
+            apiVisitTotal.setDayRate(rate(0,0));
+        }
+
+        Map<String,Object> totalV=apiHomeDao.getTotalV();
+        if(totalV!=null && totalV.containsKey("value")){
+            apiVisitTotal.setTotal(Integer.parseInt(String.valueOf(totalV.get("value"))));
+        }else {
+            apiVisitTotal.setTotal(0);
+        }
         result.put("apiVisitTotal",apiVisitTotal);
         return result;
+
     }
 
     //获取Api访问排序柱状图数据

@@ -60,41 +60,126 @@ public class EsbHomeService {
         sysTotal.setWeekRate(rate(nowWeekE.getValue(),lastWeekE.getValue()));
         result.put("sysTotal",sysTotal);
 
+//        EsbHomeCard failTotal=new EsbHomeCard();
+//        EsbHomeHisto lastWeekF= esbHomeDao.getLastWeekTotalF();
+//        lastWeekF=lastWeekF==null?new EsbHomeHisto():lastWeekF;
+//        EsbHomeHisto nowWeekF= esbHomeDao.getNowWeekTotalF();
+//        nowWeekF=nowWeekF==null?new EsbHomeHisto():nowWeekF;
+//        EsbHomeHisto todayF= esbHomeDao.getTodyTotalF();
+//        todayF=todayF==null?new EsbHomeHisto():todayF;
+//        EsbHomeHisto yestodayF= esbHomeDao.getYestodayTotalF();
+//        yestodayF=yestodayF==null?new EsbHomeHisto():yestodayF;
+//        EsbHomeHisto totalF= esbHomeDao.getTotalF();
+//        totalF=totalF==null?new EsbHomeHisto():totalF;
+//        failTotal.setDataAdd(todayF.getValue());
+//        failTotal.setDayRate(rate(todayF.getValue(),yestodayF.getValue()));
+//        failTotal.setTotal(totalF.getValue());
+//        failTotal.setWeekRate(rate(nowWeekF.getValue(),lastWeekF.getValue()));
+//        result.put("failTotal",failTotal);
+//
+//        EsbHomeCard esbVisitTotal=new EsbHomeCard();
+//        EsbHomeHisto lastWeekV= esbHomeDao.getLastWeekTotalV();
+//        lastWeekV=lastWeekV==null?new EsbHomeHisto():lastWeekV;
+//        EsbHomeHisto nowWeekV= esbHomeDao.getNowWeekTotalV();
+//        nowWeekV=nowWeekV==null?new EsbHomeHisto():nowWeekV;
+//        EsbHomeHisto todayV= esbHomeDao.getTodyTotalV();
+//        todayV=todayV==null?new EsbHomeHisto():todayV;
+//        EsbHomeHisto yestodayV= esbHomeDao.getYestodayTotalV();
+//        yestodayV=yestodayV==null?new EsbHomeHisto():yestodayV;
+//        EsbHomeHisto totalV= esbHomeDao.getTotalV();
+//        totalV=totalV==null?new EsbHomeHisto():totalV;
+//        esbVisitTotal.setDataAdd(todayV.getValue());
+//        esbVisitTotal.setDayRate(rate(todayV.getValue(),yestodayV.getValue()));
+//        esbVisitTotal.setTotal(totalV.getValue());
+//        esbVisitTotal.setWeekRate(rate(nowWeekV.getValue(),lastWeekV.getValue()));
+//        result.put("esbVisitTotal",esbVisitTotal);
+
+
+
+
         EsbHomeCard failTotal=new EsbHomeCard();
-        EsbHomeHisto lastWeekF= esbHomeDao.getLastWeekTotalF();
-        lastWeekF=lastWeekF==null?new EsbHomeHisto():lastWeekF;
-        EsbHomeHisto nowWeekF= esbHomeDao.getNowWeekTotalF();
-        nowWeekF=nowWeekF==null?new EsbHomeHisto():nowWeekF;
-        EsbHomeHisto todayF= esbHomeDao.getTodyTotalF();
-        todayF=todayF==null?new EsbHomeHisto():todayF;
-        EsbHomeHisto yestodayF= esbHomeDao.getYestodayTotalF();
-        yestodayF=yestodayF==null?new EsbHomeHisto():yestodayF;
-        EsbHomeHisto totalF= esbHomeDao.getTotalF();
-        totalF=totalF==null?new EsbHomeHisto():totalF;
-        failTotal.setDataAdd(todayF.getValue());
-        failTotal.setDayRate(rate(todayF.getValue(),yestodayF.getValue()));
-        failTotal.setTotal(totalF.getValue());
-        failTotal.setWeekRate(rate(nowWeekF.getValue(),lastWeekF.getValue()));
+
+        Map<String,Object> lastWeekF = esbHomeDao.getLastWeekTotalF();
+        Map<String,Object> nowWeekF= esbHomeDao.getNowWeekTotalF();
+        if(lastWeekF !=null && lastWeekF.containsKey("value")&& nowWeekF !=null && nowWeekF.containsKey("value")){
+            failTotal.setWeekRate(rate(Integer.parseInt(String.valueOf(nowWeekF.get("value"))),Integer.parseInt(String.valueOf(lastWeekF.get("value")))));
+        }else if((lastWeekF ==null || !lastWeekF.containsKey("value"))&& nowWeekF !=null && nowWeekF.containsKey("value")){
+            failTotal.setWeekRate(rate(Integer.parseInt(String.valueOf(nowWeekF.get("value"))),0));
+        }else if(lastWeekF !=null && lastWeekF.containsKey("value")&& (nowWeekF ==null || !nowWeekF.containsKey("value"))){
+            failTotal.setWeekRate(rate(0,Integer.parseInt(String.valueOf(lastWeekF.get("value")))));
+        }
+        else {
+            failTotal.setWeekRate(rate(0,0));
+        }
+        Map<String,Object> todayF= esbHomeDao.getTodyTotalF();
+        Map<String,Object> yestodayF= esbHomeDao.getYestodayTotalF();
+        if(todayF!=null && todayF.containsKey("value")){
+            failTotal.setDataAdd(Integer.parseInt(String.valueOf(todayF.get("value"))));
+        }else {
+            failTotal.setDataAdd(0);
+        }
+        if(todayF !=null && todayF.containsKey("value")&& yestodayF !=null && yestodayF.containsKey("value")){
+            failTotal.setDayRate(rate(Integer.parseInt(String.valueOf(todayF.get("value"))),Integer.parseInt(String.valueOf(yestodayF.get("value")))));
+        }else if((todayF ==null || !todayF.containsKey("value"))&& yestodayF !=null && yestodayF.containsKey("value")){
+            failTotal.setDayRate(rate(Integer.parseInt(String.valueOf(todayF.get("value"))),0));
+        }else if(todayF !=null && todayF.containsKey("value")&& (yestodayF ==null || !yestodayF.containsKey("value"))){
+            failTotal.setDayRate(rate(0,Integer.parseInt(String.valueOf(yestodayF.get("value")))));
+        }
+        else {
+            failTotal.setDayRate(rate(0,0));
+        }
+
+        Map<String, Object> totalF= esbHomeDao.getTotalF();
+        if(totalF != null && totalF.containsKey("value")){
+            failTotal.setTotal(Integer.parseInt(String.valueOf(totalF.get("value"))));
+        }else {
+            failTotal.setTotal(0);
+        }
         result.put("failTotal",failTotal);
         //TODO
         EsbHomeCard esbVisitTotal=new EsbHomeCard();
-        EsbHomeHisto lastWeekV= esbHomeDao.getLastWeekTotalV();
-        lastWeekV=lastWeekV==null?new EsbHomeHisto():lastWeekV;
-        EsbHomeHisto nowWeekV= esbHomeDao.getNowWeekTotalV();
-        nowWeekV=nowWeekV==null?new EsbHomeHisto():nowWeekV;
-        EsbHomeHisto todayV= esbHomeDao.getTodyTotalV();
-        todayV=todayV==null?new EsbHomeHisto():todayV;
-        EsbHomeHisto yestodayV= esbHomeDao.getYestodayTotalV();
-        yestodayV=yestodayV==null?new EsbHomeHisto():yestodayV;
-        EsbHomeHisto totalV= esbHomeDao.getTotalV();
-        totalV=totalV==null?new EsbHomeHisto():totalV;
-        esbVisitTotal.setDataAdd(todayV.getValue());
-        esbVisitTotal.setDayRate(rate(todayV.getValue(),yestodayV.getValue()));
-        esbVisitTotal.setTotal(totalV.getValue());
-        esbVisitTotal.setWeekRate(rate(nowWeekV.getValue(),lastWeekV.getValue()));
+        Map<String, Object> lastWeekV= esbHomeDao.getLastWeekTotalV();
+        Map<String, Object> nowWeekV= esbHomeDao.getNowWeekTotalV();
+        if(nowWeekV !=null && nowWeekV.containsKey("value")&& lastWeekV !=null && lastWeekV.containsKey("value")){
+            esbVisitTotal.setWeekRate(rate(Integer.parseInt(String.valueOf(nowWeekV.get("value"))),Integer.parseInt(String.valueOf(lastWeekV.get("value")))));
+        }else if((nowWeekV ==null || !nowWeekV.containsKey("value"))&& lastWeekV !=null && lastWeekV.containsKey("value")){
+            esbVisitTotal.setWeekRate(rate(Integer.parseInt(String.valueOf(nowWeekV.get("value"))),0));
+        }else if(nowWeekV !=null && nowWeekV.containsKey("value")&& (lastWeekV ==null || !lastWeekV.containsKey("value"))){
+            esbVisitTotal.setWeekRate(rate(0,Integer.parseInt(String.valueOf(lastWeekV.get("value")))));
+        }
+        else {
+            esbVisitTotal.setWeekRate(rate(0,0));
+        }
+
+        Map<String, Object> todayV= esbHomeDao.getTodyTotalV();
+        Map<String, Object> yestodayV= esbHomeDao.getYestodayTotalV();
+        Map<String, Object> totalV= esbHomeDao.getTotalV();
+
+        if(todayV != null && todayV.containsKey("value")){
+            esbVisitTotal.setDataAdd(Integer.parseInt(String.valueOf(todayV.get("value"))));
+        }else {
+            failTotal.setDataAdd(0);
+        }
+       // esbVisitTotal.setDataAdd(todayV.getValue());
+        if(todayV !=null && todayV.containsKey("value")&& yestodayV !=null && yestodayV.containsKey("value")){
+            esbVisitTotal.setDayRate(rate(Integer.parseInt(String.valueOf(todayV.get("value"))),Integer.parseInt(String.valueOf(yestodayV.get("value")))));
+        }else if((todayV ==null || !todayV.containsKey("value"))&& yestodayV !=null && yestodayV.containsKey("value")){
+            esbVisitTotal.setDayRate(rate(Integer.parseInt(String.valueOf(todayV.get("value"))),0));
+        }else if(todayV !=null && todayV.containsKey("value")&& (yestodayV ==null || !yestodayV.containsKey("value"))){
+            esbVisitTotal.setDayRate(rate(0,Integer.parseInt(String.valueOf(yestodayV.get("value")))));
+        }
+        else {
+            esbVisitTotal.setDayRate(rate(0,0));
+        }
+        if(totalV != null && totalV.containsKey("value")){
+            esbVisitTotal.setTotal(Integer.parseInt(String.valueOf(totalV.get("value"))));
+        }else {
+            failTotal.setTotal(0);
+        }
         result.put("esbVisitTotal",esbVisitTotal);
         return result;
     }
+
 
     //获取Api访问排序柱状图数据
     public List<EsbHomeHisto> querySortVist( String limitTime){
