@@ -48,7 +48,10 @@ public class ApiRouteService {
                         item.setEnvName(item.getEnvName() + valueItem.getEnvName()+",");
                     }
                     String envName=item.getEnvName();
-                    item.setEnvName(envName.trim().substring(0,envName.length()-1));
+                    if(envName.length()> 0 ){
+                        item.setEnvName(envName.trim().substring(0,envName.length()-1));
+                    }
+
                 }
             }
         }
