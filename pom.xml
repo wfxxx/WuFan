@@ -108,7 +108,7 @@
             <groupId>dsgc.common</groupId>
             <artifactId>common</artifactId>
             <scope>system</scope>
-            <version>20200217</version>
+                <version>20200217</version>
             <systemPath>${project.basedir}/lib/com.definesys.dsgc.common.jar</systemPath>
         </dependency>
         <dependency>
@@ -176,7 +176,10 @@
                         WEB-INF/lib/jaxen*.jar,
                         WEB-INF/lib/tomcat*.jar,
                         WEB-INF/lib/xml-apis*.jar,
-                        WEB-INF/lib/hibernate-validator*.jar
+                        WEB-INF/lib/hibernate-validator*.jar,
+                        WEB-INF/lib/log4j*.jar,
+                        WEB-INF/lib/logback*.jar,
+                        WEB-INF/lib/slf4j-api-*.jar
                     </packagingExcludes>
                     <webResources>
                         <resource>
