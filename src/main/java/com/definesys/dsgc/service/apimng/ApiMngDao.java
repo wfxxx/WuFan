@@ -81,9 +81,9 @@ public class  ApiMngDao {
         if ("SystemLeader".equals(userRole)) {
             if (sysCodeList.size() != 0) {
                 if (sysCodeList.size() <= 1) {
-                    query.eq("appCode", sysCodeList.get(0));
+                    query.eq("sysCode", sysCodeList.get(0));
                 } else {
-                    query.in("appCode", sysCodeList);
+                    query.in("sysCode", sysCodeList);
                 }
             } else {
                 return new PageQueryResult<>();

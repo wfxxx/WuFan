@@ -65,7 +65,7 @@ public class EsbCockpitDao {
                                 "         from rp_serv_day t \n" +
                                 "         left join  dsgc_services s on s.serv_no=t.serv_no\n" +
                                 "         left join  dsgc_system_entities e on e.sys_code=s.subordinate_system\n" +
-                                "           where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd') between #startDate  and #endDate\n" +
+                                "           where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd') between #startDate  and #endDate  and s.serv_no is not null\n" +
                                 "          group by e.sys_code,e.sys_name  \n" +
                                 "         ) where rownum<8 order by value1 desc  ")
                         .setVar("startDate",startDate)

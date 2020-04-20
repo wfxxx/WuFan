@@ -144,9 +144,22 @@ public class UserHelper {
      * 获取接口所属系统
      * @return
      */
+//    private String getServSystemCode(String servNo){
+//        String sysCode = null;
+//        Map<String,Object> servInfoRes = this.sw.buildQuery().sql("select t.subordinate_system SYS_CODE from dsgc_services t where t.serv_no = #servNo").setVar("servNo",servNo).doQueryFirst();
+//        if (servInfoRes != null) {
+//            sysCode = (String)servInfoRes.get("SYS_CODE");
+//        }
+//        return sysCode;
+//    }
+
+    /**
+     * 获取接口所属系统
+     * @return
+     */
     private String getServSystemCode(String servNo){
         String sysCode = null;
-        Map<String,Object> servInfoRes = this.sw.buildQuery().sql("select t.subordinate_system SYS_CODE from dsgc_services t where t.serv_no = #servNo").setVar("servNo",servNo).doQueryFirst();
+        Map<String,Object> servInfoRes = this.sw.buildQuery().sql("select sys_code from dsgc_svcgen_obj where obj_code = #servNo").setVar("servNo",servNo).doQueryFirst();
         if (servInfoRes != null) {
             sysCode = (String)servInfoRes.get("SYS_CODE");
         }

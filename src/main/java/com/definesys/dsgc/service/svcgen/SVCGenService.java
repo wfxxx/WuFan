@@ -287,11 +287,18 @@ public class SVCGenService {
         } else {
             if (uh.isSystemMaintainer()) {
                 //根据dpId查询服务所属系统
-                Map<String,Object> servSysRes = this.sw.buildQuery().sql("select s.subordinate_system SYS_CODE from dsgc_svcgen_tmpl t, dsgc_svcgen_deploy_profiles d ,dsgc_services s\n" +
-                        "where d.deve_id = t.deve_id\n" +
-                        " and t.is_profile = 'Y'\n" +
-                        " and t.serv_no = s.serv_no\n" +
-                        " and d.dp_id = #dpId").setVar("dpId",dpId).doQueryFirst();
+//                Map<String,Object> servSysRes = this.sw.buildQuery().sql("select s.subordinate_system SYS_CODE from dsgc_svcgen_tmpl t, dsgc_svcgen_deploy_profiles d ,dsgc_services s\n" +
+//                        "where d.deve_id = t.deve_id\n" +
+//                        " and t.is_profile = 'Y'\n" +
+//                        " and t.serv_no = s.serv_no\n" +
+//                        " and d.dp_id = #dpId").setVar("dpId",dpId).doQueryFirst();
+
+                Map<String,Object> servSysRes = this.sw.buildQuery().sql("select s.sys_code\n" +
+                        "  from dsgc_svcgen_tmpl t, dsgc_svcgen_deploy_profiles d, dsgc_svcgen_obj s\n" +
+                        " where d.deve_id = t.deve_id\n" +
+                        "   and t.is_profile = 'Y'\n" +
+                        "   and t.serv_no = s.obj_code\n" +
+                        "   and d.dp_id = #dpId").setVar("dpId",dpId).doQueryFirst();
                 if (servSysRes != null) {
                     String sysCode = (String)servSysRes.get("SYS_CODE");
                     if (uh.isSpecifySystemMaintainer(sysCode)) {
@@ -305,9 +312,10 @@ public class SVCGenService {
 
 
     private String getUserName(String uid) {
-        if (this.userMap.isEmpty()) {
-            this.initUserMap();
-        }
+//        if (this.userMap.isEmpty()) {
+//
+//        }
+        this.initUserMap();
         DSGCUser userInfo = this.userMap.get(uid);
         if (userInfo == null) {
             return uid;

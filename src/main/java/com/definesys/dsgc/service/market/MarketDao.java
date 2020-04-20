@@ -197,7 +197,7 @@ public class MarketDao {
         MpaasQuery query=sw.buildQuery().sql("select * from (select t.api_id servId,t.api_code servNo,t.api_name servName,e.sys_name fromSys,t.api_desc servDesc,\n" +
                 "t.market_category marketCategory,t.market_stat marketStat,t.creation_date creationDate ,(case when r.total_times >1 then r.total_times  else 0 end )\n" +
                 "totalTimes from DSGC_APIS t \n" +
-                "left join rp_serv_total r   on t.api_code=r.serv_no\n" +
+                "left join rp_api_year r   on t.api_code=r.serv_no\n" +
                 " left join dsgc_system_entities e   on t.app_code=e.sys_code) s ");
 
         if(mapVlue.get("searchValue")!=null){
