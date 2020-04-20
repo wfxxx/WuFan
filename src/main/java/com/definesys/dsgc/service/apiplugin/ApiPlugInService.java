@@ -43,7 +43,9 @@ public class ApiPlugInService {
                         item.setDevName(item.getDevName() + valueItem.getEnvName()+",");
                     }
                     String envName=item.getDevName();
-                    item.setDevName(envName.trim().substring(0,envName.length()-1));
+                    if(envName.length()>0){
+                        item.setDevName(envName.trim().substring(0,envName.length()-1));
+                    }
                 }
             }
         }

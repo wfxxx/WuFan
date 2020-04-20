@@ -66,7 +66,7 @@ public class ApiCockpitDao {
                                 "                                 from RP_API_DAY t \n" +
                                 "                                 left join  dsgc_apis a on a.api_code=t.serv_no\n" +
                                 "                                 left join  dsgc_system_entities e on e.sys_code=a.app_code\n" +
-                                "                                   where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd') between #startDate  and #endDate\n" +
+                                "                                   where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd') between #startDate  and #endDate  and a.api_code is not null\n" +
                                 "                                  group by e.sys_code,e.sys_name  \n" +
                                 "                                 ) where rownum<8 order by value1 desc  ")
                         .setVar("startDate",startDate)

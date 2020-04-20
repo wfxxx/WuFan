@@ -519,7 +519,7 @@ public class ApiHomeDao {
      public List<ApiHomeHisto> queryTrafficError(){
          String sql = null;
          if("oracle".equals(dbType)) {
-             sql="select to_char(t.creation_date,'hh24:mi') as name,sum(t.total_1xx+t.total_2xx+t.total_3xx+t.total_4xx+t.total_5xx)  over(partition by t.hour) as value from rp_api_hour t " +
+             sql="select to_char(t.creation_date,'hh24:mi') as name,sum(t.total_1xx+t.total_2xx+t.total_3xx+t.total_4xx+t.total_5xx-t.total_200)  over(partition by t.hour) as value from rp_api_hour t " +
                      " where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') order by t.creation_date";
          }
          if ("mysql".equals(dbType)){

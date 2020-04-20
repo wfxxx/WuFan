@@ -101,37 +101,37 @@ public class EsbHomeService {
 
         Map<String,Object> lastWeekF = esbHomeDao.getLastWeekTotalF();
         Map<String,Object> nowWeekF= esbHomeDao.getNowWeekTotalF();
-        if(lastWeekF !=null && lastWeekF.containsKey("value")&& nowWeekF !=null && nowWeekF.containsKey("value")){
-            failTotal.setWeekRate(rate(Integer.parseInt(String.valueOf(nowWeekF.get("value"))),Integer.parseInt(String.valueOf(lastWeekF.get("value")))));
-        }else if((lastWeekF ==null || !lastWeekF.containsKey("value"))&& nowWeekF !=null && nowWeekF.containsKey("value")){
-            failTotal.setWeekRate(rate(Integer.parseInt(String.valueOf(nowWeekF.get("value"))),0));
-        }else if(lastWeekF !=null && lastWeekF.containsKey("value")&& (nowWeekF ==null || !nowWeekF.containsKey("value"))){
-            failTotal.setWeekRate(rate(0,Integer.parseInt(String.valueOf(lastWeekF.get("value")))));
+        if(lastWeekF !=null && lastWeekF.containsKey("VALUE")&& nowWeekF !=null && nowWeekF.containsKey("VALUE")){
+            failTotal.setWeekRate(rate(Integer.parseInt(String.valueOf(nowWeekF.get("VALUE"))),Integer.parseInt(String.valueOf(lastWeekF.get("VALUE")))));
+        }else if((lastWeekF ==null || !lastWeekF.containsKey("VALUE"))&& nowWeekF !=null && nowWeekF.containsKey("VALUE")){
+            failTotal.setWeekRate(rate(Integer.parseInt(String.valueOf(nowWeekF.get("VALUE"))),0));
+        }else if(lastWeekF !=null && lastWeekF.containsKey("VALUE")&& (nowWeekF ==null || !nowWeekF.containsKey("VALUE"))){
+            failTotal.setWeekRate(rate(0,Integer.parseInt(String.valueOf(lastWeekF.get("VALUE")))));
         }
         else {
             failTotal.setWeekRate(rate(0,0));
         }
         Map<String,Object> todayF= esbHomeDao.getTodyTotalF();
         Map<String,Object> yestodayF= esbHomeDao.getYestodayTotalF();
-        if(todayF!=null && todayF.containsKey("value")){
-            failTotal.setDataAdd(Integer.parseInt(String.valueOf(todayF.get("value"))));
+        if(todayF!=null && todayF.containsKey("VALUE")){
+            failTotal.setDataAdd(Integer.parseInt(String.valueOf(todayF.get("VALUE"))));
         }else {
             failTotal.setDataAdd(0);
         }
-        if(todayF !=null && todayF.containsKey("value")&& yestodayF !=null && yestodayF.containsKey("value")){
-            failTotal.setDayRate(rate(Integer.parseInt(String.valueOf(todayF.get("value"))),Integer.parseInt(String.valueOf(yestodayF.get("value")))));
-        }else if((todayF ==null || !todayF.containsKey("value"))&& yestodayF !=null && yestodayF.containsKey("value")){
-            failTotal.setDayRate(rate(Integer.parseInt(String.valueOf(todayF.get("value"))),0));
-        }else if(todayF !=null && todayF.containsKey("value")&& (yestodayF ==null || !yestodayF.containsKey("value"))){
-            failTotal.setDayRate(rate(0,Integer.parseInt(String.valueOf(yestodayF.get("value")))));
+        if(todayF !=null && todayF.containsKey("VALUE")&& yestodayF !=null && yestodayF.containsKey("VALUE")){
+            failTotal.setDayRate(rate(Integer.parseInt(String.valueOf(todayF.get("VALUE"))),Integer.parseInt(String.valueOf(yestodayF.get("VALUE")))));
+        }else if((todayF ==null || !todayF.containsKey("VALUE"))&& yestodayF !=null && yestodayF.containsKey("VALUE")){
+            failTotal.setDayRate(rate(0,Integer.parseInt(String.valueOf(yestodayF.get("VALUE")))));
+        }else if(todayF !=null && todayF.containsKey("VALUE")&& (yestodayF ==null || !yestodayF.containsKey("VALUE"))){
+            failTotal.setDayRate(rate(Integer.parseInt(String.valueOf(todayF.get("VALUE"))),0));
         }
         else {
             failTotal.setDayRate(rate(0,0));
         }
 
         Map<String, Object> totalF= esbHomeDao.getTotalF();
-        if(totalF != null && totalF.containsKey("value")){
-            failTotal.setTotal(Integer.parseInt(String.valueOf(totalF.get("value"))));
+        if(totalF != null && totalF.containsKey("VALUE")){
+            failTotal.setTotal(Integer.parseInt(String.valueOf(totalF.get("VALUE"))));
         }else {
             failTotal.setTotal(0);
         }
@@ -140,12 +140,12 @@ public class EsbHomeService {
         EsbHomeCard esbVisitTotal=new EsbHomeCard();
         Map<String, Object> lastWeekV= esbHomeDao.getLastWeekTotalV();
         Map<String, Object> nowWeekV= esbHomeDao.getNowWeekTotalV();
-        if(nowWeekV !=null && nowWeekV.containsKey("value")&& lastWeekV !=null && lastWeekV.containsKey("value")){
-            esbVisitTotal.setWeekRate(rate(Integer.parseInt(String.valueOf(nowWeekV.get("value"))),Integer.parseInt(String.valueOf(lastWeekV.get("value")))));
-        }else if((nowWeekV ==null || !nowWeekV.containsKey("value"))&& lastWeekV !=null && lastWeekV.containsKey("value")){
-            esbVisitTotal.setWeekRate(rate(Integer.parseInt(String.valueOf(nowWeekV.get("value"))),0));
-        }else if(nowWeekV !=null && nowWeekV.containsKey("value")&& (lastWeekV ==null || !lastWeekV.containsKey("value"))){
-            esbVisitTotal.setWeekRate(rate(0,Integer.parseInt(String.valueOf(lastWeekV.get("value")))));
+        if(nowWeekV !=null && nowWeekV.containsKey("VALUE")&& lastWeekV !=null && lastWeekV.containsKey("VALUE")){
+            esbVisitTotal.setWeekRate(rate(Integer.parseInt(String.valueOf(nowWeekV.get("VALUE"))),Integer.parseInt(String.valueOf(lastWeekV.get("value")))));
+        }else if((nowWeekV ==null || !nowWeekV.containsKey("VALUE"))&& lastWeekV !=null && lastWeekV.containsKey("VALUE")){
+            esbVisitTotal.setWeekRate(rate(0,Integer.parseInt(String.valueOf(lastWeekV.get("VALUE")))));
+        }else if(nowWeekV !=null && nowWeekV.containsKey("VALUE")&& (lastWeekV ==null || !lastWeekV.containsKey("VALUE"))){
+            esbVisitTotal.setWeekRate(rate(Integer.parseInt(String.valueOf(nowWeekV.get("VALUE"))),0));
         }
         else {
             esbVisitTotal.setWeekRate(rate(0,0));
@@ -155,24 +155,24 @@ public class EsbHomeService {
         Map<String, Object> yestodayV= esbHomeDao.getYestodayTotalV();
         Map<String, Object> totalV= esbHomeDao.getTotalV();
 
-        if(todayV != null && todayV.containsKey("value")){
-            esbVisitTotal.setDataAdd(Integer.parseInt(String.valueOf(todayV.get("value"))));
+        if(todayV != null && todayV.containsKey("VALUE")){
+            esbVisitTotal.setDataAdd(Integer.parseInt(String.valueOf(todayV.get("VALUE"))));
         }else {
             esbVisitTotal.setDataAdd(0);
         }
        // esbVisitTotal.setDataAdd(todayV.getValue());
-        if(todayV !=null && todayV.containsKey("value")&& yestodayV !=null && yestodayV.containsKey("value")){
-            esbVisitTotal.setDayRate(rate(Integer.parseInt(String.valueOf(todayV.get("value"))),Integer.parseInt(String.valueOf(yestodayV.get("value")))));
-        }else if((todayV ==null || !todayV.containsKey("value"))&& yestodayV !=null && yestodayV.containsKey("value")){
-            esbVisitTotal.setDayRate(rate(Integer.parseInt(String.valueOf(todayV.get("value"))),0));
-        }else if(todayV !=null && todayV.containsKey("value")&& (yestodayV ==null || !yestodayV.containsKey("value"))){
-            esbVisitTotal.setDayRate(rate(0,Integer.parseInt(String.valueOf(yestodayV.get("value")))));
+        if(todayV !=null && todayV.containsKey("VALUE")&& yestodayV !=null && yestodayV.containsKey("VALUE")){
+            esbVisitTotal.setDayRate(rate(Integer.parseInt(String.valueOf(todayV.get("VALUE"))),Integer.parseInt(String.valueOf(yestodayV.get("value")))));
+        }else if((todayV ==null || !todayV.containsKey("VALUE"))&& yestodayV !=null && yestodayV.containsKey("VALUE")){
+            esbVisitTotal.setDayRate(rate(0,Integer.parseInt(String.valueOf(yestodayV.get("VALUE")))));
+        }else if(todayV !=null && todayV.containsKey("VALUE")&& (yestodayV ==null || !yestodayV.containsKey("VALUE"))){
+            esbVisitTotal.setDayRate(rate(Integer.parseInt(String.valueOf(todayV.get("VALUE"))),0));
         }
         else {
             esbVisitTotal.setDayRate(rate(0,0));
         }
-        if(totalV != null && totalV.containsKey("value")){
-            esbVisitTotal.setTotal(Integer.parseInt(String.valueOf(totalV.get("value"))));
+        if(totalV != null && totalV.containsKey("VALUE")){
+            esbVisitTotal.setTotal(Integer.parseInt(String.valueOf(totalV.get("VALUE"))));
         }else {
             esbVisitTotal.setTotal(0);
         }

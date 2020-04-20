@@ -123,12 +123,12 @@ public class ApiHomeService {
         ApiHomeCard apiVisitTotal=new ApiHomeCard();
         Map<String,Object> lastWeekV=apiHomeDao.getLastWeekTotalV();
         Map<String,Object> nowWeekV=apiHomeDao.getNowWeekTotalV();
-        if(nowWeekV !=null && nowWeekV.containsKey("value")&& lastWeekV !=null && lastWeekV.containsKey("value")){
-            apiVisitTotal.setWeekRate(rate(Integer.parseInt(String.valueOf(nowWeekV.get("value"))),Integer.parseInt(String.valueOf(lastWeekV.get("value")))));
-        }else if((nowWeekV ==null || !nowWeekV.containsKey("value"))&& lastWeekV !=null && lastWeekV.containsKey("value")){
-            apiVisitTotal.setWeekRate(rate(Integer.parseInt(String.valueOf(nowWeekV.get("value"))),0));
-        }else if(nowWeekV !=null && nowWeekV.containsKey("value")&& (lastWeekV ==null || !lastWeekV.containsKey("value"))){
-            apiVisitTotal.setWeekRate(rate(0,Integer.parseInt(String.valueOf(lastWeekV.get("value")))));
+        if(nowWeekV !=null && nowWeekV.containsKey("VALUE")&& lastWeekV !=null && lastWeekV.containsKey("VALUE")){
+            apiVisitTotal.setWeekRate(rate(Integer.parseInt(String.valueOf(nowWeekV.get("VALUE"))),Integer.parseInt(String.valueOf(lastWeekV.get("value")))));
+        }else if((nowWeekV ==null || !nowWeekV.containsKey("VALUE"))&& lastWeekV !=null && lastWeekV.containsKey("VALUE")){
+            apiVisitTotal.setWeekRate(rate(0,Integer.parseInt(String.valueOf(lastWeekV.get("VALUE")))));
+        }else if(nowWeekV !=null && nowWeekV.containsKey("VALUE")&& (lastWeekV ==null || !lastWeekV.containsKey("VALUE"))){
+            apiVisitTotal.setWeekRate(rate(Integer.parseInt(String.valueOf(nowWeekV.get("VALUE"))),0));
         }
         else {
             apiVisitTotal.setWeekRate(rate(0,0));
@@ -136,25 +136,26 @@ public class ApiHomeService {
 
         Map<String,Object> todayV=apiHomeDao.getTodyTotalV();
         Map<String,Object> yestodayV=apiHomeDao.getYestodayTotalV();
-        if(todayV!=null && todayV.containsKey("value")){
-            apiVisitTotal.setDataAdd(Integer.parseInt(String.valueOf(todayV.get("value"))));
+        if(todayV!=null && todayV.containsKey("VALUE")){
+            apiVisitTotal.setDataAdd(Integer.parseInt(String.valueOf(todayV.get("VALUE"))));
         }else {
             apiVisitTotal.setDataAdd(0);
         }
-        if(todayV !=null && todayV.containsKey("value")&& yestodayV !=null && yestodayV.containsKey("value")){
-            apiVisitTotal.setDayRate(rate(Integer.parseInt(String.valueOf(todayV.get("value"))),Integer.parseInt(String.valueOf(yestodayV.get("value")))));
-        }else if((todayV ==null || !todayV.containsKey("value"))&& yestodayV !=null && yestodayV.containsKey("value")){
-            apiVisitTotal.setDayRate(rate(Integer.parseInt(String.valueOf(todayV.get("value"))),0));
-        }else if(todayV !=null && todayV.containsKey("value")&& (yestodayV ==null || !yestodayV.containsKey("value"))){
-            apiVisitTotal.setDayRate(rate(0,Integer.parseInt(String.valueOf(yestodayV.get("value")))));
+        if(todayV !=null && todayV.containsKey("VALUE")&& yestodayV !=null && yestodayV.containsKey("VALUE")){
+            apiVisitTotal.setDayRate(rate(Integer.parseInt(String.valueOf(todayV.get("VALUE"))),Integer.parseInt(String.valueOf(yestodayV.get("VALUE")))));
+        }else if((todayV ==null || !todayV.containsKey("VALUE"))&& yestodayV !=null && yestodayV.containsKey("VALUE")){
+            apiVisitTotal.setDayRate(rate(0,Integer.parseInt(String.valueOf(yestodayV.get("VALUE")))));
+        }else if(todayV !=null && todayV.containsKey("VALUE")&& (yestodayV ==null || !yestodayV.containsKey("VALUE"))){
+            apiVisitTotal.setDayRate(rate(Integer.parseInt(String.valueOf(todayV.get("VALUE"))),0));
+
         }
         else {
             apiVisitTotal.setDayRate(rate(0,0));
         }
 
         Map<String,Object> totalV=apiHomeDao.getTotalV();
-        if(totalV!=null && totalV.containsKey("value")){
-            apiVisitTotal.setTotal(Integer.parseInt(String.valueOf(totalV.get("value"))));
+        if(totalV!=null && totalV.containsKey("VALUE")){
+            apiVisitTotal.setTotal(Integer.parseInt(String.valueOf(totalV.get("VALUE"))));
         }else {
             apiVisitTotal.setTotal(0);
         }
