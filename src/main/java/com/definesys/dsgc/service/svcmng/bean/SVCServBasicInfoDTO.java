@@ -2,10 +2,19 @@ package com.definesys.dsgc.service.svcmng.bean;
 
 public class SVCServBasicInfoDTO {
     private String servNo;
+    private String type;
     private String servName;
     private String subSystem;
     private String servDesc;
     private String shareType;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public String getServNo() {
         return servNo;

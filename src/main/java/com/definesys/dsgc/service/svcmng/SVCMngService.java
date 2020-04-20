@@ -2,6 +2,8 @@ package com.definesys.dsgc.service.svcmng;
 
 
 
+import com.definesys.dsgc.service.apimng.ApiMngDao;
+import com.definesys.dsgc.service.apimng.bean.DSGCApisBean;
 import com.definesys.dsgc.service.bpm.BpmDao;
 import com.definesys.dsgc.service.bpm.BpmService;
 import com.definesys.dsgc.service.bpm.bean.BpmCommonReqBean;
@@ -60,6 +62,8 @@ public class SVCMngService {
     @Autowired
     private UserHelper userHelper;
 
+    @Autowired
+    private ApiMngDao apiMngDao;
 
 
     @Autowired
@@ -343,7 +347,7 @@ public class SVCMngService {
         dsgcService.setShareType(svcServBasicInfo.getShareType());
         dsgcService.setServNo(svcServBasicInfo.getServNo());
         svcMngDao.saveServBasicInfo(dsgcService);
-        completionThread(dsgcService.getServNo());
+        completionThread(dsgcService.getServNo(),svcServBasicInfo.getType());
     }
 
     public List<ServUriDTO> queryServUri(String servNo){
@@ -466,80 +470,138 @@ public class SVCMngService {
             }
 
         }
-        completionThread(vo.getServNo());
+        completionThread(vo.getServNo(),vo.getType());
         return 1;
     }
 
-    public void completionThread(String servNo){
+    public void completionThread(String servNo,String type){
         Runnable myRunnable = new Runnable(){
             public void run(){
-                updateServDataCompletion(servNo);
+                updateServDataCompletion(servNo,type);
             }
         };
         Thread thread = new Thread(myRunnable);
         thread.start();
     }
     @Transactional(rollbackFor = Exception.class)
-    public void updateServDataCompletion(String servNo){
+    public void updateServDataCompletion(String servNo,String type){
         int completion = 0;
-        DSGCService dsgcService = svcMngDao.queryServByServNo(servNo);
-        if(StringUtil.isNotBlank(dsgcService.getServNo())){
-            completion +=10;
-        }
-        if(StringUtil.isNotBlank(dsgcService.getServName())){
-            completion +=10;
-        }
-        if(StringUtil.isNotBlank(dsgcService.getSubordinateSystem())){
-            completion +=10;
-        }
-        if(StringUtil.isNotBlank(dsgcService.getShareType())){
-            completion +=10;
-        }
-        if(StringUtil.isNotBlank(dsgcService.getServDesc())){
-            completion +=10;
-        }
-        List<DSGCServicesUri> uris = svcMngDao.queryServUri(servNo);
-        if(uris != null && uris.size() > 0){
-            List<String> uriTypeList = new ArrayList<>();
-            Iterator<DSGCServicesUri> iterator = uris.iterator();
-            while (iterator.hasNext()){
-                DSGCServicesUri dsgcServicesUri = iterator.next();
-                uriTypeList.add(dsgcServicesUri.getUriType());
+        if("API".equals(type)){
+            DSGCApisBean dsgcApisBean = apiMngDao.queryBasicInfoByApiCode(servNo);
+            if(StringUtil.isNotBlank(dsgcApisBean.getApiCode())){
+                completion +=20;
             }
-            if (uriTypeList.contains("REST")){
+            if(StringUtil.isNotBlank(dsgcApisBean.getApiName())){
+                completion +=20;
+            }
+            if(StringUtil.isNotBlank(dsgcApisBean.getAppCode())){
                 completion +=10;
             }
-            if (uriTypeList.contains("SOAP")){
+            if(StringUtil.isNotBlank(dsgcApisBean.getApiDesc())){
                 completion +=10;
             }
-        }
-        SVCCommonReqBean param = new SVCCommonReqBean();
-        param.setCon0(servNo);
-        param.setQueryType("REQ");
-        List<DSGCPayloadSampleBean> reqSampleBeans = svcMngDao.querySrvPaloadSample(param);
-        List<DSGCPayloadParamsBean> reqSampleParamBeans = svcMngDao.queryServPayloadParam(param);
-        param.setQueryType("RES");
-        List<DSGCPayloadSampleBean> resSampleBeans = svcMngDao.querySrvPaloadSample(param);
-        List<DSGCPayloadParamsBean> resSampleParamBeans = svcMngDao.queryServPayloadParam(param);
-        if(reqSampleBeans.size()>0){
-            completion += 10;
-        }
-        if(reqSampleParamBeans.size()>0){
-            completion +=5;
+            List<com.definesys.dsgc.service.svcmng.bean.DSGCServicesUri> uris = svcMngDao.queryServUri(servNo);
+            if(uris != null && uris.size() > 0){
+                List<String> uriTypeList = new ArrayList<>();
+                Iterator<com.definesys.dsgc.service.svcmng.bean.DSGCServicesUri> iterator = uris.iterator();
+                while (iterator.hasNext()){
+                    com.definesys.dsgc.service.svcmng.bean.DSGCServicesUri dsgcServicesUri = iterator.next();
+                    uriTypeList.add(dsgcServicesUri.getUriType());
+                }
+                if (uriTypeList.contains("REST")){
+                    completion +=10;
+                }
+            }
+            SVCCommonReqBean param = new SVCCommonReqBean();
+            param.setCon0(servNo);
+            param.setQueryType("REQ");
+            List<DSGCPayloadSampleBean> reqSampleBeans = svcMngDao.querySrvPaloadSample(param);
+            List<DSGCPayloadParamsBean> reqSampleParamBeans = svcMngDao.queryServPayloadParam(param);
+            param.setQueryType("RES");
+            List<DSGCPayloadSampleBean> resSampleBeans = svcMngDao.querySrvPaloadSample(param);
+            List<DSGCPayloadParamsBean> resSampleParamBeans = svcMngDao.queryServPayloadParam(param);
+            if(reqSampleBeans.size()>0){
+                completion += 10;
+            }
+            if(reqSampleParamBeans.size()>0){
+                completion +=5;
+
+            }
+            if (resSampleBeans.size() >0){
+                completion += 10;
+            }
+            if(resSampleParamBeans.size()>0){
+                completion +=5;
+
+            }
+
+            DSGCApisBean apisBean = new DSGCApisBean();
+            apisBean.setInfoFull(String.valueOf(completion));
+            apisBean.setApiCode(servNo);
+            apiMngDao.updateApiDataCompletion(apisBean);
 
         }
-        if (resSampleBeans.size() >0){
-            completion += 10;
-        }
-        if(resSampleParamBeans.size()>0){
-            completion +=5;
+        if("ESB".equals(type)){
+            DSGCService dsgcService = svcMngDao.queryServByServNo(servNo);
+            if(StringUtil.isNotBlank(dsgcService.getServNo())){
+                completion +=10;
+            }
+            if(StringUtil.isNotBlank(dsgcService.getServName())){
+                completion +=10;
+            }
+            if(StringUtil.isNotBlank(dsgcService.getSubordinateSystem())){
+                completion +=10;
+            }
+            if(StringUtil.isNotBlank(dsgcService.getShareType())){
+                completion +=10;
+            }
+            if(StringUtil.isNotBlank(dsgcService.getServDesc())){
+                completion +=10;
+            }
+            List<DSGCServicesUri> uris = svcMngDao.queryServUri(servNo);
+            if(uris != null && uris.size() > 0){
+                List<String> uriTypeList = new ArrayList<>();
+                Iterator<DSGCServicesUri> iterator = uris.iterator();
+                while (iterator.hasNext()){
+                    DSGCServicesUri dsgcServicesUri = iterator.next();
+                    uriTypeList.add(dsgcServicesUri.getUriType());
+                }
+                if (uriTypeList.contains("REST")){
+                    completion +=20;
+                }
+                if (uriTypeList.contains("SOAP")){
+                    completion +=20;
+                }
+            }
+            SVCCommonReqBean param = new SVCCommonReqBean();
+            param.setCon0(servNo);
+            param.setQueryType("REQ");
+            List<DSGCPayloadSampleBean> reqSampleBeans = svcMngDao.querySrvPaloadSample(param);
+            List<DSGCPayloadParamsBean> reqSampleParamBeans = svcMngDao.queryServPayloadParam(param);
+            param.setQueryType("RES");
+            List<DSGCPayloadSampleBean> resSampleBeans = svcMngDao.querySrvPaloadSample(param);
+            List<DSGCPayloadParamsBean> resSampleParamBeans = svcMngDao.queryServPayloadParam(param);
+            if(reqSampleBeans.size()>0){
+                completion += 10;
+            }
+            if(reqSampleParamBeans.size()>0){
+                completion +=5;
 
+            }
+            if (resSampleBeans.size() >0){
+                completion += 10;
+            }
+            if(resSampleParamBeans.size()>0){
+                completion +=5;
+
+            }
+
+            DSGCService service = new DSGCService();
+            service.setInfoFull(completion);
+            service.setServNo(servNo);
+            svcMngDao.updateServDataCompletion(service);
         }
 
-        DSGCService service = new DSGCService();
-        service.setInfoFull(completion);
-        service.setServNo(servNo);
-        svcMngDao.updateServDataCompletion(service);
     }
 
     public ReqParamBaseDataDTO queryParamBaseData(SVCCommonReqBean param){
@@ -697,7 +759,7 @@ public class SVCMngService {
                 svcMngDao.addServPayloadParam(paramsBean);
 
             }
-            completionThread(param.getServNo());
+            completionThread(param.getServNo(),param.getType());
 
       //  }
     }

@@ -4,6 +4,7 @@ import java.util.List;
 
 public class SaveParamDataVO {
     private String servNo;
+    private String type;
     private String paramType;
     private String restSample;
     private String soapSample;
@@ -47,5 +48,13 @@ public class SaveParamDataVO {
 
     public void setParamList(List<SVCMngIoParameterDTO> paramList) {
         this.paramList = paramList;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

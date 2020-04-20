@@ -213,7 +213,7 @@ public class DSGCLogInstanceService {
         }
         FndProperties fndProperties =dsgcLogInstanceDao.findFndPropertiesByKey("DSGC_CURRENT_ENV");
         if(fndProperties == null){
-            throw new Exception("请配置当前环境代码！");
+            throw new RuntimeException("请配置当前环境代码！");
         }
         List<DSGCEnvInfoCfg> envList = svcLogDao.queryEsbEnv();
         if ( fndProperties.getPropertyValue().equals(tempQueryLogCondition.getEnv())){

@@ -1,5 +1,6 @@
 package com.definesys.dsgc.service.svcmng;
 
+import com.definesys.dsgc.service.apimng.bean.DSGCApisBean;
 import com.definesys.dsgc.service.svcmng.bean.*;
 import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.dsgc.service.utils.UserHelper;
@@ -360,5 +361,9 @@ public PageQueryResult<DSGCSvcgenUriBean> querySvcSourceList(UserHelper uh,SVCCo
         String conAnd = " and  (UPPER(v.obj_code) like '%" + conUpper + "%'";
         conAnd += " or UPPER(v.ib_uri) like '%" + conUpper + "%' )";
         return conAnd;
+    }
+
+    public void updateApiDataCompletion(DSGCApisBean apisBean){
+
     }
 }

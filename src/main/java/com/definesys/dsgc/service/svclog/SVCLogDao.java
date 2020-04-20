@@ -33,37 +33,45 @@ public class SVCLogDao {
             sqlStr.append(" and 1 = 1");
         }
         }else if("SystemLeader".equals(userRole)){
-            switch (q.getQueryType()){
-                case "ALL":
-                    sqlStr.append(" and 1=1 ");
-                    break;
-                case "Y":
-                    sqlStr.append(" and 1=1 and dse.sys_code in  ( ");
-                   for (int i =0;i<sysCodeList.size();i++){
-                       if (i<sysCodeList.size()-1){
-                         sqlStr.append("'"+sysCodeList.get(i)+"',");
-                       }else {
-                         sqlStr.append("'"+sysCodeList.get(i)+"')");
-                       }
-                   }
-                    break;
-                case "N":
-                    sqlStr.append(" and 1=1 and dse.sys_code not in ( ");
-                    for (int i =0;i<sysCodeList.size();i++){
-                        if (i<sysCodeList.size()-1){
-                            sqlStr.append("'"+sysCodeList.get(i)+"',");
-                        }else {
-                            sqlStr.append("'"+sysCodeList.get(i)+"')");
-                        }
+            if("ALL".equals(q.getQueryType()) || "Y".equals(q.getQueryType())){
+                sqlStr.append(" and 1=1 and dse.sys_code in  ( ");
+                for (int i =0;i<sysCodeList.size();i++){
+                    if (i<sysCodeList.size()-1){
+                        sqlStr.append("'"+sysCodeList.get(i)+"',");
+                    }else {
+                        sqlStr.append("'"+sysCodeList.get(i)+"')");
                     }
-                    break;
-            }
-        }else {
-            if("Y".equals(q.getQueryType())){
+                }
+            } else {
                 sqlStr.append(" and 1 != 1");
-            }else {
-                sqlStr.append(" and 1 = 1");
             }
+//            switch (q.getQueryType()){
+//                case "ALL":
+//                    sqlStr.append(" and 1=1 ");
+//                    break;
+//                case "Y":
+//                    sqlStr.append(" and 1=1 and dse.sys_code in  ( ");
+//                   for (int i =0;i<sysCodeList.size();i++){
+//                       if (i<sysCodeList.size()-1){
+//                         sqlStr.append("'"+sysCodeList.get(i)+"',");
+//                       }else {
+//                         sqlStr.append("'"+sysCodeList.get(i)+"')");
+//                       }
+//                   }
+//                    break;
+//                case "N":
+//                    sqlStr.append(" and 1=1 and dse.sys_code not in ( ");
+//                    for (int i =0;i<sysCodeList.size();i++){
+//                        if (i<sysCodeList.size()-1){
+//                            sqlStr.append("'"+sysCodeList.get(i)+"',");
+//                        }else {
+//                            sqlStr.append("'"+sysCodeList.get(i)+"')");
+//                        }
+//                    }
+//                    break;
+//            }
+        }else {
+            sqlStr.append(" and 1 != 1");
         }
         if (StringUtil.isNotBlank(q.getCon0()) ){
             sqlStr.append(" and( upper(ds.serv_no) like #con0 or upper(ds.serv_name) like #con0 or upper(dse.sys_name) like #con0 ) ");

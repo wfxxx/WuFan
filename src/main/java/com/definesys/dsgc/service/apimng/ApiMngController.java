@@ -73,7 +73,6 @@ public class ApiMngController {
         dsgcApisBean.setApiName(apiParams.getString("apiName"));
         dsgcApisBean.setApiDesc(apiParams.getString("apiDesc"));
         dsgcApisBean.setAppCode(apiParams.getString("appCode"));
-
         DSGCServicesUri dsgcServicesUri = new DSGCServicesUri();
         dsgcServicesUri.setServNo(uriParams.getString("servNo"));
         dsgcServicesUri.setIbUri(uriParams.getString("ibUri"));

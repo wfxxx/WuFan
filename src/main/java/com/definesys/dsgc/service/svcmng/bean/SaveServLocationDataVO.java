@@ -4,6 +4,7 @@ import java.util.List;
 
 public class SaveServLocationDataVO {
     private String servNo;
+    private String type;
     private List<ServUriDTO> uriList;
     private List<ServUriParamterDTO> paramterList;
 
@@ -29,5 +30,13 @@ public class SaveServLocationDataVO {
 
     public void setParamterList(List<ServUriParamterDTO> paramterList) {
         this.paramterList = paramterList;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

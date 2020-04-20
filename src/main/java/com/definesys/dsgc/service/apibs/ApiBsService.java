@@ -106,6 +106,14 @@ public class ApiBsService {
        DagBsbean dagBsbean = apiBsDao.queryApiBsById(param);
        if (dagBsbean != null){
            apiBsDao.delApiBs(param);
+           DagCodeVersionBean dagCodeVersionBean = new DagCodeVersionBean();
+           dagCodeVersionBean.setSourCode(dagBsbean.getBsCode());
+           dagCodeVersionBean.setSourType("bs");
+           apiBsDao.delApiBsDeployStat(dagCodeVersionBean.getVid());
+           List<DagCodeVersionBean> versionBeans = apiBsDao.queryApiBsConfig(dagCodeVersionBean);
+           for (DagCodeVersionBean item:versionBeans) {
+               delDagCodeVersionByid(item.getVid());
+           }
        }else {
            throw new Exception("服务不存在！");
        }

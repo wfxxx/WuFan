@@ -1,6 +1,7 @@
 package com.definesys.dsgc.service.apibs;
 
 import com.definesys.dsgc.service.apibs.bean.*;
+import com.definesys.dsgc.service.apideploylog.bean.DagDeployStatBean;
 import com.definesys.dsgc.service.apiroute.bean.DagEnvInfoCfgBean;
 import com.definesys.dsgc.service.apiroute.bean.DagRoutesBean;
 import com.definesys.dsgc.service.esbenv.bean.DSGCEnvInfoCfg;
@@ -120,6 +121,15 @@ public class ApiBsDao {
     }
     public void delApiBs(CommonReqBean param){
          sw.buildQuery().eq("bs_id",param.getCon0()).doDelete(DagBsbean.class);
+    }
+    public List<DagCodeVersionBean> queryApiBsConfig(DagCodeVersionBean dagCodeVersionBean){
+        return sw.buildQuery().eq("sour_code",dagCodeVersionBean.getSourCode()).eq("sour_type",dagCodeVersionBean.getSourType()).doQuery(DagCodeVersionBean.class);
+    }
+    public void delApiBsDeployStat(String vid){
+        DagDeployStatBean dagDeployStatBean = sw.buildQuery().eq("vid",vid).doQueryFirst(DagDeployStatBean.class);
+        if (dagDeployStatBean != null){
+            sw.buildQuery().eq("vid",dagDeployStatBean.getVid()).doDelete(DagDeployStatBean.class);
+        }
     }
 
     public DagBsDtiBean queryDagBsDtiByVid(String params){

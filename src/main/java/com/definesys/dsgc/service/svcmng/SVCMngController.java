@@ -95,7 +95,7 @@ public class SVCMngController {
     public Response saveServLocationData(@RequestBody SaveServLocationDataVO vo,HttpServletRequest request){
         String userId = request.getHeader("uid");
         String userRole= request.getHeader("userRole");
-        if(!"SuperAdministrators".equals(userRole) || "Administrators".equals(userRole)){
+        if("Tourist".equals(userRole)){
             return Response.error("无权限操作");
         }
        int temp = svcMngService.saveServLocationData(vo);

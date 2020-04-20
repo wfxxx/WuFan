@@ -125,4 +125,7 @@ public class  ApiMngDao {
             return true;
         }
     }
+    public void updateApiDataCompletion(DSGCApisBean apisBean){
+        sw.buildQuery().eq("api_code",apisBean.getApiCode()).update("info_full",apisBean.getInfoFull()).doUpdate(DSGCApisBean.class);
+    }
 }
