@@ -166,12 +166,14 @@ public class MarketDao {
 
     public PageQueryResult<MarketEntiy> queryEsb(Map<String,Object> mapVlue, int pageSize, int pageIndex) {
 
-        MpaasQuery query=sw.buildQuery().sql("select * from (\n" +
-                "select t.serv_id servId,t.serv_no servNo,t.serv_name servName,t.serv_desc servDesc,e.sys_name fromSys,\n" +
-                "                t.market_stat marketStat ,t.market_category  marketCategory,t.creation_date creationDate,(case when r.total_times >1 then r.total_times  else 0 end ) totalTimes \n" +
-                "                from DSGC_SERVICES t \n" +
-                "                left join rp_serv_total r on t.serv_no=r.serv_no \n" +
-                "                 left join dsgc_system_entities e on t.subordinate_system=e.sys_code ) s");
+        MpaasQuery query=sw.buildQuery().sql("select distinct(servId),servNo,servName,servDesc,fromSys,marketStat，marketCategory ，creationDate，totalTimes from(\n" +
+                "select s.servId,s.servNo,s.servName,s.servDesc,s.fromSys,s.marketStat,s.marketCategory,s.creationDate,sum(s.totalTimes) over(partition by servNo) as totalTimes from (\n" +
+                "                select t.serv_id servId,t.serv_no servNo,t.serv_name servName,t.serv_desc servDesc,e.sys_name fromSys,\n" +
+                "                                t.market_stat marketStat ,t.market_category  marketCategory,t.creation_date creationDate,\n" +
+                "                                (case when r.total_times >1 then r.total_times  else 0 end ) totalTimes \n" +
+                "                                from DSGC_SERVICES t \n" +
+                "                                left join rp_serv_total r on t.serv_no=r.serv_no \n" +
+                "                                 left join dsgc_system_entities e on t.subordinate_system=e.sys_code ) s) re");
 
         if(mapVlue.get("searchValue")!=null) {
             String searchValue = (String) mapVlue.get("searchValue");
@@ -194,11 +196,13 @@ public class MarketDao {
 
     public PageQueryResult<MarketEntiy> queryApi(Map<String,Object> mapVlue, int pageSize, int pageIndex) {
 
-        MpaasQuery query=sw.buildQuery().sql("select * from (select t.api_id servId,t.api_code servNo,t.api_name servName,e.sys_name fromSys,t.api_desc servDesc,\n" +
-                "t.market_category marketCategory,t.market_stat marketStat,t.creation_date creationDate ,(case when r.total_times >1 then r.total_times  else 0 end )\n" +
-                "totalTimes from DSGC_APIS t \n" +
-                "left join rp_api_year r   on t.api_code=r.serv_no\n" +
-                " left join dsgc_system_entities e   on t.app_code=e.sys_code) s ");
+        MpaasQuery query=sw.buildQuery().sql("select distinct(servId),servNo,servName,servDesc,fromSys,marketStat，marketCategory ，creationDate，totalTimes from(\n" +
+                "select s.servId,s.servNo,s.servName,s.servDesc,s.fromSys,s.marketStat,s.marketCategory,s.creationDate,sum(s.totalTimes) over(partition by servNo) as totalTimes from \n" +
+                "(select t.api_id servId,t.api_code servNo,t.api_name servName,e.sys_name fromSys,t.api_desc servDesc,\n" +
+                "                t.market_category marketCategory,t.market_stat marketStat,t.creation_date creationDate ,(case when r.total_times >1 then r.total_times  else 0 end )\n" +
+                "                totalTimes from DSGC_APIS t \n" +
+                "                left join rp_api_year r   on t.api_code=r.serv_no\n" +
+                "                 left join dsgc_system_entities e   on t.app_code=e.sys_code) s) re");
 
         if(mapVlue.get("searchValue")!=null){
             String searchValue= (String) mapVlue.get("searchValue");
