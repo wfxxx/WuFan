@@ -201,9 +201,9 @@ public class EsbHomeService {
                 EsbHomeHisto esbHomeHisto = new EsbHomeHisto();
                 Boolean temp = false;
                 for (int j = 0; j <list.size() ; j++) {
-                    if(day.equals(list.get(j).get("day"))){
-                        esbHomeHisto.setName(String.valueOf(list.get(j).get("day")));
-                        esbHomeHisto.setValue(Integer.parseInt(String.valueOf(list.get(j).get("total"))));
+                    if(day.equals(list.get(j).get("DAY").toString())){
+                        esbHomeHisto.setName(String.valueOf(list.get(j).get("DAY")));
+                        esbHomeHisto.setValue(Integer.parseInt(String.valueOf(list.get(j).get("TOTAL"))));
                         temp = true;
                         break;
                     }
@@ -220,9 +220,9 @@ public class EsbHomeService {
                 EsbHomeHisto esbHomeHisto = new EsbHomeHisto();
                 Boolean temp = false;
                 for (int j = 0; j <list.size() ; j++) {
-                    if(i ==Integer.parseInt(String.valueOf(list.get(j).get("hour")))){
+                    if(i ==Integer.parseInt(String.valueOf(list.get(j).get("HOUR")))){
                         esbHomeHisto.setName(String.valueOf(i));
-                        esbHomeHisto.setValue(Integer.parseInt(String.valueOf(list.get(j).get("total"))));
+                        esbHomeHisto.setValue(Integer.parseInt(String.valueOf(list.get(j).get("TOTAL"))));
                         temp = true;
                         break;
                     }
@@ -243,9 +243,9 @@ public class EsbHomeService {
                 EsbHomeHisto esbHomeHisto = new EsbHomeHisto();
                 Boolean temp = false;
                 for (int j = 0; j <list.size() ; j++) {
-                    if(i ==Integer.parseInt(String.valueOf(list.get(j).get("day")))){
+                    if(i ==Integer.parseInt(String.valueOf(list.get(j).get("DAY")))){
                         esbHomeHisto.setName(String.valueOf(i));
-                        esbHomeHisto.setValue(Integer.parseInt(String.valueOf(list.get(j).get("total"))));
+                        esbHomeHisto.setValue(Integer.parseInt(String.valueOf(list.get(j).get("TOTAL"))));
                         temp = true;
                         break;
                     }
@@ -262,9 +262,9 @@ public class EsbHomeService {
                 EsbHomeHisto esbHomeHisto = new EsbHomeHisto();
                 Boolean temp = false;
                 for (int j = 0; j <list.size() ; j++) {
-                    if(i ==Integer.parseInt(String.valueOf(list.get(j).get("month")))){
+                    if(i ==Integer.parseInt(String.valueOf(list.get(j).get("MONTH")))){
                         esbHomeHisto.setName(String.valueOf(i));
-                        esbHomeHisto.setValue(Integer.parseInt(String.valueOf(list.get(j).get("total"))));
+                        esbHomeHisto.setValue(Integer.parseInt(String.valueOf(list.get(j).get("TOTAL"))));
                         temp = true;
                         break;
                     }
