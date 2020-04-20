@@ -119,7 +119,7 @@ public class ApiCockpitDao {
 
 
 
-        //查询年分月段执行次数
+        //查询年分月段 执行次数
         public List<eChartsBean> queryMonthRuntimes(String appId){
                 return sw.buildQuery().sql("      select e.sys_code,e.sys_name,t.month,sum(t.total_times) as value1 from rp_api_month t\n" +
                         "      left join  dsgc_apis a on a.api_code=t.serv_no\n" +
@@ -132,7 +132,7 @@ public class ApiCockpitDao {
                         .doQuery(eChartsBean.class);
         }
 
-        //查询年分月段成功次数
+        //查询年分月段 成功次数
         public List<eChartsBean> queryMonthSucess(String appId){
                 return sw.buildQuery().sql("      select e.sys_code,e.sys_name,t.month,sum(t.total_200) as value1 from rp_api_month t\n" +
                         "      left join  dsgc_apis a on a.api_code=t.serv_no\n" +
@@ -145,7 +145,7 @@ public class ApiCockpitDao {
                         .doQuery(eChartsBean.class);
         }
 
-        //查询年分月段消费者
+        //查询年分月段 消费者
         public List<eChartsBean> queryMonthConsumer(String appId){
                 //一定要根据月份从小到大排序
                 return sw.buildQuery().sql("select count(1) as value1,to_char(a.timecol,'mm') as name from (\n" +

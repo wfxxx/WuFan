@@ -306,11 +306,14 @@ public class ApiHomeDao {
         if(startTime!=null&&endTime!=null&&limitTime==null) {
             String sql = null;
             if("oracle".equals(dbType)) {
-                sql = "select t.serv_no as name ,sum(t.total_times)  over(partition by t.serv_no) as value from rp_api_day t " +
-                        "  where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')<=to_date(#endTime,'yyyy-mm-dd') and to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')>to_date(#startTime,'yyyy-mm-dd') order by value desc";
+                sql = "select t.serv_no as name ,sum(t.total_times)   as value from rp_api_day t \n" +
+                        "                         where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')<=to_date(#endTime,'yyyy-mm-dd') \n" +
+                        "                        and to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')>to_date(#startTime,'yyyy-mm-dd') \n" +
+                        "                        group by t.serv_no\n" +
+                        "                        order by value desc";
             }
             if ("mysql".equals(dbType)){
-                sql = "select t.serv_no as name ,sum(t.total_times) as value from rp_api_day t where str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')<=str_to_date('','%Y-%m-%d') and str_to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')>str_to_date('','%Y-%m-%d') order by t.serv_no,value desc";
+                sql = "select t.serv_no as name ,sum(t.total_times) as value from rp_api_day t where str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')<=str_to_date('','%Y-%m-%d') and str_to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')>str_to_date('','%Y-%m-%d') group by t.serv_no order by t.serv_no,value desc";
             }
             resulSql.sql(sql)
                     .setVar("endTime",endTime).setVar("startTime",startTime);
@@ -318,41 +321,41 @@ public class ApiHomeDao {
         else if(limitTime.equals("year")){
             String sql = null;
             if("oracle".equals(dbType)) {
-                sql = "select t.serv_no as name ,sum(t.total_times)  over(partition by t.serv_no) as value from rp_api_year t " +
-                        " where to_date(t.year,'yyyy')=to_date(to_char(sysdate,'yyyy'),'yyyy') order by value desc";
+                sql = "select t.serv_no as name ,sum(t.total_times)  as value from rp_api_year t " +
+                        " where to_date(t.year,'yyyy')=to_date(to_char(sysdate,'yyyy'),'yyyy') group by t.serv_no order by value desc";
             }
             if ("mysql".equals(dbType)){
-                sql = "select t.serv_no as name ,sum(t.total_times) as value   from rp_api_year t where str_to_date(t.year,'%Y')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y'),'%Y') order by t.serv_no,value desc";
+                sql = "select t.serv_no as name ,sum(t.total_times) as value   from rp_api_year t where str_to_date(t.year,'%Y')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y'),'%Y') group by t.serv_no order by t.serv_no,value desc";
             }
             resulSql .sql(sql);
         }else if(limitTime.equals("month")){
             String sql = null;
             if("oracle".equals(dbType)) {
-                sql = "select t.serv_no as name ,sum(t.total_times)  over(partition by t.serv_no) as value from rp_api_month t " +
-                        " where to_date(t.year||'-'||t.month,'yyyy-mm')=to_date(to_char(sysdate,'yyyy-mm'),'yyyy-mm') order by value desc";
+                sql = "select t.serv_no as name ,sum(t.total_times)  as value from rp_api_month t " +
+                        " where to_date(t.year||'-'||t.month,'yyyy-mm')=to_date(to_char(sysdate,'yyyy-mm'),'yyyy-mm') group by t.serv_no order by value desc";
             }
             if ("mysql".equals(dbType)){
-                sql = "select t.serv_no as name ,sum(t.total_times)  as value from rp_api_month t where str_to_date(t.year||'-'||t.month,'%Y-%m')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m'),'%Y-%m') order by t.serv_no,value desc";
+                sql = "select t.serv_no as name ,sum(t.total_times)  as value from rp_api_month t where str_to_date(t.year||'-'||t.month,'%Y-%m')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m'),'%Y-%m') group by t.serv_no order by t.serv_no,value desc";
             }
             resulSql .sql(sql);
         }else if(limitTime.equals("week")){
             String sql = null;
             if("oracle".equals(dbType)) {
-                sql = "select t.serv_no as name ,sum(t.total_times)  over(partition by t.serv_no) as value from rp_api_day t" +
-                        " where to_char(to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd'),'iw')=to_char(sysdate,'iw') and t.year=to_char(sysdate,'yyyy') order by value desc ";
+                sql = "select t.serv_no as name ,sum(t.total_times)  as value from rp_api_day t" +
+                        " where to_char(to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd'),'iw')=to_char(sysdate,'iw') and t.year=to_char(sysdate,'yyyy') group by t.serv_no order by value desc ";
             }
             if ("mysql".equals(dbType)){
-                sql = "select t.serv_no as name ,sum(t.total_times) as value from rp_api_day t where DATE_FORMAT(str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d'),'iw')=DATE_FORMAT(CURRENT_TIMESTAMP,'iw') and t.year=DATE_FORMAT(CURRENT_TIMESTAMP,'%Y') order by t.serv_no,value desc ";
+                sql = "select t.serv_no as name ,sum(t.total_times) as value from rp_api_day t where DATE_FORMAT(str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d'),'iw')=DATE_FORMAT(CURRENT_TIMESTAMP,'iw') and t.year=DATE_FORMAT(CURRENT_TIMESTAMP,'%Y') group by t.serv_no order by t.serv_no,value desc ";
             }
             resulSql.sql(sql);
         }else if(limitTime.equals("day")){
             String sql = null;
             if("oracle".equals(dbType)) {
-                sql = "select t.serv_no as name ,sum(t.total_times)  over(partition by t.serv_no) as value from rp_api_day t" +
-                        " where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') order by value desc";
+                sql = "select t.serv_no as name ,sum(t.total_times)   as value from rp_api_day t" +
+                        " where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') group by t.serv_no order by value desc";
             }
             if ("mysql".equals(dbType)){
-                sql = "select t.serv_no as name ,sum(t.total_times) as value from rp_api_day t where str_to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d'),'%Y-%m-%d') order by t.serv_no,value desc";
+                sql = "select t.serv_no as name ,sum(t.total_times) as value from rp_api_day t where str_to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d'),'%Y-%m-%d') group by t.serv_no order by t.serv_no,value desc";
             }
             resulSql .sql(sql);
         }
@@ -368,11 +371,11 @@ public class ApiHomeDao {
         if(startTime!=null&&endTime!=null&&limitTime==null) {
             String sql = null;
             if("oracle".equals(dbType)) {
-                sql = "select t.serv_no as name ,sum(t.total_times)  over(partition by t.serv_no) as value from rp_api_day t " +
-                        " where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')<=to_date(#endTime,'yyyy-mm-dd') and to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')>to_date(#startTime,'yyyy-mm-dd') order by value desc";
+                sql = "select t.serv_no as name ,sum(t.total_times)  as value from rp_api_day t " +
+                        " where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')<=to_date(#endTime,'yyyy-mm-dd') and to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')>to_date(#startTime,'yyyy-mm-dd') group by t.serv_no order by value desc";
             }
             if ("mysql".equals(dbType)){
-                sql = "select t.serv_no as name ,sum(t.total_times)  as value from rp_api_day t  where str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')<=str_to_date(#endTime,'%Y-%m-%d') and str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')>str_to_date(#startTime,'%Y-%m-%d') order by t.serv_no,value desc";
+                sql = "select t.serv_no as name ,sum(t.total_times)  as value from rp_api_day t  where str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')<=str_to_date(#endTime,'%Y-%m-%d') and str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')>str_to_date(#startTime,'%Y-%m-%d') group by t.serv_no order by t.serv_no,value desc";
             }
             resulSql.sql(sql)
                     .setVar("endTime",endTime).setVar("startTime",startTime);
@@ -380,41 +383,41 @@ public class ApiHomeDao {
         else if(limitTime.equals("year")){
             String sql = null;
             if("oracle".equals(dbType)) {
-                sql = "select t.serv_no as name,max(t.total_times) over(partition by t.serv_no )  as value from rp_api_day t " +
-                        " where to_date(t.year,'yyyy')=to_date(to_char(sysdate,'yyyy'),'yyyy') order by value desc";
+                sql = "select t.serv_no as name,max(t.total_times)  as value from rp_api_day t " +
+                        " where to_date(t.year,'yyyy')=to_date(to_char(sysdate,'yyyy'),'yyyy') group by t.serv_no order by value desc";
             }
             if ("mysql".equals(dbType)){
-                sql = "select t.serv_no as name,max(t.total_times)  as value from rp_api_day t where str_to_date(t.year,'%Y')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y'),'%Y') order by t.serv_no,value desc";
+                sql = "select t.serv_no as name,max(t.total_times)  as value from rp_api_day t where str_to_date(t.year,'%Y')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y'),'%Y') group by t.serv_no order by t.serv_no,value desc";
             }
             resulSql .sql(sql);
         }else if(limitTime.equals("month")){
             String sql = null;
             if("oracle".equals(dbType)) {
-                sql = "select t.serv_no as name,max(t.total_times) over(partition by t.serv_no )  as value from rp_api_day t " +
-                        " where to_date(t.year||'-'||t.month,'yyyy-mm')=to_date(to_char(sysdate,'yyyy-mm'),'yyyy-mm') order by value desc";
+                sql = "select t.serv_no as name,max(t.total_times)  as value from rp_api_day t " +
+                        " where to_date(t.year||'-'||t.month,'yyyy-mm')=to_date(to_char(sysdate,'yyyy-mm'),'yyyy-mm') group by t.serv_no order by value desc";
             }
             if ("mysql".equals(dbType)){
-                sql = "select t.serv_no as name,max(t.total_times) as value from rp_api_day t where str_to_date(t.year||'-'||t.month,'%Y-%m')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m'),'%Y-%m') order by t.serv_no,value desc";
+                sql = "select t.serv_no as name,max(t.total_times) as value from rp_api_day t where str_to_date(t.year||'-'||t.month,'%Y-%m')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m'),'%Y-%m') group by t.serv_no order by t.serv_no,value desc";
             }
             resulSql .sql(sql);
         }else if(limitTime.equals("week")){
             String sql = null;
             if("oracle".equals(dbType)) {
-               sql = "select t.serv_no as name,max(t.total_times) over(partition by t.serv_no )  as value from rp_api_day t " +
-                       "  where to_char(to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd'),'iw')=to_char(sysdate,'iw') and t.year=to_char(sysdate,'yyyy') order by value desc";
+               sql = "select t.serv_no as name,max(t.total_times)  as value from rp_api_day t " +
+                       "  where to_char(to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd'),'iw')=to_char(sysdate,'iw') and t.year=to_char(sysdate,'yyyy') group by t.serv_no order by value desc";
             }
             if ("mysql".equals(dbType)){
-                sql = "select t.serv_no as name,max(t.total_times)  as value from rp_api_day t where DATE_FORMAT(str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d'),'iw')=DATE_FORMAT(CURRENT_TIMESTAMP,'iw') and t.year=DATE_FORMAT(CURRENT_TIMESTAMP,'%Y') order by t.serv_no,value desc";
+                sql = "select t.serv_no as name,max(t.total_times)  as value from rp_api_day t where DATE_FORMAT(str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d'),'iw')=DATE_FORMAT(CURRENT_TIMESTAMP,'iw') and t.year=DATE_FORMAT(CURRENT_TIMESTAMP,'%Y') group by t.serv_no order by t.serv_no,value desc";
             }
             resulSql.sql(sql);
         }else if(limitTime.equals("day")){
             String sql = null;
             if("oracle".equals(dbType)) {
-                sql = "select t.serv_no as name,max(t.total_times) over(partition by t.serv_no )  as value from rp_api_day t " +
-                        " where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') order by value desc";
+                sql = "select t.serv_no as name,max(t.total_times)   as value from rp_api_day t " +
+                        " where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') group by t.serv_no order by value desc";
             }
             if ("mysql".equals(dbType)){
-                sql = "select t.serv_no as name,max(t.total_times) as value from rp_api_day t where str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d'),'%Y-%m-%d') order by t.serv_no,value desc";
+                sql = "select t.serv_no as name,max(t.total_times) as value from rp_api_day t where str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d'),'%Y-%m-%d') group by t.serv_no order by t.serv_no,value desc";
             }
             resulSql .sql(sql);
         }
@@ -430,11 +433,11 @@ public class ApiHomeDao {
         if(startTime!=null&&endTime!=null&&limitTime==null) {
             String sql = null;
             if("oracle".equals(dbType)) {
-                sql = "select t.serv_no as name ,sum(t.total_times)  over(partition by t.serv_no) as value from rp_api_day t " +
-                        " where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')<=to_date(#endTime,'yyyy-mm-dd') and to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')>to_date(#startTime,'yyyy-mm-dd') order by value desc";
+                sql = "select t.serv_no as name ,sum(t.total_times)   as value from rp_api_day t " +
+                        " where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')<=to_date(#endTime,'yyyy-mm-dd') and to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')>to_date(#startTime,'yyyy-mm-dd') group by t.serv_no order by value desc";
             }
             if ("mysql".equals(dbType)){
-                sql = "select t.serv_no as name ,sum(t.total_times) as value from rp_api_day t where str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')<=str_to_date(#endTime,'%Y-%m-%d') and str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')>str_to_date(#startTime,'%Y-%m-%d') order by t.serv_no,value desc";
+                sql = "select t.serv_no as name ,sum(t.total_times) as value from rp_api_day t where str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')<=str_to_date(#endTime,'%Y-%m-%d') and str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')>str_to_date(#startTime,'%Y-%m-%d') group by t.serv_no order by t.serv_no,value desc";
             }
             resulSql.sql(sql)
                     .setVar("endTime",endTime).setVar("startTime",startTime);
@@ -443,41 +446,41 @@ public class ApiHomeDao {
         else if(limitTime.equals("year")){
             String sql = null;
             if("oracle".equals(dbType)) {
-                sql = "select t.serv_no as name ,avg(t.avg_cost)  over(partition by t.serv_no) as value from rp_api_year t" +
-                        " where to_date(t.year,'yyyy')=to_date(to_char(sysdate,'yyyy'),'yyyy') order by value desc";
+                sql = "select t.serv_no as name ,avg(t.avg_cost)   as value from rp_api_year t" +
+                        " where to_date(t.year,'yyyy')=to_date(to_char(sysdate,'yyyy'),'yyyy') group by t.serv_no order by value desc";
             }
             if ("mysql".equals(dbType)){
-                sql = "select t.serv_no as name ,avg(t.avg_cost)  as value from rp_api_year t where str_to_date(t.year,'%Y')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y'),'%Y') order by t.serv_no,value desc";
+                sql = "select t.serv_no as name ,avg(t.avg_cost)  as value from rp_api_year t where str_to_date(t.year,'%Y')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y'),'%Y') group by t.serv_no order by t.serv_no,value desc";
             }
             resulSql .sql(sql);
         }else if(limitTime.equals("month")){
             String sql = null;
             if("oracle".equals(dbType)) {
-             sql = "select t.serv_no as name ,avg(t.avg_cost)  over(partition by t.serv_no) as value from rp_api_month t" +
-                     " where to_date(t.year||'-'||t.month,'yyyy-mm')=to_date(to_char(sysdate,'yyyy-mm'),'yyyy-mm')  order by value desc";
+             sql = "select t.serv_no as name ,avg(t.avg_cost)   as value from rp_api_month t" +
+                     " where to_date(t.year||'-'||t.month,'yyyy-mm')=to_date(to_char(sysdate,'yyyy-mm'),'yyyy-mm') group by t.serv_no  order by value desc";
             }
             if ("mysql".equals(dbType)){
-                sql = "select t.serv_no as name ,avg(t.avg_cost)  as value from rp_api_month t where str_to_date(t.year||'-'||t.month,'%Y-%m')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m'),'%Y-%m')  order by t.serv_no,value desc";
+                sql = "select t.serv_no as name ,avg(t.avg_cost)  as value from rp_api_month t where str_to_date(t.year||'-'||t.month,'%Y-%m')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m'),'%Y-%m') group by t.serv_no  order by t.serv_no,value desc";
             }
             resulSql .sql(sql);
         }else if(limitTime.equals("week")){
             String sql = null;
             if("oracle".equals(dbType)) {
-                sql = "select t.serv_no as name ,avg(t.avg_cost)  over(partition by t.serv_no) as value from rp_api_day t " +
-                        "  where to_char(to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd'),'iw')=to_char(sysdate,'iw') and t.year=to_char(sysdate,'yyyy') order by value desc";
+                sql = "select t.serv_no as name ,avg(t.avg_cost)   as value from rp_api_day t " +
+                        "  where to_char(to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd'),'iw')=to_char(sysdate,'iw') and t.year=to_char(sysdate,'yyyy') group by t.serv_no order by value desc";
             }
             if ("mysql".equals(dbType)){
-                sql = "select t.serv_no as name ,avg(t.avg_cost) as value from rp_api_day t  where DATE_FORMAT(str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d'),'iw')=DATE_FORMAT(CURRENT_TIMESTAMP,'iw') and t.year=DATE_FORMAT(CURRENT_TIMESTAMP,'%Y') order by t.serv_no,value desc";
+                sql = "select t.serv_no as name ,avg(t.avg_cost) as value from rp_api_day t  where DATE_FORMAT(str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d'),'iw')=DATE_FORMAT(CURRENT_TIMESTAMP,'iw') and t.year=DATE_FORMAT(CURRENT_TIMESTAMP,'%Y') group by t.serv_no order by t.serv_no,value desc";
             }
             resulSql.sql(sql);
         }else if(limitTime.equals("day")){
             String sql = null;
             if("oracle".equals(dbType)) {
-                sql = "select t.serv_no as name ,avg(t.avg_cost)  over(partition by t.serv_no) as value from rp_api_day t " +
-                        " where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') order by value desc";
+                sql = "select t.serv_no as name ,avg(t.avg_cost)   as value from rp_api_day t " +
+                        " where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') group by t.serv_no order by value desc";
             }
             if ("mysql".equals(dbType)){
-                sql = "select t.serv_no as name ,avg(t.avg_cost) as value from rp_api_day t  where str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d'),'%Y-%m-%d') order by t.serv_no,value desc";
+                sql = "select t.serv_no as name ,avg(t.avg_cost) as value from rp_api_day t  where str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d'),'%Y-%m-%d') group by t.serv_no order by t.serv_no,value desc";
             }
             resulSql .sql(sql);
         }
