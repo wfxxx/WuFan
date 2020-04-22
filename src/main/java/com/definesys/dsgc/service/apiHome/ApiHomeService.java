@@ -238,13 +238,13 @@ public class ApiHomeService {
         errNow.setName(hour+":"+minute);
         ApiHomeHisto runTimesNow=apiHomeDao.queryTrafficRuntimesNow();
         runTimesNow.setName(hour+":"+minute);
+        ApiHomeHisto trafficCostNow=apiHomeDao.queryTrafficCostNow();
+        trafficCostNow.setName(hour+":"+minute);
+
         List<ApiHomeHisto> runTimesNowList=apiHomeDao.queryTrafficRuntimes();
         runTimesNowList.add(runTimesNow);
         List<ApiHomeHisto> errNowapiList=apiHomeDao.queryTrafficError();
         errNowapiList.add(errNow);
-        ApiHomeHisto trafficCostNow=new ApiHomeHisto();
-        trafficCostNow.setName(hour+":"+minute);
-        trafficCostNow.setValue(0);
         List<ApiHomeHisto> trafficCostNowList=apiHomeDao.queryTrafficCost();
         trafficCostNowList.add(trafficCostNow);
         result.put("runTimes",runTimesNowList);

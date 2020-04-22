@@ -493,11 +493,15 @@ public class ApiHomeDao {
     public List<ApiHomeHisto> queryTrafficRuntimes(){
         String sql = null;
         if("oracle".equals(dbType)) {
-            sql = "select to_char(t.creation_date,'hh24:mi') as name ,sum(t.total_times)  over(partition by t.hour) as value from rp_api_hour t " +
-                    " where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') order by t.creation_date ";
+            sql = "select to_char(t.creation_date,'hh24:mi') as name ,\n" +
+                    "sum(t.total_times)  as value \n" +
+                    "from rp_api_hour t \n" +
+                    "    where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') \n" +
+                    "    group by t.creation_date\n" +
+                    "    order by t.creation_date ";
         }
         if ("mysql".equals(dbType)){
-            sql = "select DATE_FORMAT(t.creation_date,'%Y-%m') as name ,sum(t.total_times)  as value from rp_api_hour t  where str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d'),'%Y-%m-%d') order by t.hour,t.creation_date ";
+            sql = "select DATE_FORMAT(t.creation_date,'%Y-%m') as name ,sum(t.total_times)  as value from rp_api_hour t  where str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d'),'%Y-%m-%d') group by t.creation_date order by t.creation_date ";
         }
        return sw.buildQuery().sql(sql)
                 .doQuery(ApiHomeHisto.class);
@@ -507,11 +511,14 @@ public class ApiHomeDao {
     public List<ApiHomeHisto> queryTrafficCost(){
         String sql = null;
         if("oracle".equals(dbType)) {
-            sql = "select to_char(t.creation_date,'hh24:mi') as name ,avg(t.avg_cost)   over(partition by t.hour) as value from rp_api_hour t " +
-                    " where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') order by t.creation_date";
+            sql = "select to_char(t.creation_date,'hh24:mi') as name ,\n" +
+                    "avg(t.avg_cost)  as value from rp_api_hour t \n" +
+                    "                     where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') \n" +
+                    "                     group by t.creation_date\n" +
+                    "                     order by t.creation_date";
         }
         if ("mysql".equals(dbType)){
-            sql = "select DATE_FORMAT(t.creation_date,'%Y-%m') as name ,avg(t.avg_cost)  as value from rp_api_hour t where str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d'),'%Y-%m-%d') order by t.hour,t.creation_date";
+            sql = "select DATE_FORMAT(t.creation_date,'%Y-%m') as name ,avg(t.avg_cost)  as value from rp_api_hour t where str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d'),'%Y-%m-%d') group by t.creation_date order by t.creation_date";
         }
         return  sw.buildQuery().sql(sql)
 
@@ -522,11 +529,14 @@ public class ApiHomeDao {
      public List<ApiHomeHisto> queryTrafficError(){
          String sql = null;
          if("oracle".equals(dbType)) {
-             sql="select to_char(t.creation_date,'hh24:mi') as name,sum(t.total_1xx+t.total_2xx+t.total_3xx+t.total_4xx+t.total_5xx-t.total_200)  over(partition by t.hour) as value from rp_api_hour t " +
-                     " where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') order by t.creation_date";
+             sql="select to_char(t.creation_date,'hh24:mi') as name,\n" +
+                     "sum(t.total_1xx+t.total_2xx+t.total_3xx+t.total_4xx+t.total_5xx-t.total_200)  as value from rp_api_hour t \n" +
+                     "        where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') \n" +
+                     "        group by t.creation_date\n" +
+                     "        order by t.creation_date";
          }
          if ("mysql".equals(dbType)){
-             sql ="select DATE_FORMAT(t.creation_date,'%Y-%m') as name,sum(t.total_1xx+t.total_2xx+t.total_3xx+t.total_4xx+t.total_5xx)  as value from rp_api_hour t where str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d'),'%Y-%m-%d') order by t.hour,t.creation_date";
+             sql ="select DATE_FORMAT(t.creation_date,'%Y-%m') as name,sum(t.total_1xx+t.total_2xx+t.total_3xx+t.total_4xx+t.total_5xx)  as value from rp_api_hour t where str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d'),'%Y-%m-%d') group by t.creation_date order by t.creation_date";
          }
          return   sw.buildQuery().sql(sql)
                  .doQuery(ApiHomeHisto.class);
@@ -537,30 +547,42 @@ public class ApiHomeDao {
     public ApiHomeHisto queryTrafficRuntimesNow(){
         String sql = null;
         if("oracle".equals(dbType)) {
-            sql = "select count(1)   as value from dsgc_log_instance t " +
-                    " where sysdate>to_date(to_char(sysdate,'yyyy-mm-dd hh24'),'yyyy-mm-dd hh24') order by t.creation_date ";
+            sql = "select count(1) as value   from DAG_LOG_INSTANCE t \n" +
+                    "                     where t.creation_date>to_date(to_char(sysdate,'yyyy-mm-dd hh24'),'yyyy-mm-dd hh24') order by t.creation_date \n" +
+                    "         ";
         }
         if ("mysql".equals(dbType)){
-            sql = "select count(1)   as value from dsgc_log_instance t where CURRENT_TIMESTAMP>str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d %H'),'%Y-%m-%d %H') order by t.creation_date ";
+            sql = "select count(1)   as value from DAG_LOG_INSTANCE t where t.creation_date>str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d %H'),'%Y-%m-%d %H') order by t.creation_date ";
         }
         return sw.buildQuery().sql(sql)
                 .doQueryFirst(ApiHomeHisto.class);
     }
 
     //查询近一小时平均响应时间
-//    public ApiHomeHisto queryTrafficCostNow(){
-//
-//    }
+    public ApiHomeHisto queryTrafficCostNow(){
+        String sql = null;
+        if("oracle".equals(dbType)) {
+            sql = "select avg(t.req_msg_size)   as value from DAG_LOG_INSTANCE t \n" +
+                    "               where t.creation_date>to_date(to_char(sysdate,'yyyy-mm-dd hh24'),'yyyy-mm-dd hh24') \n" +
+                    "                order by t.creation_date";
+        }
+        if ("mysql".equals(dbType)){
+            sql = "select avg(t.req_msg_size)  as value from DAG_LOG_INSTANCE t where CURRENT_TIMESTAMP>str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d %H'),'%Y-%m-%d %H') order by t.creation_date";
+        }
+        return   sw.buildQuery().sql(sql)
+                .doQueryFirst(ApiHomeHisto.class);
+    }
+
 
     //查询近一小时错误次数流量
     public ApiHomeHisto queryTrafficErrorNow(){
         String sql = null;
         if("oracle".equals(dbType)) {
-            sql = "select count(1)   as value from dsgc_log_instance t " +
-                    "  where sysdate>to_date(to_char(sysdate,'yyyy-mm-dd hh24'),'yyyy-mm-dd hh24') and t.inst_status='0' order by t.creation_date  ";
+            sql = "select count(1)   as value from DAG_LOG_INSTANCE t \n" +
+                    "                      where t.creation_date>to_date(to_char(sysdate,'yyyy-mm-dd hh24'),'yyyy-mm-dd hh24') and t.res_code<>'200' order by t.creation_date";
         }
         if ("mysql".equals(dbType)){
-            sql = "select count(1)   as value from dsgc_log_instance t where CURRENT_TIMESTAMP>str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d %H'),'%Y-%m-%d %H') and t.inst_status='0' order by t.creation_date";
+            sql = "select count(1)   as value from DAG_LOG_INSTANCE t where CURRENT_TIMESTAMP>str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d %H'),'%Y-%m-%d %H') and t.res_code<>'200' order by t.creation_date";
         }
         return   sw.buildQuery().sql(sql)
                 .doQueryFirst(ApiHomeHisto.class);

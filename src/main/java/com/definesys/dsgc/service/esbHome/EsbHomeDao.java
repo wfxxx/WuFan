@@ -605,11 +605,11 @@ public class EsbHomeDao {
     public List<EsbHomeHisto> queryTrafficRuntimes(){
         String sql = null;
         if("oracle".equals(dbType)) {
-            sql = "select to_char(t.creation_date,'hh24:mi') as name ,sum(t.total_times)  over(partition by t.hour) as value from rp_serv_hour t " +
-                    " where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') order by t.creation_date ";
+            sql = "select to_char(t.creation_date,'hh24:mi') as name ,sum(t.total_times)  as value from rp_serv_hour t " +
+                    " where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') group by t.creation_date order by t.creation_date ";
         }
         if ("mysql".equals(dbType)){
-            sql = "select DATE_FORMAT(t.creation_date,'%Y-%m') as name ,sum(t.total_times)  as value from rp_serv_hour t  where str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d'),'%Y-%m-%d') order by t.hour,t.creation_date ";
+            sql = "select DATE_FORMAT(t.creation_date,'%Y-%m') as name ,sum(t.total_times)  as value from rp_serv_hour t  where str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d'),'%Y-%m-%d') group by t.creation_date order by t.creation_date ";
         }
        return sw.buildQuery().sql(sql)
                 .doQuery(EsbHomeHisto.class);
@@ -619,11 +619,11 @@ public class EsbHomeDao {
     public List<EsbHomeHisto> queryTrafficCost(){
         String sql = null;
         if("oracle".equals(dbType)) {
-            sql = "select to_char(t.creation_date,'hh24:mi') as name ,avg(t.avg_cost)   over(partition by t.hour) as value from rp_serv_hour t " +
-                    " where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') order by t.creation_date";
+            sql = "select to_char(t.creation_date,'hh24:mi') as name ,avg(t.avg_cost)  as value from rp_serv_hour t " +
+                    " where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') group by t.creation_date order by t.creation_date";
         }
         if ("mysql".equals(dbType)){
-            sql = "select DATE_FORMAT(t.creation_date,'%Y-%m') as name ,avg(t.avg_cost)  as value from rp_serv_hour t where str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d'),'%Y-%m-%d') order by t.hour,t.creation_date";
+            sql = "select DATE_FORMAT(t.creation_date,'%Y-%m') as name ,avg(t.avg_cost)  as value from rp_serv_hour t where str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d'),'%Y-%m-%d') group by t.creation_date order by t.creation_date";
         }
         return  sw.buildQuery().sql(sql)
 
@@ -634,11 +634,11 @@ public class EsbHomeDao {
      public List<EsbHomeHisto> queryTrafficError(){
          String sql = null;
          if("oracle".equals(dbType)) {
-             sql="select to_char(t.creation_date,'hh24:mi') as name,sum(t.total_times_f)  over(partition by t.hour) as value from rp_serv_hour t " +
-                     " where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') order by t.creation_date";
+             sql="select to_char(t.creation_date,'hh24:mi') as name,sum(t.total_times_f)  as value from rp_serv_hour t " +
+                     " where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') group by t.creation_date order by t.creation_date";
          }
          if ("mysql".equals(dbType)){
-             sql ="select DATE_FORMAT(t.creation_date,'%Y-%m') as name,sum(t.total_times_f)  as value from rp_serv_hour t where str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d'),'%Y-%m-%d') order by t.hour,t.creation_date";
+             sql ="select DATE_FORMAT(t.creation_date,'%Y-%m') as name,sum(t.total_times_f)  as value from rp_serv_hour t where str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d'),'%Y-%m-%d') group by t.creation_date order by t.creation_date";
          }
          return   sw.buildQuery().sql(sql)
                  .doQuery(EsbHomeHisto.class);
@@ -660,9 +660,19 @@ public class EsbHomeDao {
     }
 
     //查询近一小时平均响应时间
-//    public EsbHomeHisto queryTrafficCostNow(){
-//
-//    }
+    public EsbHomeHisto queryTrafficCostNow(){
+        String sql = null;
+        if("oracle".equals(dbType)) {
+            sql = "select avg(t.req_msg_size)   as value from dsgc_log_instance t \n" +
+                    "               where t.creation_date>to_date(to_char(sysdate,'yyyy-mm-dd hh24'),'yyyy-mm-dd hh24') \n" +
+                    "                order by t.creation_date";
+        }
+        if ("mysql".equals(dbType)){
+            sql = "select avg(t.req_msg_size)  as value from dsgc_log_instance t where CURRENT_TIMESTAMP>str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d %H'),'%Y-%m-%d %H') order by t.creation_date";
+        }
+        return   sw.buildQuery().sql(sql)
+                .doQueryFirst(EsbHomeHisto.class);
+    }
 
     //查询近一小时错误次数流量
     public EsbHomeHisto queryTrafficErrorNow(){

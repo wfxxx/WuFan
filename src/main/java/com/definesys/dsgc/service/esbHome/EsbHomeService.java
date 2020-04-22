@@ -202,14 +202,14 @@ public class EsbHomeService {
                 Boolean temp = false;
                 for (int j = 0; j <list.size() ; j++) {
                     if(day.equals(list.get(j).get("DAY").toString())){
-                        esbHomeHisto.setName(String.valueOf(list.get(j).get("DAY")));
+                        esbHomeHisto.setName(String.valueOf(list.get(j).get("DAY"))+"日");
                         esbHomeHisto.setValue(Integer.parseInt(String.valueOf(list.get(j).get("TOTAL"))));
                         temp = true;
                         break;
                     }
                 }
                 if(!temp){
-                    esbHomeHisto.setName(day);
+                    esbHomeHisto.setName(day+"日");
                     esbHomeHisto.setValue(0);
                 }
                 result.add(esbHomeHisto);
@@ -221,14 +221,14 @@ public class EsbHomeService {
                 Boolean temp = false;
                 for (int j = 0; j <list.size() ; j++) {
                     if(i ==Integer.parseInt(String.valueOf(list.get(j).get("HOUR")))){
-                        esbHomeHisto.setName(String.valueOf(i));
+                        esbHomeHisto.setName(String.valueOf(i)+"时");
                         esbHomeHisto.setValue(Integer.parseInt(String.valueOf(list.get(j).get("TOTAL"))));
                         temp = true;
                         break;
                     }
                 }
                 if(!temp){
-                    esbHomeHisto.setName(String.valueOf(i));
+                    esbHomeHisto.setName(String.valueOf(i)+"时");
                     esbHomeHisto.setValue(0);
                 }
                 result.add(esbHomeHisto);
@@ -244,14 +244,14 @@ public class EsbHomeService {
                 Boolean temp = false;
                 for (int j = 0; j <list.size() ; j++) {
                     if(i ==Integer.parseInt(String.valueOf(list.get(j).get("DAY")))){
-                        esbHomeHisto.setName(String.valueOf(i));
+                        esbHomeHisto.setName(String.valueOf(i)+"日");
                         esbHomeHisto.setValue(Integer.parseInt(String.valueOf(list.get(j).get("TOTAL"))));
                         temp = true;
                         break;
                     }
                 }
                 if(!temp){
-                    esbHomeHisto.setName(String.valueOf(i));
+                    esbHomeHisto.setName(String.valueOf(i)+"日");
                     esbHomeHisto.setValue(0);
                 }
                 result.add(esbHomeHisto);
@@ -263,14 +263,14 @@ public class EsbHomeService {
                 Boolean temp = false;
                 for (int j = 0; j <list.size() ; j++) {
                     if(i ==Integer.parseInt(String.valueOf(list.get(j).get("MONTH")))){
-                        esbHomeHisto.setName(String.valueOf(i));
+                        esbHomeHisto.setName(String.valueOf(i)+"月");
                         esbHomeHisto.setValue(Integer.parseInt(String.valueOf(list.get(j).get("TOTAL"))));
                         temp = true;
                         break;
                     }
                 }
                 if(!temp){
-                    esbHomeHisto.setName(String.valueOf(i));
+                    esbHomeHisto.setName(String.valueOf(i)+"月");
                     esbHomeHisto.setValue(0);
                 }
                 result.add(esbHomeHisto);
