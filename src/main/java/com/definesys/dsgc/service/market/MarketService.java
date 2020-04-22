@@ -354,7 +354,9 @@ public class MarketService {
                     servLocation.setUrlType(dsgcServicesUri.getUriType());
                     servLocation.setEnvName(dsgcEnvInfoCfg.getEnvName());
                     servLocation.setHttpMethod(dsgcServicesUri.getHttpMethod());
-                    String url ="http://"+ dsgcEnvInfoCfg.getEsbIp()+":"+dsgcEnvInfoCfg.getEsbPort()+"/"+dsgcServicesUri.getIbUri();
+//                    String url ="http://"+ dsgcEnvInfoCfg.getEsbIp()+":"+dsgcEnvInfoCfg.getEsbPort()+"/"+dsgcServicesUri.getIbUri();
+
+                    String url =dsgcEnvInfoCfg.getReqLocation()+dsgcServicesUri.getIbUri();
                     servLocation.setUrl(url);
                     locationList.add(servLocation);
                 }
