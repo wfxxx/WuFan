@@ -141,7 +141,7 @@ public class EsbHomeService {
         Map<String, Object> lastWeekV= esbHomeDao.getLastWeekTotalV();
         Map<String, Object> nowWeekV= esbHomeDao.getNowWeekTotalV();
         if(nowWeekV !=null && nowWeekV.containsKey("VALUE")&& lastWeekV !=null && lastWeekV.containsKey("VALUE")){
-            esbVisitTotal.setWeekRate(rate(Integer.parseInt(String.valueOf(nowWeekV.get("VALUE"))),Integer.parseInt(String.valueOf(lastWeekV.get("value")))));
+            esbVisitTotal.setWeekRate(rate(Integer.parseInt(String.valueOf(nowWeekV.get("VALUE"))),Integer.parseInt(String.valueOf(lastWeekV.get("VALUE")))));
         }else if((nowWeekV ==null || !nowWeekV.containsKey("VALUE"))&& lastWeekV !=null && lastWeekV.containsKey("VALUE")){
             esbVisitTotal.setWeekRate(rate(0,Integer.parseInt(String.valueOf(lastWeekV.get("VALUE")))));
         }else if(nowWeekV !=null && nowWeekV.containsKey("VALUE")&& (lastWeekV ==null || !lastWeekV.containsKey("VALUE"))){
@@ -162,7 +162,7 @@ public class EsbHomeService {
         }
        // esbVisitTotal.setDataAdd(todayV.getValue());
         if(todayV !=null && todayV.containsKey("VALUE")&& yestodayV !=null && yestodayV.containsKey("VALUE")){
-            esbVisitTotal.setDayRate(rate(Integer.parseInt(String.valueOf(todayV.get("VALUE"))),Integer.parseInt(String.valueOf(yestodayV.get("value")))));
+            esbVisitTotal.setDayRate(rate(Integer.parseInt(String.valueOf(todayV.get("VALUE"))),Integer.parseInt(String.valueOf(yestodayV.get("VALUE")))));
         }else if((todayV ==null || !todayV.containsKey("VALUE"))&& yestodayV !=null && yestodayV.containsKey("VALUE")){
             esbVisitTotal.setDayRate(rate(0,Integer.parseInt(String.valueOf(yestodayV.get("VALUE")))));
         }else if(todayV !=null && todayV.containsKey("VALUE")&& (yestodayV ==null || !yestodayV.containsKey("VALUE"))){

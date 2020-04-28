@@ -124,7 +124,7 @@ public class ApiHomeService {
         Map<String,Object> lastWeekV=apiHomeDao.getLastWeekTotalV();
         Map<String,Object> nowWeekV=apiHomeDao.getNowWeekTotalV();
         if(nowWeekV !=null && nowWeekV.containsKey("VALUE")&& lastWeekV !=null && lastWeekV.containsKey("VALUE")){
-            apiVisitTotal.setWeekRate(rate(Integer.parseInt(String.valueOf(nowWeekV.get("VALUE"))),Integer.parseInt(String.valueOf(lastWeekV.get("value")))));
+            apiVisitTotal.setWeekRate(rate(Integer.parseInt(String.valueOf(nowWeekV.get("VALUE"))),Integer.parseInt(String.valueOf(lastWeekV.get("VALUE")))));
         }else if((nowWeekV ==null || !nowWeekV.containsKey("VALUE"))&& lastWeekV !=null && lastWeekV.containsKey("VALUE")){
             apiVisitTotal.setWeekRate(rate(0,Integer.parseInt(String.valueOf(lastWeekV.get("VALUE")))));
         }else if(nowWeekV !=null && nowWeekV.containsKey("VALUE")&& (lastWeekV ==null || !lastWeekV.containsKey("VALUE"))){
