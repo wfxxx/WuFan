@@ -4,6 +4,8 @@ import com.definesys.dsgc.service.apicockpit.bean.eChartsBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -60,7 +62,10 @@ public class ApiCockpitService {
      */
     public eChartsBean queryAppExecute(Date startDate, Date endDate){
         eChartsBean result=apiCockpitDao.queryAppExecute(startDate,endDate);
-        eChartsBean appTotal=apiCockpitDao.queryTotalapp();
+        Calendar cal = Calendar.getInstance();
+        cal.set(1000, cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
+        Date beginOfDate = cal.getTime();
+        eChartsBean appTotal=apiCockpitDao.queryApiTotalDate(beginOfDate,endDate);
         result.setRate(result.getValue1()/Double.valueOf(appTotal.getValue1()));
         return result;
     }
@@ -181,24 +186,27 @@ public class ApiCockpitService {
     }
 
     public Map<String,Object> dash(){
+        //1000-0-0 0:0:0
         Calendar cal = Calendar.getInstance();
         cal.set(1000, cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
         Date beginOfDate = cal.getTime();
+        //当天 23:59:59
         cal=Calendar.getInstance();
         cal.set( cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH), 23, 59, 59);
         Date endOfDate = cal.getTime();
+        //当天 0:0:0
         cal=Calendar.getInstance();
-        cal.set( cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH), 0, 0, 59);
+        cal.set( cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)-1, 23, 59, 59);
         Date todayOfDate = cal.getTime();
         Map<String,Object> result=new HashMap<String,Object>();
         result.put("appTotal", queryTotalapp());//应用总数
-        result.put("appInstance", queryAppDistri(beginOfDate,endOfDate));//api日志状况
+        result.put("appInstance", queryAppDistri(todayOfDate,endOfDate));//api日志状况
         result.put("appUseRate", queryAppExecute(todayOfDate,endOfDate));//api使用率
         result.put("totalRunTimes", queryTotalRunTimes(beginOfDate,endOfDate));//api总调用次数
         result.put("appConsumer", queryAppInfo());//app消费者
 //        result.put("appFlow", queryTrafficAnalysis());//整合进app消费者数据中
         result.put("sourceTotal", querySourceDate());//资源总数
-        result.put("appSourceAnalysis", querySourceFlow());//资源周增长
+        result.put("appSourceAnalysis", querySourceFlow());//资源增长
         result.put("apiInfoByApp", queryApiInfoByAppALL());//api按应用分类
         result.put("apiInfoByType", queryApiInfoByTypeALL());//api按类型分类
         return result;

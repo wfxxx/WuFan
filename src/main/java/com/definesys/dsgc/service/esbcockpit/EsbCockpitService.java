@@ -60,7 +60,10 @@ public class EsbCockpitService {
      */
     public eChartsBean queryAppExecute(Date startDate, Date endDate){
         eChartsBean result=esbCockpitDao.queryAppExecute(startDate,endDate);
-        eChartsBean appTotal=esbCockpitDao.queryTotalapp();
+        Calendar cal = Calendar.getInstance();
+        cal.set(1000, cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
+        Date beginOfDate = cal.getTime();
+        eChartsBean appTotal=esbCockpitDao.queryEsbTotalDate(beginOfDate,endDate);
         result.setRate(result.getValue1()/Double.valueOf(appTotal.getValue1()));
         return result;
     }
@@ -188,12 +191,13 @@ public class EsbCockpitService {
         cal=Calendar.getInstance();
         cal.set( cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH), 23, 59, 59);
         Date endOfDate = cal.getTime();
+        //当天 0:0:0
         cal=Calendar.getInstance();
-        cal.set( cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH), 0, 0, 59);
+        cal.set( cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)-1, 23, 59, 59);
         Date todayOfDate = cal.getTime();
         Map<String,Object> result=new HashMap<String,Object>();
         result.put("appTotal", queryTotalapp());//应用总数
-        result.put("appInstance", queryAppDistri(beginOfDate,endOfDate));//esb日志状况
+        result.put("appInstance", queryAppDistri(todayOfDate,endOfDate));//esb日志状况
         result.put("appUseRate", queryAppExecute(todayOfDate,endOfDate));//aesb使用率
         result.put("totalRunTimes", queryTotalRunTimes(beginOfDate,endOfDate));//esb总调用次数
         result.put("appConsumer", queryAppInfo());//app消费者

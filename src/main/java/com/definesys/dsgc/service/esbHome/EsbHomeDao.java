@@ -279,9 +279,9 @@ public class EsbHomeDao {
     //按类型分类获取个人api信息
     public List<EsbHomeHisto> queryEsbInfoByType(String userRole,List<String> sysCodeList){
         List<EsbHomeHisto> result=new ArrayList<EsbHomeHisto>();
-        StringBuffer str = new StringBuffer("select (case when t.sys_name is not null then t.sys_name else '未知' end)  as name," +
-                " (count(case when t.sys_name is not null then t.sys_name else '未知' end)) as value ," +
-                " (case when t.sys_name is not null then t.sys_name else '未知' end) as legend_name  from" +
+        StringBuffer str = new StringBuffer("select (case when t.sys_name is not null then t.sys_name else '其他' end)  as name," +
+                " (count(case when t.sys_name is not null then t.sys_name else '其他' end)) as value ," +
+                " (case when t.sys_name is not null then t.sys_name else '其他' end) as legend_name  from" +
                 " (select a.serv_no,a.serv_name,c.sys_name ,c.sys_code " +
                 " from dsgc_services a " +
                 " left join dsgc_system_entities c on a.subordinate_system=c.sys_code) t where 1=1 ");
@@ -303,9 +303,9 @@ public class EsbHomeDao {
         //  mq.groupBy("t.sys_code");
         return mq.doQuery(EsbHomeHisto.class);
 //        return sw.buildQuery().sql("select \n" +
-//                "(case when t.cate_name is not null then t.cate_name else '未知' end)  as name,\n" +
-//                "(count(case when t.cate_name is not null then t.cate_name else '未知' end)) as value , \n" +
-//                "(case when t.cate_name is not null then t.cate_name else '未知' end) as legend_name  from\n" +
+//                "(case when t.cate_name is not null then t.cate_name else '其他' end)  as name,\n" +
+//                "(count(case when t.cate_name is not null then t.cate_name else '其他' end)) as value , \n" +
+//                "(case when t.cate_name is not null then t.cate_name else '其他' end) as legend_name  from\n" +
 //                "\n" +
 //                "  (select a.api_code,a.api_name,c.cate_name ,c.cate_code \n" +
 //                "  from (select a.* from dsgc_apis a,dsgc_apis_access aa,dsgc_consumer_users cu where a.api_code=aa.api_code and cu.csm_code=aa.csm_code and cu.user_id=#userId) a \n" +
@@ -315,9 +315,9 @@ public class EsbHomeDao {
 
     //按类型分类获取全部api信息
     public List<EsbHomeHisto> queryEsbInfoByTypeALL(){
-        return  sw.buildQuery().sql("select (case when t.sys_name is not null then t.sys_name else '未知' end)  as name,\n" +
-                "(count(case when t.sys_name is not null then t.sys_name else '未知' end)) as value ,\n" +
-                "(case when t.sys_name is not null then t.sys_name else '未知' end) as legend_name  from\n" +
+        return  sw.buildQuery().sql("select (case when t.sys_name is not null then t.sys_name else '其他' end)  as name,\n" +
+                "(count(case when t.sys_name is not null then t.sys_name else '其他' end)) as value ,\n" +
+                "(case when t.sys_name is not null then t.sys_name else '其他' end) as legend_name  from\n" +
                 "(select a.serv_no,a.serv_name,c.sys_name ,c.sys_code \n" +
                 "from dsgc_services a \n" +
                 "left join dsgc_system_entities c on a.subordinate_system=c.sys_code) t \n" +

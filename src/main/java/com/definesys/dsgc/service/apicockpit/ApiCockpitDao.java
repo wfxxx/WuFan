@@ -61,17 +61,22 @@ public class ApiCockpitDao {
                 if(startDate==null){
                         startDate=new Date();
                 }
+                System.out.println(startDate);
+                System.out.println(endDate);
+
                 return sw.buildQuery()
                         .sql("select * from (select e.sys_name as name, sum(t.total_times) as value1,sum(t.total_200) as value2\n" +
                                 "                                 from RP_API_DAY t \n" +
                                 "                                 left join  dsgc_apis a on a.api_code=t.serv_no\n" +
                                 "                                 left join  dsgc_system_entities e on e.sys_code=a.app_code\n" +
-                                "                                   where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd') between #startDate  and #endDate  and a.api_code is not null\n" +
+                                "                                 where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd hh24:mi:ss') between #startDate  " +
+                                "and #endDate  and a.api_code is not null\n" +
                                 "                                  group by e.sys_code,e.sys_name  \n" +
                                 "                                 ) where rownum<8 order by value1 desc  ")
                         .setVar("startDate",startDate)
                         .setVar("endDate",endDate)
                         .doQuery(eChartsBean.class);
+
         }
 
         //一段时间内调用到的API个数（注意不是次数）占总数的比例
@@ -87,6 +92,7 @@ public class ApiCockpitDao {
                 if(startDate==null){
                         startDate=new Date();
                 }
+
                 return sw.buildQuery()
                         .sql("select '调用api个数' as name, count(1) as value1 from (\n" +
                                 "select t.serv_no  from RP_API_DAY t   where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd' ) between #startDate  and #endDate group by t.serv_no) s")
@@ -121,7 +127,7 @@ public class ApiCockpitDao {
 
         //查询年分月段 执行次数
         public List<eChartsBean> queryMonthRuntimes(String appId){
-                return sw.buildQuery().sql("      select e.sys_code,e.sys_name,t.month,sum(t.total_times) as value1 from rp_api_month t\n" +
+                return sw.buildQuery().sql("      select e.sys_code,e.sys_name,t.month as name,sum(t.total_times) as value1 from rp_api_month t\n" +
                         "      left join  dsgc_apis a on a.api_code=t.serv_no\n" +
                         "      left join  dsgc_system_entities e on e.sys_code=a.app_code\n" +
                         "      where t.year=to_char(sysdate,'yyyy') \n" +
@@ -134,7 +140,7 @@ public class ApiCockpitDao {
 
         //查询年分月段 成功次数
         public List<eChartsBean> queryMonthSucess(String appId){
-                return sw.buildQuery().sql("      select e.sys_code,e.sys_name,t.month,sum(t.total_200) as value1 from rp_api_month t\n" +
+                return sw.buildQuery().sql("      select e.sys_code,e.sys_name,t.month as name,sum(t.total_200) as value1 from rp_api_month t\n" +
                         "      left join  dsgc_apis a on a.api_code=t.serv_no\n" +
                         "      left join  dsgc_system_entities e on e.sys_code=a.app_code\n" +
                         "      where t.year=to_char(sysdate,'yyyy') \n" +
@@ -215,7 +221,7 @@ public class ApiCockpitDao {
         }
         //过去30天API状况
         public List<eChartsBean> queryApiMonth(){
-                return sw.buildQuery().sql("select a.time as name,nvl(b.num,0) as value1 from (\n" +
+                return sw.buildQuery().sql("select a.time||'日' as name,nvl(b.num,0) as value1 from (\n" +
                         "                              select  sysdate-30+rownum as currentDate,to_char( sysdate-30+rownum ,  'dd') as time\n" +
                         "                              from dual \n" +
                         "                              connect by rownum <=30 )a\n" +
@@ -226,7 +232,7 @@ public class ApiCockpitDao {
         }
         //过去一年API状况
         public List<eChartsBean> queryApiyear(){
-                return sw.buildQuery().sql("select a.time as name,nvl(b.num,0) as value1 from (\n" +
+                return sw.buildQuery().sql("select a.time||'月' as name,nvl(b.num,0) as value1 from (\n" +
                         "    select add_months(sysdate,-12+rownum) as currentDate,to_char( add_months(sysdate,-12+rownum) ,  'mm') as time\n" +
                         "    from dual \n" +
                         "    connect by rownum <=12 )a\n" +
@@ -254,7 +260,7 @@ public class ApiCockpitDao {
         }
         //过去30天消费者状况，dsgc_consumer_entities
         public List<eChartsBean> queryConsumerMonth(){
-                return sw.buildQuery().sql("select a.time as name,nvl(b.num,0) as value1 from (\n" +
+                return sw.buildQuery().sql("select a.time||'日' as name,nvl(b.num,0) as value1 from (\n" +
                         "                                  select  sysdate-30+rownum as currentDate,to_char(sysdate-30 + rownum ,  'dd') as time\n" +
                         "                                  from dual \n" +
                         "                                  connect by rownum <=30 )a\n" +
@@ -269,7 +275,7 @@ public class ApiCockpitDao {
         }
         //过去一年消费者状况，dsgc_consumer_entities
         public List<eChartsBean> queryConsumerYear(){
-                return sw.buildQuery().sql("select a.time as name,nvl(b.num,0) as value1 from (\n" +
+                return sw.buildQuery().sql("select a.time||'月' as name,nvl(b.num,0) as value1 from (\n" +
                         "                        select add_months(sysdate,-12+rownum) as currentDate,to_char(add_months(sysdate,-12+rownum) ,  'mm') as time\n" +
                         "                        from dual \n" +
                         "                        connect by rownum <=12 )a\n" +
@@ -294,7 +300,7 @@ public class ApiCockpitDao {
 
         //过去30天应用状况，dsgc_system_entities
         public List<eChartsBean> queryAppMonth(){
-                return sw.buildQuery().sql("select a.time as name,nvl(b.num,0) as value1 from (\n" +
+                return sw.buildQuery().sql("select a.time||'日' as name,nvl(b.num,0) as value1 from (\n" +
                         "                        select  sysdate-30+rownum as currentDate,to_char(sysdate-30 + rownum ,  'dd') as time\n" +
                         "                        from dual \n" +
                         "                        connect by rownum <=30 )a\n" +
@@ -306,7 +312,7 @@ public class ApiCockpitDao {
 
         //过去一年应用状况，dsgc_system_entities
         public List<eChartsBean> queryAppYear(){
-                return sw.buildQuery().sql("select a.time as name,nvl(b.num,0) as value1 from (\n" +
+                return sw.buildQuery().sql("select a.time||'月' as name,nvl(b.num,0) as value1 from (\n" +
                         "                        select add_months(sysdate,-12+rownum) as currentDate,to_char(add_months(sysdate,-12+rownum) ,  'mm') as time\n" +
                         "                        from dual \n" +
                         "                        connect by rownum <=12 )a\n" +
@@ -328,8 +334,8 @@ public class ApiCockpitDao {
         //按类型分类获取全部api信息
         public List<eChartsBean> queryApiInfoByTypeALL(){
                 return  sw.buildQuery().sql("select \n" +
-                        "(case when t.cate_name is not null then t.cate_name else '未知' end)  as name,\n" +
-                        "(count(case when t.cate_name is not null then t.cate_name else '未知' end)) as value1  \n" +
+                        "(case when t.cate_name is not null then t.cate_name else '其他' end)  as name,\n" +
+                        "(count(case when t.cate_name is not null then t.cate_name else '其他' end)) as value1  \n" +
                         "  from\n" +
                         "\n" +
                         "  (select a.api_code,a.api_name,c.cate_name ,c.cate_code \n" +

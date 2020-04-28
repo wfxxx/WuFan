@@ -87,17 +87,17 @@ public class MarketDao {
         }
         if("ESB".equals(type)){
             query .sql("select t.API_ID,\n" +
-                    "       t.API_NAME,\n" +
-                    "       t.APP_CODE,\n" +
-                    "       t.API_DESC,\n" +
-                    "       t.MARKET_CATEGORY,\n" +
-                    "       t.MARKET_STAT,\n" +
-                    "       t.type,\n" +
-                    "       y.CATE_NAME,\n" +
-                    "       t.creation_Date\n" +
-                    "from (select API_ID, API_NAME, API_DESC, APP_CODE, MARKET_CATEGORY, MARKET_STAT,creation_Date, '集成服务' type\n" +
-                    "      from DSGC_SERVICES  ) t " +
-                    "       left join DSGC_MARKET_CATEGORY y on t.MARKET_CATEGORY = y.CATE_CODE");
+                    "                           t.API_NAME,\n" +
+                    "                           t.APP_CODE,\n" +
+                    "                           t.API_DESC,\n" +
+                    "                           t.MARKET_CATEGORY,\n" +
+                    "                           t.MARKET_STAT,\n" +
+                    "                           t.type,\n" +
+                    "                           y.CATE_NAME,\n" +
+                    "                           t.creation_Date\n" +
+                    "                    from (select SERV_ID API_ID,SERV_NAME API_NAME,SERV_DESC API_DESC,SUBORDINATE_SYSTEM APP_CODE, MARKET_CATEGORY, MARKET_STAT,creation_Date, '集成服务' type\n" +
+                    "                          from DSGC_SERVICES  ) t  \n" +
+                    "                           left join DSGC_MARKET_CATEGORY y on t.MARKET_CATEGORY = y.CATE_CODE");
         }
 
         if("API".equals(type)){
@@ -145,7 +145,6 @@ public class MarketDao {
             }
         }
         query.orderBy("creationDate","desc");
-
         return query.doPageQuery(pageIndex, pageSize, MarketApiBean.class);
     }
 

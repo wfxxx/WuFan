@@ -273,9 +273,9 @@ public class ApiHomeDao {
     //按类型分类获取个人api信息
     public List<ApiHomeHisto> queryApiInfoByType(String userId){
         return sw.buildQuery().sql("select \n" +
-                "(case when t.cate_name is not null then t.cate_name else '未知' end)  as name,\n" +
-                "(count(case when t.cate_name is not null then t.cate_name else '未知' end)) as value , \n" +
-                "(case when t.cate_name is not null then t.cate_name else '未知' end) as legend_name  from\n" +
+                "(case when t.cate_name is not null then t.cate_name else '其他' end)  as name,\n" +
+                "(count(case when t.cate_name is not null then t.cate_name else '其他' end)) as value , \n" +
+                "(case when t.cate_name is not null then t.cate_name else '其他' end) as legend_name  from\n" +
                 "\n" +
                 "  (select a.api_code,a.api_name,c.cate_name ,c.cate_code \n" +
                 "  from (select a.* from dsgc_apis a,dsgc_apis_access aa,dsgc_consumer_users cu where a.api_code=aa.api_code and cu.csm_code=aa.csm_code and cu.user_id=#userId) a \n" +
@@ -286,9 +286,9 @@ public class ApiHomeDao {
     //按类型分类获取全部api信息
     public List<ApiHomeHisto> queryApiInfoByTypeALL(){
         return  sw.buildQuery().sql("select \n" +
-                "(case when t.cate_name is not null then t.cate_name else '未知' end)  as name,\n" +
-                "(count(case when t.cate_name is not null then t.cate_name else '未知' end)) as value , \n" +
-                "(case when t.cate_name is not null then t.cate_name else '未知' end) as legend_name  from\n" +
+                "(case when t.cate_name is not null then t.cate_name else '其他' end)  as name,\n" +
+                "(count(case when t.cate_name is not null then t.cate_name else '其他' end)) as value , \n" +
+                "(case when t.cate_name is not null then t.cate_name else '其他' end) as legend_name  from\n" +
                 "\n" +
                 "  (select a.api_code,a.api_name,c.cate_name ,c.cate_code \n" +
                 "  from dsgc_apis a \n" +

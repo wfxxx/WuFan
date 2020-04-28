@@ -53,6 +53,7 @@ public class ApiLogDao {
           } catch (ParseException e) {
               e.printStackTrace();
           }
+          System.out.println(endTime);
           mq.gt("creation_date",startTime)
                   .lteq("creation_date",endTime);
       }

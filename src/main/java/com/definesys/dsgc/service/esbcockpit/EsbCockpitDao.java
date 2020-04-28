@@ -121,7 +121,7 @@ public class EsbCockpitDao {
 
         //查询年分月段执行次数
         public List<eChartsBean> queryMonthRuntimes(String esbId){
-                return sw.buildQuery().sql("select e.sys_code,e.sys_name,t.month,sum(t.total_times) as value1 from rp_serv_month t\n" +
+                return sw.buildQuery().sql("select e.sys_code,e.sys_name,t.month as name,sum(t.total_times) as value1 from rp_serv_month t\n" +
                         "                              left join  dsgc_services s on s.serv_no=t.serv_no\n" +
                         "                              left join  dsgc_system_entities e on e.sys_code=s.subordinate_system\n" +
                         "                              where t.year=to_char(sysdate,'yyyy') \n" +
@@ -134,7 +134,7 @@ public class EsbCockpitDao {
 
         //查询年分月段成功次数
         public List<eChartsBean> queryMonthSucess(String esbId){
-                return sw.buildQuery().sql("      select e.sys_code,e.sys_name,t.month,sum(t.total_times_s) as value1 from rp_serv_month t\n" +
+                return sw.buildQuery().sql("      select e.sys_code,e.sys_name,t.month as name,sum(t.total_times_s) as value1 from rp_serv_month t\n" +
                         "                              left join  dsgc_services s on s.serv_no=t.serv_no\n" +
                         "                              left join  dsgc_system_entities e on e.sys_code=s.subordinate_system\n" +
                         "                              where t.year=to_char(sysdate,'yyyy') \n" +
@@ -328,8 +328,8 @@ public class EsbCockpitDao {
         //按类型分类获取全部esb信息
         public List<eChartsBean> queryEsbInfoByTypeALL(){
                 return  sw.buildQuery().sql("select \n" +
-                        "        (case when t.cate_name is not null then t.cate_name else '未知' end)  as name,\n" +
-                        "        (count(case when t.cate_name is not null then t.cate_name else '未知' end)) as value1  \n" +
+                        "        (case when t.cate_name is not null then t.cate_name else '其他' end)  as name,\n" +
+                        "        (count(case when t.cate_name is not null then t.cate_name else '其他' end)) as value1  \n" +
                         "          from\n" +
                         "                        \n" +
                         "          (select s.serv_no,s.serv_name,c.cate_name ,c.cate_code \n" +

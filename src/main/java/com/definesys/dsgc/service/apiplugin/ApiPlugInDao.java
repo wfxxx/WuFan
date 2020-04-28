@@ -25,7 +25,7 @@ public class ApiPlugInDao {
         StringBuffer sqlStr = null;
         if("oracle".equals(dbType)){
              sqlStr = new StringBuffer("select * from (\n" +
-                    "    select t1.*,case when e.sys_name is not null then  e.sys_name else '未知' end as app_name  from\n" +
+                    "    select t1.*,case when e.sys_name is not null then  e.sys_name else '其他' end as app_name  from\n" +
                     "           (select \n" +
                     "           u.dpu_id as plugin_using_id,\n" +
                     "           u.plugin_code,\n" +
@@ -37,7 +37,7 @@ public class ApiPlugInDao {
                     "            v.sour_code,\n" +
                     "           (case when lr.app_code is not null then lr.app_code \n" +
                     "                 when  rou.app_code is not null then  rou.app_code \n" +
-                    "                 when bs.app_code is not null then bs.app_code else '未知' end) \n" +
+                    "                 when bs.app_code is not null then bs.app_code else '其他' end) \n" +
                     "           as app_code,\n" +
                     "           stat.env_code,\n" +
                     "           v.creation_date \n" +
@@ -55,7 +55,7 @@ public class ApiPlugInDao {
         }
         if ("mysql".equals(dbType)){
             sqlStr = new StringBuffer("select * from (\n" +
-                    "select t1.*,case when e.sys_name is not null then  e.sys_name else '未知' end as app_name  from\n" +
+                    "select t1.*,case when e.sys_name is not null then  e.sys_name else '其他' end as app_name  from\n" +
                     "(select \n" +
                     "u.dpu_id as plugin_using_id,\n" +
                     "u.plugin_code,\n" +
@@ -67,7 +67,7 @@ public class ApiPlugInDao {
                     "v.sour_code,\n" +
                     "(case when lr.app_code is not null then lr.app_code \n" +
                     "when  rou.app_code is not null then  rou.app_code \n" +
-                    "when bs.app_code is not null then bs.app_code else '未知' end) \n" +
+                    "when bs.app_code is not null then bs.app_code else '其他' end) \n" +
                     "as app_code,\n" +
                     "stat.env_code,\n" +
                     "v.creation_date \n" +
