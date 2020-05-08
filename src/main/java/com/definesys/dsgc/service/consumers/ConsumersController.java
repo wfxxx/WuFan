@@ -63,9 +63,10 @@ public class ConsumersController {
         return Response.ok().setData(consumersService.queryConsumerBasicAuthData(dceId));
     }
     @RequestMapping(value = "updateConsumerBasicAuthPwd",method = RequestMethod.POST)
-    public Response updateConsumerBasicAuthPwd(@RequestBody() UpdateBasicPwdVO updateBasicPwdVO){
+    public Response updateConsumerBasicAuthPwd(@RequestBody() UpdateBasicPwdVO updateBasicPwdVO,HttpServletRequest request){
         try {
-            consumersService.updateConsumerBasicAuthPwd(updateBasicPwdVO);
+            String userId = request.getHeader("uid");
+            consumersService.updateConsumerBasicAuthPwd(updateBasicPwdVO,userId);
         } catch (Exception e) {
             e.printStackTrace();
             return Response.error("新增或更新basic认证密码失败！");
@@ -103,9 +104,10 @@ public class ConsumersController {
         return Response.ok().setData(result);
     }
     @RequestMapping(value = "consumerDeploy")
-    public Response consumerDeploy(@RequestBody() ConsumerDeployChangeVO param){
+    public Response consumerDeploy(@RequestBody() ConsumerDeployChangeVO param,HttpServletRequest request){
         try {
-        consumersService.consumerDeploy(param);
+            String userId = request.getHeader("uid");
+        consumersService.consumerDeploy(param,userId);
         }catch (Exception e){
             e.printStackTrace();
             return Response.error("部署或取消部署失败");

@@ -2,6 +2,7 @@ package com.definesys.dsgc.service.dagclient;
 
 import com.definesys.dsgc.service.dagclient.bean.DAGEnvBean;
 import com.definesys.dsgc.service.dagclient.proxy.ConsumerProxy;
+import com.definesys.dsgc.service.dagclient.proxy.OSBConsumerProxy;
 import com.definesys.dsgc.service.dagclient.proxy.bean.JWTAuthBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,7 @@ public class ConsumerDeployService {
      * @param envCode
      * @return
      */
-    public boolean deployConsumer(String consumerCode,String envCode) {
+    public boolean deployConsumer(String consumerCode,String envCode,String loginUser) {
         DAGEnvBean env = this.dagEnvDao.getDAGEnvInfoByEnvCode(envCode);
 
         if (env == null || env.getAdminLocation() == null) {
@@ -74,6 +75,8 @@ public class ConsumerDeployService {
 
         } else if ("ESB".equals(env.getEnvType()) && "OSB".equals(env.getTechType())) {
             //OSB总线环境添加用户
+            String basicAuthPd = this.consumerDeployDao.getConsumerBasicAuth(consumerCode,envCode);
+            OSBConsumerProxy.newInstance().setUser(envCode,loginUser,consumerCode,basicAuthPd);
         }
 
         return res;
@@ -151,7 +154,7 @@ public class ConsumerDeployService {
      * @param envCode
      * @return
      */
-    public boolean undeployConsumer(String consumerCode,String envCode) {
+    public boolean undeployConsumer(String consumerCode,String envCode,String loginUser) {
         DAGEnvBean env = this.dagEnvDao.getDAGEnvInfoByEnvCode(envCode);
 
         if (env == null || env.getAdminLocation() == null) {
@@ -159,14 +162,16 @@ public class ConsumerDeployService {
         }
 
         if ("DAG".equals(env.getEnvType())) {
-            //网关环境添加用户
+            //网关环境取消部署消费者
             ConsumerProxy cp = new ConsumerProxy(env.getAdminLocation(),consumerCode);
             if (cp.isFound()) {
                 cp.delete();
             }
 
         } else if ("ESB".equals(env.getEnvType()) && "OSB".equals(env.getTechType())) {
-            //OSB总线环境添加用户
+            //OSB总线环境取消部署消费者
+            OSBConsumerProxy.newInstance().removeUser(envCode,loginUser,consumerCode);
+
         }
 
         return true;
@@ -180,7 +185,7 @@ public class ConsumerDeployService {
      * @param envCode
      * @return
      */
-    public boolean updateBasicAuth(String consumerCode,String newPd,String envCode) {
+    public boolean updateBasicAuth(String consumerCode,String newPd,String envCode,String loginUser) {
 
         DAGEnvBean env = this.dagEnvDao.getDAGEnvInfoByEnvCode(envCode);
 
@@ -208,6 +213,7 @@ public class ConsumerDeployService {
             }
         } else if ("ESB".equals(env.getEnvType()) && "OSB".equals(env.getTechType())) {
             //OSB总线环境添加用户
+            OSBConsumerProxy.newInstance().setUser(envCode,loginUser,consumerCode,newPd);
         }
 
         return res;

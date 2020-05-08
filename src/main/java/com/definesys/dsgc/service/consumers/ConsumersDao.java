@@ -184,7 +184,24 @@ public class ConsumersDao {
                 .doQuery(DSGCConsumerEntities.class);
     }
     public List<DSGCEnvInfoCfg> queryApiEnv(){
-        return sw.buildQuery().eq("env_type","DAG").doQuery(DSGCEnvInfoCfg.class);
+
+        Map<String,Object> res = sw.buildQuery().sql("select PROPERTY_VALUE from FND_PROPERTIES where PROPERTY_KEY = 'SHOW_SER_TYPE'").doQueryFirst();
+
+        String dislpayType = "ALL";
+        if(res != null){
+            Object pv = res.get("PROPERTY_VALUE");
+            if(pv != null){
+                dislpayType = pv.toString();
+            }
+        }
+
+        if("API".equals(dislpayType)){
+            return sw.buildQuery().eq("env_type","DAG").doQuery(DSGCEnvInfoCfg.class);
+        } else if ("ESB".equals(dislpayType)){
+            return sw.buildQuery().eq("env_type","ESB").doQuery(DSGCEnvInfoCfg.class);
+        } else {
+            return sw.buildQuery().doQuery(DSGCEnvInfoCfg.class);
+        }
     }
 
     public Boolean checkCsmCodeIsExsit(String csmCode){

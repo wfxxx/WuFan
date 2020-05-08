@@ -186,10 +186,10 @@ public class ConsumersService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void updateConsumerBasicAuthPwd(UpdateBasicPwdVO updateBasicPwdVO) throws Exception {
+    public void updateConsumerBasicAuthPwd(UpdateBasicPwdVO updateBasicPwdVO,String userId) throws Exception {
         DSGCConsumerEntities dsgcConsumerEntities = consumersDao.queryConsumerEntByCsmCode(updateBasicPwdVO.getCsmCode());
         //  DSGCConsumerAuth auth = consumersDao.queryConsumerBasicDataByEnvCode(updateBasicPwdVO);
-        Boolean res = consumerDeployService.updateBasicAuth(dsgcConsumerEntities.getCsmCode(), updateBasicPwdVO.getPwd(), updateBasicPwdVO.getEnvCode());
+        Boolean res = consumerDeployService.updateBasicAuth(dsgcConsumerEntities.getCsmCode(), updateBasicPwdVO.getPwd(), updateBasicPwdVO.getEnvCode(),userId);
         if (!res) {
             throw new Exception("新增或更新basic认证密码失败！");
         }
@@ -248,13 +248,13 @@ public class ConsumersService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void consumerDeploy(ConsumerDeployChangeVO param) throws Exception {
+    public void consumerDeploy(ConsumerDeployChangeVO param,String userId) throws Exception {
         if (StringUtil.isNotBlank(param.getDceId()) && StringUtil.isNotBlank(param.getEnvCode())) {
             DSGCConsumerEntities dsgcConsumerEntities = consumersDao.queryConsumerEntById(param.getDceId());
             String deployEnv = dsgcConsumerEntities.getDeployEnv();
             Boolean res;
             if (param.getDeployment()) {
-                res = consumerDeployService.deployConsumer(dsgcConsumerEntities.getCsmCode(), param.getEnvCode());
+                res = consumerDeployService.deployConsumer(dsgcConsumerEntities.getCsmCode(), param.getEnvCode(),userId);
                 if (!res) {
                     throw new Exception("部署失败！");
                 }
@@ -266,7 +266,7 @@ public class ConsumersService {
                 dsgcConsumerEntities.setDeployEnv(deployEnv);
                 consumersDao.updateConsumerDeployEnv(dsgcConsumerEntities);
             } else {
-                res = consumerDeployService.undeployConsumer(dsgcConsumerEntities.getCsmCode(), param.getEnvCode());
+                res = consumerDeployService.undeployConsumer(dsgcConsumerEntities.getCsmCode(), param.getEnvCode(),userId);
                 if (!res) {
                     throw new Exception("取消部署失败！");
                 }
