@@ -912,8 +912,20 @@ public class MyNtyDao {
 
 
     public DSGCMnNotices getNoticesCount(String ntyUser){
-       return sw.buildQuery().sql("select distinct (select count(*) from DSGC_MN_NOTICES) allCount,(select count(*) from DSGC_MN_NOTICES where read_stat = 0) unreadCount from DSGC_MN_NOTICES where nty_user = #ntyUser ")
-               .setVar("ntyUser",ntyUser)
-               .doQueryFirst(DSGCMnNotices.class);
+        if(ntyUser != null) {
+            return sw.buildQuery().sql("select count(1) allCount,count(case when read_stat = 0 then 1 else null end)  unreadCount from DSGC_MN_NOTICES where nty_user = #ntyUser ")
+                    .setVar("ntyUser",ntyUser)
+                    .doQueryFirst(DSGCMnNotices.class);
+        } else {
+            return new DSGCMnNotices();
+        }
+    }
+
+    public MyMnNoticesCountDTO getNoticesCountDTO(String ntyUser) {
+        DSGCMnNotices dn = this.getNoticesCount(ntyUser);
+        MyMnNoticesCountDTO dd = new MyMnNoticesCountDTO();
+        dd.setAllCount(dn.getAllCount());
+        dd.setUnreadCount(dn.getUnreadCount());
+        return dd;
     }
 }

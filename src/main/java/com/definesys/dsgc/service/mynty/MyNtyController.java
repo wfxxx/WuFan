@@ -253,4 +253,10 @@ public class MyNtyController {
         return Response.ok().setData(result);
     }
 
+    @RequestMapping(value = "/getMNNoticeCount", method = RequestMethod.GET)
+    public Response getMNNoticeCount(HttpServletRequest request){
+        String userId = request.getHeader("uid");
+        return Response.ok().setData(this.mns.getUserMNNoticesCount(userId));
+    }
+
 }

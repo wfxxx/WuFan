@@ -531,4 +531,9 @@ public class MyNtyService {
         }
         return result;
     }
+
+
+    public MyMnNoticesCountDTO getUserMNNoticesCount(String userId){
+        return this.mndao.getNoticesCountDTO(userId);
+    }
 }
