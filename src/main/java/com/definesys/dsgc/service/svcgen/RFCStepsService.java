@@ -57,9 +57,10 @@ public class RFCStepsService {
                     res.setSapConnVaildMsg(rtn);
                 }
             } catch (Exception e) {
+                e.printStackTrace();
                 res.setSapConnVaild(false);
                 String errorMsg = CommonUtils.getExceptionTrackDetailInfo(e);
-                errorMsg = CommonUtils.splitSpecifyLengthStr(errorMsg,1000);
+                errorMsg = CommonUtils.splitSpecifyLengthStr(errorMsg,4000);
                 res.setSapConnVaildMsg(Base64.getEncoder().encodeToString(errorMsg.getBytes(Charset.forName("UTF-8"))));
             }
         }
