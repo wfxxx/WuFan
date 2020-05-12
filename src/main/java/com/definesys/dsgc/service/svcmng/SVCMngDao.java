@@ -24,7 +24,9 @@ public class SVCMngDao {
 
     public ServSgUriBean getSgInfoByServNo(String servNo) {
         if (servNo != null) {
-            return sw.buildQuery().sql("select PROVIDER,IB_URI from DSGC_SERVICES_URI where SERV_NO = #servNo")
+            return sw.buildQuery().sql("select (select s.OBJ_CODE from DSGC_SVCGEN_URI s where s.IB_URI = tt.IB_URI and rownum = 1) PROVIDER, tt.IB_URI \n" +
+                    "from DSGC_SERVICES_URI tt \n" +
+                    "where tt.SERV_NO = #servNo")
                     .setVar("servNo",servNo).doQueryFirst(ServSgUriBean.class);
         } else {
             return null;

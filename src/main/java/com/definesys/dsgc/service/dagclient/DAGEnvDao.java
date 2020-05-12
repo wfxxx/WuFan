@@ -1,6 +1,5 @@
 package com.definesys.dsgc.service.dagclient;
 
-import com.definesys.dsgc.common.cache.helper.FndPropertiesHelper;
 import com.definesys.dsgc.service.dagclient.bean.DAGEnvBean;
 import com.definesys.dsgc.service.lkv.FndPropertiesDao;
 import com.definesys.mpaas.query.MpaasQueryFactory;
