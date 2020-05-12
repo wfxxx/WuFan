@@ -1,6 +1,8 @@
 package com.definesys.dsgc.service.dagclient;
 
+import com.definesys.dsgc.common.cache.helper.FndPropertiesHelper;
 import com.definesys.dsgc.service.dagclient.bean.DAGEnvBean;
+import com.definesys.dsgc.service.lkv.FndPropertiesDao;
 import com.definesys.mpaas.query.MpaasQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -14,6 +16,10 @@ public class DAGEnvDao {
 
     public DAGEnvBean getDAGEnvInfoByEnvCode(String envCode){
         return sw.buildQuery().eq("envCode",envCode).doQueryFirst(DAGEnvBean.class);
+    }
+
+    public DAGEnvBean getESBCurrentEnvInfoByEnvCode(){
+        return sw.buildQuery().sql("select * from DSGC_ENV_INFO_CFG where ENV_CODE = (select PROPERTY_VALUE from FND_PROPERTIES where PROPERTY_KEY = 'DSGC_CURRENT_ENV')").doQueryFirst(DAGEnvBean.class);
     }
 
     public List<DAGEnvBean> getConsumerDeployedDAGEnvInfo(String consumerCode){

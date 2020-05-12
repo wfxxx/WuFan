@@ -20,6 +20,18 @@ public class SVCMngDao {
     private MpaasQueryFactory sw;
     @Value("${database.type}")
     private String dbType;
+
+
+    public ServSgUriBean getSgInfoByServNo(String servNo) {
+        if (servNo != null) {
+            return sw.buildQuery().sql("select PROVIDER,IB_URI from DSGC_SERVICES_URI where SERV_NO = #servNo")
+                    .setVar("servNo",servNo).doQueryFirst(ServSgUriBean.class);
+        } else {
+            return null;
+        }
+    }
+
+
     public PageQueryResult<DSGCService> querySvcMngServList(SVCCommonReqBean param, int pageIndex, int pageSize,String userRole, List<String> sysCodeList,String servIsOnline){
         StringBuffer sqlStr = null;
         MpaasQuery mq = sw.buildQuery();

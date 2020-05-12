@@ -21,6 +21,17 @@ public class DAGEnvBean extends MpaasBasePojo {
     @Column(value = "ADMIN_LOCATION", type = ColumnType.DB)
     private String adminLocation;
 
+    @Column(value = "REQ_LOCATION", type = ColumnType.DB)
+    private String reqLocation;
+
+    public String getReqLocation() {
+        return reqLocation;
+    }
+
+    public void setReqLocation(String reqLocation) {
+        this.reqLocation = reqLocation;
+    }
+
     public String getEnvCode() {
         return envCode;
     }

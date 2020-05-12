@@ -33,6 +33,75 @@ public class ServiceGenerateProxy {
 
 
 
+    /**
+     * 基于敏捷服务生成的服务通过本方法生成请求参数示例
+     * @param sgObjCode
+     * @param ibUri
+     * @param oper
+     * @return
+     */
+    public String createSoapSgRequestSamle(String sgObjCode,String ibUri,String oper) throws Exception{
+        Method createSoapSgRequestSamle = this.generateServcieClass.getMethod("createSoapSgRequestSamle",String.class,String.class,String.class);
+        Object invokeRes = createSoapSgRequestSamle.invoke(this.generateServcie,sgObjCode,ibUri,oper);
+        if(invokeRes != null){
+            return invokeRes.toString();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * 基于敏捷服务生成的服务通过本方法生成响应参数示例
+     * @param sgObjCode
+     * @param ibUri
+     * @param oper
+     * @return
+     */
+    public String createSoapSgResponseSamle(String sgObjCode,String ibUri,String oper) throws Exception{
+        Method createSoapSgResponseSamle = this.generateServcieClass.getMethod("createSoapSgResponseSamle",String.class,String.class,String.class);
+        Object invokeRes = createSoapSgResponseSamle.invoke(this.generateServcie,sgObjCode,ibUri,oper);
+        if(invokeRes != null){
+            return invokeRes.toString();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * 基于WSDL地址生成请求参数示例，WSDL只限于ESB提供的地址
+     * @param wsdlUrl
+     * @param oper
+     * @return
+     */
+    public String createSoapUrlRequestSamle(String wsdlUrl,String oper) throws Exception{
+        Method createSoapUrlRequestSamle = this.generateServcieClass.getMethod("createSoapUrlRequestSamle",String.class,String.class);
+        Object invokeRes = createSoapUrlRequestSamle.invoke(this.generateServcie,wsdlUrl,oper);
+        if(invokeRes != null){
+            return invokeRes.toString();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * 基于WSDL地址生成响应参数示例，WSDL只限于ESB提供的地址
+     * @param wsdlUrl
+     * @param oper
+     * @return
+     */
+    public String createSoapUrlResponseSamle(String wsdlUrl,String oper) throws Exception{
+        Method createSoapUrlResponseSamle = this.generateServcieClass.getMethod("createSoapUrlResponseSamle",String.class,String.class);
+        Object invokeRes = createSoapUrlResponseSamle.invoke(this.generateServcie,wsdlUrl,oper);
+        if(invokeRes != null){
+            return invokeRes.toString();
+        } else {
+            return null;
+        }
+    }
+
+
+
+
 
     /**
      * 获取项目目录下接口目录

@@ -9,9 +9,12 @@ import com.definesys.dsgc.service.bpm.BpmService;
 import com.definesys.dsgc.service.bpm.bean.BpmCommonReqBean;
 import com.definesys.dsgc.service.bpm.bean.BpmInstanceBean;
 import com.definesys.dsgc.service.bpm.bean.BpmInstanceDTO;
+import com.definesys.dsgc.service.dagclient.DAGEnvDao;
+import com.definesys.dsgc.service.dagclient.bean.DAGEnvBean;
 import com.definesys.dsgc.service.svcAuth.SVCAuthDao;
 import com.definesys.dsgc.service.svcAuth.SVCAuthService;
 import com.definesys.dsgc.service.svcgen.bean.WSDLResolveBean;
+import com.definesys.dsgc.service.svcgen.utils.ServiceGenerateProxy;
 import com.definesys.dsgc.service.svcmng.utils.WsdlResolvProxy;
 import com.definesys.dsgc.service.svclog.SVCLogDao;
 import com.definesys.dsgc.service.svcmng.bean.*;
@@ -65,6 +68,8 @@ public class SVCMngService {
     @Autowired
     private ApiMngDao apiMngDao;
 
+    @Autowired
+    private DAGEnvDao dagEnvDao;
 
     @Autowired
     private DSGCBusCfgDao dsgcBusCfgDao;
@@ -156,20 +161,54 @@ public class SVCMngService {
     }
     public Map<String, Object> generateMsgExample(SVCMngGenerateMsgVO param) throws Exception{
         Map<String,Object> result = new HashMap<>();
-        if("SOAP".equals(param.getType())){
-          DSGCService dsgcService =  svcMngDao.queryBasicInfoByServNo(param.getServNo());
-          String deployedNode = "1";
-          if (dsgcService != null && StringUtil.isNotBlank(dsgcService.getDeployedNode()) ){
-              deployedNode = dsgcService.getDeployedNode();
-          }
-          String wsdl = getWsdlUrl(param.getServNo(),deployedNode);
-            String  msg ="";
-            if("REQ".equals(param.getReqOrRes())){
-              msg = getWsdlBodyReq(wsdl,param.getWsdlFunction());   //请求报文
+        if ("SOAP".equals(param.getType())) {
+            //DSGCService dsgcService =  svcMngDao.queryBasicInfoByServNo(param.getServNo());
+            String msg = "";
+
+            ServSgUriBean sg = this.svcMngDao.getSgInfoByServNo(param.getServNo());
+            if (sg != null) {
+
+                if (sg.getProvider() != null) {
+                    if ("REQ".equals(param.getReqOrRes())) {
+                        msg = ServiceGenerateProxy.newInstance().createSoapSgRequestSamle(sg.getProvider(),sg.getIbUri(),param.getWsdlFunction());
+                    }
+                    if ("RES".equals(param.getReqOrRes())) {
+                        msg = ServiceGenerateProxy.newInstance().createSoapSgResponseSamle(sg.getProvider(),sg.getIbUri(),param.getWsdlFunction());
+                    }
+                } else {
+                    DAGEnvBean env = this.dagEnvDao.getESBCurrentEnvInfoByEnvCode();
+
+                    if (env != null) {
+                        String baseLocal = env.getReqLocation();
+                        if (baseLocal != null) {
+                            String wsdlUrl = baseLocal + sg.getIbUri() + "?wsdl";
+                            if ("REQ".equals(param.getReqOrRes())) {
+                                msg = ServiceGenerateProxy.newInstance().createSoapUrlRequestSamle(wsdlUrl,param.getWsdlFunction());
+                            }
+                            if ("RES".equals(param.getReqOrRes())) {
+                                msg = ServiceGenerateProxy.newInstance().createSoapUrlResponseSamle(wsdlUrl,param.getWsdlFunction());
+                            }
+                        }
+                    }
+
+
+                }
             }
-            if ("RES".equals(param.getReqOrRes())){
-                msg = getWsdlBodyRes(wsdl,param.getWsdlFunction());  //响应报文
-            }
+
+//          String deployedNode = "1";
+//          if (dsgcService != null && StringUtil.isNotBlank(dsgcService.getDeployedNode()) ){
+//              deployedNode = dsgcService.getDeployedNode();
+//          }
+//          String wsdl = getWsdlUrl(param.getServNo(),deployedNode);
+
+//            if("REQ".equals(param.getReqOrRes())){
+//              msg = getWsdlBodyReq(wsdl,param.getWsdlFunction());   //请求报文
+//            }
+//            if ("RES".equals(param.getReqOrRes())){
+//                msg = getWsdlBodyRes(wsdl,param.getWsdlFunction());  //响应报文
+//            }
+
+
            String type = getType(msg);
             List<Map<String,String>> paramResult = new ArrayList<>();
             if("Json".equals(type)) {
