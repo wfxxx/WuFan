@@ -3,7 +3,7 @@ package com.definesys.dsgc.service.svclog.bean;
 import java.util.List;
 
 public class TempQueryLogCondition {
-    private DSGCLogInstance logInstance;
+    private LogInstanceQueryDTO logInstance;
     private List<Object> keywordForm;
 
     //http请求url，此url配置在值列表，多个url对应不同的环境
@@ -13,11 +13,11 @@ public class TempQueryLogCondition {
 
     private  String trackId;
 
-    public DSGCLogInstance getLogInstance() {
+    public LogInstanceQueryDTO getLogInstance() {
         return logInstance;
     }
 
-    public void setLogInstance(DSGCLogInstance logInstance) {
+    public void setLogInstance(LogInstanceQueryDTO logInstance) {
         this.logInstance = logInstance;
     }
 

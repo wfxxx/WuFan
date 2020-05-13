@@ -35,7 +35,7 @@ public class DSGCLogInstanceService {
     SVCLogDao svcLogDao;
 
 
-    public PageQueryResult<DSGCLogInstance> query(List<Object> keyword,String userRole, String uid, DSGCLogInstance instance, int pageSize, int pageIndex) {
+    public PageQueryResult<DSGCLogInstance> query(List<Object> keyword,String userRole, String uid, LogInstanceQueryDTO instance, int pageSize, int pageIndex) {
         try {
             PageQueryResult<DSGCLogInstance> dsgcLogInstance = new PageQueryResult<DSGCLogInstance>();
             // 根据用户名查询用户所管理的系统
@@ -206,7 +206,7 @@ public class DSGCLogInstanceService {
     }
 
     public Response queryEsbServLogInst( TempQueryLogCondition tempQueryLogCondition,int pageSize,int pageIndex,String userRole,String userId, HttpServletRequest request)throws Exception{
-        DSGCLogInstance logInstance = tempQueryLogCondition.getLogInstance();
+        LogInstanceQueryDTO logInstance = tempQueryLogCondition.getLogInstance();
         List<Object> keyword = tempQueryLogCondition.getKeywordForm();
         if(StringUtil.isBlank(tempQueryLogCondition.getEnv())){
             throw new Exception("请求参数错误！");

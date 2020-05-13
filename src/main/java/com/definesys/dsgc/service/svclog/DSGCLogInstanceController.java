@@ -4,11 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
+import com.definesys.dsgc.service.svclog.bean.*;
 import com.definesys.dsgc.service.system.bean.DSGCSystemEntities;
-import com.definesys.dsgc.service.svclog.bean.DSGCLogAudit;
-import com.definesys.dsgc.service.svclog.bean.DSGCLogInstance;
-import com.definesys.dsgc.service.svclog.bean.DSGCLogOutBound;
-import com.definesys.dsgc.service.svclog.bean.TempQueryLogCondition;
 import com.definesys.dsgc.service.svclog.DSGCLogInstanceService;
 import com.definesys.dsgc.service.utils.CommonUtils;
 import com.definesys.dsgc.service.utils.MsgCompressUtil;
@@ -46,7 +43,7 @@ public class DSGCLogInstanceController {
                           @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
                           @RequestParam(value = "pageIndex", required = false, defaultValue = "1") int pageIndex,
                           HttpServletRequest request) {
-        DSGCLogInstance logInstance = tempQueryLogCondition.getLogInstance();
+        LogInstanceQueryDTO logInstance = tempQueryLogCondition.getLogInstance();
         List<Object> keyword = tempQueryLogCondition.getKeywordForm();
         String userRole = request.getHeader("userRole");
         String uid = request.getHeader("uid");
@@ -65,7 +62,7 @@ public class DSGCLogInstanceController {
     @RequestMapping(value = "/queryLogInstanceBySwitchUrl", method = {RequestMethod.POST, RequestMethod.GET})
     public ResultVO queryLogInstanceBySwitchUrl(@RequestBody com.alibaba.fastjson.JSONObject reqMap,HttpServletRequest request)  {
         ResultVO<PageQueryResult<DSGCLogInstance>> resultVO = new ResultVO<PageQueryResult<DSGCLogInstance>>();
-        DSGCLogInstance logInstance = JSON.parseObject(reqMap.getString("logInstance"),DSGCLogInstance.class);
+        LogInstanceQueryDTO logInstance = JSON.parseObject(reqMap.getString("logInstance"),LogInstanceQueryDTO.class);
         List<Object> keyword = JSON.parseArray(reqMap.getString("keyword"));
         Integer pageSize = (Integer)JSON.parse(reqMap.getString("pageSize"));
         Integer pageIndex = (Integer)JSON.parse(reqMap.getString("pageIndex"));

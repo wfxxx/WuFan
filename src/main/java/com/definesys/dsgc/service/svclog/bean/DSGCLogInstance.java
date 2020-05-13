@@ -6,9 +6,13 @@ import com.definesys.mpaas.query.json.MpaasDateSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 
 @SQLQuery(value = {
         @SQL(view = "Administrators_view", sql = "select loin.*, ss.attribue5 as sys_code from dsgc_log_instance loin,dsgc_services ss where loin.serv_no = ss.serv_no(+)  "),
@@ -36,6 +40,9 @@ public class DSGCLogInstance {
 
     private String startTime;  //请求时间
     private String endTime;   //结束时间
+
+    @Column(type = ColumnType.JAVA)
+    private String costDesc;  //耗时时长
     private String clientIp;  //请求方IP
     private String instStatus;//实例状态
     private String bizStatus;
@@ -46,7 +53,9 @@ public class DSGCLogInstance {
     private String results;  //出栈响应结果
     private String ibLob;   //请求报文
     private Integer msgNum;//报文数量
-    private Integer msgSize;//报文大小
+    private Double msgSize;//报文大小
+    @Column(type = ColumnType.JAVA)
+    private String msDesc;//报文大小描述
     private String obLob;
     private String plCompress;
     private String plStoreType;
@@ -54,6 +63,7 @@ public class DSGCLogInstance {
     private Long sequencesId;
     private String billGuid;
     private String aysnStatus;
+    private String accessUser;
 
     private String bizKey1; // 业务关键字1
 
@@ -85,6 +95,65 @@ public class DSGCLogInstance {
     private Date lastUpdateDate;
 
     private String urlParams;
+
+    //add by legolas20200513
+    private void custMSDescSet(Double msgSize){
+        if(msgSize != null){
+            double md = msgSize.doubleValue();
+            if(md >= 1024d && md <1024d*1024d){
+                BigDecimal b = new BigDecimal(md / (1024d*1024d)).setScale(3,RoundingMode.UP);
+                this.msDesc = b.doubleValue() +"MB";
+            } else if (md >= 1024d*1024d){
+                BigDecimal b = new BigDecimal(md / (1024d*1024d)).setScale(3,RoundingMode.UP);
+                this.msDesc = b.doubleValue() +"GB";
+            } else {
+                this.msDesc = md+"KB";
+            }
+
+        } else {
+            this.msDesc="";
+        }
+    }
+
+    //add by legolas20200513
+    private void costDescSet(){
+        try{
+        if(this.startTime != null && this.endTime != null){
+            long cost  = this.getEndTimeDate().getTime() - this.getStartTimeDate().getTime();
+            if(cost < 1000){
+                this.costDesc = cost +"毫秒";
+            } else if (cost >= 1000 && cost < 60000){
+                double costd = Double.valueOf(cost);
+                BigDecimal b = new BigDecimal(costd / 1000).setScale(2,RoundingMode.UP);
+                this.costDesc = b.doubleValue() + "秒";
+            } else {
+                double costd = Double.valueOf(cost);
+                BigDecimal b = new BigDecimal(costd / 60000).setScale(2,RoundingMode.UP);
+                this.costDesc = b.doubleValue() + "分钟";
+            }
+        } else {
+            this.costDesc = "";
+        }}catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private String getBugFixDate(String time) {
+        if(time != null) {
+            //倚天框架bug，毫秒最后的0会被去掉。。。。
+            String s = time.substring(time.indexOf("."));
+            if(s == null){
+                time +=".000";
+            }else if (s.length() == 1) {
+                time += "000";
+            } else if (s.length() == 2) {
+                time += "00";
+            } else if (s.length() == 3) {
+                time += "0";
+            }
+        }
+        return time;
+    }
 
     public String getBizKey1() {
         return bizKey1;
@@ -134,12 +203,13 @@ public class DSGCLogInstance {
         this.msgNum = msgNum;
     }
 
-    public Integer getMsgSize() {
+    public Double getMsgSize() {
         return msgSize;
     }
 
-    public void setMsgSize(Integer msgSize) {
+    public void setMsgSize(Double msgSize) {
         this.msgSize = msgSize;
+        this.custMSDescSet(msgSize);
     }
 
     public String getServNo() {
@@ -174,21 +244,57 @@ public class DSGCLogInstance {
         this.clientIp = clientIp;
     }
 
+
     public String getStartTime() {
         return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = this.getBugFixDate(startTime);
+        this.costDescSet();
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime =  this.getBugFixDate(endTime);
+        this.costDescSet();
+    }
+
+    public String getCostDesc() {
+        return costDesc;
+    }
+
+    public void setCostDesc(String costDesc) {
+        this.costDesc = costDesc;
     }
 
     public Date getStartTimeDate() throws ParseException {
         if(startTime == null){
             return null;
         }
-        SimpleDateFormat sdf= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        SimpleDateFormat sdf= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         return sdf.parse(startTime);
+
+
     }
 
-    public void setStartTime(String startTime) {
-        this.startTime = startTime;
+    public Date getEndTimeDate() throws Exception{
+        if(endTime == null){
+            return null;
+        }
+
+
+        SimpleDateFormat sdf= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        return sdf.parse(endTime);
     }
+
+
+
+
 
     public String getServer() {
         return server;
@@ -198,22 +304,9 @@ public class DSGCLogInstance {
         this.server = server;
     }
 
-    public String getEndTime() {
-        return endTime;
-    }
-
-    public Date getEndTimeDate() throws Exception{
-        if(endTime == null){
-            return null;
-        }
-        SimpleDateFormat sdf= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        return sdf.parse(endTime);
-    }
 
 
-    public void setEndTime(String endTime) {
-        this.endTime = endTime;
-    }
+
 
     public String getResTime() {
         return resTime;
@@ -418,5 +511,21 @@ public class DSGCLogInstance {
 
     public void setUrlParams(String urlParams) {
         this.urlParams = urlParams;
+    }
+
+    public String getAccessUser() {
+        return accessUser;
+    }
+
+    public void setAccessUser(String accessUser) {
+        this.accessUser = accessUser;
+    }
+
+    public String getMsDesc() {
+        return msDesc;
+    }
+
+    public void setMsDesc(String msDesc) {
+        this.msDesc = msDesc;
     }
 }

@@ -4,12 +4,9 @@ package com.definesys.dsgc.service.svclog;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.definesys.dsgc.service.rpt.bean.TopologyVO;
-import com.definesys.dsgc.service.svclog.bean.FndProperties;
+import com.definesys.dsgc.service.svclog.bean.*;
 import com.definesys.dsgc.service.system.bean.DSGCSystemEntities;
 import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
-import com.definesys.dsgc.service.svclog.bean.DSGCLogAudit;
-import com.definesys.dsgc.service.svclog.bean.DSGCLogInstance;
-import com.definesys.dsgc.service.svclog.bean.DSGCLogOutBound;
 import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.dsgc.service.utils.StringUtils;
 import com.definesys.mpaas.log.SWordLogger;
@@ -39,7 +36,7 @@ public class DSGCLogInstanceDao {
     @Value("${database.type}")
     private String dbType;
 
-    public PageQueryResult<DSGCLogInstance> query(List<Object> keyword, String isAdmin, String uid, DSGCLogInstance instance, int pageSize, int pageIndex,List<String> sysNoList) throws Exception {
+    public PageQueryResult<DSGCLogInstance> query(List<Object> keyword,String isAdmin,String uid,LogInstanceQueryDTO instance,int pageSize,int pageIndex,List<String> sysNoList) throws Exception {
         logger.debug(instance.toString());
         //不存在关键字时
         if (keyword == null) {
@@ -73,7 +70,6 @@ public class DSGCLogInstanceDao {
             MpaasQuery mq = null;
             for (int i = 0; i < keyword.size(); i++) {
                 JSONObject jsonObject = JSONObject.parseObject(keyword.get(i).toString());
-                System.out.println(jsonObject.toString());
                 String inputValue = jsonObject.getString("inputValue");
                 String busKeyword = jsonObject.getString("busKeyword");
                 switch (busKeyword) {
