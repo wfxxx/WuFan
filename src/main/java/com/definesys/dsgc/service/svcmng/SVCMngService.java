@@ -821,6 +821,11 @@ public class SVCMngService {
 
     }
 
+
+
+
+
+
     //返回解析的字段Map<name,value>集合，若va;ue=null，表示该name节点为父节点，不包含内容。
     public List<Map<String,String>>  resloveXML(String XMLDemo){
         String patternXml="<(.*?)>";
@@ -831,30 +836,54 @@ public class SVCMngService {
         Map<String,String> value=new HashMap<String,String>();
         while (m.find()) {
             String node=m.group();
-            //<value></value>,匹配到结束字符返回
+            String[] nodes=node.split(" ");
+            //去除xml标签的空间内容
+            node=nodes[0];
+            if(nodes.length>1){
+                node=node+">";
+            }
+            //</value>,去除正则匹配的尾部标签，
             if(node.indexOf("</")>-1){
                 continue;
             }
-            String nodetext=node.substring(1,node.length()-1);
-            //匹配<value>的文本
-            String patternXmlContext="<"+nodetext+">"+"(.*?)"+"</"+nodetext+">";
-            Pattern rr = Pattern.compile(patternXmlContext);
-            Matcher mm = rr.matcher(XMLDemo);
-            //<value>父节点没有内容为null
-            value.put(nodetext,null);
-            if(mm.find()){
-                String ContextResult=mm.group();
-                String Context=ContextResult.substring(ContextResult.indexOf(">")+1,(ContextResult.lastIndexOf("</")));
-                //不包含子节点，内容为该节点文本
-                if(Context.indexOf("<")<0){
-                    value.put(nodetext,Context);
+            //<！--value-->,去除注释标签
+            if(node.indexOf("<!--")>-1){
+                continue;
+            }
+            //<value/>,特殊处理空节点
+            if(node.indexOf("/>")>-1){
+                value.put(node.substring(0,node.length()-2),"");
+            }else{
+                String nodetext=node.substring(1,node.length()-1);
+                //匹配<value>的文本内容
+                String patternXmlContext="<"+nodetext+">"+"(.*?)"+"</"+nodetext+">";
+                Pattern rr = Pattern.compile(patternXmlContext);
+                Matcher mm = rr.matcher(XMLDemo);
+                //<value>如果不是叶子标签，其值设置为null
+                value.put(nodetext,null);
+                //<value>赋值内容
+                if(mm.find()){
+                    String ContextResult=mm.group();
+                    String Context=ContextResult.substring(ContextResult.indexOf(">")+1,(ContextResult.lastIndexOf("</")));
+                    if(Context.indexOf("<")<0){
+                        value.put(nodetext,Context);
+                    }
                 }
             }
+
         }
+        //返回结构
         List<Map<String,String>> result =new ArrayList<>();
         value.keySet().stream().forEach(e->{
             Map<String,String> node=new HashMap<String,String>();
-            node.put("name",e);
+            String[] names=e.split(":");
+            String name="";
+            if(names.length>1){
+                name=names[1];
+            }else{
+                name=names[0];
+            }
+            node.put("name",name);
             node.put("value",value.get(e));
             result.add(node);
         });
