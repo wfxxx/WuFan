@@ -67,6 +67,9 @@ public class DSGCLogInstance {
 
     private String bizKey1; // 业务关键字1
 
+    private String contentType;
+
+    private String userHeaders;
     //服务接收方（Java字段，不参与此表的增删改）
     @Column(type = ColumnType.JAVA)
     private String sendTo;
@@ -153,6 +156,14 @@ public class DSGCLogInstance {
             }
         }
         return time;
+    }
+
+    private String userHeadersFormat(String userheaders){
+        if(userheaders != null){
+            return userheaders.replace("&"," \n ");
+        } else {
+            return null;
+        }
     }
 
     public String getBizKey1() {
@@ -527,5 +538,22 @@ public class DSGCLogInstance {
 
     public void setMsDesc(String msDesc) {
         this.msDesc = msDesc;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+
+    public String getUserHeaders() {
+        return userHeaders;
+    }
+
+    public void setUserHeaders(String userHeaders) {
+
+        this.userHeaders = this.userHeadersFormat(userHeaders);
     }
 }

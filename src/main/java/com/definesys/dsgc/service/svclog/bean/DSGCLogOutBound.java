@@ -6,6 +6,10 @@ import com.definesys.mpaas.query.json.MpaasDateSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Table(value = "DSGC_LOG_OUTBOUND")
@@ -22,6 +26,8 @@ public class DSGCLogOutBound {
     private String sendTo; //接收方
     private String reqTime; //请求时间
     private String resTime; // 响应时间
+    @Column(type = ColumnType.JAVA)
+    private String costDesc;
     private String resBodyLob; //异常信息
     private String reqHeaderLob; //出栈请求Header
     private String status; //出栈状态
@@ -63,6 +69,76 @@ public class DSGCLogOutBound {
     @Column(type = ColumnType.JAVA)
     private Date lastUpdateDate;
 
+    //add by legolas20200513
+    private void costDescSet(){
+        try{
+            if(this.reqTime != null && this.resTime != null){
+                long cost  = this.getEndTimeDate().getTime() - this.getStartTimeDate().getTime();
+                if(cost < 1000){
+                    this.costDesc = cost +"毫秒";
+                } else if (cost >= 1000 && cost < 60000){
+                    double costd = Double.valueOf(cost);
+                    BigDecimal b = new BigDecimal(costd / 1000).setScale(2,RoundingMode.UP);
+                    this.costDesc = b.doubleValue() + "秒";
+                } else {
+                    double costd = Double.valueOf(cost);
+                    BigDecimal b = new BigDecimal(costd / 60000).setScale(2,RoundingMode.UP);
+                    this.costDesc = b.doubleValue() + "分钟";
+                }
+            } else {
+                this.costDesc = "";
+            }}catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private String getBugFixDate(String time) {
+        if(time != null) {
+            //倚天框架bug，毫秒最后的0会被去掉。。。。
+            String s = time.substring(time.indexOf("."));
+            if(s == null){
+                time +=".000";
+            }else if (s.length() == 1) {
+                time += "000";
+            } else if (s.length() == 2) {
+                time += "00";
+            } else if (s.length() == 3) {
+                time += "0";
+            }
+        }
+        return time;
+    }
+
+
+    public Date getStartTimeDate() throws ParseException {
+        if(this.reqTime == null){
+            return null;
+        }
+
+        SimpleDateFormat sdf= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        return sdf.parse(this.reqTime);
+
+
+    }
+
+    public Date getEndTimeDate() throws Exception{
+        if(this.resTime == null){
+            return null;
+        }
+
+
+        SimpleDateFormat sdf= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        return sdf.parse(this.resTime);
+    }
+
+
+    public String getCostDesc() {
+        return costDesc;
+    }
+
+    public void setCostDesc(String costDesc) {
+        this.costDesc = costDesc;
+    }
 
     public String getToken() {
         return token;
@@ -117,7 +193,8 @@ public class DSGCLogOutBound {
     }
 
     public void setReqTime(String reqTime) {
-        this.reqTime = reqTime;
+        this.reqTime = this.getBugFixDate(reqTime);
+        this.costDescSet();
     }
 
     public String getResTime() {
@@ -125,7 +202,8 @@ public class DSGCLogOutBound {
     }
 
     public void setResTime(String resTime) {
-        this.resTime = resTime;
+        this.resTime = this.getBugFixDate(resTime);
+        this.costDescSet();
     }
 
     public String getObId() {
