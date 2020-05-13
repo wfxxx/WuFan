@@ -1097,6 +1097,7 @@ public void addRestServ(AddRestServVO addRestServVO){
             }
             if("SOAP".equals(addQuickServVO.getSourceType())){
                 dsgcServicesUri.setSoapOper(addQuickServVO.getSoapFunction());
+                dsgcServicesUri.setHttpMethod("POST");
             }
             dsgcServicesUri.setTransportType("http");
             svcMngDao.addServUri(dsgcServicesUri);

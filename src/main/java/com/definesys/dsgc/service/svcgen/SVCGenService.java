@@ -613,7 +613,6 @@ public class SVCGenService {
         if (saCode != null && saCode.trim().length() > 0) {
             SABean sa = this.svcGenDao.getSaInfoBySaCode(saCode);
             //根据系统编号，默认设置下一步的提供方系统
-            System.out.println(sa.getUn()+"=======>"+sa.getPd());
             Response res = this.sgProxy.parseSpyWSDL(wsdl.getWsdlUri(),sa.getUn(),sa.getPd());
             if(Response.CODE_OK.equals(res.getCode())) {
                 return res.setMessage(sa.getSystemCode());
