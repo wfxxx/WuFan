@@ -22,6 +22,9 @@ public class DSGCBusCfgVO {
     @ApiModelProperty(value = "环境类型")
     private String envType;
 
+    @ApiModelProperty(value = "技术类型")
+    private String techType;
+
     @ApiModelProperty(value = "环境顺序")
     private Integer envSeq;
 
@@ -72,6 +75,8 @@ public class DSGCBusCfgVO {
     private String reqLocation;
 
     private String adminLocation;
+
+    private String dsgcAdmin;
 
     private List<DSGCEnvMachineCfg> envMachineCfgs;
 
@@ -253,5 +258,21 @@ public class DSGCBusCfgVO {
 
     public void setEnvType(String envType) {
         this.envType = envType;
+    }
+
+    public String getTechType() {
+        return techType;
+    }
+
+    public void setTechType(String techType) {
+        this.techType = techType;
+    }
+
+    public String getDsgcAdmin() {
+        return dsgcAdmin;
+    }
+
+    public void setDsgcAdmin(String dsgcAdmin) {
+        this.dsgcAdmin = dsgcAdmin;
     }
 }

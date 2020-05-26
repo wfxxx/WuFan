@@ -10,7 +10,9 @@ public class DagEnvInfoDTO {
     private Integer envSeq;
     private String reqLocation;
     private String adminLocation;
+    private String dsgcAdmin;
     private String envType;
+    private String techType;
     private String adminUser;
     private String adminPd;
     private List<DagEnvInfoNodeBean> nodeList;
@@ -95,5 +97,21 @@ public class DagEnvInfoDTO {
 
     public void setNodeList(List<DagEnvInfoNodeBean> nodeList) {
         this.nodeList = nodeList;
+    }
+
+    public String getDsgcAdmin() {
+        return dsgcAdmin;
+    }
+
+    public void setDsgcAdmin(String dsgcAdmin) {
+        this.dsgcAdmin = dsgcAdmin;
+    }
+
+    public String getTechType() {
+        return techType;
+    }
+
+    public void setTechType(String techType) {
+        this.techType = techType;
     }
 }

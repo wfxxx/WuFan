@@ -112,9 +112,11 @@ public class EnvInfoService {
             dto.setEnvName(dsgcEnvInfoCfgBean.getEnvName());
             dto.setEnvSeq(dsgcEnvInfoCfgBean.getEnvSeq());
             dto.setReqLocation(dsgcEnvInfoCfgBean.getReqLocation());
+            dto.setDsgcAdmin(dsgcEnvInfoCfgBean.getDsgcAdmin());
             dto.setAdminLocation(dsgcEnvInfoCfgBean.getAdminLocation());
             dto.setDeicId(dsgcEnvInfoCfgBean.getDeicId());
             dto.setEnvType(dsgcEnvInfoCfgBean.getEnvType());
+            dto.setTechType(dsgcEnvInfoCfgBean.getTechType());
             result.add(dto);
         }
         return result;
@@ -131,6 +133,9 @@ public class EnvInfoService {
 
         envInfoCfg.setEsbIp(this.getIpFromUrl(reqLocation));
         envInfoCfg.setEsbPort(this.getPortFromUrl(reqLocation));
+
+        envInfoCfg.setDsgcIp(this.getIpFromUrl(envInfoCfg.getDsgcAdmin()));
+        envInfoCfg.setDsgcPort(this.getPortFromUrl(envInfoCfg.getDsgcAdmin()));
 
         envInfoDao.addOrUpdateEnvInfoCfg(envInfoCfg);
     }
@@ -268,8 +273,10 @@ public class EnvInfoService {
             dto.setEnvSeq(dsgcEnvInfoCfgBean.getEnvSeq());
             dto.setReqLocation(dsgcEnvInfoCfgBean.getReqLocation());
             dto.setAdminLocation(dsgcEnvInfoCfgBean.getAdminLocation());
+            dto.setDsgcAdmin(dsgcEnvInfoCfgBean.getDsgcAdmin());
             dto.setDeicId(dsgcEnvInfoCfgBean.getDeicId());
             dto.setEnvType(dsgcEnvInfoCfgBean.getEnvType());
+            dto.setTechType(dsgcEnvInfoCfgBean.getTechType());
             result.add(dto);
         }
         return result;
