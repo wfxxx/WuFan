@@ -259,4 +259,21 @@ public class MyNtyController {
         return Response.ok().setData(this.mns.getUserMNNoticesCount(userId));
     }
 
+
+    @RequestMapping(value = "/pushNotice", method = RequestMethod.POST)
+    public Response pushNotice(@RequestBody PushNoticeDTO notice) {
+        boolean res = this.mns.pushNotice(notice);
+        if(res){
+            PushNoticeResDTO r = new PushNoticeResDTO();
+            r.setRtnCode("S");
+            r.setRtnMsg("notice push successfully!");
+            return Response.ok().setData(r);
+        } else {
+            PushNoticeResDTO r = new PushNoticeResDTO();
+            r.setRtnCode("E");
+            r.setRtnMsg("notice push failed! check the server log.");
+            return Response.ok().setData(r);
+        }
+    }
+
 }
