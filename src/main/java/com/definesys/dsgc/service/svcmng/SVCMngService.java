@@ -11,6 +11,7 @@ import com.definesys.dsgc.service.bpm.bean.BpmInstanceBean;
 import com.definesys.dsgc.service.bpm.bean.BpmInstanceDTO;
 import com.definesys.dsgc.service.dagclient.DAGEnvDao;
 import com.definesys.dsgc.service.dagclient.bean.DAGEnvBean;
+import com.definesys.dsgc.service.lkv.FndLookupTypeDao;
 import com.definesys.dsgc.service.svcAuth.SVCAuthDao;
 import com.definesys.dsgc.service.svcAuth.SVCAuthService;
 import com.definesys.dsgc.service.svcgen.bean.WSDLResolveBean;
@@ -74,13 +75,15 @@ public class SVCMngService {
     private ServiceGenerateProxy sgProxy = ServiceGenerateProxy.newInstance();
 
     @Autowired
+    private FndLookupTypeDao lkvDao;
+
+    @Autowired
     private DSGCBusCfgDao dsgcBusCfgDao;
     public PageQueryResult<SVCMngInfoListBean> querySvcMngServList(SVCCommonReqBean param,int pageIndex,int pageSize,String userId,String userRole){
         if ("Tourist".equals(userRole)){
             return new PageQueryResult<>();
         }else {
-
-            List<FndLookupValue> fndLookupValueList =  svcAuthDao.queryFndModuleByLookupType("SVC_SHARE_TYPE");
+            Map<String,String> envColorLkv = this.lkvDao.getlookupValues("ENV_COLOR");
             List<FndLookupValue> servIsCompleteList = svcAuthDao.queryFndModuleByLookupType("SERV_IS_COMPLETE");
             String servIsOnline = "";
             if (param.getCon0() != null && param.getCon0().trim().length() > 0) {
@@ -122,11 +125,14 @@ public class SVCMngService {
             List<SVCMngInfoListBean> list = new ArrayList<>();
             for (DSGCService item:pageQueryResult.getResult()) {
                 SVCMngInfoListBean temp =svcMngBeanMapping(item);
-
-                for (int  i =0;i<fndLookupValueList.size();i++){
-                    if (temp.getShareTypeDesc() != null && temp.getShareTypeDesc().equals(fndLookupValueList.get(i).getLookupCode())){
-                        temp.setShareTypeDesc(fndLookupValueList.get(i).getMeaning());
-                        break;
+                if(temp.getDeplEnv() != null && temp.getDeplEnv().size() >0){
+                    for(DeployedEnvInfoBean env:temp.getDeplEnv()){
+                        String color = envColorLkv.get(env.getEnvCode());
+                        if(color == null || color.trim().length() == 0) {
+                            env.setColor("magenta");
+                        } else {
+                            env.setColor(color.trim());
+                        }
                     }
                 }
                 list.add(temp);
@@ -146,19 +152,20 @@ public class SVCMngService {
         svcMngInfoListBean.setIsProd(dsgcService.getIsProd());
         svcMngInfoListBean.setIbUri(dsgcService.getIbUri());
         svcMngInfoListBean.setHttpMethod(dsgcService.getHttpMethod());
+        svcMngInfoListBean.setDeplEnv(this.svcMngDao.getDeployEnvInfo(dsgcService.getIbUri()));
       //  svcMngInfoListBean.setCurBpmNode(dsgcService.getAttribue2());
-        if(dsgcService.getInstanceId() != null && !"".equals(dsgcService.getInstanceId())){
-            BpmCommonReqBean bpmCommonReqBean = new BpmCommonReqBean();
-            bpmCommonReqBean.setCon0(dsgcService.getInstanceId());
-            BpmInstanceBean bpmInstanceBean = bpmdao.queryBpmInstanceBaseInfo(bpmCommonReqBean);
-            BpmInstanceDTO bpmInstanceDTO =bpmService.instanceBeanMapping(bpmInstanceBean);
-            svcMngInfoListBean.setCurBpmNode(bpmInstanceDTO.getCurNodeName());
-        }
-        if(dsgcService.getDeployedNode() != null){
-            List<DSGCEnvInfoCfg>  dsgcEnvInfoCfgs =  dsgcBusCfgDao.queryEnvInfoCfgByEnvSeq(Integer.parseInt(dsgcService.getDeployedNode()));
-            svcMngInfoListBean.setDeployedNode(dsgcEnvInfoCfgs.get(0).getEnvCode());
-            svcMngInfoListBean.setDeployedNodeName(dsgcEnvInfoCfgs.get(0).getEnvName());
-        }
+//        if(dsgcService.getInstanceId() != null && !"".equals(dsgcService.getInstanceId())){
+//            BpmCommonReqBean bpmCommonReqBean = new BpmCommonReqBean();
+//            bpmCommonReqBean.setCon0(dsgcService.getInstanceId());
+//            BpmInstanceBean bpmInstanceBean = bpmdao.queryBpmInstanceBaseInfo(bpmCommonReqBean);
+//            BpmInstanceDTO bpmInstanceDTO =bpmService.instanceBeanMapping(bpmInstanceBean);
+//            svcMngInfoListBean.setCurBpmNode(bpmInstanceDTO.getCurNodeName());
+//        }
+//        if(dsgcService.getDeployedNode() != null){
+//            List<DSGCEnvInfoCfg>  dsgcEnvInfoCfgs =  dsgcBusCfgDao.queryEnvInfoCfgByEnvSeq(Integer.parseInt(dsgcService.getDeployedNode()));
+//            svcMngInfoListBean.setDeployedNode(dsgcEnvInfoCfgs.get(0).getEnvCode());
+//            svcMngInfoListBean.setDeployedNodeName(dsgcEnvInfoCfgs.get(0).getEnvName());
+//        }
         return svcMngInfoListBean;
     }
     public Map<String, Object> generateMsgExample(SVCMngGenerateMsgVO param) throws Exception{

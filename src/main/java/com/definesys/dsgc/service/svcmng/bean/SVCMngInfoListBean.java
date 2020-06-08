@@ -1,5 +1,8 @@
 package com.definesys.dsgc.service.svcmng.bean;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SVCMngInfoListBean {
     private String servNo;
     private String servName;
@@ -13,6 +16,7 @@ public class SVCMngInfoListBean {
     private String curBpmNode;
     private String ibUri;
     private String httpMethod;
+    private List<DeployedEnvInfoBean> deplEnv = new ArrayList<DeployedEnvInfoBean>();
 
     public String getIbUri() {
         return ibUri;
@@ -108,5 +112,13 @@ public class SVCMngInfoListBean {
 
     public void setCurBpmNode(String curBpmNode) {
         this.curBpmNode = curBpmNode;
+    }
+
+    public List<DeployedEnvInfoBean> getDeplEnv() {
+        return deplEnv;
+    }
+
+    public void setDeplEnv(List<DeployedEnvInfoBean> deplEnv) {
+        this.deplEnv = deplEnv;
     }
 }
