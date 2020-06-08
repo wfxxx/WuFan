@@ -71,6 +71,8 @@ public class SVCMngService {
     @Autowired
     private DAGEnvDao dagEnvDao;
 
+    private ServiceGenerateProxy sgProxy = ServiceGenerateProxy.newInstance();
+
     @Autowired
     private DSGCBusCfgDao dsgcBusCfgDao;
     public PageQueryResult<SVCMngInfoListBean> querySvcMngServList(SVCCommonReqBean param,int pageIndex,int pageSize,String userId,String userRole){
@@ -1101,6 +1103,29 @@ public void addRestServ(AddRestServVO addRestServVO){
             }
             dsgcServicesUri.setTransportType("http");
             svcMngDao.addServUri(dsgcServicesUri);
+        }
+    }
+
+
+    public void refreshServDeployStatus(String uid){
+        try {
+            List uriList = null;
+            UserHelper uh = this.userHelper.user(uid);
+            if (uh.isSuperAdministrator() || uh.isAdmin()) {
+                //刷新所有服务的状态
+
+            } else if (uh.isSystemMaintainer()) {
+                //刷新其负责的应用下面的服务的状态
+
+
+            }
+
+
+            String envCode = null;
+            Set<String> existUri = this.sgProxy.filterNoExistUriInESB(envCode,uid,uriList);
+
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 }

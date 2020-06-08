@@ -191,4 +191,11 @@ public class SVCMngController {
 
         return Response.ok();
     }
+
+    @RequestMapping(value = "/refreshServDeployStatus",method = RequestMethod.GET)
+    public Response refreshServDeployStatus(HttpServletRequest request){
+        String userId = request.getHeader("uid");
+
+        return Response.ok();
+    }
 }
