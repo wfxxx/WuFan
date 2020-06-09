@@ -1148,11 +1148,13 @@ public void addRestServ(AddRestServVO addRestServVO){
             List<DSGCEnvInfoCfg> envList = this.svcMngDao.queryEnvInfoCfgByEnvType("ESB");
             for (DSGCEnvInfoCfg env: envList) {
                 envCode = env.getEnvCode();
-                //Set<String> existUri = this.sgProxy.filterNoExistUriInESB(envCode,uid,uriList);
+                Set<String> existUri = this.sgProxy.filterNoExistUriInESB(envCode,uid,uriList);
+
                 //对环境code和过滤后的uri进行数据更新
-                for(String uri:uriList){
+                for(String uri:existUri){
                     //新增
                     this.svcMngDao.addUriDplEnv(new DSGCUriDplEnvBean(envCode,uri));
+                    System.out.println("======>envCode->"+envCode+" uriList->"+uriList);
                 }
                 // System.out.println("envCode->"+envCode+" uriList->"+uriList);
             }
