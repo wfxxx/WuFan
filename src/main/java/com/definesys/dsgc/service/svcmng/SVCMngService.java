@@ -147,7 +147,7 @@ public class SVCMngService {
         svcMngInfoListBean.setServName(dsgcService.getServName());
         svcMngInfoListBean.setServNo(dsgcService.getServNo());
         svcMngInfoListBean.setSubSystem(dsgcService.getAttribue1());
-        svcMngInfoListBean.setShareTypeDesc(dsgcService.getShareType());
+        svcMngInfoListBean.setShareTypeDesc(dsgcService.getShareTypeMeaning());
         svcMngInfoListBean.setInfoFull(dsgcService.getInfoFull());
         svcMngInfoListBean.setIsProd(dsgcService.getIsProd());
         svcMngInfoListBean.setIbUri(dsgcService.getIbUri());

@@ -162,6 +162,9 @@ public class DSGCService extends MpaasBasePojo implements Serializable {
     @Column(type = ColumnType.JAVA)
     private String httpMethod;
 
+    @Column(type = ColumnType.JAVA)
+    private String shareTypeMeaning;
+
     public String getDeployedNode() {
         return deployedNode;
     }
@@ -686,5 +689,13 @@ public class DSGCService extends MpaasBasePojo implements Serializable {
                 ", subordinate_system='" + subordinateSystem + '\'' +
                 ", deployFlag='" + deployFlag + '\'' +
                 '}';
+    }
+
+    public String getShareTypeMeaning() {
+        return shareTypeMeaning;
+    }
+
+    public void setShareTypeMeaning(String shareTypeMeaning) {
+        this.shareTypeMeaning = shareTypeMeaning;
     }
 }
