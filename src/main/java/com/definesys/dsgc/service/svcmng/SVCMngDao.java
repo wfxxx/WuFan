@@ -1,6 +1,7 @@
 package com.definesys.dsgc.service.svcmng;
 
 import com.definesys.dsgc.service.apimng.bean.DSGCApisBean;
+import com.definesys.dsgc.service.esbenv.bean.DSGCEnvInfoCfg;
 import com.definesys.dsgc.service.svcmng.bean.*;
 import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.dsgc.service.utils.UserHelper;
@@ -359,5 +360,50 @@ public PageQueryResult<DSGCSvcgenUriBean> querySvcSourceList(UserHelper uh,SVCCo
         } else {
             return new ArrayList<DeployedEnvInfoBean>();
         }
+    }
+
+    /*** ystar 20200608****/
+    public List<Map<String, Object>> querySvcGenList(String uid){
+        String sql = " SELECT u.IB_URI,u.SYS_CODE FROM (" +
+                " SELECT I.IB_URI," +
+                "       (SELECT S.SUBORDINATE_SYSTEM " +
+                "          FROM DSGC_SERVICES S " +
+                "         WHERE S.SERV_NO = I.SERV_NO) SYS_CODE " +
+                "  FROM DSGC_SERVICES_URI I) u where 1 = 1 " ;
+        if(StringUtil.isNotBlank(uid)){
+            sql +=" and u.SYS_CODE in (SELECT su.sys_code FROM dsgc_system_user su WHERE su.user_id = #uid ) ";
+        }
+
+        sql += " GROUP BY u.IB_URI,u.SYS_CODE ";
+
+        MpaasQuery mq = this.sw.buildQuery().sql(sql);
+        if(StringUtil.isNotBlank(uid)){
+            mq = mq.setVar("uid",uid);
+        }
+        return mq.doQuery();
+    }
+
+    public List<DSGCEnvInfoCfg> queryEnvInfoCfgByEnvType(String envType){
+        return sw.buildQuery().eq("envType",envType).doQuery(DSGCEnvInfoCfg.class);
+    }
+
+    public void removeUriDpl(List<String> uriList){
+        MpaasQuery mq=this.sw.buildQuery();
+        if(uriList != null && uriList.size()>0){
+            mq = mq .in("ibUri",uriList);
+        }
+        List<DSGCUriDplEnvBean> uriDplList = mq.doQuery(DSGCUriDplEnvBean.class);
+        for (DSGCUriDplEnvBean uriDpl:uriDplList) {
+            this.sw.buildQuery()
+                    .eq("envCode",uriDpl.getEnvCode())
+                    .eq("ibUri",uriDpl.getIbUri())
+                    .doDelete(DSGCUriDplEnvBean.class);
+        }
+
+    }
+
+    public void addUriDplEnv(DSGCUriDplEnvBean  uriDplList) {
+        this.sw.buildQuery()
+                .doInsert(uriDplList);
     }
 }

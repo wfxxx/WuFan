@@ -1113,24 +1113,49 @@ public void addRestServ(AddRestServVO addRestServVO){
         }
     }
 
-
+    @Transactional
     public void refreshServDeployStatus(String uid){
         try {
-            List uriList = null;
+            List<String> uriList = new ArrayList<>();
             UserHelper uh = this.userHelper.user(uid);
+            List<Map<String, Object>> svcGenList = new ArrayList<>();
             if (uh.isSuperAdministrator() || uh.isAdmin()) {
                 //刷新所有服务的状态
-
+                //1-查找所有uri
+                svcGenList = this.svcMngDao.querySvcGenList(null);
+                //2-清空全部数据
+                this.svcMngDao.removeUriDpl(null);
             } else if (uh.isSystemMaintainer()) {
                 //刷新其负责的应用下面的服务的状态
-
-
+                //1-查找当前用户所负责应用的服务uri
+                svcGenList = this.svcMngDao.querySvcGenList(uid);
+            }
+            //System.out.println("--->"+svcGenList.size());
+            for (Map<String, Object> svc:svcGenList) {
+                String uri = String.valueOf(svc.get("IB_URI"));
+                System.out.println("-uri->"+uri);
+                if(!uriList.contains(uri)) {
+                    uriList.add(uri);
+                }
+            }
+            if (uh.isSystemMaintainer()) {
+                //2-删除该系统负责人所负责的所有url数据
+                this.svcMngDao.removeUriDpl(uriList);
             }
 
-
             String envCode = null;
-            Set<String> existUri = this.sgProxy.filterNoExistUriInESB(envCode,uid,uriList);
-
+            //查找当前环境配置信息
+            List<DSGCEnvInfoCfg> envList = this.svcMngDao.queryEnvInfoCfgByEnvType("ESB");
+            for (DSGCEnvInfoCfg env: envList) {
+                envCode = env.getEnvCode();
+                //Set<String> existUri = this.sgProxy.filterNoExistUriInESB(envCode,uid,uriList);
+                //对环境code和过滤后的uri进行数据更新
+                for(String uri:uriList){
+                    //新增
+                    this.svcMngDao.addUriDplEnv(new DSGCUriDplEnvBean(envCode,uri));
+                }
+                // System.out.println("envCode->"+envCode+" uriList->"+uriList);
+            }
         }catch (Exception e){
             e.printStackTrace();
         }
