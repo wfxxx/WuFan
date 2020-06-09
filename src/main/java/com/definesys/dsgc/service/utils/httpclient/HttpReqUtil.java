@@ -1,6 +1,7 @@
 package com.definesys.dsgc.service.utils.httpclient;
 
 import com.alibaba.fastjson.JSONObject;
+import com.definesys.dsgc.service.svclog.bean.TempQueryLogCondition;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.lang.Nullable;
@@ -16,6 +17,55 @@ import javax.servlet.http.HttpServletRequest;
  * @history: 1.2019/7/3 created by biao.luo
  */
 public class HttpReqUtil {
+
+
+    public static void main(String[] args){
+        try {
+            RestTemplate client = new RestTemplate();
+            String url = "http://192.168.1.34:7778/dsgc/logInstance/HttpRestLogSwith?pageSize=10&pageIndex=1";
+            TempQueryLogCondition params = new TempQueryLogCondition();
+
+            String json="{\n" +
+                    "  \"logInstance\": {\n" +
+                    "    \"trackId\": null,\n" +
+                    "    \"servNo\": null,\n" +
+                    "    \"servName\": null,\n" +
+                    "    \"logPartition\": null,\n" +
+                    "    \"token\": null,\n" +
+                    "    \"startTime\": \"2020-06-09 15:19:00\",\n" +
+                    "    \"endTime\": \"2020-06-09 16:20:00\",\n" +
+                    "    \"defaultDateRange\": [\n" +
+                    "      \"2020-06-09T07:19:00.000Z\",\n" +
+                    "      \"2020-06-09T08:20:00.000Z\"\n" +
+                    "    ],\n" +
+                    "    \"instStatus\": null,\n" +
+                    "    \"bizStatus\": null,\n" +
+                    "    \"reqFrom\": null,\n" +
+                    "    \"bizKey1\": null,\n" +
+                    "    \"history\": null,\n" +
+                    "    \"bizStatusDtl\": null\n" +
+                    "  },\n" +
+                    "  \"env\": \"ESB_DEV\"\n" +
+                    "}";
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+            headers.set("userRole","SuperAdministrators");
+            headers.set("uid","053d7986b7394f2db64fcc9713cdbd99");
+            headers.set("userName","Legolas");
+            headers.set("token",null);
+            HttpEntity<JSONObject> requestEntity = new HttpEntity<JSONObject>(JSONObject.parseObject(json),headers);
+            //执行HTTP请求，将返回的结构使用ResultVO类格式化
+//        ResponseEntity<ResultVO> response = client.exchange(url, method, requestEntity, ResultVO.class);
+            ResponseEntity<ResultVO> response = client.exchange(url,HttpMethod.resolve("POST"),requestEntity,new ParameterizedTypeReference<ResultVO>() {
+            });
+
+
+            System.out.println(response.getBody());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
     /**
      * 向目的URL发送post请求
      *
@@ -72,6 +122,7 @@ public class HttpReqUtil {
         headers.setContentType(type);
         headers.add("Accept",MediaType.APPLICATION_JSON.toString());
 
+     //  System.out.println("===>post to dag:"+jsonText);
         HttpEntity<String> request = new HttpEntity<String>(jsonText,headers);
 
         String res = client.postForObject(url,request,String.class,uriVariables);
@@ -140,7 +191,7 @@ public class HttpReqUtil {
         if (request != null) {
             jsonText = JSONObject.toJSONString(request);
         }
-        System.out.println(jsonText);
+        //System.out.println("====>put to DAG:"+jsonText);
         putJsonText(url,jsonText,uriVariables);
     }
 

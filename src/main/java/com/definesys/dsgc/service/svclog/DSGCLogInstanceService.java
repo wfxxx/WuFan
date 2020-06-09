@@ -10,6 +10,7 @@ import com.definesys.dsgc.service.system.bean.DSGCSystemEntities;
 import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
 import com.definesys.dsgc.service.rpt.bean.TopologyVO;
 import com.definesys.dsgc.service.utils.StringUtil;
+import com.definesys.dsgc.service.utils.UserHelper;
 import com.definesys.dsgc.service.utils.httpclient.HttpReqUtil;
 import com.definesys.dsgc.service.utils.httpclient.ResultVO;
 import com.definesys.mpaas.common.exception.MpaasRuntimeException;
@@ -33,6 +34,10 @@ public class DSGCLogInstanceService {
     DSGCLogInstanceDao dsgcLogInstanceDao;
     @Autowired
     SVCLogDao svcLogDao;
+
+    @Autowired
+    private UserHelper userHelper;
+
 
 
     public PageQueryResult<DSGCLogInstance> query(List<Object> keyword,String userRole, String uid, LogInstanceQueryDTO instance, int pageSize, int pageIndex) {
@@ -112,8 +117,38 @@ public class DSGCLogInstanceService {
         return this.dsgcLogInstanceDao.getAuditLog(trackId);
     }
 
-    public void doRetry(JSONArray jsonArray) {
-        this.dsgcLogInstanceDao.doRetry(jsonArray);
+    public void doRetry(String uid,LogRetryReqDTO param,HttpServletRequest request) {
+        UserHelper uh = this.userHelper.user(uid);
+        if(uh.isSuperAdministrator() || uh.isAdmin() || uh.isSystemMaintainer()) {
+            FndProperties fndProperties =dsgcLogInstanceDao.findFndPropertiesByKey("DSGC_CURRENT_ENV");
+            if(fndProperties == null){
+                throw new RuntimeException("请配置当前环境代码！");
+            }
+            if ( fndProperties.getPropertyValue().equals(param.getEnvCode())) {
+                this.dsgcLogInstanceDao.doRetry(param);
+            } else {
+                List<DSGCEnvInfoCfg> envList = svcLogDao.queryEsbEnv();
+                for(DSGCEnvInfoCfg env: envList){
+                    if(env.getEnvCode().equals(param.getEnvCode())){
+                        String retryPath =env.getDsgcAdmin();
+                        retryPath += "/dsgc/logInstance/doRetry";
+                        try {
+                            HttpReqUtil.sendPostRequest(retryPath,JSONObject.parseObject(JSONObject.toJSONString(param)),request);
+                        }catch(JSONException jex){
+                            jex.printStackTrace();
+                            throw new JSONException("参数解析异常，请检查请求参数是否正确！");
+                        }catch (HttpClientErrorException hcex){
+                            hcex.printStackTrace();
+                            throw new HttpClientErrorException(HttpStatus.resolve(404));
+                        }catch (IllegalArgumentException ex){
+                            ex.printStackTrace();
+                            throw new IllegalArgumentException("环境信息配置的uri不能为空！");
+                        }
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     public List<DSGCLogOutBound> getStackLog(String trackId) {
@@ -225,13 +260,15 @@ public class DSGCLogInstanceService {
                 if(tempQueryLogCondition.getEnv().equals(envList.get(i).getEnvCode())){
                     String logPath =envList.get(i).getDsgcAdmin();
                     logPath += "/dsgc/logInstance/HttpRestLogSwith?pageSize="+pageSize+"&pageIndex="+pageIndex;
-                    JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("keyword", JSON.toJSONString(keyword));
-                    jsonObject.put("logInstance",JSON.toJSONString(logInstance));
-                    jsonObject.put("pageSize",JSON.toJSONString(pageSize));
-                    jsonObject.put("pageIndex",JSON.toJSONString(pageIndex));
+//                    JSONObject jsonObject = new JSONObject();
+//                    jsonObject.put("keyword", JSON.toJSONString(keyword));
+//                    jsonObject.put("logInstance",JSON.toJSONString(logInstance));
+//                    jsonObject.put("pageSize",JSON.toJSONString(pageSize));
+//                    jsonObject.put("pageIndex",JSON.toJSONString(pageIndex));
                     try {
-                        resultvo = HttpReqUtil.sendPostRequest(logPath,jsonObject,request);
+                        String json =JSONObject.toJSONString(tempQueryLogCondition);
+                        System.out.println("==================>"+json);
+                        resultvo = HttpReqUtil.sendPostRequest(logPath,JSONObject.parseObject(JSONObject.toJSONString(tempQueryLogCondition)),request);
 
                     }catch(JSONException jex){
                         jex.printStackTrace();
@@ -246,7 +283,7 @@ public class DSGCLogInstanceService {
                     break;
                 }
             }
-            return resultvo.getData();
+            return Response.ok().setData(resultvo.getData());
         }
     }
 
@@ -292,7 +329,27 @@ public class DSGCLogInstanceService {
                     break;
                 }
             }
-            return resultvo.getData();
+            return Response.ok().setData(resultvo.getData());
         }
+    }
+
+
+    public String getSwitchUrl(String envCode) throws Exception{
+        FndProperties fndProperties =dsgcLogInstanceDao.findFndPropertiesByKey("DSGC_CURRENT_ENV");
+        if(fndProperties == null){
+            throw new Exception("请配置当前环境代码！");
+        }
+
+        if(fndProperties.getPropertyValue().equals(envCode)){
+            return null;
+        } else {
+            List<DSGCEnvInfoCfg> envList = svcLogDao.queryEsbEnv();
+            for(DSGCEnvInfoCfg env :envList){
+                if(env.getEnvCode().equals(envCode)){
+                    return env.getDsgcAdmin();
+                }
+            }
+        }
+        return null;
     }
 }
