@@ -1,25 +1,12 @@
 package com.definesys.dsgc.service.svclog.bean;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class LogRetryReqDTO {
-    private String trackId;
-    private String sys;
+
     private String envCode;
-
-    public String getTrackId() {
-        return trackId;
-    }
-
-    public void setTrackId(String trackId) {
-        this.trackId = trackId;
-    }
-
-    public String getSys() {
-        return sys;
-    }
-
-    public void setSys(String sys) {
-        this.sys = sys;
-    }
+    private List<LogRetryDTO> retryList;
 
     public String getEnvCode() {
         return envCode;
@@ -27,5 +14,13 @@ public class LogRetryReqDTO {
 
     public void setEnvCode(String envCode) {
         this.envCode = envCode;
+    }
+
+    public List<LogRetryDTO> getRetryList() {
+        return retryList;
+    }
+
+    public void setRetryList(List<LogRetryDTO> retryList) {
+        this.retryList = retryList;
     }
 }

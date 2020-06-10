@@ -210,14 +210,18 @@ public class DSGCLogInstanceDao {
 
 
     public void doRetry(LogRetryReqDTO param) {
-        sw.buildQuery()
-                .sql("insert into dsgc_serv_retry_job (job_id,track_id,retry_system,status) values (#job_id,#track_id,#retry_system,#status)")
-                .setVar("job_id", UUID.randomUUID().toString())
-                .setVar("track_id", param.getTrackId())
-                .setVar("retry_system", param.getSys())
-                .setVar("status", "W")
-                .doQuery();
-
+        List<LogRetryDTO> retryList = param.getRetryList();
+        if(retryList != null && !retryList.isEmpty()) {
+            for(LogRetryDTO r :retryList) {
+                sw.buildQuery()
+                        .sql("insert into dsgc_serv_retry_job (job_id,track_id,retry_system,status) values (#job_id,#track_id,#retry_system,#status)")
+                        .setVar("job_id",UUID.randomUUID().toString())
+                        .setVar("track_id",r.getTrackId())
+                        .setVar("retry_system",r.getSys())
+                        .setVar("status","W")
+                        .doQuery();
+            }
+        }
     }
 
     public List<DSGCLogAudit> getAuditLog(String trackId) {
