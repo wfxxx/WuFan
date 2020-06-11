@@ -1124,7 +1124,7 @@ public void addRestServ(AddRestServVO addRestServVO){
                 //1-查找所有uri
                 svcGenList = this.svcMngDao.querySvcGenList(null);
                 //2-清空全部数据
-                this.svcMngDao.removeUriDpl(null);
+                //this.svcMngDao.removeUriDpl(null);
             } else if (uh.isSystemMaintainer()) {
                 //刷新其负责的应用下面的服务的状态
                 //1-查找当前用户所负责应用的服务uri
@@ -1138,10 +1138,6 @@ public void addRestServ(AddRestServVO addRestServVO){
                     uriList.add(uri);
                 }
             }
-            if (uh.isSystemMaintainer()) {
-                //2-删除该系统负责人所负责的所有url数据
-                this.svcMngDao.removeUriDpl(uriList);
-            }
 
             String envCode = null;
             //查找当前环境配置信息
@@ -1149,14 +1145,16 @@ public void addRestServ(AddRestServVO addRestServVO){
             for (DSGCEnvInfoCfg env: envList) {
                 envCode = env.getEnvCode();
                 Set<String> existUri = this.sgProxy.filterNoExistUriInESB(envCode,uid,uriList);
-
-                //对环境code和过滤后的uri进行数据更新
-                for(String uri:existUri){
-                    //新增
-                    this.svcMngDao.addUriDplEnv(new DSGCUriDplEnvBean(envCode,uri));
-                    System.out.println("======>envCode->"+envCode+" uriList->"+uriList);
+                //遍历服务资产uri
+                for (String uri:uriList) {
+                    //过滤之后，不存在，需删除
+                    if(!existUri.contains(uri)){
+                        this.svcMngDao.removeUriDpl(envCode,uri);
+                    }else{
+                        //若存在，则进行查找更新
+                        this.svcMngDao.addUriDplEnv(envCode,uri);
+                    }
                 }
-                // System.out.println("envCode->"+envCode+" uriList->"+uriList);
             }
         }catch (Exception e){
             e.printStackTrace();

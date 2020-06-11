@@ -387,23 +387,32 @@ public PageQueryResult<DSGCSvcgenUriBean> querySvcSourceList(UserHelper uh,SVCCo
         return sw.buildQuery().eq("envType",envType).doQuery(DSGCEnvInfoCfg.class);
     }
 
-    public void removeUriDpl(List<String> uriList){
-        MpaasQuery mq=this.sw.buildQuery();
-        if(uriList != null && uriList.size()>0){
-            mq = mq .in("ibUri",uriList);
-        }
-        List<DSGCUriDplEnvBean> uriDplList = mq.doQuery(DSGCUriDplEnvBean.class);
-        for (DSGCUriDplEnvBean uriDpl:uriDplList) {
-            this.sw.buildQuery()
-                    .eq("envCode",uriDpl.getEnvCode())
-                    .eq("ibUri",uriDpl.getIbUri())
-                    .doDelete(DSGCUriDplEnvBean.class);
-        }
+    public void removeUriDpl(String envCode,String uri){
+        //System.out.println("==删除查找==>envCode->"+envCode+" uri->"+uri);
+        DSGCUriDplEnvBean uriDplEnv = this.sw.buildQuery()
+                .eq("envCode",envCode)
+                .eq("ibUri",uri)
+                .doQueryFirst(DSGCUriDplEnvBean.class);
 
+        if(uriDplEnv != null){
+            this.sw.buildQuery()
+                    .eq("envCode",envCode)
+                    .eq("ibUri",uri)
+                    .doDelete(DSGCUriDplEnvBean.class);
+            //System.out.println("==成功删除==>envCode->"+envCode+" uri->"+uri);
+        }
     }
 
-    public void addUriDplEnv(DSGCUriDplEnvBean  uriDplList) {
-        this.sw.buildQuery()
-                .doInsert(uriDplList);
+    public void addUriDplEnv(String envCode,String uri) {
+        DSGCUriDplEnvBean uriDpl = this.sw.buildQuery()
+                .eq("envCode",envCode)
+                .eq("ibUri",uri)
+                .doQueryFirst(DSGCUriDplEnvBean.class);
+        if(uriDpl == null){
+            uriDpl = new DSGCUriDplEnvBean(envCode,uri);
+            this.sw.buildQuery()
+                    .doInsert(uriDpl);
+            //System.out.println("==新增====>envCode->"+envCode+" uri->"+uri);
+        }
     }
 }
