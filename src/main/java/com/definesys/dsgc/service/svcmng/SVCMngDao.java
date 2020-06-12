@@ -106,6 +106,7 @@ public class SVCMngDao {
             sqlStr.append(" and ( DS.info_full != 100 or DS.info_full is null) ");
         }
 
+        sqlStr.append(" ORDER BY DS.CREATION_DATE DESC");
 
         mq.sql(sqlStr.toString());
         return mq.doPageQuery(pageIndex,pageSize,DSGCService.class);

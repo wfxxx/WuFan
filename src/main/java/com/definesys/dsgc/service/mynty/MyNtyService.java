@@ -543,8 +543,8 @@ public class MyNtyService {
         if (notice != null) {
             try {
                 Class pusherClass = Class.forName("com.definesys.dsgc.mnpush.NoticePush");
-                Method pushMethod = pusherClass.getMethod("push",String.class,String.class,String.class,String.class,String.class);
-                boolean res = (Boolean)pushMethod.invoke(pusherClass.newInstance(),notice.getSendTo(),notice.getNtyTitle(),notice.getCntShort(),notice.getCntText(),notice.getCntFormat());
+                Method pushMethod = pusherClass.getMethod("push",String.class,String.class,String.class,String.class,String.class,String.class,String.class);
+                boolean res = (Boolean)pushMethod.invoke(pusherClass.newInstance(),notice.getSendTo(),notice.getNtyTitle(),notice.getNtySour(),notice.getMnLevel(),notice.getCntShort(),notice.getCntText(),notice.getCntFormat());
                 return res;
             } catch (Exception e) {
                 e.printStackTrace();
