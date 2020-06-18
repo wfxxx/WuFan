@@ -1,10 +1,7 @@
 package com.definesys.dsgc.service.users;
 
 import com.definesys.dsgc.service.svcmng.bean.DSGCService;
-import com.definesys.dsgc.service.users.bean.DSGCServiceQueryVO;
-import com.definesys.dsgc.service.users.bean.DSGCServiceUser;
-import com.definesys.dsgc.service.users.bean.DSGCUser;
-import com.definesys.dsgc.service.users.bean.DSGCUserKs;
+import com.definesys.dsgc.service.users.bean.*;
 import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.mpaas.common.exception.MpaasBusinessException;
 import com.definesys.mpaas.log.SWordLogger;
@@ -348,4 +345,14 @@ public class DSGCUserDao {
                 .doQuery();
     }
 
+    public DSGCUserNtyCfgBean modifyUserNtyCfg(DSGCUserNtyCfgBean userNtyCfg) {
+        String userId = userNtyCfg.getUserId();
+        //先查询当前用户是否存在配置信息
+        DSGCUserNtyCfgBean userNtyCfgBean =this.sw.buildQuery().eq("userId",userId).doQueryFirst(DSGCUserNtyCfgBean.class);
+        if(userNtyCfgBean != null ){
+            this.sw.buildQuery().eq("userId",userId).doDelete(DSGCUserNtyCfgBean.class);
+        }
+        this.sw.buildQuery().doInsert(userNtyCfg);
+        return userNtyCfg;
+    }
 }
