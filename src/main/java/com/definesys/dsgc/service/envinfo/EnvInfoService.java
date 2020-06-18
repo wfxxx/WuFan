@@ -282,4 +282,14 @@ public class EnvInfoService {
         return result;
 
     }
+
+    public List<EnvOptionDTO> getEnvList(){
+        return this.envInfoDao.getEnvList();
+    }
+    public List<EnvOptionDTO> getESBEnvList(){
+        return this.envInfoDao.getEnvList();
+    }
+    public List<EnvOptionDTO> getDAGEnvList(){
+        return this.envInfoDao.getEnvList();
+    }
 }

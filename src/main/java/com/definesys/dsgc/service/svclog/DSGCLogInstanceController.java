@@ -279,21 +279,17 @@ public class DSGCLogInstanceController {
     }
 
     @RequestMapping(value = "/doRetry", method = RequestMethod.POST)
-    public Response doRetry(HttpServletRequest request) {
-        String body = CommonUtils.charReader(request);
-        if ("".equals(body)) {
-            throw new MpaasBusinessException("请求数据为空");
-        }
-        JSONArray js = JSONArray.parseArray(body);
-        System.out.println(js);
-        this.logService.doRetry(js);
-        return Response.ok().data("");
+    public Response doRetry(@RequestBody LogRetryReqDTO param, HttpServletRequest request) {
+        String uid = request.getHeader("uid");
+        this.logService.doRetry(uid,param,request);
+        return Response.ok();
     }
 
     @ResponseBody
     @RequestMapping(value = "/getHeaderPayload", method = RequestMethod.GET)
     public void getHeaderPayload(@RequestParam("trackId") String trackId,
                                  @RequestParam("ibLob") String ibLob,
+                                 @RequestParam("envCode") String envCode,
                                  String startTime,
                                  String endTime,
                                  HttpServletResponse response) {
@@ -312,6 +308,15 @@ public class DSGCLogInstanceController {
                 out.close();
                 return;
             }
+
+            String switchUrl = this.logService.getSwitchUrl(envCode);
+            if(switchUrl != null ){
+                out.println(HttpReqUtil.getObject(switchUrl+"/dsgc/logInstance/getHeaderPayload?trackId="+trackId+"&ibLob="+ibLob+"&envCode="+envCode+"&startTime="+startTime+"&endTime="+endTime,String.class));
+                out.flush();
+                out.close();
+                return;
+            }
+
             String str = logService.getHeaderPayload(trackId, ibLob);
             if (str != null) {
                 if (str.trim().length() == 0) {
@@ -341,6 +346,7 @@ public class DSGCLogInstanceController {
     public void getBodyPayload(@RequestParam("ibLob") String ibLob,
                                @RequestParam("servNo") String servNo,
                                @RequestParam("trackId") String trackId,
+                               @RequestParam("envCode") String envCode,
                                @RequestParam("startTime") String startTime,
                                @RequestParam("endTime") String endTime,
                                HttpServletResponse response) {
@@ -349,6 +355,17 @@ public class DSGCLogInstanceController {
 //            logService.noPayload(response);
 //            return;
 //        }
+        try {
+            String switchUrl = this.logService.getSwitchUrl(envCode);
+            if (switchUrl != null) {
+                String res = HttpReqUtil.getObject(switchUrl + "/dsgc/logInstance/getBodyPayload?trackId=" + trackId + "&servNo="+ servNo + "&ibLob=" + ibLob + "&envCode=" + envCode + "&startTime=" + startTime + "&endTime=" + endTime,String.class);
+                this.logService.showData(response,res);
+                return;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
         DSGCLogInstance detailsInterfaceData = logService.findLogById(trackId);
         String type = detailsInterfaceData.getPlStoreType();
 //        detailsInterfaceData.
@@ -441,7 +458,17 @@ public class DSGCLogInstanceController {
 
     @RequestMapping(value = "/getErrMsg", method = RequestMethod.GET)
     @ResponseBody
-    public void getErrMsg(String errLob, HttpServletResponse response) {
+    public void getErrMsg(@RequestParam("errLob") String errLob,@RequestParam("envCode")String envCode, HttpServletResponse response) {
+        try {
+            String switchUrl = this.logService.getSwitchUrl(envCode);
+            if (switchUrl != null) {
+                String res = HttpReqUtil.getObject(switchUrl + "/dsgc/logInstance/getErrMsg?errLob=" + errLob+"&envCode=" + envCode,String.class);
+                this.logService.showData(response,res);
+                return;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         try {
             response.setContentType("text/xml;charset=UTF-8");
             String str = logService.getErrMsg(errLob);

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.Method;
 import java.util.*;
 
 @Service
@@ -535,5 +536,22 @@ public class MyNtyService {
 
     public MyMnNoticesCountDTO getUserMNNoticesCount(String userId){
         return this.mndao.getNoticesCountDTO(userId);
+    }
+
+
+    public boolean pushNotice(PushNoticeDTO notice) {
+        if (notice != null) {
+            try {
+                Class pusherClass = Class.forName("com.definesys.dsgc.mnpush.NoticePush");
+                Method pushMethod = pusherClass.getMethod("push",String.class,String.class,String.class,String.class,String.class,String.class,String.class);
+                boolean res = (Boolean)pushMethod.invoke(pusherClass.newInstance(),notice.getSendTo(),notice.getNtyTitle(),notice.getNtySour(),notice.getMnLevel(),notice.getCntShort(),notice.getCntText(),notice.getCntFormat());
+                return res;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
+        } else {
+            return true;
+        }
     }
 }

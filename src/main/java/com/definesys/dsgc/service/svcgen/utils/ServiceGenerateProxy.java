@@ -32,6 +32,18 @@ public class ServiceGenerateProxy {
     }
 
 
+    /**
+     * 过滤掉没有在ESB运行的uri
+     * @param envCode
+     * @param user
+     * @param uriList
+     * @return
+     */
+    public Set<String> filterNoExistUriInESB(String envCode,String user,List<String> uriList) throws Exception{
+        Method filterNoExistUriInESB = this.generateServcieClass.getMethod("filterNoExistUriInESB",String.class,String.class,List.class);
+        return (Set<String>)filterNoExistUriInESB.invoke(this.generateServcie,envCode,user,uriList);
+    }
+
 
     /**
      * 基于敏捷服务生成的服务通过本方法生成请求参数示例

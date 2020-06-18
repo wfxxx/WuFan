@@ -7,6 +7,7 @@ public class SVCCommonReqBean {
     private String con0;//通用查询条件
     private String isComplete;
     private String queryType;
+    private String envCode;
 
     public String getCon0() {
         return con0;
@@ -30,5 +31,13 @@ public class SVCCommonReqBean {
 
     public void setQueryType(String queryType) {
         this.queryType = queryType;
+    }
+
+    public String getEnvCode() {
+        return envCode;
+    }
+
+    public void setEnvCode(String envCode) {
+        this.envCode = envCode;
     }
 }

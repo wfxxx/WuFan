@@ -209,21 +209,19 @@ public class DSGCLogInstanceDao {
     }
 
 
-    public void doRetry(JSONArray jsonArray) {
-        if (jsonArray != null && jsonArray.size() > 0) {
-            for (int i = 0; i < jsonArray.size(); i++) {
-                JSONObject jo = jsonArray.getJSONObject(i);
+    public void doRetry(LogRetryReqDTO param) {
+        List<LogRetryDTO> retryList = param.getRetryList();
+        if(retryList != null && !retryList.isEmpty()) {
+            for(LogRetryDTO r :retryList) {
                 sw.buildQuery()
                         .sql("insert into dsgc_serv_retry_job (job_id,track_id,retry_system,status) values (#job_id,#track_id,#retry_system,#status)")
-                        .setVar("job_id", UUID.randomUUID().toString())
-                        .setVar("track_id", jo.getString("trackId"))
-                        .setVar("retry_system", jo.getString("sys"))
-                        .setVar("status", "W")
+                        .setVar("job_id",UUID.randomUUID().toString())
+                        .setVar("track_id",r.getTrackId())
+                        .setVar("retry_system",r.getSys())
+                        .setVar("status","W")
                         .doQuery();
             }
-
         }
-
     }
 
     public List<DSGCLogAudit> getAuditLog(String trackId) {

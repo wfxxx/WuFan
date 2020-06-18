@@ -128,4 +128,18 @@ public class EnvInfoDao {
     public void addEnvDeployCfg(SvcgenDeployControl svcgenDeployControl){
         sw.buildQuery().doInsert(svcgenDeployControl);
     }
+
+    public List<EnvOptionDTO> getEnvList(){
+        return this.sw.buildQuery().sql("SELECT C.ENV_CODE,C.ENV_NAME FROM DSGC_ENV_INFO_CFG C,FND_PROPERTIES P\n" +
+                "WHERE P.PROPERTY_KEY = 'SHOW_SER_TYPE'\n" +
+                "AND( P.PROPERTY_VALUE = 'ALL'\n" +
+                "  OR P.PROPERTY_VALUE = 'ESB' AND C.ENV_TYPE = 'ESB'\n" +
+                "  OR P.PROPERTY_VALUE = 'API' AND C.ENV_TYPE = 'DAG')").doQuery(EnvOptionDTO.class);
+    }
+    public List<EnvOptionDTO> getESBEnvList(){
+        return this.sw.buildQuery().sql("SELECT C.ENV_CODE,C.ENV_NAME FROM DSGC_ENV_INFO_CFG C WHERE C.ENV_TYPE = 'ESB'").doQuery(EnvOptionDTO.class);
+    }
+    public List<EnvOptionDTO> getDAGEnvList(){
+        return this.sw.buildQuery().sql("SELECT C.ENV_CODE,C.ENV_NAME FROM DSGC_ENV_INFO_CFG C WHERE C.ENV_TYPE = 'DAG'").doQuery(EnvOptionDTO.class);
+    }
 }

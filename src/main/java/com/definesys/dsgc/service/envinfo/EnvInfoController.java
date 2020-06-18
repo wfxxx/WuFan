@@ -130,4 +130,18 @@ public class EnvInfoController {
         }
         return Response.ok().data(result);
     }
+
+
+    @RequestMapping(value="/getEnvList",method = RequestMethod.GET)
+    public Response getEnvList(){
+        return Response.ok().data(this.envInfoService.getEnvList());
+    }
+    @RequestMapping(value="/getESBEnvList",method = RequestMethod.GET)
+    public Response getESBEnvList(){
+        return Response.ok().data(this.envInfoService.getESBEnvList());
+    }
+    @RequestMapping(value="/getDAGEnvList",method = RequestMethod.GET)
+    public Response getDAGEnvList(){
+        return Response.ok().data(this.envInfoService.getDAGEnvList());
+    }
 }

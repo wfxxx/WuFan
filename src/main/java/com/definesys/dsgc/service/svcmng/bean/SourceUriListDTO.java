@@ -6,8 +6,10 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.Date;
+import java.util.UUID;
 
 public class SourceUriListDTO {
+    private String suId = UUID.randomUUID().toString();
     private String sourceName;
     private String objName;
     private String objDesc;
@@ -108,5 +110,13 @@ public class SourceUriListDTO {
 
     public void setAppName(String appName) {
         this.appName = appName;
+    }
+
+    public String getSuId() {
+        return suId;
+    }
+
+    public void setSuId(String suId) {
+        this.suId = suId;
     }
 }
