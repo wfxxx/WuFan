@@ -1,6 +1,8 @@
 package com.definesys.dsgc.service.mynty.bean;
 
 
+import com.definesys.mpaas.query.annotation.Column;
+import com.definesys.mpaas.query.annotation.ColumnType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class MyNtyQueryListBean {
@@ -11,6 +13,16 @@ public class MyNtyQueryListBean {
     private String subStat;
 
     private String isEnable;
+    @Column(value = "error_fail", type = ColumnType.DB)
+    @JsonIgnore
+    private String errorFail;
+    @Column(type = ColumnType.JAVA)
+    private boolean errorFailBL;
+    @JsonIgnore
+    @Column(value = "biz_fail", type = ColumnType.DB)
+    private String bizFail;
+    @Column(type = ColumnType.JAVA)
+    private boolean bizFailBL;
 
     private String ruleId;
 
@@ -21,6 +33,12 @@ public class MyNtyQueryListBean {
     private String ruleTypeMeaning;
 
     private String ruleExprDesc;
+
+    private Integer mnLevel;
+
+    private String mnLevelMeaning;
+
+    private String mnLevelColor;
 
     @JsonIgnore
     private String appCode;
@@ -134,5 +152,66 @@ public class MyNtyQueryListBean {
 
     public void setAlertCount(int alertCount) {
         this.alertCount = alertCount;
+    }
+
+    public String getErrorFail() {
+        return errorFail;
+    }
+
+    public void setErrorFail(String errorFail) {
+        this.errorFail = errorFail;
+    }
+
+    public boolean isErrorFailBL() {
+        return errorFailBL;
+    }
+
+    public void setErrorFailBL(boolean errorFailBL) {
+        this.errorFailBL = errorFailBL;
+    }
+
+    public String getBizFail() {
+        return bizFail;
+    }
+
+    public void setBizFail(String bizFail) {
+        this.bizFail = bizFail;
+    }
+
+    public boolean isBizFailBL() {
+        return bizFailBL;
+    }
+
+    public void setBizFailBL(boolean bizFailBL) {
+        this.bizFailBL = bizFailBL;
+    }
+
+    public void setAlertCount(Integer alertCount) {
+        this.alertCount = alertCount;
+    }
+
+
+    public Integer getMnLevel() {
+        return mnLevel;
+    }
+
+    public void setMnLevel(Integer mnLevel) {
+        this.mnLevel = mnLevel;
+    }
+
+    public String getMnLevelMeaning() {
+        return mnLevelMeaning;
+    }
+
+    public void setMnLevelMeaning(String mnLevelMeaning) {
+        this.mnLevelMeaning = mnLevelMeaning;
+    }
+
+    public String getMnLevelColor() {
+        return mnLevelColor;
+    }
+
+    public void setMnLevelColor(String mnLevelColor) {
+        this.mnLevelColor = mnLevelColor;
     }
 }

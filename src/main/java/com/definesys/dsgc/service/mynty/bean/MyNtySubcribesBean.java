@@ -3,13 +3,14 @@ package com.definesys.dsgc.service.mynty.bean;
 import com.definesys.mpaas.query.annotation.*;
 import com.definesys.mpaas.query.json.MpaasDateTimeDeserializer;
 import com.definesys.mpaas.query.json.MpaasDateTimeSerializer;
+import com.definesys.mpaas.query.model.MpaasBasePojo;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.Date;
 
 @Table(value = "DSGC_MN_SUBCRIBES")
-public class MyNtySubcribesBean {
+public class MyNtySubcribesBean extends MpaasBasePojo {
 
     @RowID(type = RowIDType.UUID)
     @Column(value = "scb_id", type = ColumnType.DB)

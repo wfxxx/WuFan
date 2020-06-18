@@ -4,7 +4,7 @@ public class RuleStatSetVO {
 
 
     private String ruleId;
-
+    private String ruleType;
     private String isEnable;
 
     public String getRuleId() {
@@ -21,5 +21,13 @@ public class RuleStatSetVO {
 
     public void setIsEnable(String isEnable) {
         this.isEnable = isEnable;
+    }
+
+    public String getRuleType() {
+        return ruleType;
+    }
+
+    public void setRuleType(String ruleType) {
+        this.ruleType = ruleType;
     }
 }

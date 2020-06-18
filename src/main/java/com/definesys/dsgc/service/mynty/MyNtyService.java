@@ -38,8 +38,12 @@ public class MyNtyService {
         List<MyNtyQueryListBean> resLst = res.getResult();
         if (resLst != null) {
             Iterator<MyNtyQueryListBean> resIter = resLst.iterator();
+            Map<String,String> mnLevelColor = this.mndao.getMnLevelColor();
             while (resIter.hasNext()) {
                 MyNtyQueryListBean ob = resIter.next();
+                ob.setBizFailBL("Y".equals(ob.getBizFail()));
+                ob.setErrorFailBL("Y".equals(ob.getErrorFail()));
+                ob.setMnLevelColor(mnLevelColor.get(ob.getMnLevel().toString()));
                 if (uid != null && uid.equals(ob.getCreatedBy()) || uh.isSuperAdministrator() || uh.isAdmin()) {
                     ob.setReadonly(false);
                 } else if (uh.isSystemMaintainer() && uh.isSpecifySystemMaintainer(ob.getAppCode())) {
@@ -72,13 +76,30 @@ public class MyNtyService {
         return "S";
     }
 
+    public String setSERuleStat(String uid,RuleStatSetVO reqParam) {
+        ServExcptSubRulesBean ssrb = this.mndao.getServExcptSubRulesBySeeId(reqParam.getRuleId());
+        if (ssrb != null) {
+            UserHelper uh = this.userHelper.user(uid);
+            if (!(uh.isSuperAdministrator()
+                    || uh.isAdmin()
+                    || uh.isSystemMaintainer() && uh.isSpecifySystemMaintainer(ssrb.getAppCode())
+                    || uid.equals(ssrb.getCreatedBy()))) {
+                return "无效的操作权限！";
+            }
+
+            this.mndao.setRuleStat(reqParam);
+        }
+        return "S";
+    }
+
+
+
     public void delMNRule(String uid,String ruleId) throws Exception{
         if(ruleId != null && ruleId.trim().length() > 0){
             MyNtyRulesBean rule = this.mndao.getMyNtyRuleDtl(ruleId);
             //执行更新操作要先判断权限
             UserHelper uh = this.userHelper.user(uid);
             //执行更新操作，要判断权限
-            rule = this.mndao.getMyNtyRuleDtl(ruleId);
             if (!(uh.isSuperAdministrator()
                     || uh.isAdmin()
                     || uh.isSystemMaintainer() && uh.isSpecifySystemMaintainer(rule.getAppCode())
@@ -90,6 +111,27 @@ public class MyNtyService {
 
     }
 
+    public void delSEMNRule(String uid,String seeId) throws Exception{
+        if(seeId != null && seeId.trim().length() > 0){
+            ServExcptSubRulesBean ssrb = this.mndao.getServExcptSubRulesBySeeId(seeId);
+            //执行更新操作要先判断权限
+            UserHelper uh = this.userHelper.user(uid);
+            //执行更新操作，要判断权限
+            if (!(uh.isSuperAdministrator()
+                    || uh.isAdmin()
+                    || uh.isSystemMaintainer() && uh.isSpecifySystemMaintainer(ssrb.getAppCode())
+                    || uid.equals(ssrb.getCreatedBy()))) {
+                throw new Exception("无效的操作权限！");
+            }
+            this.mndao.deleteServExcptRule(seeId);
+        }
+    }
+
+    /**
+     * 获取普通预警规则详细
+     * @param ruleId
+     * @return
+     */
     public MyNtyRuleDetailVO getMNRuleDetail(String ruleId) {
         MyNtyRuleDetailVO res = new MyNtyRuleDetailVO();
 
@@ -107,19 +149,61 @@ public class MyNtyService {
             res.setAppName(this.mndao.getAppCodeName(rule.getAppCode()));
         }
 
-        MyNtyServSltBean serSlt = new MyNtyServSltBean();
-        serSlt.setRuleId(rule.getRuleId());
-        serSlt.setRuleType(rule.getRuleType());
-        res.setServSlt(this.getMNSubscributedServList(serSlt));
-
-        MyNtyUserSltBean userSlt = new MyNtyUserSltBean();
-        userSlt.setRuleId(rule.getRuleId());
-        userSlt.setRuleType(rule.getRuleType());
-        res.setUserSlt(userSlt);
+//        MyNtyServSltBean serSlt = new MyNtyServSltBean();
+//        serSlt.setRuleId(res.getRuleId());
+//        serSlt.setRuleType(res.getRuleType());
+//        res.setServSlt(this.getMNSubscributedServList(serSlt));
+//
+//        MyNtyUserSltBean userSlt = new MyNtyUserSltBean();
+//        userSlt.setRuleId(res.getRuleId());
+//        userSlt.setRuleType(res.getRuleType());
+//        res.setUserSlt(userSlt);
 
         return res;
     }
 
+    /**
+     * 获取异常通知订阅规则详细
+     * @param seeId
+     * @return
+     */
+    public MyNtyRuleDetailVO getSEMNRuleDetail(String seeId) {
+        MyNtyRuleDetailVO res = new MyNtyRuleDetailVO();
+        ServExcptSubRulesBean ssrb = this.mndao.getServExcptSubRulesBySeeId(seeId);
+        if(ssrb != null){
+            res.setRuleId(ssrb.getRuleId());
+            res.setMnLevel(ssrb.getMnLevel());
+            res.setRuleType("SE");
+            res.setRuleTypeMeaning("服务异常订阅规则");
+            res.setAppCode(ssrb.getAppCode());
+            res.setAppName(this.mndao.getAppCodeName(ssrb.getAppCode()));
+            res.setReExpr(ssrb.getReExpr());
+            res.setSeeId(ssrb.getSeeId());
+            res.setReName(ssrb.getReName());
+            res.setBizFailBL("Y".equals(ssrb.getBizFail()));
+            res.setErrorFailBL("Y".equalsIgnoreCase(ssrb.getErrorFail()));
+        }
+
+
+//        MyNtyServSltBean serSlt = new MyNtyServSltBean();
+//        serSlt.setRuleId(res.getSeeId());
+//        serSlt.setRuleType(res.getRuleType());
+//        res.setServSlt(this.getMNSubscributedServList(serSlt));
+//
+//        MyNtyUserSltBean userSlt = new MyNtyUserSltBean();
+//        userSlt.setRuleId(res.getSeeId());
+//        userSlt.setRuleType(res.getRuleType());
+//        res.setUserSlt(userSlt);
+        return res;
+    }
+
+    /**
+     * 更新预警规则
+     * @param uid
+     * @param reqParam
+     * @return
+     * @throws Exception
+     */
     public MyNtyRuleDetailVO updateMNRuleDetail(String uid,MyNtyRuleDetailVO reqParam) throws Exception {
         MyNtyRulesBean rule = new MyNtyRulesBean();
         if (reqParam.getRuleId() != null && reqParam.getRuleId().trim().length() >0) {
@@ -131,10 +215,9 @@ public class MyNtyService {
                     || uh.isAdmin()
                     || uh.isSystemMaintainer() && uh.isSpecifySystemMaintainer(rule.getAppCode())
                     || uid.equals(rule.getCreatedBy()))) {
-                throw new Exception("无效的操作权限！");
+                throw new Exception("不允许的操作！");
             }
         }
-
         rule.setRunInterval(reqParam.getRunInterval() * 60 * 60 * 1000);
         rule.setRuleExprDesc(reqParam.getRuleExpr());
         Map<String,String> lkv = mndao.getRuleExprDescLKV(reqParam.getRuleType());
@@ -151,15 +234,81 @@ public class MyNtyService {
         //更新选择的服务
         reqParam.getServSlt().setRuleId(reqParam.getRuleId());
         reqParam.getServSlt().setRuleType(reqParam.getRuleType());
-        reqParam.setServSlt(this.saveMNSubcributeServList(reqParam.getServSlt()));
+        this.saveMNSubcributeServList(reqParam.getServSlt());//reqParam.setServSlt(this.saveMNSubcributeServList(reqParam.getServSlt()));
 
         //更新选择的用户
         reqParam.getUserSlt().setRuleId(reqParam.getRuleId());
         reqParam.getUserSlt().setRuleType(reqParam.getRuleType());
-
-        reqParam.setUserSlt(this.saveMNSubUser(reqParam.getUserSlt()));
+        this.saveMNSubUser(reqParam.getUserSlt());//reqParam.setUserSlt(this.saveMNSubUser(reqParam.getUserSlt()));
         return reqParam;
     }
+
+    /**
+     * 更新异常订阅规则
+     * @param uid
+     * @param reqParam
+     * @return
+     * @throws Exception
+     */
+    public MyNtyRuleDetailVO updateSEMNRuleDetail(String uid,MyNtyRuleDetailVO reqParam) throws Exception {
+
+        ServExcptSubRulesBean ssrb = new ServExcptSubRulesBean();
+        if (reqParam.getSeeId() != null && reqParam.getSeeId().length() > 0) {
+            //执行更新操作要先判断权限
+            UserHelper uh = this.userHelper.user(uid);
+            //执行更新操作，要判断权限
+            ssrb = this.mndao.getServExcptSubRulesBySeeId(reqParam.getSeeId());
+            if (ssrb != null) {
+                if (!(uh.isSuperAdministrator()
+                        || uh.isAdmin()
+                        || uh.isSystemMaintainer() && uh.isSpecifySystemMaintainer(ssrb.getAppCode())
+                        || uid.equals(ssrb.getCreatedBy()))) {
+                    throw new Exception("不允许的操作！");
+                }
+            } else {
+                //在数据库中未找到对应的记录
+                throw new Exception("未找到对应的异常通知规则！");
+            }
+
+        } else {
+            //初始化一条规则数据
+            String ruleId = this.mndao.initExcptSubcributeRule(reqParam.getRuleType());
+            ssrb.setRuleId(ruleId);
+            ssrb.setIsEnableBL(true);
+            ssrb.setIsEnable("Y");
+        }
+
+        ssrb.setBizFail(reqParam.isBizFailBL() ? "Y" : "N");
+        ssrb.setErrorFail(reqParam.isErrorFailBL() ? "Y" : "N");
+        ssrb.setBizFailBL(reqParam.isBizFailBL());
+        ssrb.setErrorFailBL(reqParam.isErrorFailBL());
+        ssrb.setAppCode(reqParam.getAppCode());
+        ssrb.setMnLevel(reqParam.getMnLevel());
+        ssrb.setReExpr(reqParam.getReExpr());
+        ssrb.setReName(reqParam.getReName());
+
+
+        String seeId = this.mndao.updServExcptSubRules(ssrb);
+        reqParam.setSeeId(seeId);
+        reqParam.setRuleId(ssrb.getRuleId());
+
+        //更新选择的服务
+        reqParam.getServSlt().setRuleId(reqParam.getSeeId());
+        reqParam.getServSlt().setRuleType(reqParam.getRuleType());
+
+        this.saveMNSubcributeServList(reqParam.getServSlt());//reqParam.setServSlt(this.saveMNSubcributeServList(reqParam.getServSlt()));
+
+        //更新选择的用户
+        reqParam.getUserSlt().setRuleId(reqParam.getSeeId());
+        reqParam.getUserSlt().setRuleType(reqParam.getRuleType());
+
+        this.saveMNSubUser(reqParam.getUserSlt());//reqParam.setUserSlt(this.saveMNSubUser(reqParam.getUserSlt()));
+
+        this.mndao.updateServExcptRuleServExpr(ssrb);
+        return reqParam;
+    }
+
+
 
     /**
      * 获取我的通知订阅规则
@@ -353,6 +502,7 @@ public class MyNtyService {
      *
      * @param chgs
      */
+    @Deprecated
     public void updateServExcptSubRules(String userId,List<ServExcptSubRulesBean> chgs) {
         if (chgs != null) {
             Iterator<ServExcptSubRulesBean> iter = chgs.iterator();

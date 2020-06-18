@@ -10,6 +10,11 @@ import java.util.Date;
 public class MyNtyRuleDetailVO {
 
     private String ruleId;
+    private String seeId;
+    private String reName;
+    private boolean errorFailBL;
+    private boolean bizFailBL;
+    private String reExpr;
     private String ruleType;
     private String ruleTypeMeaning;
     private Integer mnLevel;
@@ -118,5 +123,45 @@ public class MyNtyRuleDetailVO {
 
     public void setAppName(String appName) {
         this.appName = appName;
+    }
+
+    public String getSeeId() {
+        return seeId;
+    }
+
+    public void setSeeId(String seeId) {
+        this.seeId = seeId;
+    }
+
+    public String getReName() {
+        return reName;
+    }
+
+    public void setReName(String reName) {
+        this.reName = reName;
+    }
+
+    public boolean isErrorFailBL() {
+        return errorFailBL;
+    }
+
+    public void setErrorFailBL(boolean errorFailBL) {
+        this.errorFailBL = errorFailBL;
+    }
+
+    public boolean isBizFailBL() {
+        return bizFailBL;
+    }
+
+    public void setBizFailBL(boolean bizFailBL) {
+        this.bizFailBL = bizFailBL;
+    }
+
+    public String getReExpr() {
+        return reExpr;
+    }
+
+    public void setReExpr(String reExpr) {
+        this.reExpr = reExpr;
     }
 }

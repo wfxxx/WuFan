@@ -5,8 +5,8 @@ public class LookupTypeLovBean {
     public static final String SQL_GET_LOV_BY_LKT = "select v.lookup_code, v.meaning, v.tag\n" +
             "        from fnd_lookup_types t, fnd_lookup_values v\n" +
             "        where t.lookup_id = v.lookup_id\n" +
-            "        and t.lookup_type = #lookupType";
-
+            "        and t.lookup_type = #lookupType\n"+
+            "        order by v.DISPLAY_SEQUENCE asc";
     private String lookupCode;
     private String meaning;
     private String tag;
