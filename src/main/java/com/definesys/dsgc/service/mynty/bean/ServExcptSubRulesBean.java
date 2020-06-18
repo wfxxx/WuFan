@@ -40,6 +40,13 @@ public class ServExcptSubRulesBean extends MpaasBasePojo {
     private String isEnable;
     @Column(type = ColumnType.JAVA)
     private boolean isEnableBL;
+
+    @Column(value = "APP_CODE", type = ColumnType.DB)
+    private String appCode;
+
+    @Column(value = "MN_LEVEL", type = ColumnType.DB)
+    private Integer mnLevel;
+
     @Column(value = "serv_count", type = ColumnType.CALCULATE)
     private Integer servCount;
 
@@ -231,5 +238,21 @@ public class ServExcptSubRulesBean extends MpaasBasePojo {
 
     public void setUserCount(Integer userCount) {
         this.userCount = userCount;
+    }
+
+    public String getAppCode() {
+        return appCode;
+    }
+
+    public void setAppCode(String appCode) {
+        this.appCode = appCode;
+    }
+
+    public Integer getMnLevel() {
+        return mnLevel;
+    }
+
+    public void setMnLevel(Integer mnLevel) {
+        this.mnLevel = mnLevel;
     }
 }

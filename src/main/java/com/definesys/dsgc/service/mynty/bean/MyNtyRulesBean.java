@@ -3,6 +3,7 @@ package com.definesys.dsgc.service.mynty.bean;
 import com.definesys.mpaas.query.annotation.*;
 import com.definesys.mpaas.query.json.MpaasDateTimeDeserializer;
 import com.definesys.mpaas.query.json.MpaasDateTimeSerializer;
+import com.definesys.mpaas.query.model.MpaasBasePojo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -13,7 +14,7 @@ import java.util.Date;
         @SQL(view="V_GET_MN_RULES",sql="select r.*,(select count(1) from dsgc_mn_services b where b.rule_id = r.rule_id) serv_count,(select count(1) from dsgc_mn_user b where b.rule_id = r.rule_id) user_count from dsgc_mn_rules r,dsgc_mn_subcribes s where s.mn_rule = r.rule_id and s.scb_user = #userId and r.rule_type = #ruleType")
 })
 @Table(value = "DSGC_MN_RULES")
-public class MyNtyRulesBean {
+public class MyNtyRulesBean extends MpaasBasePojo {
 
     @RowID(type = RowIDType.UUID)
     @Column(value = "RULE_ID", type = ColumnType.DB)

@@ -33,33 +33,78 @@ public class MyNtyDao {
 
     public PageQueryResult<MyNtyQueryListBean> queryMNRules(String uid,UserHelper uh,MyNtyQueryParamVO reqParam,int pageSize,int pageIndex) {
 
-        String sql = "select r.rule_id,\n" +
-                "       r.rule_title,\n" +
-                "       r.rule_type,\n" +
-                "       (select fv.meaning from fnd_lookup_types ft,fnd_lookup_values fv where ft.lookup_id = fv.lookup_id and ft.lookup_type = 'MN_RULE_ALERT_TYPE' and fv.lookup_code = r.rule_type) rule_type_meaning,\n" +
-                "       r.rule_expr_desc,\n" +
-                "       r.is_enable,\n" +
-                "       r.created_by,\n" +
-                "       (select u.user_name from dsgc_user u where u.user_id = r.created_by) creator,\n" +
-                "       r.app_code,\n" +
-                "       (select e.sys_name\n" +
-                "          from dsgc_system_entities e\n" +
-                "         where e.sys_code = r.app_code) app_code_meaning,\n" +
-                "       r.alert_count,\n" +
-                "       (select s.is_enable from dsgc_mn_subcribes s where s.scb_user = '" + uid + "' and s.mn_rule = r.rule_id) sub_stat\n" +
-                "  from dsgc_mn_rules r where r.rule_type in (select fv.lookup_code from fnd_lookup_types ft,fnd_lookup_values fv where ft.lookup_id = fv.lookup_id and ft.lookup_type = 'MN_RULE_ALERT_TYPE') ";
+//        String sql = "select r.rule_id,\n" +
+//                "       r.rule_title,\n" +
+//                "       r.rule_type,\n" +
+//                "       (select fv.meaning from fnd_lookup_types ft,fnd_lookup_values fv where ft.lookup_id = fv.lookup_id and ft.lookup_type = 'MN_RULE_ALERT_TYPE' and fv.lookup_code = r.rule_type) rule_type_meaning,\n" +
+//                "       r.rule_expr_desc,\n" +
+//                "       r.is_enable,\n" +
+//                "       r.created_by,\n" +
+//                "       (select u.user_name from dsgc_user u where u.user_id = r.created_by) creator,\n" +
+//                "       r.app_code,\n" +
+//                "       (select e.sys_name\n" +
+//                "          from dsgc_system_entities e\n" +
+//                "         where e.sys_code = r.app_code) app_code_meaning,\n" +
+//                "       r.alert_count,\n" +
+//                "       (select s.is_enable from dsgc_mn_subcribes s where s.scb_user = '" + uid + "' and s.mn_rule = r.rule_id) sub_stat\n" +
+//                "  from dsgc_mn_rules r where r.rule_type in (select fv.lookup_code from fnd_lookup_types ft,fnd_lookup_values fv where ft.lookup_id = fv.lookup_id and ft.lookup_type = 'MN_RULE_ALERT_TYPE') ";
+        String sql = "SELECT R.RULE_ID,\n" +
+                "       R.RULE_TITLE,\n" +
+                "       R.RULE_TYPE,\n" +
+                "       LOV.MEANING RULE_TYPE_MEANING,\n" +
+                "       R.RULE_EXPR_DESC,\n" +
+                "       '' ERROR_FAIL,\n" +
+                "       '' BIZ_FAIL,\n" +
+                "       R.IS_ENABLE,\n" +
+                "       R.CREATED_BY,\n" +
+                "       (SELECT U.USER_NAME FROM DSGC_USER U WHERE U.USER_ID = R.CREATED_BY)                          CREATOR,\n" +
+                "       R.APP_CODE,\n" +
+                "       (SELECT E.SYS_NAME\n" +
+                "        FROM DSGC_SYSTEM_ENTITIES E\n" +
+                "        WHERE E.SYS_CODE = R.APP_CODE)                                                               APP_CODE_MEANING,\n" +
+                "       R.ALERT_COUNT,\n" +
+                "       (SELECT S.IS_ENABLE FROM DSGC_MN_SUBCRIBES S WHERE S.SCB_USER = '" + uid + "' AND S.MN_RULE = R.RULE_ID) SUB_STAT,\n" +
+                "       R.CREATION_DATE,\n" +
+                "       R.MN_LEVEL,\n" +
+                "       (SELECT FV1.MEANING FROM FND_LOOKUP_TYPES FT1, FND_LOOKUP_VALUES FV1 WHERE FT1.LOOKUP_ID = FV1.LOOKUP_ID AND FT1.LOOKUP_TYPE = 'MN_LEVEL_LOV' AND FV1.LOOKUP_CODE = concat(R.MN_LEVEL,'')) MN_LEVEL_MEANING\n" +
+                "FROM DSGC_MN_RULES R ,(SELECT FV.LOOKUP_CODE,FV.MEANING FROM FND_LOOKUP_TYPES FT, FND_LOOKUP_VALUES FV WHERE FT.LOOKUP_ID = FV.LOOKUP_ID AND FT.LOOKUP_TYPE = 'MN_RULE_ALERT_TYPE') LOV\n" +
+                "WHERE R.RULE_TYPE = LOV.LOOKUP_CODE\n" +
+                "union all\n" +
+                "SELECT SE.SEE_ID RULE_ID,\n" +
+                "       SE.RE_NAME RULE_TITLE,\n" +
+                "       R.RULE_TYPE,\n" +
+                "       LOV.MEANING RULE_TYPE_MEANING,\n" +
+                "       SE.RE_EXPR RULE_EXPR_DESC,\n" +
+                "       SE.ERROR_FAIL,\n" +
+                "       SE.BIZ_FAIL,\n" +
+                "       SE.IS_ENABLE,\n" +
+                "       SE.CREATED_BY,\n" +
+                "       (SELECT U.USER_NAME FROM DSGC_USER U WHERE U.USER_ID = SE.CREATED_BY)                          CREATOR,\n" +
+                "       SE.APP_CODE,\n" +
+                "       (SELECT E.SYS_NAME\n" +
+                "        FROM DSGC_SYSTEM_ENTITIES E\n" +
+                "        WHERE E.SYS_CODE = SE.APP_CODE)                                                               APP_CODE_MEANING,\n" +
+                "       null ALERT_COUNT,\n" +
+                "       (SELECT S.IS_ENABLE FROM DSGC_MN_SUBCRIBES S WHERE S.SCB_USER = '" + uid + "' AND S.MN_RULE = SE.SEE_ID) SUB_STAT,\n" +
+                "       SE.CREATION_DATE,\n" +
+                "       SE.MN_LEVEL,\n" +
+                "       (SELECT FV1.MEANING FROM FND_LOOKUP_TYPES FT1, FND_LOOKUP_VALUES FV1 WHERE FT1.LOOKUP_ID = FV1.LOOKUP_ID AND FT1.LOOKUP_TYPE = 'MN_LEVEL_LOV' AND FV1.LOOKUP_CODE = concat(SE.MN_LEVEL,'')) MN_LEVEL_MEANING\n" +
+                "FROM DSGC_MN_RULES R,DSGC_MN_SERVEXCPT_RULEEXPR SE ,(SELECT FV.LOOKUP_CODE,FV.MEANING FROM FND_LOOKUP_TYPES FT, FND_LOOKUP_VALUES FV WHERE FT.LOOKUP_ID = FV.LOOKUP_ID AND FT.LOOKUP_TYPE = 'MN_RULE_EA_TYPE') LOV\n" +
+                "WHERE R.RULE_TYPE = LOV.LOOKUP_CODE\n" +
+                "  and R.RULE_ID  = SE.RULE_ID";
+
 
         String queryAnd = "";
         if (reqParam.getRuleType() != null && !"ALL".equals(reqParam.getRuleType())) {
-            queryAnd += " and rule_type = '" + reqParam.getRuleType() + "'";
+            queryAnd += " and RT.rule_type = '" + reqParam.getRuleType() + "'";
         }
 
         if (reqParam.getIsEnable() != null && !"ALL".equals(reqParam.getIsEnable())) {
-            queryAnd += " and is_enable = '" + reqParam.getIsEnable() + "'";
+            queryAnd += " and RT.is_enable = '" + reqParam.getIsEnable() + "'";
         }
 
         if (reqParam.getSubStat() != null && !"ALL".equals(reqParam.getSubStat())) {
-            queryAnd += " and sub_stat = '" + reqParam.getSubStat() + "'";
+            queryAnd += " and RT.sub_stat = '" + reqParam.getSubStat() + "'";
         }
 
         if (reqParam.getCon0() != null) {
@@ -71,38 +116,53 @@ public class MyNtyDao {
             }
         }
 
+
         if (!(uh.isSuperAdministrator() || uh.isAdmin())) {
             //如果不是管理员，则不能查询所有的规则
             if (uh.isSystemMaintainer()) {
-                queryAnd += " and ( created_by = '" + uid + "' \n" +
-                        "          or sub_stat is not null\n" +
-                        "          or app_code in (select sys_code from dsgc_system_user s where s.user_id = '" + uid + "')\n" +
+                queryAnd += " and ( RT.created_by = '" + uid + "' \n" +
+                        "          or RT.sub_stat is not null\n" +
+                        "          or RT.app_code in (select sys_code from dsgc_system_user s where s.user_id = '" + uid + "')\n" +
                         "        )";
 
             } else {
-                queryAnd += " and ( created_by = '" + uid + "' \n" +
-                        "          or sub_stat is not null\n" +
+                queryAnd += " and ( RT.created_by = '" + uid + "' \n" +
+                        "          or RT.sub_stat is not null\n" +
                         "        )";
             }
         }
 
+        queryAnd += " order by RT.CREATION_DATE desc";
+
         if (queryAnd != null && queryAnd.trim().length() > 0) {
-            sql = "select * from (" + sql + ") g where 1 = 1 " + queryAnd;
+            sql = "select RT.* from (" + sql + ") RT where 1=1 " + queryAnd;
         }
 
         return sw.buildQuery().sql(sql).doPageQuery(pageIndex,pageSize,MyNtyQueryListBean.class);
+    }
 
+
+    public Map<String,String> getMnLevelColor(){
+        Map<String,String> t = new HashMap<String,String>();
+        List<MNLevelBean> res = sw.buildQuery().sql("SELECT FV.LOOKUP_CODE MN_LEVEL,FV.MEANING MN_LEVEL_MEANING,FV.TAG MN_LEVEL_COLOR FROM FND_LOOKUP_TYPES FT, FND_LOOKUP_VALUES FV WHERE FT.LOOKUP_ID = FV.LOOKUP_ID AND FT.LOOKUP_TYPE = 'MN_LEVEL_LOV'").doQuery(MNLevelBean.class);
+        if(res != null){
+            for(MNLevelBean m:res){
+                t.put(m.getMnLevel(),m.getMnLevelColor());
+            }
+        }
+        return t;
     }
 
 
     private String generateLikeAndCluse(String con) {
         String conUpper = con.toUpperCase();
-        String conAnd = " and (UPPER(rule_title) like '%" + conUpper + "%'";
-        conAnd += " or UPPER(rule_type_meaning) like '%" + conUpper + "%'";
-        conAnd += " or UPPER(rule_expr_desc) like '%" + conUpper + "%'";
-        conAnd += " or UPPER(creator) like '%" + conUpper + "%'";
-        conAnd += " or UPPER(app_code_meaning) like '%" + conUpper + "%'";
-        conAnd +=")";
+        String conAnd = " and (UPPER(RT.rule_title) like '%" + conUpper + "%'";
+        conAnd += " or UPPER(RT.rule_type_meaning) like '%" + conUpper + "%'";
+        conAnd += " or UPPER(RT.rule_expr_desc) like '%" + conUpper + "%'";
+        conAnd += " or UPPER(RT.creator) like '%" + conUpper + "%'";
+        conAnd += " or UPPER(RT.MN_LEVEL_MEANING) like '%" + conUpper + "%'";
+        conAnd += " or UPPER(RT.app_code_meaning) like '%" + conUpper + "%'";
+        conAnd += ")";
         return conAnd;
     }
 
@@ -113,18 +173,22 @@ public class MyNtyDao {
         }
     }
 
-    public void setRuleStat(RuleStatSetVO reqParam){
+    public void setRuleStat(RuleStatSetVO reqParam) {
         if ("Y".equals(reqParam.getIsEnable()) || "N".equals(reqParam.getIsEnable())) {
-            sw.buildQuery().update("IS_ENABLE",reqParam.getIsEnable()).eq("ruleId",reqParam.getRuleId()).doUpdate(MyNtyRulesBean.class);
+            if("SE".equals(reqParam.getRuleType())){
+                sw.buildQuery().update("IS_ENABLE",reqParam.getIsEnable()).eq("seeId",reqParam.getRuleId()).doUpdate(ServExcptSubRulesBean.class);
+            } else {
+                sw.buildQuery().update("IS_ENABLE",reqParam.getIsEnable()).eq("ruleId",reqParam.getRuleId()).doUpdate(MyNtyRulesBean.class);
+            }
         }
     }
 
-    public MyNtyRulesBean getMyNtyRuleDtl(String ruleId){
-       return  sw.buildQuery().eq("ruleId",ruleId).doQueryFirst(MyNtyRulesBean.class);
+    public MyNtyRulesBean getMyNtyRuleDtl(String ruleId) {
+        return sw.buildQuery().eq("ruleId",ruleId).doQueryFirst(MyNtyRulesBean.class);
     }
 
 
-    public void deleteMyNtyRule(String ruleId){
+    public void deleteMyNtyRule(String ruleId) {
 
         //删除用户订阅
         sw.buildQuery().eq("mnRule",ruleId).doDelete(MyNtySubcribesBean.class);
@@ -135,6 +199,7 @@ public class MyNtyDao {
 
 
     }
+
     /**
      * 根据用户id和订阅规则类型，获取用户订阅规则
      *
@@ -150,13 +215,14 @@ public class MyNtyDao {
 
     /**
      * 执行更新或者新增订阅规则，新增则返回ruleid
+     *
      * @param rule
      * @return
      */
-    public void updateMNRule(MyNtyRulesBean rule){
-        if(rule.getRuleId() == null || rule.getRuleId().trim().length() == 0){
-           Object key = sw.buildQuery().doInsert(rule);
-        } else{
+    public void updateMNRule(MyNtyRulesBean rule) {
+        if (rule.getRuleId() == null || rule.getRuleId().trim().length() == 0) {
+            Object key = sw.buildQuery().doInsert(rule);
+        } else {
             sw.buildQuery().rowid("ruleId",rule.getRuleId()).doUpdate(rule);
         }
     }
@@ -230,7 +296,7 @@ public class MyNtyDao {
      * @param newSlted
      */
     public void saveMNSESubServ(String refExprId,String[] unSlt,String[] newSlted) {
-        if (refExprId != null || refExprId.trim().length() > 0) {
+        if (refExprId != null && refExprId.trim().length() > 0) {
 
             //删除取消订阅的服务
             if (unSlt != null && unSlt.length > 0) {
@@ -388,31 +454,31 @@ public class MyNtyDao {
         }
 
         if (filterServNo != null && filterServNo.trim().length() > 0) {
-            String[] conArray =filterServNo.trim().split(" ");
-            if(conArray.length==1){
+            String[] conArray = filterServNo.trim().split(" ");
+            if (conArray.length == 1) {
                 if ("ALA".equals(ruleType)) {
-                    sqlBuilder.append(" and ( t.api_code like '%" + conArray[0] + "%'"+" or t.api_name like '%" + conArray[0] + "%'"+" or (select sys_name from dsgc_system_entities where sys_code = t.app_code) like '%" + conArray[0] + "%' )");
+                    sqlBuilder.append(" and ( t.api_code like '%" + conArray[0] + "%'" + " or t.api_name like '%" + conArray[0] + "%'" + " or (select sys_name from dsgc_system_entities where sys_code = t.app_code) like '%" + conArray[0] + "%' )");
                 } else {
-                    sqlBuilder.append(" and ( UPPER(t.serv_no) like '%" + conArray[0] + "%'"+" or UPPER(t.serv_name) like '%" + conArray[0] + "%'"+" or (select sys_name from dsgc_system_entities where sys_code = t.subordinate_system)  like '%" + conArray[0] + "%' )");
+                    sqlBuilder.append(" and ( UPPER(t.serv_no) like '%" + conArray[0] + "%'" + " or UPPER(t.serv_name) like '%" + conArray[0] + "%'" + " or (select sys_name from dsgc_system_entities where sys_code = t.subordinate_system)  like '%" + conArray[0] + "%' )");
                 }
-            }else {
-                for (int i=0;i<conArray.length;i++) {
+            } else {
+                for (int i = 0; i < conArray.length; i++) {
                     if (StringUtil.isNotBlank(conArray[i])) {
                         if ("ALA".equals(ruleType)) {
-                            if(i == 0){
-                                sqlBuilder.append(" and ( (t.api_code like '%" + conArray[i] + "%'"+" or t.api_name like '%" + conArray[i] + "%'"+" or (select sys_name from dsgc_system_entities where sys_code = t.app_code) like '%" + conArray[i] + "%' )");
-                            }else if(i>0 && i < conArray.length-1){
-                                sqlBuilder.append(" and (t.api_code like '%" + conArray[i] + "%'"+" or t.api_name like '%" + conArray[i] + "%'"+" or (select sys_name from dsgc_system_entities where sys_code = t.app_code) like '%" + conArray[i] + "%' )");
-                            }else if(i==conArray.length-1){
-                                sqlBuilder.append(" and (t.api_code like '%" + conArray[i] + "%'"+" or t.api_name like '%" + conArray[i] + "%'"+" or (select sys_name from dsgc_system_entities where sys_code = t.app_code) like '%" + conArray[i] + "%' ) )");
+                            if (i == 0) {
+                                sqlBuilder.append(" and ( (t.api_code like '%" + conArray[i] + "%'" + " or t.api_name like '%" + conArray[i] + "%'" + " or (select sys_name from dsgc_system_entities where sys_code = t.app_code) like '%" + conArray[i] + "%' )");
+                            } else if (i > 0 && i < conArray.length - 1) {
+                                sqlBuilder.append(" and (t.api_code like '%" + conArray[i] + "%'" + " or t.api_name like '%" + conArray[i] + "%'" + " or (select sys_name from dsgc_system_entities where sys_code = t.app_code) like '%" + conArray[i] + "%' )");
+                            } else if (i == conArray.length - 1) {
+                                sqlBuilder.append(" and (t.api_code like '%" + conArray[i] + "%'" + " or t.api_name like '%" + conArray[i] + "%'" + " or (select sys_name from dsgc_system_entities where sys_code = t.app_code) like '%" + conArray[i] + "%' ) )");
                             }
                         } else {
-                            if(i == 0){
-                                sqlBuilder.append(" and ( UPPER(t.serv_no) like '%" + conArray[i] + "%'"+" or UPPER(t.serv_name) like '%" + conArray[i] + "%'"+" or (select sys_name from dsgc_system_entities where sys_code = t.subordinate_system)  like '%" + conArray[i] + "%'");
-                            }else if(i>0 && i < conArray.length-1){
-                                sqlBuilder.append(" and UPPER(t.serv_no) like '%" + conArray[i] + "%'"+" or UPPER(t.serv_name) like '%" + conArray[i] + "%'"+" or (select sys_name from dsgc_system_entities where sys_code = t.subordinate_system)  like '%" + conArray[i] + "%'");
-                            }else if(i==conArray.length-1){
-                                sqlBuilder.append(" and UPPER(t.serv_no) like '%" + conArray[i] + "%'"+" or UPPER(t.serv_name) like '%" + conArray[i] + "%'"+" or (select sys_name from dsgc_system_entities where sys_code = t.subordinate_system)  like '%" + conArray[i] + "%' )");
+                            if (i == 0) {
+                                sqlBuilder.append(" and ( UPPER(t.serv_no) like '%" + conArray[i] + "%'" + " or UPPER(t.serv_name) like '%" + conArray[i] + "%'" + " or (select sys_name from dsgc_system_entities where sys_code = t.subordinate_system)  like '%" + conArray[i] + "%'");
+                            } else if (i > 0 && i < conArray.length - 1) {
+                                sqlBuilder.append(" and UPPER(t.serv_no) like '%" + conArray[i] + "%'" + " or UPPER(t.serv_name) like '%" + conArray[i] + "%'" + " or (select sys_name from dsgc_system_entities where sys_code = t.subordinate_system)  like '%" + conArray[i] + "%'");
+                            } else if (i == conArray.length - 1) {
+                                sqlBuilder.append(" and UPPER(t.serv_no) like '%" + conArray[i] + "%'" + " or UPPER(t.serv_name) like '%" + conArray[i] + "%'" + " or (select sys_name from dsgc_system_entities where sys_code = t.subordinate_system)  like '%" + conArray[i] + "%' )");
                             }
                         }
                     }
@@ -473,12 +539,42 @@ public class MyNtyDao {
     }
 
 
+    public ServExcptSubRulesBean getServExcptSubRulesBySeeId(String seeId) {
+        if (seeId != null) {
+            return sw.buildQuery().eq("seeId",seeId).doQueryFirst(ServExcptSubRulesBean.class);
+        } else {
+            return null;
+        }
+    }
+
+
+    public String updServExcptSubRules(ServExcptSubRulesBean ssrb) {
+        String seeId = ssrb.getSeeId();
+        if (ssrb != null) {
+            if (ssrb.getSeeId() != null) {
+                sw.buildQuery().rowid("seeId",ssrb.getSeeId()).doUpdate(ssrb);
+            } else {
+                sw.buildQuery().doInsert(ssrb);
+            }
+        }
+        return ssrb.getSeeId();
+    }
+
+    public void updateServExcptRuleServExpr(ServExcptSubRulesBean ssrb) {
+        //更新该规则下所有订阅的服务的过滤表达式
+        String filterExpr = this.getServExcptRuleFilterExpr(ssrb);
+
+        //通过组装后的filterExpr表达式更新所有订阅的服务
+        sw.buildQuery().update("filter_expr",filterExpr).eq("exprRefId",ssrb.getSeeId()).doUpdate(MyNtySubServBean.class);
+    }
+
     /**
      * 根据前端界面操作更新数据
      *
      * @param userId
      * @param chgs
      */
+    @Deprecated
     public void updServExcptSubRules(String userId,List<ServExcptSubRulesBean> chgs) {
         String ruleId = initServExcptSubcribute(userId);
         if (chgs != null && chgs.size() > 0) {
@@ -514,10 +610,10 @@ public class MyNtyDao {
     private String initServExcptSubcribute(String userId) {
         String ruleId = null;
         String sql = null;
-        if("oracle".equals(dbType)){
+        if ("oracle".equals(dbType)) {
             sql = "select r.rule_id from dsgc_mn_subcribes s,dsgc_mn_rules r where s.mn_rule = r.rule_id and r.rule_type = 'SE' and s.scb_user = #userId and rownum  = 1";
         }
-        if("mysql".equals(dbType)){
+        if ("mysql".equals(dbType)) {
             sql = " select r.rule_id from dsgc_mn_subcribes s,dsgc_mn_rules r where s.mn_rule = r.rule_id and r.rule_type = 'SE' and s.scb_user = #userId  limit 1";
         }
         List<Map<String,Object>> isExist = sw.buildQuery().sql(sql)
@@ -541,12 +637,47 @@ public class MyNtyDao {
     }
 
     /**
+     * 异常订阅类型SE/其它
+     *
+     * @param ruleType
+     * @return
+     */
+    public String initExcptSubcributeRule(String ruleType) {
+        if (ruleType != null) {
+            MyNtyRulesBean rule = this.sw.buildQuery().eq("ruleType",ruleType).doQueryFirst(MyNtyRulesBean.class);
+            if (rule != null) {
+                return rule.getRuleId();
+            } else {
+                MyNtyRulesBean mnr = this.generateServExcptRule();
+                sw.buildQuery().doInsert(mnr);
+
+                MyNtySubcribesBean addSub = new MyNtySubcribesBean();
+                addSub.setScbUser("-1");
+                addSub.setMnRule(mnr.getRuleId());
+                addSub.setIsEnable("Y");
+                sw.buildQuery().doInsert(addSub);
+                return mnr.getRuleId();
+            }
+        } else {
+            return null;
+        }
+    }
+
+
+    /**
      * 删除服务异常订阅信息
      *
      * @param seeId
      */
+    @Deprecated
     private void deleteServExcptSubcribute(String seeId) {
         sw.buildQuery().rowid("seeId",seeId).doDelete(ServExcptSubRulesBean.class);
+        sw.buildQuery().eq("exprRefId",seeId).doDelete(MyNtySubServBean.class);
+    }
+
+    public void deleteServExcptRule(String seeId) {
+        sw.buildQuery().rowid("seeId",seeId).doDelete(ServExcptSubRulesBean.class);
+        sw.buildQuery().eq("mnRule",seeId).doDelete(MyNtySubcribesBean.class);
         sw.buildQuery().eq("exprRefId",seeId).doDelete(MyNtySubServBean.class);
     }
 
@@ -660,20 +791,20 @@ public class MyNtyDao {
         return lkv;
     }
 
-    public String getRuleTypeMeaningFromLKV(String ruleType){
+    public String getRuleTypeMeaningFromLKV(String ruleType) {
         Map<String,String> lkv = this.lkvDao.getlookupValues("MN_RULE_ALERT_TYPE");
-        if(lkv != null){
+        if (lkv != null) {
             return lkv.get(ruleType);
         } else {
             return null;
         }
     }
 
-    public String getAppCodeName(String appCode){
+    public String getAppCodeName(String appCode) {
         Map<String,Object> res = sw.buildQuery().sql("select SYS_NAME from dsgc_system_entities where sys_code = #sysCode").setVar("sysCode",appCode).doQueryFirst();
-        if(res != null){
+        if (res != null) {
             Object obj = res.get("SYS_NAME");
-            if(obj !=null){
+            if (obj != null) {
                 return obj.toString();
             }
         }
@@ -686,10 +817,10 @@ public class MyNtyDao {
         if (StringUtils.isNotEmpty(dsgcMnNotices.getMnTitle())) {
             mpaasQuery = mpaasQuery.like("mnTitle",dsgcMnNotices.getMnTitle());
         }
-        if (dsgcMnNotices.getMnTypeList()!=null) {
-            if(dsgcMnNotices.getMnTypeList().size()==0){
+        if (dsgcMnNotices.getMnTypeList() != null) {
+            if (dsgcMnNotices.getMnTypeList().size() == 0) {
                 mpaasQuery = mpaasQuery.eq("mnType","xxxx");
-            }else {
+            } else {
                 mpaasQuery = mpaasQuery.in("mnType",dsgcMnNotices.getMnTypeList());
             }
         }
@@ -702,7 +833,7 @@ public class MyNtyDao {
             }
 
         }
-        if (StringUtils.isNotEmpty(dsgcMnNotices.getMnLevel()) && !dsgcMnNotices.getMnLevel().equals("all")){
+        if (StringUtils.isNotEmpty(dsgcMnNotices.getMnLevel()) && !dsgcMnNotices.getMnLevel().equals("all")) {
             mpaasQuery = mpaasQuery.eq("mnLevel",dsgcMnNotices.getMnLevel());
         }
         List<DSGCMnNotices> dsgcMnNoticesList = mpaasQuery.doQuery(DSGCMnNotices.class);
@@ -778,18 +909,18 @@ public class MyNtyDao {
 
 
         if (filterUserName != null && filterUserName.trim().length() > 0) {
-            String[] conArray =filterUserName.trim().split(" ");
-            if(conArray.length==1){
-                sql.append(" and ( du.user_name like '%" + conArray[0] + "%'"+" or du.user_description like '%" + conArray[0] + "%' )");
-            }else {
-                for (int i=0;i<conArray.length;i++) {
+            String[] conArray = filterUserName.trim().split(" ");
+            if (conArray.length == 1) {
+                sql.append(" and ( du.user_name like '%" + conArray[0] + "%'" + " or du.user_description like '%" + conArray[0] + "%' )");
+            } else {
+                for (int i = 0; i < conArray.length; i++) {
                     if (StringUtil.isNotBlank(conArray[i])) {
-                        if(i == 0){
-                            sql.append(" and ( (du.user_name like '%" + conArray[i] + "%'"+" or du.user_description like '%" + conArray[i] + "%' ) ");
-                        }else if(i>0 && i < conArray.length-1){
-                            sql.append(" and (du.user_name like '%" + conArray[i] + "%'"+" or du.user_description like '%" + conArray[i] + "%' ) ");
-                        }else if(i==conArray.length-1){
-                            sql.append(" and (du.user_name like '%" + conArray[i] + "%'"+" or du.user_description like '%" + conArray[i] + "%' ) )");
+                        if (i == 0) {
+                            sql.append(" and ( (du.user_name like '%" + conArray[i] + "%'" + " or du.user_description like '%" + conArray[i] + "%' ) ");
+                        } else if (i > 0 && i < conArray.length - 1) {
+                            sql.append(" and (du.user_name like '%" + conArray[i] + "%'" + " or du.user_description like '%" + conArray[i] + "%' ) ");
+                        } else if (i == conArray.length - 1) {
+                            sql.append(" and (du.user_name like '%" + conArray[i] + "%'" + " or du.user_description like '%" + conArray[i] + "%' ) )");
                         }
                     }
                 }
@@ -831,24 +962,24 @@ public class MyNtyDao {
 
             //添加新增订阅的服务
             if (newSlted != null && newSlted.length > 0) {
-                    List<MyNtySubcribesBean> existedSubUserList = sw.buildQuery().in("SCB_USER",newSlted).eq("MN_RULE",ruleId).doQuery(MyNtySubcribesBean.class);
-                    Set<String> existFlag = new HashSet<String>();
-                    Iterator<MyNtySubcribesBean> existIter = existedSubUserList.iterator();
-                    while (existIter.hasNext()) {
-                        MyNtySubcribesBean ssb = existIter.next();
-                        existFlag.add(ssb.getScbUser());//标记已经存在
+                List<MyNtySubcribesBean> existedSubUserList = sw.buildQuery().in("SCB_USER",newSlted).eq("MN_RULE",ruleId).doQuery(MyNtySubcribesBean.class);
+                Set<String> existFlag = new HashSet<String>();
+                Iterator<MyNtySubcribesBean> existIter = existedSubUserList.iterator();
+                while (existIter.hasNext()) {
+                    MyNtySubcribesBean ssb = existIter.next();
+                    existFlag.add(ssb.getScbUser());//标记已经存在
+                }
+                //插入不存在的
+                for (int i = 0; i < newSlted.length; i++) {
+                    String userId = newSlted[i];
+                    if (userId != null && userId.trim().length() > 0 && !existFlag.contains(userId)) {
+                        MyNtySubcribesBean newSsb = new MyNtySubcribesBean();
+                        newSsb.setScbUser(userId);
+                        newSsb.setMnRule(ruleId);
+                        newSsb.setIsEnable("Y");
+                        sw.buildQuery().doInsert(newSsb);
                     }
-                    //插入不存在的
-                    for (int i = 0; i < newSlted.length; i++) {
-                        String userId = newSlted[i];
-                        if (userId != null && userId.trim().length() > 0 && !existFlag.contains(userId)) {
-                            MyNtySubcribesBean newSsb = new MyNtySubcribesBean();
-                            newSsb.setScbUser(userId);
-                            newSsb.setMnRule(ruleId);
-                            newSsb.setIsEnable("Y");
-                            sw.buildQuery().doInsert(newSsb);
-                        }
-                    }
+                }
             }
         }
     }
@@ -891,18 +1022,18 @@ public class MyNtyDao {
 //        }
 //    }
 
-    public PageQueryResult<DSGCUser> queryUserList(CommonReqBean commonReqBean, int pageSize, int pageIndex){
-        MpaasQuery mpaasQuery =  sw.buildQuery();
-        StringBuffer sqlStr= new StringBuffer("select * from dsgc_user du where 1=1 ");
+    public PageQueryResult<DSGCUser> queryUserList(CommonReqBean commonReqBean,int pageSize,int pageIndex) {
+        MpaasQuery mpaasQuery = sw.buildQuery();
+        StringBuffer sqlStr = new StringBuffer("select * from dsgc_user du where 1=1 ");
         if (StringUtil.isNotBlank(commonReqBean.getCon0())) {
             String[] conArray = commonReqBean.getCon0().trim().split(" ");
             for (String s : conArray) {
                 if (s != null && s.length() > 0) {
-                    sqlStr.append(" and du.user_name like '%" + s + "%'"+" or du.user_description like '%" + s + "%'");
+                    sqlStr.append(" and du.user_name like '%" + s + "%'" + " or du.user_description like '%" + s + "%'");
                 }
             }
         }
-        if(!commonReqBean.getUserRole().equals("ALL")){
+        if (!commonReqBean.getUserRole().equals("ALL")) {
             sqlStr.append(" and du.user_role = #userRole ");
             mpaasQuery.setVar("userRole",commonReqBean.getUserRole());
         }
@@ -911,8 +1042,8 @@ public class MyNtyDao {
     }
 
 
-    public DSGCMnNotices getNoticesCount(String ntyUser){
-        if(ntyUser != null) {
+    public DSGCMnNotices getNoticesCount(String ntyUser) {
+        if (ntyUser != null) {
             return sw.buildQuery().sql("select count(1) allCount,count(case when read_stat = 0 then 1 else null end)  unreadCount from DSGC_MN_NOTICES where nty_user = #ntyUser ")
                     .setVar("ntyUser",ntyUser)
                     .doQueryFirst(DSGCMnNotices.class);
