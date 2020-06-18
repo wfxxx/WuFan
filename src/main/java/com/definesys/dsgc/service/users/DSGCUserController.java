@@ -404,4 +404,24 @@ public class DSGCUserController {
         }
 
     }
+
+    @RequestMapping(value = "/findUserNtyCfg", method = RequestMethod.POST)
+    public Response findUserNtyCfg(@RequestBody DSGCUserNtyCfgBean userNtyCfg) {
+        try {
+            return Response.ok().setData( userService.modifyUserNtyCfg(userNtyCfg));
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.ok().setData(false);
+        }
+    }
+
+    @RequestMapping(value = "/modifyUserNtyCfg", method = RequestMethod.POST)
+    public Response modifyUserNtyCfg(@RequestBody DSGCUserNtyCfgBean userNtyCfg) {
+        try {
+            return Response.ok().setData( userService.modifyUserNtyCfg(userNtyCfg));
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.ok().setData(false);
+        }
+    }
 }
