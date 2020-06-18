@@ -345,14 +345,21 @@ public class DSGCUserDao {
                 .doQuery();
     }
 
+    public DSGCUserNtyCfgBean findUserNtyCfg(String userId) {
+        return this.sw.buildQuery().eq("userId",userId)
+                .doQueryFirst(DSGCUserNtyCfgBean.class);
+    }
+
     public DSGCUserNtyCfgBean modifyUserNtyCfg(DSGCUserNtyCfgBean userNtyCfg) {
         String userId = userNtyCfg.getUserId();
         //先查询当前用户是否存在配置信息
-        DSGCUserNtyCfgBean userNtyCfgBean =this.sw.buildQuery().eq("userId",userId).doQueryFirst(DSGCUserNtyCfgBean.class);
+        DSGCUserNtyCfgBean userNtyCfgBean =this.findUserNtyCfg(userId);
         if(userNtyCfgBean != null ){
             this.sw.buildQuery().eq("userId",userId).doDelete(DSGCUserNtyCfgBean.class);
         }
         this.sw.buildQuery().doInsert(userNtyCfg);
         return userNtyCfg;
     }
+
+
 }

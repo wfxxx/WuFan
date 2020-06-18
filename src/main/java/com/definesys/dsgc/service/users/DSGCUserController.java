@@ -408,7 +408,7 @@ public class DSGCUserController {
     @RequestMapping(value = "/findUserNtyCfg", method = RequestMethod.POST)
     public Response findUserNtyCfg(@RequestBody DSGCUserNtyCfgBean userNtyCfg) {
         try {
-            return Response.ok().setData( userService.modifyUserNtyCfg(userNtyCfg));
+            return Response.ok().setData( userService.findUserNtyCfg(userNtyCfg));
         }catch (Exception e){
             e.printStackTrace();
             return Response.ok().setData(false);

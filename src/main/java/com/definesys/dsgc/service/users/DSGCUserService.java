@@ -365,7 +365,13 @@ public class DSGCUserService {
         return isEdit;
     }
 
+    public DSGCUserNtyCfgBean findUserNtyCfg(DSGCUserNtyCfgBean userNtyCfg) {
+        return this.userDao.findUserNtyCfg(userNtyCfg.getUserId());
+    }
+
     public DSGCUserNtyCfgBean modifyUserNtyCfg(DSGCUserNtyCfgBean userNtyCfg) {
         return  this.userDao.modifyUserNtyCfg(userNtyCfg);
     }
+
+
 }
