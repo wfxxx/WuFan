@@ -548,6 +548,24 @@ public class MyNtyService {
         return myMnNoticesDTO;
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    public MyMnNoticesDTO findDSGCMnNoticesPage(DSGCMnNotices dsgcMnNotices,int pageSize,int pageIndex) {
+        MyMnNoticesDTO myMnNoticesDTO = new MyMnNoticesDTO();
+
+        DSGCMnNotices noticesCount = this.mndao.getNoticesCount(dsgcMnNotices.getNtyUser());
+        if(noticesCount!=null){
+            myMnNoticesDTO.setAllCount(noticesCount.getAllCount());
+            myMnNoticesDTO.setUnreadCount(noticesCount.getUnreadCount());
+        }else {
+            myMnNoticesDTO.setAllCount(0);
+            myMnNoticesDTO.setUnreadCount(0);
+        }
+        PageQueryResult<DSGCMnNotices> mnNotices = this.mndao.findDSGCMnNoticesPage(dsgcMnNotices,pageSize,pageIndex);
+        myMnNoticesDTO.setNotices(mnNotices.getResult());
+
+        return myMnNoticesDTO;
+    }
+
 
     public List<DSGCMnNotices> findDSGCMnNoticesByMnTitle(DSGCMnNotices dsgcMnNotices) {
         return this.mndao.findDSGCMnNoticesByMnTitle(dsgcMnNotices);

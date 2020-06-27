@@ -215,6 +215,13 @@ public class MyNtyController {
         return Response.ok().data(this.mns.findDSGCMnNotices(dsgcMnNotices));
     }
 
+    @RequestMapping(value = "/findDSGCMnNoticesPage", method = RequestMethod.POST)
+    public Response findDSGCMnNoticesPage(@RequestBody DSGCMnNotices dsgcMnNotices,
+                                      @RequestParam int pageSize,
+                                      @RequestParam int pageIndex) {
+        return Response.ok().data(this.mns.findDSGCMnNoticesPage(dsgcMnNotices,pageSize,pageIndex));
+    }
+
     @RequestMapping(value = "getServByUser", method = RequestMethod.POST)
     public Response getServByUser(@RequestBody DSGCUser dsgcUser) {
         List<Map<String,Object>> servByUser = mns.getServByUser(dsgcUser);

@@ -282,6 +282,8 @@ public class DSGCLogInstanceDao {
         return "";
     }
 
+
+
     /**
      * 查询所有系统，返回系统编码和系统名称
      * @return
