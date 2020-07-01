@@ -843,6 +843,37 @@ public class MyNtyDao {
     }
 
 
+    public PageQueryResult<DSGCMnNotices> findDSGCMnNoticesPage(DSGCMnNotices dsgcMnNotices,int pageSize,int pageIndex) {
+        MpaasQuery mpaasQuery = this.sw.buildQuery()
+                .eq("ntyUser",dsgcMnNotices.getNtyUser());
+        if (StringUtils.isNotEmpty(dsgcMnNotices.getMnTitle())) {
+            mpaasQuery = mpaasQuery.like("mnTitle",dsgcMnNotices.getMnTitle());
+        }
+        if (dsgcMnNotices.getMnTypeList() != null) {
+            if (dsgcMnNotices.getMnTypeList().size() == 0) {
+                mpaasQuery = mpaasQuery.eq("mnType","xxxx");
+            } else {
+                mpaasQuery = mpaasQuery.in("mnType",dsgcMnNotices.getMnTypeList());
+            }
+        }
+        if (StringUtils.isNotEmpty(dsgcMnNotices.getReadStat()) && !dsgcMnNotices.getReadStat().equals("all")) {
+            if ("unread".equals(dsgcMnNotices.getReadStat())) {
+                mpaasQuery = mpaasQuery.eq("readStat",'0');
+            }
+            if ("read".equals(dsgcMnNotices.getReadStat())) {
+                mpaasQuery = mpaasQuery.eq("readStat",'1');
+            }
+
+        }
+        if (StringUtils.isNotEmpty(dsgcMnNotices.getMnLevel()) && !dsgcMnNotices.getMnLevel().equals("all")) {
+            mpaasQuery = mpaasQuery.eq("mnLevel",dsgcMnNotices.getMnLevel());
+        }
+        PageQueryResult<DSGCMnNotices> dsgcMnNoticesList = mpaasQuery.doPageQuery(pageIndex,pageSize,DSGCMnNotices.class);
+
+        return dsgcMnNoticesList;
+    }
+
+
     public List<DSGCMnNotices> findDSGCMnNoticesByMnTitle(DSGCMnNotices dsgcMnNotices) {
         MpaasQuery mpaasQuery = this.sw.buildQuery().eq("ntyUser",dsgcMnNotices.getNtyUser());
         if (StringUtils.isNotEmpty(dsgcMnNotices.getMnTitle())) {
