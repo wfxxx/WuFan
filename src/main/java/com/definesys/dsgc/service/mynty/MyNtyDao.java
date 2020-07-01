@@ -764,7 +764,7 @@ public class MyNtyDao {
         mnr.setMnLevel(2);
         mnr.setDayBD("00:00:00");
         mnr.setDayED("23:59:59");
-        mnr.setRunInterval(5 * 60 * 1000L);
+        mnr.setRunInterval(1 * 60 * 1000L);
         mnr.setRuleExpr("1=1");
         mnr.setIsEnable("Y");
         String disableDate = "9999.12.31 23:59:59";
@@ -836,6 +836,7 @@ public class MyNtyDao {
         if (StringUtils.isNotEmpty(dsgcMnNotices.getMnLevel()) && !dsgcMnNotices.getMnLevel().equals("all")) {
             mpaasQuery = mpaasQuery.eq("mnLevel",dsgcMnNotices.getMnLevel());
         }
+        mpaasQuery.orderBy("creationDate","desc");
         List<DSGCMnNotices> dsgcMnNoticesList = mpaasQuery.doQuery(DSGCMnNotices.class);
 
         return dsgcMnNoticesList;
