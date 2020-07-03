@@ -16,7 +16,7 @@ import java.util.Date;
 public class DSGCLogOutBound {
 
     @RowID(type = RowIDType.UUID)
-    private String obId;    //日志主键
+    private String obUuid;    //日志主键
     private String trackId;
     private String runTimes; //出栈批次
     private String  token;  //Token
@@ -205,15 +205,6 @@ public class DSGCLogOutBound {
         this.resTime = this.getBugFixDate(resTime);
         this.costDescSet();
     }
-
-    public String getObId() {
-        return obId;
-    }
-
-    public void setObId(String obId) {
-        this.obId = obId;
-    }
-
     public String getReqHeaderLob() {
         return reqHeaderLob;
     }
@@ -385,7 +376,7 @@ public class DSGCLogOutBound {
     @Override
     public String toString(){
         StringBuilder arg=new StringBuilder("");
-        arg.append("obId : ").append(this.obId);
+        arg.append("obUuid : ").append(this.obUuid);
         arg.append("trackId : ").append(this.trackId);
         arg.append("runTimes : ").append(this.runTimes);
         arg.append("token : ").append(this.token);
