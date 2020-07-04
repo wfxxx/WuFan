@@ -49,7 +49,9 @@ public class DSGCLogInstanceService {
             // 记录接口名称
             List<String> servNoList = new ArrayList<>();
             if ("SuperAdministrators".equals(userRole)||"Administrators".equals(userRole)) { // 超管和管理员可以查看到所有的服务日志
-            } else if ("SystemLeader".equals(userRole)) { // 系统负责人只能查看自己负责的系统
+            }
+            //else if ("SystemLeader".equals(userRole)) { // 系统负责人只能查看自己负责的系统
+            else{ //系统负责人和游客只能查看自己所属应用的服务
                 // 根据uid可以查看到用户与系统的关系
                 List<DSGCSystemUser> codes = dsgcLogInstanceDao.querySystemlistUserByUserId(uid);
                 if(codes.size() < 1){
@@ -64,9 +66,10 @@ public class DSGCLogInstanceService {
                         servNoList.add(topologyVO.getServNo());
                     }
                 }
-            } else if ("Tourist".equals(userRole)) {
-                return dsgcLogInstance;
             }
+//            else if ("Tourist".equals(userRole)) {
+//                return dsgcLogInstance;
+//            }
             dsgcLogInstance = this.dsgcLogInstanceDao.query(keyword,userRole ,uid, instance, pageSize, pageIndex,servNoList);
             return dsgcLogInstance;
         } catch (Exception e) {
