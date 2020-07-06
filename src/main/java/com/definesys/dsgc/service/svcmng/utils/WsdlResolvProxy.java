@@ -19,7 +19,7 @@ public class WsdlResolvProxy {
     public static WsdlResolvProxy newInstance() {
         try {
             WsdlResolvProxy proxy = new WsdlResolvProxy();
-            proxy.resolverWsdlClass = Class.forName("com.definesys.dsgc.common.svcgen.utils.ResolverWsdl");
+            proxy.resolverWsdlClass = Class.forName("com.definesys.dsgc.svcgen.utils.ResolverWsdl");
             proxy.resolverWsdlServcie = proxy.resolverWsdlClass.newInstance();
             return proxy;
         } catch (Exception e) {

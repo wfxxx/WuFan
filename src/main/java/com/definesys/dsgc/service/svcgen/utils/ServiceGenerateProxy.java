@@ -20,7 +20,7 @@ public class ServiceGenerateProxy {
     public static ServiceGenerateProxy newInstance() {
         try {
             ServiceGenerateProxy proxy = new ServiceGenerateProxy();
-            proxy.generateServcieClass = Class.forName("com.definesys.dsgc.common.svcgen.ServiceGenerate");
+            proxy.generateServcieClass = Class.forName("com.definesys.dsgc.svcgen.ServiceGenerate");
             proxy.generateServcie = proxy.generateServcieClass.newInstance();
             proxy.sapUtilsClass = Class.forName("com.definesys.dsgc.sap.SapUtils");
 
@@ -434,7 +434,7 @@ public class ServiceGenerateProxy {
     public Response generateServiceCode(String loginUser,TmplConfigBean cfg,Map<String,Object> paramMap) throws Exception {
         Method genService = this.generateServcieClass.getMethod("generateServiceCode",String.class,String.class,Map.class);
 
-        Class paramTcbClass = Class.forName("com.definesys.dsgc.common.svcgen.bean.TmplCntBean");
+        Class paramTcbClass = Class.forName("com.definesys.dsgc.svcgen.bean.TmplCntBean");
         Object paramTcb = paramTcbClass.newInstance();
         if ("3".equals(cfg.getTmplFlag())) {
             //rfc配置方式
@@ -566,7 +566,7 @@ public class ServiceGenerateProxy {
     public List<CodeFileJsonBean> generateIDETmplCodeFiles(String loginUser,TmplConfigBean cfg,Map<String,Object> paramMap) throws Exception {
         Method generateIDETmplCodeFiles = this.generateServcieClass.getMethod("generateIDETmplCodeFiles",String.class,String.class,Map.class);
 
-        Class paramTcbClass = Class.forName("com.definesys.dsgc.common.svcgen.bean.TmplCntBean");
+        Class paramTcbClass = Class.forName("com.definesys.dsgc.svcgen.bean.TmplCntBean");
         Object paramTcb = paramTcbClass.newInstance();
         if ("2".equals(cfg.getTmplFlag())) {
             //ide配置方式
@@ -768,7 +768,7 @@ public class ServiceGenerateProxy {
 //     * @throws Exception
 //     */
 //    public void updateSvcGenConfig(String loginUser,TmplConfigBean cfg) throws Exception{
-//        Class paramCl = Class.forName("com.definesys.dsgc.common.svcgen.bean.TmplCntBean");
+//        Class paramCl = Class.forName("com.definesys.dsgc.svcgen.bean.TmplCntBean");
 //        Object param = paramCl.newInstance();
 //        if("3".equals(cfg.getTmplFlag())){
 //            //rfc配置方式
