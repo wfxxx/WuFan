@@ -17,8 +17,9 @@ public class DSGCUserNtyCfgBean extends MpaasBasePojo {
     private String userId;
     private String mnLevel;
     private String ntySour;
-    private String isDdOpen;
-    private String isMailOpen;
+    //private String isDdOpen;
+    //private String isMailOpen;
+    private String mnWay;
 
 
     @SystemColumn(SystemColumnType.CREATE_BY)
@@ -73,20 +74,12 @@ public class DSGCUserNtyCfgBean extends MpaasBasePojo {
         this.ntySour = ntySour;
     }
 
-    public String getIsDdOpen() {
-        return isDdOpen;
+    public String getMnWay() {
+        return mnWay;
     }
 
-    public void setIsDdOpen(String isDdOpen) {
-        this.isDdOpen = isDdOpen;
-    }
-
-    public String getIsMailOpen() {
-        return isMailOpen;
-    }
-
-    public void setIsMailOpen(String isMailOpen) {
-        this.isMailOpen = isMailOpen;
+    public void setMnWay(String mnWay) {
+        this.mnWay = mnWay;
     }
 
     public String getCreatedBy() {
@@ -136,8 +129,7 @@ public class DSGCUserNtyCfgBean extends MpaasBasePojo {
                 ", userId='" + userId + '\'' +
                 ", mnLevel='" + mnLevel + '\'' +
                 ", ntySour='" + ntySour + '\'' +
-                ", isDdOpen='" + isDdOpen + '\'' +
-                ", isMailOpen='" + isMailOpen + '\'' +
+                ", mnWay='" + mnWay + '\'' +
                 ", createdBy='" + createdBy + '\'' +
                 ", creationDate=" + creationDate +
                 ", lastUpdatedBy='" + lastUpdatedBy + '\'' +
