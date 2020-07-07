@@ -649,11 +649,11 @@ public class EsbHomeDao {
     public EsbHomeHisto queryTrafficRuntimesNow(){
         String sql = null;
         if("oracle".equals(dbType)) {
-            sql = "select count(1)   as value from dsgc_log_instance t " +
-                    " where sysdate>to_date(to_char(sysdate,'yyyy-mm-dd hh24'),'yyyy-mm-dd hh24') order by t.creation_date ";
+            sql = "select count(1) from dsgc_log_instance t \n" +
+                    "                     where t.creation_date>to_date(to_char(sysdate,'yyyy-mm-dd hh24'),'yyyy-mm-dd hh24')  ";
         }
         if ("mysql".equals(dbType)){
-            sql = "select count(1)   as value from dsgc_log_instance t where CURRENT_TIMESTAMP>str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d %H'),'%Y-%m-%d %H') order by t.creation_date ";
+            sql = "select count(1)   as value from dsgc_log_instance t where t.creation_date>str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d %H'),'%Y-%m-%d %H') order by t.creation_date ";
         }
         return sw.buildQuery().sql(sql)
                 .doQueryFirst(EsbHomeHisto.class);
@@ -668,7 +668,7 @@ public class EsbHomeDao {
                     "                order by t.creation_date";
         }
         if ("mysql".equals(dbType)){
-            sql = "select avg(t.req_msg_size)  as value from dsgc_log_instance t where CURRENT_TIMESTAMP>str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d %H'),'%Y-%m-%d %H') order by t.creation_date";
+            sql = "select avg(t.req_msg_size)  as value from dsgc_log_instance t where t.creation_date>str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d %H'),'%Y-%m-%d %H') order by t.creation_date";
         }
         return   sw.buildQuery().sql(sql)
                 .doQueryFirst(EsbHomeHisto.class);
@@ -679,10 +679,10 @@ public class EsbHomeDao {
         String sql = null;
         if("oracle".equals(dbType)) {
             sql = "select count(1)   as value from dsgc_log_instance t " +
-                    "  where sysdate>to_date(to_char(sysdate,'yyyy-mm-dd hh24'),'yyyy-mm-dd hh24') and t.inst_status='0' order by t.creation_date  ";
+                    "  where t.creation_date>to_date(to_char(sysdate,'yyyy-mm-dd hh24'),'yyyy-mm-dd hh24') and t.inst_status='0' order by t.creation_date  ";
         }
         if ("mysql".equals(dbType)){
-            sql = "select count(1)   as value from dsgc_log_instance t where CURRENT_TIMESTAMP>str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d %H'),'%Y-%m-%d %H') and t.inst_status='0' order by t.creation_date";
+            sql = "select count(1)   as value from dsgc_log_instance t where t.creation_date>str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d %H'),'%Y-%m-%d %H') and t.inst_status='0' order by t.creation_date";
         }
         return   sw.buildQuery().sql(sql)
                 .doQueryFirst(EsbHomeHisto.class);
