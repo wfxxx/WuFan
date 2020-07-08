@@ -76,4 +76,14 @@ public class FndLookupTypeService {
             fndLookupTypeDao.addFndLookupType(fndLookupType);
         }
     }
+
+    public List<FndLookupType> getLookupValuesByTypeList(List<FndLookupType> lookupTypes) {
+        List<FndLookupType> fndTypes = new ArrayList<>();
+        if(lookupTypes!= null && lookupTypes.size() > 0){
+            for (FndLookupType type:lookupTypes) {
+                fndTypes.add(fndLookupTypeDao.findFndLookupTypeByType(type));
+            }
+        }
+        return fndTypes;
+    }
 }

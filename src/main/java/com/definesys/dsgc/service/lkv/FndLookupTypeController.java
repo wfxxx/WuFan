@@ -152,4 +152,15 @@ public class FndLookupTypeController {
         fndLookupTypeService.margeLookUpValue(fndLookupType);
         return Response.ok();
     }
+
+    /**
+     *  通过值列表类型Code查询值列表
+     * @param lookupTypes
+     * @return
+     */
+    @RequestMapping(value="/getLookupValuesByTypeList",method = RequestMethod.POST)
+    public Response getLookupValuesByTypeList(@RequestBody List<FndLookupType> lookupTypes){
+        System.out.println("list->"+lookupTypes);
+       return Response.ok().data(fndLookupTypeService.getLookupValuesByTypeList(lookupTypes));
+    }
 }

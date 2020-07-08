@@ -61,6 +61,9 @@ public class FndLookupTypeDao {
         FndLookupType fndLookupType1 = this.sw.buildQuery()
                 .eq("lookupType", fndLookupType.getLookupType())
                 .doQueryFirst(FndLookupType.class);
+        if(fndLookupType1==null){
+            return null;
+        }
         FndModules modules = this.sw.buildQuery()
                 .eq("moduleId", fndLookupType1.getModuleId())
                 .doQueryFirst(FndModules.class);
