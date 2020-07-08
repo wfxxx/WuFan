@@ -152,7 +152,6 @@ public class ApiHomeService {
         else {
             apiVisitTotal.setDayRate(rate(0,0));
         }
-
         Map<String,Object> totalV=apiHomeDao.getTotalV();
         if(totalV!=null && totalV.containsKey("VALUE")){
             apiVisitTotal.setTotal(Integer.parseInt(String.valueOf(totalV.get("VALUE"))));
@@ -188,12 +187,7 @@ public class ApiHomeService {
     public Map<String,Object> queryMyTask(String userId){
         List<Map<String,Object>> result1=apiHomeDao.queryTaskTotal(userId);
         List<Map<String,Object>> result2=apiHomeDao.queryTaskdayIncrease(userId);
-      //  BigDecimal bigDecimal1= (BigDecimal) result1.get(0).get("COUNT(1)");
-       // BigDecimal bigDecimal1=  new BigDecimal((String)result1.get(0).get("COUNT(1)"));
         Integer taskTotal=Integer.parseInt((result1.get(0).get("COUNT(1)").toString()));
-      //  BigDecimal bigDecimal2= (BigDecimal) result2.get(0).get("COUNT(1)");
-       // BigDecimal bigDecimal2=  new BigDecimal((String)result2.get(0).get("COUNT(1)"));
-       // bigDecimal2.toString()
         Integer dayIncrease=Integer.parseInt(result2.get(0).get("COUNT(1)").toString());
         double dayRate=0.0;
         if(taskTotal!=0){
@@ -259,21 +253,20 @@ public class ApiHomeService {
 
 
     //计算比率
-    public Integer rate(Integer num1,Integer num2){
+    public double rate(Integer num1,Integer num2){
         if(num1==null){
             num1=0;
         }
         if(num2==null){
             num2=0;
         }
-
-        Integer dayRate=0;
+        double dayRate=0;
         if(num2!=0){
-            dayRate=num1/num2*100;
+            dayRate=num1.doubleValue()/num2.doubleValue()*100;
         }else{
-            dayRate=num1*100;
+            dayRate=num1.doubleValue()*100;
         }
-        return dayRate;
+        return Math.ceil(dayRate);
     }
 
 }

@@ -9,6 +9,7 @@ import com.definesys.dsgc.service.lkv.bean.FndLookupValue;
 import com.definesys.dsgc.service.market.bean.MarketEntiy;
 import com.definesys.dsgc.service.svclog.SVCLogDao;
 import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -59,46 +60,7 @@ public class EsbHomeService {
         sysTotal.setTotal(totalE.getValue());
         sysTotal.setWeekRate(rate(nowWeekE.getValue(),lastWeekE.getValue()));
         result.put("sysTotal",sysTotal);
-
-//        EsbHomeCard failTotal=new EsbHomeCard();
-//        EsbHomeHisto lastWeekF= esbHomeDao.getLastWeekTotalF();
-//        lastWeekF=lastWeekF==null?new EsbHomeHisto():lastWeekF;
-//        EsbHomeHisto nowWeekF= esbHomeDao.getNowWeekTotalF();
-//        nowWeekF=nowWeekF==null?new EsbHomeHisto():nowWeekF;
-//        EsbHomeHisto todayF= esbHomeDao.getTodyTotalF();
-//        todayF=todayF==null?new EsbHomeHisto():todayF;
-//        EsbHomeHisto yestodayF= esbHomeDao.getYestodayTotalF();
-//        yestodayF=yestodayF==null?new EsbHomeHisto():yestodayF;
-//        EsbHomeHisto totalF= esbHomeDao.getTotalF();
-//        totalF=totalF==null?new EsbHomeHisto():totalF;
-//        failTotal.setDataAdd(todayF.getValue());
-//        failTotal.setDayRate(rate(todayF.getValue(),yestodayF.getValue()));
-//        failTotal.setTotal(totalF.getValue());
-//        failTotal.setWeekRate(rate(nowWeekF.getValue(),lastWeekF.getValue()));
-//        result.put("failTotal",failTotal);
-//
-//        EsbHomeCard esbVisitTotal=new EsbHomeCard();
-//        EsbHomeHisto lastWeekV= esbHomeDao.getLastWeekTotalV();
-//        lastWeekV=lastWeekV==null?new EsbHomeHisto():lastWeekV;
-//        EsbHomeHisto nowWeekV= esbHomeDao.getNowWeekTotalV();
-//        nowWeekV=nowWeekV==null?new EsbHomeHisto():nowWeekV;
-//        EsbHomeHisto todayV= esbHomeDao.getTodyTotalV();
-//        todayV=todayV==null?new EsbHomeHisto():todayV;
-//        EsbHomeHisto yestodayV= esbHomeDao.getYestodayTotalV();
-//        yestodayV=yestodayV==null?new EsbHomeHisto():yestodayV;
-//        EsbHomeHisto totalV= esbHomeDao.getTotalV();
-//        totalV=totalV==null?new EsbHomeHisto():totalV;
-//        esbVisitTotal.setDataAdd(todayV.getValue());
-//        esbVisitTotal.setDayRate(rate(todayV.getValue(),yestodayV.getValue()));
-//        esbVisitTotal.setTotal(totalV.getValue());
-//        esbVisitTotal.setWeekRate(rate(nowWeekV.getValue(),lastWeekV.getValue()));
-//        result.put("esbVisitTotal",esbVisitTotal);
-
-
-
-
         EsbHomeCard failTotal=new EsbHomeCard();
-
         Map<String,Object> lastWeekF = esbHomeDao.getLastWeekTotalF();
         Map<String,Object> nowWeekF= esbHomeDao.getNowWeekTotalF();
         if(lastWeekF !=null && lastWeekF.containsKey("VALUE")&& nowWeekF !=null && nowWeekF.containsKey("VALUE")){
@@ -150,11 +112,9 @@ public class EsbHomeService {
         else {
             esbVisitTotal.setWeekRate(rate(0,0));
         }
-
         Map<String, Object> todayV= esbHomeDao.getTodyTotalV();
         Map<String, Object> yestodayV= esbHomeDao.getYestodayTotalV();
         Map<String, Object> totalV= esbHomeDao.getTotalV();
-
         if(todayV != null && todayV.containsKey("VALUE")){
             esbVisitTotal.setDataAdd(Integer.parseInt(String.valueOf(todayV.get("VALUE"))));
         }else {
@@ -201,7 +161,7 @@ public class EsbHomeService {
                 EsbHomeHisto esbHomeHisto = new EsbHomeHisto();
                 Boolean temp = false;
                 for (int j = 0; j <list.size() ; j++) {
-                    if(day.equals(list.get(j).get("DAY").toString())){
+                    if(day.equals(StringUtils.leftPad(list.get(j).get("DAY").toString(), 2, "0"))){
                         esbHomeHisto.setName(String.valueOf(list.get(j).get("DAY"))+"日");
                         esbHomeHisto.setValue(Integer.parseInt(String.valueOf(list.get(j).get("TOTAL"))));
                         temp = true;
@@ -299,12 +259,7 @@ public class EsbHomeService {
     public Map<String,Object> queryMyTask(String userId){
         List<Map<String,Object>> result1= esbHomeDao.queryTaskTotal(userId);
         List<Map<String,Object>> result2= esbHomeDao.queryTaskdayIncrease(userId);
-      //  BigDecimal bigDecimal1= (BigDecimal) result1.get(0).get("COUNT(1)");
-       // BigDecimal bigDecimal1=  new BigDecimal((String)result1.get(0).get("COUNT(1)"));
         Integer taskTotal=Integer.parseInt((result1.get(0).get("COUNT(1)").toString()));
-      //  BigDecimal bigDecimal2= (BigDecimal) result2.get(0).get("COUNT(1)");
-       // BigDecimal bigDecimal2=  new BigDecimal((String)result2.get(0).get("COUNT(1)"));
-       // bigDecimal2.toString()
         Integer dayIncrease=Integer.parseInt(result2.get(0).get("COUNT(1)").toString());
         double dayRate=0.0;
         if(taskTotal!=0){
@@ -317,10 +272,7 @@ public class EsbHomeService {
         result.put("dayIncrease",dayIncrease);
         result.put("dayRate",dayRate);
         return result;
-
     }
-
-
 
 
 
@@ -408,21 +360,20 @@ public class EsbHomeService {
 
 
     //计算比率
-    public Integer rate(Integer num1,Integer num2){
+    public double rate(Integer num1,Integer num2){
         if(num1==null){
             num1=0;
         }
         if(num2==null){
             num2=0;
         }
-
-        Integer dayRate=0;
+        double dayRate=0;
         if(num2!=0){
-            dayRate=num1/num2*100;
+            dayRate=num1.doubleValue()/num2.doubleValue()*100;
         }else{
-            dayRate=num1*100;
+            dayRate=num1.doubleValue()*100;
         }
-        return dayRate;
+        return Math.ceil(dayRate);
     }
 
 }

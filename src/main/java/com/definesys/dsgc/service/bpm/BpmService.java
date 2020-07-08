@@ -183,6 +183,9 @@ public class BpmService {
         List<String> userList = new ArrayList<>();                          //审批用户集合
         if(!"spy".equals(nodeBeanList.get(0).getApprType())){
             List<String> roleUserList = getApprUserList(nodeBeanList.get(0));
+            if("creator".equals(nodeBeanList.get(0).getApprType())){
+                roleUserList.add(instanceBeanList.get(0).getCreatedBy());
+            }
             for (int i = 0;i<roleUserList.size();i++){
                 if (roleUserList.get(i).equals(userId)){
                     isAuthApply = true;
@@ -283,7 +286,9 @@ public class BpmService {
                result = Arrays.asList(users);
                 break;
             case "creator":
-                result.add(apprCode);
+                if(apprCode != null){
+                    result.add(apprCode);
+                }
                 break;
             case "spy":          //前置审批人指定
                 break;

@@ -344,49 +344,9 @@ public class EsbHomeDao {
     public List<Map<String,Object>> querySortVist( String limitTime) {
         List<EsbHomeHisto> result = new ArrayList<EsbHomeHisto>();
         MpaasQuery resulSql = sw.buildQuery();
-//        if (startTime != null && endTime != null && limitTime == null) {
-//            SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm");
-//            Date start = null;
-//            Date end = null;
-//            try {
-//                start = simpleFormat.parse(startTime);
-//                end = simpleFormat.parse(endTime);
-//            } catch (ParseException e) {
-//                e.printStackTrace();
-//            }
-//            Map<String, Integer> map = DayComparePrecise.dayComparePrecise(start, end);
-//            Calendar calendar = Calendar.getInstance();
-//            calendar.setTime(new Date());
-//            int startYear = calendar.get(Calendar.YEAR);
-//            int startMonth = calendar.get(Calendar.MONTH);
-//            int week = calendar.get(Calendar.DAY_OF_WEEK) - 1;
-//            int startDay = calendar.get(Calendar.DAY_OF_MONTH);
-//            String sql = null;
-//            if ("oracle".equals(dbType)) {
-//                sql = " select t.serv_no as name ,t.total_times as value from rp_api_hour t where to_number(t.year) = #year and to_number(t.month) = #month and to_number(t.day) = #day";
-//            }
-//            if ("mysql".equals(dbType)) {
-//                 sql = "select t.serv_no as name ,sum(t.total_times) as value from rp_serv_day t where str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')<=str_to_date('','%Y-%m-%d') and str_to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')>str_to_date('','%Y-%m-%d') order by t.serv_no,value desc";
-//
-//            }
-//            resulSql.sql(sql).setVar("year", startYear).setVar("month", startMonth).setVar("day", startDay);
-//        }
-//            String sql = null;
-//            if("oracle".equals(dbType)) {
-//                sql = "select t.serv_no as name ,sum(t.total_times)  over(partition by t.serv_no) as value from rp_serv_day t " +
-//                        "  where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')<=to_date(#endTime,'yyyy-mm-dd') and to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')>to_date(#startTime,'yyyy-mm-dd') order by value desc";
-//            }
-//            if ("mysql".equals(dbType)){
-//                sql = "select t.serv_no as name ,sum(t.total_times) as value from rp_serv_day t where str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')<=str_to_date('','%Y-%m-%d') and str_to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')>str_to_date('','%Y-%m-%d') order by t.serv_no,value desc";
-//            }
-//            resulSql.sql(sql)
-//                    .setVar("endTime",endTime).setVar("startTime",startTime);
-
-
          if(limitTime.equals("year")){
             String sql = null;
             if("oracle".equals(dbType)) {
-//                sql = "select sum(t.total_times) as total,t.month from rp_serv_month t where to_number(t.year) = #year group by t.month ";
                 sql = "select sum(t.total_times) as total,t.month month from rp_serv_month t " +
                         " where to_date(t.year,'yyyy')=to_date(to_char(sysdate,'yyyy'),'yyyy') group  by t.month order by t.month desc";
             }
@@ -409,9 +369,7 @@ public class EsbHomeDao {
             if("oracle".equals(dbType)) {
                         sql = "select sum(t.total_times) as total,t.day day from rp_serv_day t" +
                        " where to_char(to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd'),'iw')=to_char(sysdate,'iw') and t.year=to_char(sysdate,'yyyy') group  by t.day order by t.day desc";
-//                sql = "select t.serv_no as name ,sum(t.total_times)  over(partition by t.serv_no) as value from rp_serv_day t" +
-//                        " where to_char(to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd'),'iw')=to_char(sysdate,'iw') and t.year=to_char(sysdate,'yyyy') order by value desc ";
-            }
+           }
             if ("mysql".equals(dbType)){
                 sql = "select tsum(t.total_times) as total,t.day day from rp_serv_day t where DATE_FORMAT(str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d'),'iw')=DATE_FORMAT(CURRENT_TIMESTAMP,'iw') and t.year=DATE_FORMAT(CURRENT_TIMESTAMP,'%Y')group  by t.day order by t.day desc ";
             }

@@ -12,8 +12,8 @@ public class ApiHomeCard {
 
 
     private Integer total;
-    private Integer weekRate;//百分比
-    private Integer dayRate;//百分比
+    private Double weekRate;//百分比
+    private Double dayRate;//百分比
     private Integer dataAdd;
 
 
@@ -25,19 +25,19 @@ public class ApiHomeCard {
         this.total = total;
     }
 
-    public Integer getWeekRate() {
+    public Double getWeekRate() {
         return weekRate;
     }
 
-    public void setWeekRate(Integer weekRate) {
+    public void setWeekRate(Double weekRate) {
         this.weekRate = weekRate;
     }
 
-    public Integer getDayRate() {
+    public Double getDayRate() {
         return dayRate;
     }
 
-    public void setDayRate(Integer dayRate) {
+    public void setDayRate(Double dayRate) {
         this.dayRate = dayRate;
     }
 
