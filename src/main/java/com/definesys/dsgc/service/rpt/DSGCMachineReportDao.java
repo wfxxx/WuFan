@@ -323,10 +323,10 @@ public class DSGCMachineReportDao {
         if("minute".equals(temp)){
             String sql = null;
             if ("oracle".equals(dbType)){
-                sql = "SELECT avg() as disk_usage,to_char(LAST_UPDATE_DATE,'yyyy-mm-dd hh24:mi') as dates FROM DSGC_PC_DISK_INFO_HIS disk WHERE LAST_UPDATE_DATE >= to_date(#startTime,'yyyy-mm-dd hh24:mi:ss') AND LAST_UPDATE_DATE <= to_date(#endTime,'yyyy-mm-dd hh24:mi:ss') AND SERVER = #serverName group by to_char(LAST_UPDATE_DATE,'yyyy-mm-dd hh24:mi') order by to_char(LAST_UPDATE_DATE,'yyyy-mm-dd hh24:mi')";
+                sql = "SELECT avg(disk.USAGE) as disk_usage,to_char(LAST_UPDATE_DATE,'yyyy-mm-dd hh24:mi') as dates FROM DSGC_PC_DISK_INFO_HIS disk WHERE LAST_UPDATE_DATE >= to_date(#startTime,'yyyy-mm-dd hh24:mi:ss') AND LAST_UPDATE_DATE <= to_date(#endTime,'yyyy-mm-dd hh24:mi:ss') AND SERVER = #serverName group by to_char(LAST_UPDATE_DATE,'yyyy-mm-dd hh24:mi') order by to_char(LAST_UPDATE_DATE,'yyyy-mm-dd hh24:mi')";
             }
             if ("mysql".equals(dbType)){
-                sql = "SELECT avg() as disk_usage,date_format(LAST_UPDATE_DATE,'%Y-%m-%d %H:%i') as dates FROM DSGC_PC_DISK_INFO_HIS disk WHERE LAST_UPDATE_DATE >= str_to_date(#startTime,'%Y-%m-%d %H:%i:%s') AND LAST_UPDATE_DATE <= str_to_date(#endTime,'%Y-%m-%d %H:%i:%s') AND SERVER = #serverName group by date_format(LAST_UPDATE_DATE,'%Y-%m-%d %H:%i') order by date_format(LAST_UPDATE_DATE,'%Y-%m-%d %H:%i')";
+                sql = "SELECT avg(disk.USAGE) as disk_usage,date_format(LAST_UPDATE_DATE,'%Y-%m-%d %H:%i') as dates FROM DSGC_PC_DISK_INFO_HIS disk WHERE LAST_UPDATE_DATE >= str_to_date(#startTime,'%Y-%m-%d %H:%i:%s') AND LAST_UPDATE_DATE <= str_to_date(#endTime,'%Y-%m-%d %H:%i:%s') AND SERVER = #serverName group by date_format(LAST_UPDATE_DATE,'%Y-%m-%d %H:%i') order by date_format(LAST_UPDATE_DATE,'%Y-%m-%d %H:%i')";
             }
             return sw
                     .buildQuery()

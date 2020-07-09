@@ -34,12 +34,10 @@ public class DSGCMachineReportController {
         if ("".equals(body)) {
             throw new MpaasBusinessException("请求数据为空");
         }
-
         JSONObject jsonObject = JSONObject.parseObject(body);
         String startTime = jsonObject.getString("startTime");
         String endTime = jsonObject.getString("endTime");
         String serverName = jsonObject.getString("serverName");
-       // System.out.println(startTime + " | "+ endTime + " | "+ serverName);
         Map<String,String> map= new HashMap<String,String>();
         map.put("serverName",serverName);
         map.put("startTime",startTime);
