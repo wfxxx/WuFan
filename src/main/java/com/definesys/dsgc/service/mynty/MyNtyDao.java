@@ -84,7 +84,7 @@ public class MyNtyDao {
                 "       (SELECT E.SYS_NAME\n" +
                 "        FROM DSGC_SYSTEM_ENTITIES E\n" +
                 "        WHERE E.SYS_CODE = SE.APP_CODE)                                                               APP_CODE_MEANING,\n" +
-                "       null ALERT_COUNT,\n" +
+                "       SE.ALERT_COUNT,\n" +
                 "       (SELECT S.IS_ENABLE FROM DSGC_MN_SUBCRIBES S WHERE S.SCB_USER = '" + uid + "' AND S.MN_RULE = SE.SEE_ID) SUB_STAT,\n" +
                 "       SE.CREATION_DATE,\n" +
                 "       SE.MN_LEVEL,\n" +
