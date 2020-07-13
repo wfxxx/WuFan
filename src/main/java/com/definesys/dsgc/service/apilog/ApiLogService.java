@@ -54,6 +54,7 @@ public class ApiLogService {
             dagLogInstanceBean.setBsCode(jsonObject.getString("service"));
             String routeCode = jsonObject.getString("route");
             dagLogInstanceBean.setRouteCode(routeCode);
+
             JSONObject request = jsonObject.getJSONObject("request");
 
             dagLogBodyReqPayloadBean.setPayload(request.getString("body"));
@@ -237,17 +238,15 @@ public class ApiLogService {
             logInstPayloadDTO.setUrl(dagLogInstanceBean.getIbUri().trim().replaceAll("\\s*",""));
             logInstPayloadDTO.setReqHeaders(dagLogInstanceBean.getReqHeaders().trim().replaceAll("\\s*",""));
             Iterator<DagLogBodyPayloadBean> iterator = dagLogBodyPayloadBeans.iterator();
+            logInstPayloadDTO.setReqPayload("");
+            logInstPayloadDTO.setResPayload("");
             while (iterator.hasNext()){
                 DagLogBodyPayloadBean dagLogBodyPayloadBean = iterator.next();
                 if (dagLogBodyPayloadBean.getPayload() != null && dagLogBodyPayloadBean.getPayloadId().indexOf("IB") != -1){
                     logInstPayloadDTO.setReqPayload(dagLogBodyPayloadBean.getPayload().trim().replaceAll("\\s*",""));
-                }else {
-                    logInstPayloadDTO.setReqPayload("");
                 }
                 if(dagLogBodyPayloadBean.getPayload() != null && dagLogBodyPayloadBean.getPayloadId().indexOf("OB") != -1){
                     logInstPayloadDTO.setResPayload(dagLogBodyPayloadBean.getPayload().trim().replaceAll("\\s*",""));
-                }else {
-                    logInstPayloadDTO.setResPayload("");
                 }
             }
            return Response.ok().setData(logInstPayloadDTO);
