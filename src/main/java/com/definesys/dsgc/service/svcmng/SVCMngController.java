@@ -1,6 +1,7 @@
 package com.definesys.dsgc.service.svcmng;
 
 import com.definesys.dsgc.service.svcmng.bean.*;
+import com.definesys.mpaas.common.exception.MpaasBusinessException;
 import com.definesys.mpaas.common.http.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -196,6 +197,46 @@ public class SVCMngController {
     public Response refreshServDeployStatus(HttpServletRequest request){
         String userId = request.getHeader("uid");
         this.svcMngService.refreshServDeployStatus(userId);
+        return Response.ok();
+    }
+
+    /**
+     * 修改服务状态
+     * @param map
+     * @return
+     */
+    @RequestMapping(value = "/modifyServStatus",method = RequestMethod.POST)
+    public Response modifyServStatus(@RequestBody Map<String,String> map){
+        try {
+            svcMngService.modifyServStatus(map);
+        }catch (MpaasBusinessException mp){
+            mp.printStackTrace();
+            return Response.error(mp.getMessage());
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return Response.error("修改服务状态失败");
+        }
+
+        return Response.ok();
+    }
+    /**
+     * 删除服务
+     * @param map
+     * @return
+     */
+    @RequestMapping(value = "/delServ",method = RequestMethod.POST)
+    public Response delServ(@RequestBody Map<String,String> map){
+        try {
+            svcMngService.delServ(map);
+        }catch (MpaasBusinessException mp){
+            mp.printStackTrace();
+            return Response.error(mp.getMessage());
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return Response.error("删除服务失败");
+        }
         return Response.ok();
     }
 }

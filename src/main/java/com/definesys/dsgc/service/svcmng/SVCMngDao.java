@@ -3,6 +3,7 @@ package com.definesys.dsgc.service.svcmng;
 import com.definesys.dsgc.service.apimng.bean.DSGCApisBean;
 import com.definesys.dsgc.service.esbenv.bean.DSGCEnvInfoCfg;
 import com.definesys.dsgc.service.svcmng.bean.*;
+import com.definesys.dsgc.service.system.bean.DSGCSystemAccess;
 import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.dsgc.service.utils.UserHelper;
 import com.definesys.mpaas.query.MpaasQuery;
@@ -42,6 +43,7 @@ public class SVCMngDao {
 
         sqlStr = new StringBuffer("SELECT DS.SERV_NO,\n" +
                 "       DS.SERV_NAME,\n" +
+                "       DS.SERV_STATUS, " +
                 "       DSE.SYS_NAME attribue1,\n" +
                 "       DS.SUBORDINATE_SYSTEM,\n" +
                 "       DS.SHARE_TYPE,\n" +
@@ -415,5 +417,24 @@ public PageQueryResult<DSGCSvcgenUriBean> querySvcSourceList(UserHelper uh,SVCCo
                     .doInsert(uriDpl);
             //System.out.println("==新增====>envCode->"+envCode+" uri->"+uri);
         }
+    }
+    public void modifyServStatus(Map<String,String> map){
+        sw.buildQuery().update("serv_status",map.get("label")).eq("serv_no",map.get("servNo")).doUpdate(DSGCService.class);
+    }
+    public void delServ(String servNo){
+        DSGCService dsgcService = sw.buildQuery().eq("serv_no",servNo).doQueryFirst(DSGCService.class);
+        DSGCServicesUri dsgcServicesUri = sw.buildQuery().eq("serv_no",servNo).doQueryFirst(DSGCServicesUri.class);
+        DSGCSystemAccess dsgcSystemAccess = sw.buildQuery().eq("serv_no",servNo).doQueryFirst(DSGCSystemAccess.class);
+        if(dsgcServicesUri != null){
+            sw.buildQuery().eq("serv_no",servNo).doDelete(DSGCServicesUri.class);
+        }
+        if(dsgcSystemAccess != null){
+            sw.buildQuery().eq("serv_no",servNo).doDelete(DSGCSystemAccess.class);
+        }
+       if (dsgcService != null){
+           sw.buildQuery().eq("serv_no",servNo).doDelete(DSGCService.class);
+       }
+
+
     }
 }

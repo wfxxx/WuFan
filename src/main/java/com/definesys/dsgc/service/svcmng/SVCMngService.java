@@ -27,6 +27,7 @@ import com.definesys.dsgc.service.esbenv.DSGCBusCfgDao;
 import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.dsgc.service.utils.StringUtils;
 import com.definesys.dsgc.service.utils.UserHelper;
+import com.definesys.mpaas.common.exception.MpaasBusinessException;
 import com.definesys.mpaas.query.db.PageQueryResult;
 
 
@@ -151,6 +152,7 @@ public class SVCMngService {
         svcMngInfoListBean.setInfoFull(dsgcService.getInfoFull());
         svcMngInfoListBean.setIsProd(dsgcService.getIsProd());
         svcMngInfoListBean.setIbUri(dsgcService.getIbUri());
+        svcMngInfoListBean.setServStatus(dsgcService.getServStatus());
         svcMngInfoListBean.setHttpMethod(dsgcService.getHttpMethod());
         svcMngInfoListBean.setDeplEnv(this.svcMngDao.getDeployEnvInfo(dsgcService.getIbUri()));
       //  svcMngInfoListBean.setCurBpmNode(dsgcService.getAttribue2());
@@ -1160,4 +1162,22 @@ public void addRestServ(AddRestServVO addRestServVO){
             e.printStackTrace();
         }
     }
+    @Transactional(rollbackFor = Exception.class)
+    public void modifyServStatus(Map<String,String> map){
+        if(!map.containsKey("servNo") || !map.containsKey("label")){
+            throw new MpaasBusinessException("请求参数错误，请检查参数");
+        }
+        if(!"1".equals(map.get("label")) && !"0".equals(map.get("label"))){
+            throw new MpaasBusinessException("请求参数错误，请检查参数");
+        }
+        this.svcMngDao.modifyServStatus(map);
+    }
+    @Transactional(rollbackFor = Exception.class)
+    public void delServ(Map<String,String> map){
+        if(!map.containsKey("servNo") || "".equals(map.get("servNo"))|| map.get("servNo") == null){
+            throw new MpaasBusinessException("请求参数错误，请检查参数");
+        }
+        this.svcMngDao.delServ(map.get("servNo"));
+    }
+
 }

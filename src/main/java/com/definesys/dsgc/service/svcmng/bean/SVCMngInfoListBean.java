@@ -16,6 +16,7 @@ public class SVCMngInfoListBean {
     private String curBpmNode;
     private String ibUri;
     private String httpMethod;
+    private String servStatus;
     private List<DeployedEnvInfoBean> deplEnv = new ArrayList<DeployedEnvInfoBean>();
 
     public String getIbUri() {
@@ -120,5 +121,13 @@ public class SVCMngInfoListBean {
 
     public void setDeplEnv(List<DeployedEnvInfoBean> deplEnv) {
         this.deplEnv = deplEnv;
+    }
+
+    public String getServStatus() {
+        return servStatus;
+    }
+
+    public void setServStatus(String servStatus) {
+        this.servStatus = servStatus;
     }
 }
