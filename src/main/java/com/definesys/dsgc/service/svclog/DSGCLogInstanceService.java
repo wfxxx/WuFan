@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service("logService")
 public class DSGCLogInstanceService {
@@ -354,5 +355,10 @@ public class DSGCLogInstanceService {
             }
         }
         return null;
+    }
+
+    public List<RetryJobDTO> getRetryDetial(String trackId){
+        List<RetryJobDTO> retryDetial = dsgcLogInstanceDao.getRetryDetial(trackId);
+        return retryDetial;
     }
 }

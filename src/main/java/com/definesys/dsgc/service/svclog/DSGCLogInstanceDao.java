@@ -313,4 +313,9 @@ public class DSGCLogInstanceDao {
                 .doQueryFirst(FndProperties.class);
     }
 
+    public List<RetryJobDTO> getRetryDetial(String trackId){
+        return sw.buildQuery()
+                .eq("track_id",trackId)
+                .doQuery(RetryJobDTO.class);
+    }
 }
