@@ -487,4 +487,11 @@ public class DSGCLogInstanceController {
 
         return Response.ok().data(systemEntitiesList.size() > 0 ? systemEntitiesList : null);
     }
+
+    @RequestMapping(value = "/getRetryDetial",method = RequestMethod.POST)
+    public Response getRetryDetial(@RequestBody String trackId){
+        JSONObject object =  JSONObject.parseObject(trackId);
+        String t = object.getString("trackId");
+        return Response.ok().data(logService.getRetryDetial(t));
+    }
 }
