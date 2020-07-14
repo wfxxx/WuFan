@@ -209,16 +209,17 @@ public class DSGCLogInstanceDao {
     }
 
 
-    public void doRetry(LogRetryReqDTO param) {
+    public void doRetry(String uid,LogRetryReqDTO param) {
         List<LogRetryDTO> retryList = param.getRetryList();
         if(retryList != null && !retryList.isEmpty()) {
             for(LogRetryDTO r :retryList) {
                 sw.buildQuery()
-                        .sql("insert into dsgc_serv_retry_job (job_id,track_id,retry_system,status) values (#job_id,#track_id,#retry_system,#status)")
+                        .sql("insert into dsgc_serv_retry_job (job_id,track_id,retry_system,status,created_by) values (#job_id,#track_id,#retry_system,#status,#uid)")
                         .setVar("job_id",UUID.randomUUID().toString())
                         .setVar("track_id",r.getTrackId())
                         .setVar("retry_system",r.getSys())
                         .setVar("status","W")
+                        .setVar("uid",uid)
                         .doQuery();
             }
         }
@@ -317,5 +318,54 @@ public class DSGCLogInstanceDao {
         return sw.buildQuery()
                 .eq("track_id",trackId)
                 .doQuery(RetryJobDTO.class);
+    }
+
+    public String getReqBodyRetry(String jobId) {
+        List<Map<String, Object>> result = this.sw.buildQuery()
+                .sql("select * from DSGC_SERV_RETRY_JOB where job_id = #jobId")
+                .setVar("jobId",jobId)
+                .doQuery();
+        for (Map<String, Object> item : result) {
+            Object REQ_CONTENT = item.get("REQ_CONTENT");
+            if (REQ_CONTENT != null) {
+                return StringUtils.ClobToString((Clob) REQ_CONTENT);
+            }
+        }
+        return "";
+    }
+
+    public String getResBodyRetry(String jobId) {
+        List<Map<String, Object>> result = this.sw.buildQuery()
+                .sql("select * from DSGC_SERV_RETRY_JOB where job_id = #jobId")
+                .setVar("jobId",jobId)
+                .doQuery();
+        for (Map<String, Object> item : result) {
+            Object RES_CONTENT = item.get("RES_CONTENT");
+            if (RES_CONTENT != null) {
+                return StringUtils.ClobToString((Clob) RES_CONTENT);
+            }
+        }
+        return "";
+    }
+
+    public String getErrMsgRetry(String jobId) {
+        List<Map<String, Object>> result = this.sw.buildQuery()
+                .sql("select * from DSGC_SERV_RETRY_JOB where job_id = #jobId")
+                .setVar("jobId",jobId)
+                .doQuery();
+        for (Map<String, Object> item : result) {
+            Object ERROR_MSG = item.get("ERROR_MSG");
+            if (ERROR_MSG != null) {
+                return StringUtils.ClobToString((Clob) ERROR_MSG);
+            }
+        }
+        return "";
+    }
+
+    public Map<String, Object> getUserName(String uid) {
+        return sw.buildQuery()
+                .sql("select user_name from dsgc_user where user_id = #uid")
+                .setVar("uid",uid)
+                .doQueryFirst();
     }
 }

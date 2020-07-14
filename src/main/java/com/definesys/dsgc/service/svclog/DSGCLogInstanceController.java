@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.Map;
 
 @RequestMapping(value = "/dsgc/logInstance")
 @RestController
@@ -349,6 +350,8 @@ public class DSGCLogInstanceController {
                                @RequestParam("envCode") String envCode,
                                @RequestParam("startTime") String startTime,
                                @RequestParam("endTime") String endTime,
+                               @RequestParam("jobId") String jobId,
+                               @RequestParam("bodyType") String bodyType,
                                HttpServletResponse response) {
         System.out.println(trackId + trackId.getClass());
 //        if ("N/A".equals(servNo) || "n/a".equals(servNo) || "".equals(servNo)) {
@@ -365,7 +368,40 @@ public class DSGCLogInstanceController {
         }catch (Exception e){
             e.printStackTrace();
         }
+        if(!jobId.isEmpty()){
+            try {
+                String str = "";
 
+                if("req".equals(bodyType)){
+                    str = logService.getReqBodyRetry(jobId);
+                }else if("res".equals(bodyType)){
+                    str = logService.getResBodyRetry(jobId);
+                }
+
+                if (str != null) {
+                    if (str.trim().length() == 0) {
+                        logService.showData(response, "报文为空");
+                    } else {
+                        str.replaceAll(" ", "");
+                        System.out.println("|" + str + "|");
+                        if (str.contains("<")) {
+                            System.out.println("---xx---");
+                            logService.showData(response, str);
+                        }else {
+//                            str= "<json>"+str+"</json>";
+                            logService.showData(response, str);
+                        }
+                        return;
+                    }
+
+                } else {
+                    logService.noPayload(response);
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         DSGCLogInstance detailsInterfaceData = logService.findLogById(trackId);
         String type = detailsInterfaceData.getPlStoreType();
 //        detailsInterfaceData.
@@ -458,7 +494,10 @@ public class DSGCLogInstanceController {
 
     @RequestMapping(value = "/getErrMsg", method = RequestMethod.GET)
     @ResponseBody
-    public void getErrMsg(@RequestParam("errLob") String errLob,@RequestParam("envCode")String envCode, HttpServletResponse response) {
+    public void getErrMsg(@RequestParam("errLob") String errLob,
+                          @RequestParam("envCode")String envCode,
+                          @RequestParam("jobId") String jobId,
+                          HttpServletResponse response) {
         try {
             String switchUrl = this.logService.getSwitchUrl(envCode);
             if (switchUrl != null) {
@@ -470,8 +509,15 @@ public class DSGCLogInstanceController {
             e.printStackTrace();
         }
         try {
+            String str = "";
             response.setContentType("text/xml;charset=UTF-8");
-            String str = logService.getErrMsg(errLob);
+
+            if(jobId.isEmpty()){
+                str = logService.getErrMsg(errLob);
+            }else {
+                str = logService.getErrMsgRetry((jobId));
+            }
+
             if (!str.contains("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")) {
                 str = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><payload>" + str + "</payload>";
             }
