@@ -129,7 +129,7 @@ public class DSGCLogInstanceService {
                 throw new RuntimeException("请配置当前环境代码！");
             }
             if ( fndProperties.getPropertyValue().equals(param.getEnvCode())) {
-                this.dsgcLogInstanceDao.doRetry(param);
+                this.dsgcLogInstanceDao.doRetry(uid,param);
             } else {
                 List<DSGCEnvInfoCfg> envList = svcLogDao.queryEsbEnv();
                 for(DSGCEnvInfoCfg env: envList){
@@ -359,6 +359,25 @@ public class DSGCLogInstanceService {
 
     public List<RetryJobDTO> getRetryDetial(String trackId){
         List<RetryJobDTO> retryDetial = dsgcLogInstanceDao.getRetryDetial(trackId);
+        for (RetryJobDTO r : retryDetial) {
+            Map<String, Object> userName = dsgcLogInstanceDao.getUserName(r.getCreatedBy());
+            if(userName!=null){
+                String name = userName.get("USER_NAME").toString();
+                r.setCreatedBy(name);
+            }
+        }
         return retryDetial;
+    }
+
+    public String getReqBodyRetry(String jobId) {
+        return this.dsgcLogInstanceDao.getReqBodyRetry(jobId);
+    }
+
+    public String getResBodyRetry(String jobId) {
+        return this.dsgcLogInstanceDao.getResBodyRetry(jobId);
+    }
+
+    public String getErrMsgRetry(String jobId){
+        return this.dsgcLogInstanceDao.getErrMsgRetry((jobId));
     }
 }

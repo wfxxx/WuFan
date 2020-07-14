@@ -9,9 +9,9 @@ public class RetryJobDTO extends MpaasBasePojo {
     private String jobId;
     private String trackId;
     private String retrySystem;
-    private String errorMsg;
-    private String reqContent;
-    private String resContent;
+//    private String errorMsg;
+//    private String reqContent;
+//    private String resContent;
     private String createdBy;
     private String creationDate;
     private String status;
@@ -40,29 +40,29 @@ public class RetryJobDTO extends MpaasBasePojo {
         this.retrySystem = retrySystem;
     }
 
-    public String getErrorMsg() {
-        return errorMsg;
-    }
-
-    public void setErrorMsg(String errorMsg) {
-        this.errorMsg = errorMsg;
-    }
-
-    public String getReqContent() {
-        return reqContent;
-    }
-
-    public void setReqContent(String reqContent) {
-        this.reqContent = reqContent;
-    }
-
-    public String getResContent() {
-        return resContent;
-    }
-
-    public void setResContent(String resContent) {
-        this.resContent = resContent;
-    }
+//    public String getErrorMsg() {
+//        return errorMsg;
+//    }
+//
+//    public void setErrorMsg(String errorMsg) {
+//        this.errorMsg = errorMsg;
+//    }
+//
+//    public String getReqContent() {
+//        return reqContent;
+//    }
+//
+//    public void setReqContent(String reqContent) {
+//        this.reqContent = reqContent;
+//    }
+//
+//    public String getResContent() {
+//        return resContent;
+//    }
+//
+//    public void setResContent(String resContent) {
+//        this.resContent = resContent;
+//    }
 
     public String getCreatedBy() {
         return createdBy;
