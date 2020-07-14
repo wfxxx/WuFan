@@ -1177,7 +1177,16 @@ public void addRestServ(AddRestServVO addRestServVO){
         if(!map.containsKey("servNo") || "".equals(map.get("servNo"))|| map.get("servNo") == null){
             throw new MpaasBusinessException("请求参数错误，请检查参数");
         }
-        this.svcMngDao.delServ(map.get("servNo"));
+        DSGCService dsgcService = this.sldao.queryServiceByServNo(map.get("servNo"));
+        if(dsgcService == null){
+            throw new MpaasBusinessException("服务不存在，无法删除，请联系管理员");
+        }
+        if(!"1".equals(dsgcService.getServStatus())){
+            this.svcMngDao.delServ(map.get("servNo"));
+        }else {
+            throw new MpaasBusinessException("服务为启用状态，无法删除，请联系管理员");
+        }
+
     }
 
 }

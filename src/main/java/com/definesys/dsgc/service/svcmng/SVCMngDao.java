@@ -70,6 +70,10 @@ public class SVCMngDao {
             sqlStr.append(" and DS.share_type = #queryType ");
             mq.setVar("queryType",param.getQueryType());
         }
+        if("0".equals(param.getIsEnable())){
+            sqlStr.append(" and DS.serv_status = #isEnable");
+            mq.setVar("isEnable",param.getIsEnable());
+        }
 
         if(!"ALL".equals(param.getEnvCode()) && param.getEnvCode() != null){
             String envIf = param.getEnvCode();
@@ -422,7 +426,6 @@ public PageQueryResult<DSGCSvcgenUriBean> querySvcSourceList(UserHelper uh,SVCCo
         sw.buildQuery().update("serv_status",map.get("label")).eq("serv_no",map.get("servNo")).doUpdate(DSGCService.class);
     }
     public void delServ(String servNo){
-        DSGCService dsgcService = sw.buildQuery().eq("serv_no",servNo).doQueryFirst(DSGCService.class);
         DSGCServicesUri dsgcServicesUri = sw.buildQuery().eq("serv_no",servNo).doQueryFirst(DSGCServicesUri.class);
         DSGCSystemAccess dsgcSystemAccess = sw.buildQuery().eq("serv_no",servNo).doQueryFirst(DSGCSystemAccess.class);
         if(dsgcServicesUri != null){
@@ -431,9 +434,7 @@ public PageQueryResult<DSGCSvcgenUriBean> querySvcSourceList(UserHelper uh,SVCCo
         if(dsgcSystemAccess != null){
             sw.buildQuery().eq("serv_no",servNo).doDelete(DSGCSystemAccess.class);
         }
-       if (dsgcService != null){
            sw.buildQuery().eq("serv_no",servNo).doDelete(DSGCService.class);
-       }
 
 
     }

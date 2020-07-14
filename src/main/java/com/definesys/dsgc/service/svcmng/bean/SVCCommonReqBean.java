@@ -8,6 +8,7 @@ public class SVCCommonReqBean {
     private String isComplete;
     private String queryType;
     private String envCode;
+    private String isEnable;
 
     public String getCon0() {
         return con0;
@@ -39,5 +40,13 @@ public class SVCCommonReqBean {
 
     public void setEnvCode(String envCode) {
         this.envCode = envCode;
+    }
+
+    public String getIsEnable() {
+        return isEnable;
+    }
+
+    public void setIsEnable(String isEnable) {
+        this.isEnable = isEnable;
     }
 }
