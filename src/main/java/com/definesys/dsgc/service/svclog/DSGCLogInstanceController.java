@@ -368,7 +368,7 @@ public class DSGCLogInstanceController {
         }catch (Exception e){
             e.printStackTrace();
         }
-        if(!jobId.isEmpty()){
+        if(!"undefined".equals(jobId)){
             try {
                 String str = "";
 
