@@ -353,7 +353,7 @@ public class DSGCLogInstanceController {
                                @RequestParam(value = "jobId",required = false, defaultValue = "undefined") String jobId,
                                @RequestParam(value = "bodyType",required = false, defaultValue = "undefined") String bodyType,
                                HttpServletResponse response) {
-        System.out.println(trackId + trackId.getClass());
+//        System.out.println(trackId + trackId.getClass());
 //        if ("N/A".equals(servNo) || "n/a".equals(servNo) || "".equals(servNo)) {
 //            logService.noPayload(response);
 //            return;
@@ -383,9 +383,9 @@ public class DSGCLogInstanceController {
                         logService.showData(response, "报文为空");
                     } else {
                         str.replaceAll(" ", "");
-                        System.out.println("|" + str + "|");
+//                        System.out.println("|" + str + "|");
                         if (str.contains("<")) {
-                            System.out.println("---xx---");
+//                            System.out.println("---xx---");
                             logService.showData(response, str);
                         }else {
 //                            str= "<json>"+str+"</json>";
@@ -405,7 +405,7 @@ public class DSGCLogInstanceController {
         DSGCLogInstance detailsInterfaceData = logService.findLogById(trackId);
         String type = detailsInterfaceData.getPlStoreType();
 //        detailsInterfaceData.
-        System.out.println(type);
+//        System.out.println(type);
         if ("DB".equals(type)) {
             try {
 
@@ -416,9 +416,9 @@ public class DSGCLogInstanceController {
                         logService.showData(response, "报文为空");
                     } else {
                         str.replaceAll(" ", "");
-                        System.out.println("|" + str + "|");
+//                        System.out.println("|" + str + "|");
                         if (str.contains("<")) {
-                            System.out.println("---xx---");
+//                            System.out.println("---xx---");
                             logService.showData(response, str);
                         } else {
 //                     String s = MsgZLibUtil.decompress(str);
@@ -437,7 +437,7 @@ public class DSGCLogInstanceController {
         } else if ("BOTH".equals(type)) {
             try {
                 String str = logService.getBodyPayload(ibLob);
-                System.out.println(str);
+//                System.out.println(str);
                 if (str != null) {
 //                    if (str.indexOf("<?xml version=") != -1) {
                     if (str.contains("<")) {
@@ -445,7 +445,7 @@ public class DSGCLogInstanceController {
                     } else {
 //                      String s = MsgZLibUtil.decompress(str);
                         String s = MsgCompressUtil.deCompress(str);
-                        System.out.println(s);
+//                        System.out.println(s);
                         logService.showData(response, s);
                     }
                 } else {
@@ -471,7 +471,7 @@ public class DSGCLogInstanceController {
             try {
                 String path = logService.dealPath(startTime, servNo, ibLob);
                 String fileContent = logService.readFileByLines(path);
-                System.out.println(fileContent);
+//                System.out.println(fileContent);
                 if (fileContent != null && !"error".equals(fileContent)) {
 //                    if (fileContent.indexOf("<?xml version=") != -1) {
                     if (fileContent.contains("<")) {
