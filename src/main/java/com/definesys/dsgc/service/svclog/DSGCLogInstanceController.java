@@ -512,7 +512,7 @@ public class DSGCLogInstanceController {
             String str = "";
             response.setContentType("text/xml;charset=UTF-8");
 
-            if(jobId.isEmpty()){
+            if("undefined".equals(jobId)){
                 str = logService.getErrMsg(errLob);
             }else {
                 str = logService.getErrMsgRetry((jobId));
@@ -534,10 +534,24 @@ public class DSGCLogInstanceController {
         return Response.ok().data(systemEntitiesList.size() > 0 ? systemEntitiesList : null);
     }
 
-    @RequestMapping(value = "/getRetryDetial",method = RequestMethod.POST)
-    public Response getRetryDetial(@RequestBody String trackId){
-        JSONObject object =  JSONObject.parseObject(trackId);
-        String t = object.getString("trackId");
-        return Response.ok().data(logService.getRetryDetial(t));
+    @RequestMapping(value = "/getRetryDetial",method = {RequestMethod.POST, RequestMethod.GET})
+    public Response getRetryDetial(@RequestBody TempQueryLogCondition tempQueryLogCondition,
+                                   HttpServletRequest request){
+        try {
+            return logService.getRetryDetial(tempQueryLogCondition,request);
+        }catch(JSONException jex){
+            jex.printStackTrace();
+            return Response.error(jex.getMessage());
+        }catch (HttpClientErrorException hcex){
+            hcex.printStackTrace();
+            return Response.error(hcex.getMessage());
+        }catch (IllegalArgumentException ex){
+            ex.printStackTrace();
+            return Response.error(ex.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.error("查询数据失败！");
+        }
+
     }
 }

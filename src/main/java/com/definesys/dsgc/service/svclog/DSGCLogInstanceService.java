@@ -357,16 +357,44 @@ public class DSGCLogInstanceService {
         return null;
     }
 
-    public List<RetryJobDTO> getRetryDetial(String trackId){
-        List<RetryJobDTO> retryDetial = dsgcLogInstanceDao.getRetryDetial(trackId);
-        for (RetryJobDTO r : retryDetial) {
-            Map<String, Object> userName = dsgcLogInstanceDao.getUserName(r.getCreatedBy());
-            if(userName!=null){
-                String name = userName.get("USER_NAME").toString();
-                r.setCreatedBy(name);
-            }
+    public Response getRetryDetial(TempQueryLogCondition tempQueryLogCondition,HttpServletRequest request)throws Exception{
+        if(StringUtil.isBlank(tempQueryLogCondition.getEnv())){
+            throw new Exception("请求参数错误！");
         }
-        return retryDetial;
+        FndProperties fndProperties =dsgcLogInstanceDao.findFndPropertiesByKey("DSGC_CURRENT_ENV");
+        if(fndProperties == null){
+            throw new RuntimeException("请配置当前环境代码！");
+        }
+        List<DSGCEnvInfoCfg> envList = svcLogDao.queryEsbEnv();
+        if ( fndProperties.getPropertyValue().equals(tempQueryLogCondition.getEnv())){
+            List<RetryJobDTO> retryDetial = dsgcLogInstanceDao.getRetryDetial(tempQueryLogCondition.getTrackId());
+            return Response.ok().setData(retryDetial);
+        }else {
+            ResultVO<Response> resultvo = new ResultVO<>();
+            for (int i = 0; i < envList.size(); i++) {
+                if(tempQueryLogCondition.getEnv().equals(envList.get(i).getEnvCode())){
+                    String logPath =envList.get(i).getDsgcAdmin();
+                    logPath += "/dsgc/logInstance/getRetryDetial";
+                    try {
+                        String json =JSONObject.toJSONString(tempQueryLogCondition);
+                        System.out.println("==================>"+json);
+                        resultvo = HttpReqUtil.sendPostRequest(logPath,JSONObject.parseObject(JSONObject.toJSONString(tempQueryLogCondition)),request);
+
+                    }catch(JSONException jex){
+                        jex.printStackTrace();
+                        throw new JSONException("参数解析异常，请检查请求参数是否正确！");
+                    }catch (HttpClientErrorException hcex){
+                        hcex.printStackTrace();
+                        throw new HttpClientErrorException(HttpStatus.resolve(404));
+                    }catch (IllegalArgumentException ex){
+                        ex.printStackTrace();
+                        throw new IllegalArgumentException("环境信息配置的uri不能为空！");
+                    }
+                    break;
+                }
+            }
+            return Response.ok().setData(resultvo.getData());
+        }
     }
 
     public String getReqBodyRetry(String jobId) {
