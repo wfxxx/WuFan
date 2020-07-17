@@ -369,10 +369,25 @@ public class DSGCLogInstanceService {
         if ( fndProperties.getPropertyValue().equals(tempQueryLogCondition.getEnv())){
             List<RetryJobDTO> retryDetial = dsgcLogInstanceDao.getRetryDetial(tempQueryLogCondition.getTrackId());
             for (RetryJobDTO r : retryDetial) {
-                Map<String, Object> userName = dsgcLogInstanceDao.getUserName(request.getHeader("uid"));
+                Map<String, Object> userName = dsgcLogInstanceDao.getUserName(r.getCreatedBy());
                 if(userName!=null){
                     String name = userName.get("USER_NAME").toString();
                     r.setCreatedBy(name);
+                }
+                if (r.getReqContent()==null) {
+                    r.setIsReqNull("true");
+                } else {
+                    r.setIsReqNull("false");
+                }
+                if (r.getResContent()==null) {
+                    r.setIsResNull("true");
+                } else {
+                    r.setIsResNull("false");
+                }
+                if (r.getErrorMsg()==null) {
+                    r.setIsErrNull("true");
+                } else {
+                    r.setIsErrNull("false");
                 }
             }
             return Response.ok().setData(retryDetial);
