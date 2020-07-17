@@ -368,6 +368,13 @@ public class DSGCLogInstanceService {
         List<DSGCEnvInfoCfg> envList = svcLogDao.queryEsbEnv();
         if ( fndProperties.getPropertyValue().equals(tempQueryLogCondition.getEnv())){
             List<RetryJobDTO> retryDetial = dsgcLogInstanceDao.getRetryDetial(tempQueryLogCondition.getTrackId());
+            for (RetryJobDTO r : retryDetial) {
+                Map<String, Object> userName = dsgcLogInstanceDao.getUserName(request.getHeader("uid"));
+                if(userName!=null){
+                    String name = userName.get("USER_NAME").toString();
+                    r.setCreatedBy(name);
+                }
+            }
             return Response.ok().setData(retryDetial);
         }else {
             ResultVO<Response> resultvo = new ResultVO<>();
