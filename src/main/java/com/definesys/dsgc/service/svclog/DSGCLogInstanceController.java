@@ -350,8 +350,8 @@ public class DSGCLogInstanceController {
                                @RequestParam("envCode") String envCode,
                                @RequestParam("startTime") String startTime,
                                @RequestParam("endTime") String endTime,
-                               @RequestParam("jobId") String jobId,
-                               @RequestParam("bodyType") String bodyType,
+                               @RequestParam(value = "jobId",required = false, defaultValue = "undefined") String jobId,
+                               @RequestParam(value = "bodyType",required = false, defaultValue = "undefined") String bodyType,
                                HttpServletResponse response) {
         System.out.println(trackId + trackId.getClass());
 //        if ("N/A".equals(servNo) || "n/a".equals(servNo) || "".equals(servNo)) {
@@ -361,7 +361,7 @@ public class DSGCLogInstanceController {
         try {
             String switchUrl = this.logService.getSwitchUrl(envCode);
             if (switchUrl != null) {
-                String res = HttpReqUtil.getObject(switchUrl + "/dsgc/logInstance/getBodyPayload?trackId=" + trackId + "&servNo="+ servNo + "&ibLob=" + ibLob + "&envCode=" + envCode + "&startTime=" + startTime + "&endTime=" + endTime,String.class);
+                String res = HttpReqUtil.getObject(switchUrl + "/dsgc/logInstance/getBodyPayload?trackId=" + trackId + "&servNo="+ servNo + "&ibLob=" + ibLob + "&envCode=" + envCode + "&startTime=" + startTime + "&endTime=" + endTime+"&jobId="+jobId+"&bodyType="+bodyType,String.class);
                 this.logService.showData(response,res);
                 return;
             }
@@ -496,12 +496,12 @@ public class DSGCLogInstanceController {
     @ResponseBody
     public void getErrMsg(@RequestParam("errLob") String errLob,
                           @RequestParam("envCode")String envCode,
-                          @RequestParam("jobId") String jobId,
+                          @RequestParam(value = "jobId",required = false, defaultValue = "undefined") String jobId,
                           HttpServletResponse response) {
         try {
             String switchUrl = this.logService.getSwitchUrl(envCode);
             if (switchUrl != null) {
-                String res = HttpReqUtil.getObject(switchUrl + "/dsgc/logInstance/getErrMsg?errLob=" + errLob+"&envCode=" + envCode,String.class);
+                String res = HttpReqUtil.getObject(switchUrl + "/dsgc/logInstance/getErrMsg?errLob=" + errLob+"&envCode=" + envCode+"&jobId="+jobId,String.class);
                 this.logService.showData(response,res);
                 return;
             }

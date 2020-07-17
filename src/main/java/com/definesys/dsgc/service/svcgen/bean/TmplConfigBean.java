@@ -1,5 +1,8 @@
 package com.definesys.dsgc.service.svcgen.bean;
 
+import com.definesys.dsgc.service.svcgen.bean.db.RspDTO;
+import com.definesys.dsgc.service.svcgen.bean.db.TblDTO;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +35,13 @@ public class TmplConfigBean {
     private List<OBHeaderBean> obHeaders;
     private String resolveDenpendencies;
     private List<String> toResolveFileList = new ArrayList<>();
+
+    //db 快速配置
+    private String dbConn;
+    private String dbOper;
+    private TblDTO[] tbls;
+    private RspDTO[] rsps;
+    private String sqlcode;
 
 //    //创建服务代码并同时创建服务资产信息
 //    private String servAssetNo;
@@ -264,7 +274,47 @@ public class TmplConfigBean {
         this.saForWsdl = saForWsdl;
     }
 
-//    public String getServAssetNo() {
+    public String getDbConn() {
+        return dbConn;
+    }
+
+    public void setDbConn(String dbConn) {
+        this.dbConn = dbConn;
+    }
+
+    public String getDbOper() {
+        return dbOper;
+    }
+
+    public void setDbOper(String dbOper) {
+        this.dbOper = dbOper;
+    }
+
+    public TblDTO[] getTbls() {
+        return tbls;
+    }
+
+    public void setTbls(TblDTO[] tbls) {
+        this.tbls = tbls;
+    }
+
+    public RspDTO[] getRsps() {
+        return rsps;
+    }
+
+    public void setRsps(RspDTO[] rsps) {
+        this.rsps = rsps;
+    }
+
+    public String getSqlcode() {
+        return sqlcode;
+    }
+
+    public void setSqlcode(String sqlcode) {
+        this.sqlcode = sqlcode;
+    }
+
+    //    public String getServAssetNo() {
 //        return servAssetNo;
 //    }
 //
