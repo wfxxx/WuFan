@@ -350,10 +350,10 @@ public class DSGCLogInstanceController {
                                @RequestParam("envCode") String envCode,
                                @RequestParam("startTime") String startTime,
                                @RequestParam("endTime") String endTime,
-                               @RequestParam("jobId") String jobId,
-                               @RequestParam("bodyType") String bodyType,
+                               @RequestParam(value = "jobId",required = false, defaultValue = "undefined") String jobId,
+                               @RequestParam(value = "bodyType",required = false, defaultValue = "undefined") String bodyType,
                                HttpServletResponse response) {
-        System.out.println(trackId + trackId.getClass());
+//        System.out.println(trackId + trackId.getClass());
 //        if ("N/A".equals(servNo) || "n/a".equals(servNo) || "".equals(servNo)) {
 //            logService.noPayload(response);
 //            return;
@@ -361,14 +361,14 @@ public class DSGCLogInstanceController {
         try {
             String switchUrl = this.logService.getSwitchUrl(envCode);
             if (switchUrl != null) {
-                String res = HttpReqUtil.getObject(switchUrl + "/dsgc/logInstance/getBodyPayload?trackId=" + trackId + "&servNo="+ servNo + "&ibLob=" + ibLob + "&envCode=" + envCode + "&startTime=" + startTime + "&endTime=" + endTime,String.class);
+                String res = HttpReqUtil.getObject(switchUrl + "/dsgc/logInstance/getBodyPayload?trackId=" + trackId + "&servNo="+ servNo + "&ibLob=" + ibLob + "&envCode=" + envCode + "&startTime=" + startTime + "&endTime=" + endTime+"&jobId="+jobId+"&bodyType="+bodyType,String.class);
                 this.logService.showData(response,res);
                 return;
             }
         }catch (Exception e){
             e.printStackTrace();
         }
-        if(!jobId.isEmpty()){
+        if(!"undefined".equals(jobId)){
             try {
                 String str = "";
 
@@ -383,9 +383,9 @@ public class DSGCLogInstanceController {
                         logService.showData(response, "报文为空");
                     } else {
                         str.replaceAll(" ", "");
-                        System.out.println("|" + str + "|");
+//                        System.out.println("|" + str + "|");
                         if (str.contains("<")) {
-                            System.out.println("---xx---");
+//                            System.out.println("---xx---");
                             logService.showData(response, str);
                         }else {
 //                            str= "<json>"+str+"</json>";
@@ -405,7 +405,7 @@ public class DSGCLogInstanceController {
         DSGCLogInstance detailsInterfaceData = logService.findLogById(trackId);
         String type = detailsInterfaceData.getPlStoreType();
 //        detailsInterfaceData.
-        System.out.println(type);
+//        System.out.println(type);
         if ("DB".equals(type)) {
             try {
 
@@ -416,9 +416,9 @@ public class DSGCLogInstanceController {
                         logService.showData(response, "报文为空");
                     } else {
                         str.replaceAll(" ", "");
-                        System.out.println("|" + str + "|");
+//                        System.out.println("|" + str + "|");
                         if (str.contains("<")) {
-                            System.out.println("---xx---");
+//                            System.out.println("---xx---");
                             logService.showData(response, str);
                         } else {
 //                     String s = MsgZLibUtil.decompress(str);
@@ -437,7 +437,7 @@ public class DSGCLogInstanceController {
         } else if ("BOTH".equals(type)) {
             try {
                 String str = logService.getBodyPayload(ibLob);
-                System.out.println(str);
+//                System.out.println(str);
                 if (str != null) {
 //                    if (str.indexOf("<?xml version=") != -1) {
                     if (str.contains("<")) {
@@ -445,7 +445,7 @@ public class DSGCLogInstanceController {
                     } else {
 //                      String s = MsgZLibUtil.decompress(str);
                         String s = MsgCompressUtil.deCompress(str);
-                        System.out.println(s);
+//                        System.out.println(s);
                         logService.showData(response, s);
                     }
                 } else {
@@ -471,7 +471,7 @@ public class DSGCLogInstanceController {
             try {
                 String path = logService.dealPath(startTime, servNo, ibLob);
                 String fileContent = logService.readFileByLines(path);
-                System.out.println(fileContent);
+//                System.out.println(fileContent);
                 if (fileContent != null && !"error".equals(fileContent)) {
 //                    if (fileContent.indexOf("<?xml version=") != -1) {
                     if (fileContent.contains("<")) {
@@ -496,12 +496,12 @@ public class DSGCLogInstanceController {
     @ResponseBody
     public void getErrMsg(@RequestParam("errLob") String errLob,
                           @RequestParam("envCode")String envCode,
-                          @RequestParam("jobId") String jobId,
+                          @RequestParam(value = "jobId",required = false, defaultValue = "undefined") String jobId,
                           HttpServletResponse response) {
         try {
             String switchUrl = this.logService.getSwitchUrl(envCode);
             if (switchUrl != null) {
-                String res = HttpReqUtil.getObject(switchUrl + "/dsgc/logInstance/getErrMsg?errLob=" + errLob+"&envCode=" + envCode,String.class);
+                String res = HttpReqUtil.getObject(switchUrl + "/dsgc/logInstance/getErrMsg?errLob=" + errLob+"&envCode=" + envCode+"&jobId="+jobId,String.class);
                 this.logService.showData(response,res);
                 return;
             }
@@ -512,7 +512,7 @@ public class DSGCLogInstanceController {
             String str = "";
             response.setContentType("text/xml;charset=UTF-8");
 
-            if(jobId.isEmpty()){
+            if("undefined".equals(jobId)){
                 str = logService.getErrMsg(errLob);
             }else {
                 str = logService.getErrMsgRetry((jobId));
@@ -534,10 +534,24 @@ public class DSGCLogInstanceController {
         return Response.ok().data(systemEntitiesList.size() > 0 ? systemEntitiesList : null);
     }
 
-    @RequestMapping(value = "/getRetryDetial",method = RequestMethod.POST)
-    public Response getRetryDetial(@RequestBody String trackId){
-        JSONObject object =  JSONObject.parseObject(trackId);
-        String t = object.getString("trackId");
-        return Response.ok().data(logService.getRetryDetial(t));
+    @RequestMapping(value = "/getRetryDetial",method = {RequestMethod.POST, RequestMethod.GET})
+    public Response getRetryDetial(@RequestBody TempQueryLogCondition tempQueryLogCondition,
+                                   HttpServletRequest request){
+        try {
+            return logService.getRetryDetial(tempQueryLogCondition,request);
+        }catch(JSONException jex){
+            jex.printStackTrace();
+            return Response.error(jex.getMessage());
+        }catch (HttpClientErrorException hcex){
+            hcex.printStackTrace();
+            return Response.error(hcex.getMessage());
+        }catch (IllegalArgumentException ex){
+            ex.printStackTrace();
+            return Response.error(ex.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.error("查询数据失败！");
+        }
+
     }
 }

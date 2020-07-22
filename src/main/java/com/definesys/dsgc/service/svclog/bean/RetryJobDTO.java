@@ -1,5 +1,7 @@
 package com.definesys.dsgc.service.svclog.bean;
 
+import com.definesys.mpaas.query.annotation.Column;
+import com.definesys.mpaas.query.annotation.ColumnType;
 import com.definesys.mpaas.query.annotation.Table;
 import com.definesys.mpaas.query.model.MpaasBasePojo;
 
@@ -9,12 +11,19 @@ public class RetryJobDTO extends MpaasBasePojo {
     private String jobId;
     private String trackId;
     private String retrySystem;
-//    private String errorMsg;
-//    private String reqContent;
-//    private String resContent;
+    private String errorMsg;
+    private String reqContent;
+    private String resContent;
     private String createdBy;
     private String creationDate;
     private String status;
+
+    @Column(type = ColumnType.JAVA)
+    private String isReqNull;
+    @Column(type = ColumnType.JAVA)
+    private String isResNull;
+    @Column(type = ColumnType.JAVA)
+    private String isErrNull;
 
     public String getJobId() {
         return jobId;
@@ -40,29 +49,29 @@ public class RetryJobDTO extends MpaasBasePojo {
         this.retrySystem = retrySystem;
     }
 
-//    public String getErrorMsg() {
-//        return errorMsg;
-//    }
-//
-//    public void setErrorMsg(String errorMsg) {
-//        this.errorMsg = errorMsg;
-//    }
-//
-//    public String getReqContent() {
-//        return reqContent;
-//    }
-//
-//    public void setReqContent(String reqContent) {
-//        this.reqContent = reqContent;
-//    }
-//
-//    public String getResContent() {
-//        return resContent;
-//    }
-//
-//    public void setResContent(String resContent) {
-//        this.resContent = resContent;
-//    }
+    public String getErrorMsg() {
+        return errorMsg;
+    }
+
+    public void setErrorMsg(String errorMsg) {
+        this.errorMsg = errorMsg;
+    }
+
+    public String getReqContent() {
+        return reqContent;
+    }
+
+    public void setReqContent(String reqContent) {
+        this.reqContent = reqContent;
+    }
+
+    public String getResContent() {
+        return resContent;
+    }
+
+    public void setResContent(String resContent) {
+        this.resContent = resContent;
+    }
 
     public String getCreatedBy() {
         return createdBy;
@@ -86,5 +95,29 @@ public class RetryJobDTO extends MpaasBasePojo {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getIsReqNull() {
+        return isReqNull;
+    }
+
+    public void setIsReqNull(String isReqNull) {
+        this.isReqNull = isReqNull;
+    }
+
+    public String getIsResNull() {
+        return isResNull;
+    }
+
+    public void setIsResNull(String isResNull) {
+        this.isResNull = isResNull;
+    }
+
+    public String getIsErrNull() {
+        return isErrNull;
+    }
+
+    public void setIsErrNull(String isErrNull) {
+        this.isErrNull = isErrNull;
     }
 }
