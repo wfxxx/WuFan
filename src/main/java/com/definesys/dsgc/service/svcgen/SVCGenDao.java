@@ -433,5 +433,13 @@ public class SVCGenDao {
         //清理dsgc_svcgen_files_header
         sw.buildQuery().table("dsgc_svcgen_files_header").eq("serv_no",sgObjCode).doDelete();
     }
-
+    public List<SvcgenConnBean> getDBConnList(String dbType){
+      return  sw.buildQuery().eq("conn_type","DB").eq("attr1",dbType).doQuery(SvcgenConnBean.class);
+    }
+    public void saveDBConnectInfo(SvcgenConnBean svcgenConnBean){
+        sw.buildQuery().doInsert(svcgenConnBean);
+    }
+    public SvcgenConnBean getDBConnDetailByName(String connName){
+        return sw.buildQuery().eq("conn_name",connName).doQueryFirst(SvcgenConnBean.class);
+    }
 }

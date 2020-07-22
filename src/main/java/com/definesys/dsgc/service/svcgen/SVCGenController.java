@@ -1,5 +1,8 @@
 package com.definesys.dsgc.service.svcgen;
 
+import ch.qos.logback.core.encoder.EchoEncoder;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.definesys.dsgc.service.svcgen.bean.*;
 //import com.definesys.dsgc.aspect.annotation.AuthAspect;
 import com.definesys.dsgc.service.system.bean.DSGCSystemEntities;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
 
 //@AuthAspect(menuCode = "服务资产", menuName = "服务快速配置")
 @Api(description = "服务快速配置", tags = "服务快速配置")
@@ -480,6 +484,71 @@ public class SVCGenController {
         }
     }
 
+    @RequestMapping(value = "/getDBConnList",method = RequestMethod.GET)
+    public Response getDBConnList(@RequestParam String dbType,HttpServletRequest request) {
+        try {
+            List<Map<String,String>> result = this.svc.getDBConnList(dbType);
+            return Response.ok().setData(result);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("发生错误，请联系管理员处理！");
+        }
+    }
+    @RequestMapping(value = "/vaildDBConnInfo", method = RequestMethod.POST)
+    public Response vaildDBConnInfo(@RequestBody DBconnVO dBconnVO){
+        try {
+            this.svc.vaildDBConnInfo(dBconnVO);
+            return Response.ok();
+        }catch (Exception e){
+          e.printStackTrace();
+          return Response.error("测试DB连接失败，请稍后再试！");
+        }
+
+    }
+
+    @RequestMapping(value = "/getDBConnDetailByName",method = RequestMethod.GET)
+    public Response getDBConnDetailByName(@RequestParam String connName,HttpServletRequest request) {
+        try {
+            DBconnVO dbConnDetailByName = this.svc.getDBConnDetailByName(connName);
+            return Response.ok().setData(dbConnDetailByName);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("发生错误，请联系管理员处理！");
+        }
+    }
+    @RequestMapping(value = "/queryTableList",method = RequestMethod.GET)
+    public Response queryTableList(@RequestParam String con0,@RequestParam String connectName,
+                                   @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
+                                   @RequestParam(value = "pageIndex", required = false, defaultValue = "1") int pageIndex) {
+        try {
+            List<Map<String,Object>> map =this.svc.queryTableList(con0,connectName);
+            return Response.ok().setData(map);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("发生错误，请联系管理员处理！");
+        }
+    }
+    @RequestMapping(value = "/queryTableFileds",method = RequestMethod.GET)
+    public Response queryTableFileds(@RequestParam String tableName,@RequestParam String connectName) {
+        try {
+            List<Map<String,Object>> map =this.svc.queryTableFileds(tableName,connectName);
+            return Response.ok().setData(map);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("发生错误，请联系管理员处理！");
+        }
+    }
+    @RequestMapping(value = "/generateTableTree", method = RequestMethod.POST)
+    public Response generateTableTree(@RequestBody JSONObject jsonObject){
+        Object result = this.svc.generateTableTree(jsonObject);
+        System.out.println(jsonObject);
+        return Response.ok().setData(result);
+    }
+    @RequestMapping(value = "/generateSelectSql", method = RequestMethod.POST)
+    public Response generateSelectSql(@RequestBody JSONObject jsonObject){
+        String result = this.svc.generateSelectSql(jsonObject);
+        return Response.ok().setData(result);
+    }
 
     private Response validUser(HttpServletRequest request) {
         //获取用户id
