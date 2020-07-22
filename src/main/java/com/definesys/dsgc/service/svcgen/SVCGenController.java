@@ -501,7 +501,7 @@ public class SVCGenController {
             return Response.ok();
         }catch (Exception e){
           e.printStackTrace();
-          return Response.error("测试DB连接失败，请稍后再试！");
+          return Response.error("测试DB连接失败，请检查连接信息，稍后再试！");
         }
 
     }
@@ -549,6 +549,12 @@ public class SVCGenController {
         String result = this.svc.generateSelectSql(jsonObject);
         return Response.ok().setData(result);
     }
+    @RequestMapping(value = "/checkConnectNameIsExsit", method = RequestMethod.POST)
+    public Response checkConnectNameIsExsit(@RequestBody Map<String,String> map){
+        Boolean result = this.svc.checkConnectNameIsExsit(map);
+        return Response.ok().setData(result);
+    }
+
 
     private Response validUser(HttpServletRequest request) {
         //获取用户id

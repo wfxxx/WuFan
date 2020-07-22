@@ -1081,8 +1081,22 @@ public class SVCGenService {
             }
         }
         String tableName = jsonObject.getString("tableName");
-        String sql = "SELECT "+stringBuilder.toString()+" FROM "+tableName;
+        String sql = "SELECT "+stringBuilder.toString()+" FROM "+tableName +" WHERE COL1=#param1";
         return sql;
+    }
+
+    public Boolean checkConnectNameIsExsit(Map<String,String> map){
+        if(map != null && !map.isEmpty() && !"".equals(map.get("connectName"))){
+            String connectName = map.get("connectName");
+            SvcgenConnBean svcgenConnBean = svcGenDao.getDBConnDetailByName(connectName);
+            if(svcgenConnBean != null){
+                return true;
+            }else {
+                return false;
+            }
+        }else {
+            throw new MpaasBusinessException("请求参数错误！");
+        }
     }
 
 }
