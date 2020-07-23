@@ -15,6 +15,7 @@ public class TreeNode {
     private Boolean expanded;
     private String colType;
     private String isNull;
+    private Boolean isChecked;
 
 
     public String getKey() {
@@ -95,5 +96,13 @@ public class TreeNode {
 
     public void setIsNull(String isNull) {
         this.isNull = isNull;
+    }
+
+    public Boolean getIsChecked() {
+        return isChecked;
+    }
+
+    public void setIsChecked(Boolean isChecked) {
+        this.isChecked = isChecked;
     }
 }

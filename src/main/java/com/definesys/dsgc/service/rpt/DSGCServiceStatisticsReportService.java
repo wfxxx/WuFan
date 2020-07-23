@@ -1,6 +1,8 @@
 package com.definesys.dsgc.service.rpt;
 
 import com.definesys.dsgc.service.rpt.bean.*;
+import com.definesys.dsgc.service.system.DSGCSystemDao;
+import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
 import com.definesys.dsgc.service.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,9 @@ public class DSGCServiceStatisticsReportService {
 
     @Autowired
     DSGCServiceStatisticsReportDao serviceStatisticsReportDao;
+
+    @Autowired
+    private DSGCSystemDao systemDao;
 
     public List<RpServTotal> getRunTotalNum(){
         return serviceStatisticsReportDao.getRunTotalNum();
@@ -287,7 +292,25 @@ public class DSGCServiceStatisticsReportService {
     public List<Map<String,Object>> getAllServername(){
         return serviceStatisticsReportDao.getAllServerName();
     }
+    /**
+     * 查询用户有权限查看的服务编号
+     * @return
+     */
+    public List<Map<String,Object>> getAllServerNameFilterByRole(String userId,String userRole){
+        if("SuperAdministrators".equals(userRole) || "Administrators".equals(userRole)){
+            return this.getAllServername();
+        }else if("SystemLeader".equals(userRole)){
+            List<DSGCSystemUser> systemUser = systemDao.findSystemUserByUserId(userId);
+            List<String> sysList = new ArrayList<>();
+            for (DSGCSystemUser item:systemUser) {
+                sysList.add(item.getSysCode());
+            }
+            return serviceStatisticsReportDao.getAllServerNameFilterByRole(sysList);
+        }else {
+            return new ArrayList();
+        }
 
+    }
 
 
 }

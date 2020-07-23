@@ -32,6 +32,7 @@ public class DSGCMnNotices extends MpaasBasePojo {
     private String refValue;
     private String readStat;
     private String mnLevel;
+    private String envCode;
     @Column(type = ColumnType.CALCULATE)
     private Integer unreadCount;
     @Column(type = ColumnType.CALCULATE)
@@ -58,6 +59,14 @@ public class DSGCMnNotices extends MpaasBasePojo {
     @SystemColumn(SystemColumnType.LASTUPDATE_ON)
     @Column(value = "last_update_date")
     private Date lastUpdateDate;
+
+    public String getEnvCode() {
+        return envCode;
+    }
+
+    public void setEnvCode(String envCode) {
+        this.envCode = envCode;
+    }
 
     public DSGCMnNotices() {
     }

@@ -36,24 +36,27 @@ public class DSGCLogInstanceDao {
     @Value("${database.type}")
     private String dbType;
 
-    public PageQueryResult<DSGCLogInstance> query(List<Object> keyword,String isAdmin,String uid,LogInstanceQueryDTO instance,int pageSize,int pageIndex,List<String> sysNoList) throws Exception {
+    public PageQueryResult<DSGCLogInstance> query(List<Object> keyword,String userRole,String uid,LogInstanceQueryDTO instance,int pageSize,int pageIndex,List<String> sysNoList,List<String> sysList) throws Exception {
         logger.debug(instance.toString());
         //不存在关键字时
         if (keyword == null) {
-            return sw.buildQuery()
-                    .likeNocase("serv_no", instance.getServNo())
-                    .likeNocase("serv_name", instance.getServName())
-                    .likeNocase("token", instance.getToken())
-                    .likeNocase("inst_status", instance.getInstStatus())
-                    .likeNocase("biz_status", instance.getBizStatus())
-                    .likeNocase("req_from", instance.getReqFrom())
-                    .likeNocase("biz_key1", instance.getBizKey1())
-                    .likeNocase("biz_status_dtl",instance.getBizStatusDtl())
-                    .in("serv_no",sysNoList)
-                    .lteq("end_time", instance.getEndTimeDate())
-                    .gteq("start_time", instance.getStartTimeDate())
-                    .orderBy("creation_date", "desc")
-                    .doPageQuery(pageIndex, pageSize, DSGCLogInstance.class);
+            MpaasQuery mq = sw.buildQuery();
+            mq.likeNocase("serv_no", instance.getServNo());
+            mq.likeNocase("serv_name", instance.getServName());
+            mq.likeNocase("token", instance.getToken());
+            mq.likeNocase("inst_status", instance.getInstStatus());
+            mq.likeNocase("biz_status", instance.getBizStatus());
+            mq.likeNocase("req_from", instance.getReqFrom());
+            mq.likeNocase("biz_key1", instance.getBizKey1());
+            mq.likeNocase("biz_status_dtl",instance.getBizStatusDtl());
+            mq.lteq("end_time", instance.getEndTimeDate());
+            mq.gteq("start_time", instance.getStartTimeDate());
+            mq.orderBy("creation_date", "desc");
+            if("SystemLeader".equals(userRole) || "Tourist".equals(userRole)){
+                mq.in("serv_no",sysNoList).or().
+                in("req_from",sysList);
+            }
+          return   mq.doPageQuery(pageIndex, pageSize, DSGCLogInstance.class);
 
         } else {
             //存在关键字时
@@ -125,10 +128,14 @@ public class DSGCLogInstanceDao {
                     .likeNocase("req_from", instance.getReqFrom())
                     .likeNocase("biz_key1", instance.getBizKey1())
                     .likeNocase("biz_status_dtl",instance.getBizStatusDtl())
-                    .in("serv_no",sysNoList)
                     .lteq("end_time", instance.getEndTimeDate())
                     .gteq("start_time", instance.getStartTimeDate())
                     .orderBy("creation_date", "desc");
+            if("SystemLeader".equals(userRole) || "Tourist".equals(userRole)){
+                mq.in("serv_no",sysNoList).or().
+                        in("req_from",sysList);
+            }
+
 
             return mq.doPageQuery(pageIndex, pageSize, DSGCLogInstance.class);
 

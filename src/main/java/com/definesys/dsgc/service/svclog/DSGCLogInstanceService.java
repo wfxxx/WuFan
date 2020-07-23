@@ -71,7 +71,7 @@ public class DSGCLogInstanceService {
 //            else if ("Tourist".equals(userRole)) {
 //                return dsgcLogInstance;
 //            }
-            dsgcLogInstance = this.dsgcLogInstanceDao.query(keyword,userRole ,uid, instance, pageSize, pageIndex,servNoList);
+            dsgcLogInstance = this.dsgcLogInstanceDao.query(keyword,userRole ,uid, instance, pageSize, pageIndex,servNoList,codeList);
             return dsgcLogInstance;
         } catch (Exception e) {
             throw new MpaasRuntimeException(e);
@@ -271,7 +271,6 @@ public class DSGCLogInstanceService {
 //                    jsonObject.put("pageIndex",JSON.toJSONString(pageIndex));
                     try {
                         String json =JSONObject.toJSONString(tempQueryLogCondition);
-                        System.out.println("==================>"+json);
                         resultvo = HttpReqUtil.sendPostRequest(logPath,JSONObject.parseObject(JSONObject.toJSONString(tempQueryLogCondition)),request);
 
                     }catch(JSONException jex){

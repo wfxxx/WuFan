@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
@@ -188,6 +189,13 @@ public class DSGCServiceStatisticsReportController {
     @RequestMapping(value = "getAllServerName", method = RequestMethod.GET)
     public Response getAllServerName(){
         List<Map<String,Object>> allServername = serviceStatisticsReportService.getAllServername();
+        return Response.ok().data(allServername);
+    }
+    @RequestMapping(value = "getAllServerNameFilterByRole", method = RequestMethod.GET)
+    public Response getAllServerNameFilterByRole(HttpServletRequest httpServletRequest){
+        String userId = httpServletRequest.getHeader("uid");
+        String userRole = httpServletRequest.getHeader("userRole");
+        List<Map<String,Object>> allServername = serviceStatisticsReportService.getAllServerNameFilterByRole(userId,userRole);
         return Response.ok().data(allServername);
     }
 }

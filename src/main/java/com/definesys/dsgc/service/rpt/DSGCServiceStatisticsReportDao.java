@@ -454,4 +454,15 @@ public class DSGCServiceStatisticsReportDao {
                 .sql("SELECT SERV_NO, SERV_NAME FROM dsgc_services")
                 .doQuery();
     }
+    /**
+     * 查询用户有权限查看的服务编号
+     * @return
+     */
+    public List<Map<String,Object>> getAllServerNameFilterByRole(List<String> sysList){
+        return sw.buildQuery()
+                .select("SERV_NO,SERV_NAME")
+                .in("subordinate_system",sysList)
+                .table("dsgc_services")
+                .doQuery();
+    }
 }

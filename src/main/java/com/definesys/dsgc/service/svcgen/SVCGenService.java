@@ -1025,6 +1025,7 @@ public class SVCGenService {
                 treeNode.setTitle(filed.get("columnName"));
                 treeNode.setIsNull(filed.get("isNull"));
                 treeNode.setColType(filed.get("dataType"));
+                treeNode.setIsChecked(true);
                 treeNode.setLeaf(true);
 
                 treeNode.setParentId(item.getKey());
@@ -1081,7 +1082,7 @@ public class SVCGenService {
             }
         }
         String tableName = jsonObject.getString("tableName");
-        String sql = "SELECT "+stringBuilder.toString()+" FROM "+tableName +" WHERE COL1=#param1";
+        String sql = "SELECT "+stringBuilder.toString()+" FROM "+tableName;
         return sql;
     }
 
