@@ -274,7 +274,7 @@ public class MarketService {
         if (restResSample != null){
             restCallSample.setResponseMessage(restResSample.getPlSample());
         }else {
-            restCallSample.setRequestMessage("");
+            restCallSample.setResponseMessage("");
         }
         DSGCPayloadSampleBean sampleSoapBean = new DSGCPayloadSampleBean();
         sampleSoapBean.setUriType("SOAP");
