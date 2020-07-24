@@ -854,9 +854,18 @@ public class SVCGenService {
         List<Map<String, Object>> list = new ArrayList<>();
         try {
             connection = JdbcConnection.getDSGCDBConnectTest(dBconnVO.getDbType(), url, dBconnVO.getConnUN(), dBconnVO.getConnPD());
-            String sql = "select * from (SELECT table_name name, 'table' type FROM user_tables UNION SELECT view_name name,'view' type FROM user_views ) where name like ? order by type desc";
+            String sql ="";
+            if ("oracle".equals(dBconnVO.getDbType())) {
+                sql = "select * from (SELECT table_name name, 'table' type FROM user_tables UNION SELECT view_name name,'view' type FROM user_views ) where name like ? order by type desc";
+
+            } else if ("mysql".equals(dBconnVO.getDbType())) {
+               sql = "select table_name name,(case when find_in_set('BASE TABLE',  table_type) then 'table' when find_in_set('VIEW',  table_type) then 'view' end) type from information_schema.tables where table_name like ? and  table_schema= ? order by table_type desc";
+            }
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, "%" + con0 + "%");
+            if("mysql".equals(dBconnVO.getDbType())){
+                preparedStatement.setString(2, dBconnVO.getDbName());
+            }
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet != null) {
                 while (resultSet.next()) {
@@ -892,9 +901,18 @@ public class SVCGenService {
         List<Map<String, Object>> list = new ArrayList<>();
         try {
             connection = JdbcConnection.getDSGCDBConnectTest(dBconnVO.getDbType(), url, dBconnVO.getConnUN(), dBconnVO.getConnPD());
-            String sql = "select column_name,data_type,nullable from user_tab_columns where table_name=?";
+            String sql = "";
+            if ("oracle".equals(dBconnVO.getDbType())) {
+                sql = "select column_name,data_type,nullable from user_tab_columns where table_name=?";
+
+            } else if ("mysql".equals(dBconnVO.getDbType())) {
+                sql = "select column_name,(case when find_in_set('YES',  is_nullable) then 'Y' when find_in_set('NO',  is_nullable) then 'N' end) nullable,data_type from INFORMATION_SCHEMA.Columns where table_name= ? and table_schema= ? ";
+            }
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, tableName.toUpperCase());
+            if("mysql".equals(dBconnVO.getDbType())){
+                preparedStatement.setString(2, dBconnVO.getDbName());
+            }
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet != null) {
                 while (resultSet.next()) {
