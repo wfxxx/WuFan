@@ -1,9 +1,13 @@
 package com.definesys.dsgc.service.svcgen.utils;
 
 import com.definesys.dsgc.service.svcgen.bean.*;
+import com.definesys.dsgc.service.svcgen.bean.db.ColDTO;
+import com.definesys.dsgc.service.svcgen.bean.db.RspDTO;
+import com.definesys.dsgc.service.svcgen.bean.db.TblDTO;
 import com.definesys.dsgc.service.svcinfo.bean.SVCUriBean;
 import com.definesys.mpaas.common.http.Response;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.sql.Timestamp;
@@ -436,7 +440,10 @@ public class ServiceGenerateProxy {
 
         Class paramTcbClass = Class.forName("com.definesys.dsgc.svcgen.bean.TmplCntBean");
         Object paramTcb = paramTcbClass.newInstance();
-        if ("3".equals(cfg.getTmplFlag())) {
+        if ("30".equals(cfg.getTmplFlag())) {
+            //db配置方式
+            this.updateDBSvcGenConfig(cfg,paramTcb);
+        } else if ("3".equals(cfg.getTmplFlag())) {
             //rfc配置方式
             this.updateRfcSvcGenConfig(cfg,paramTcb);
         } else if ("2".equals(cfg.getTmplFlag())) {
@@ -466,6 +473,102 @@ public class ServiceGenerateProxy {
         paramMap.put("tcb",paramTcb);
         Object res = genService.invoke(this.generateServcie,loginUser,cfg.getServNo(),paramMap);
         return this.covertRtnMsgToResponse(res);
+    }
+
+
+    private void updateDBSvcGenConfig(TmplConfigBean cfg,Object param) throws Exception {
+        this.setObjAttrValue(param,"sgObjCode",cfg.getServNo());
+        this.setObjAttrValue(param,"projDir",cfg.getProjDir());
+        if("I".equals(cfg.getDbOper())){
+            this.setObjAttrValue(param,"tmplCodeFlag",31,int.class);
+        } else if("I".equals(cfg.getDbOper())){
+            this.setObjAttrValue(param,"tmplCodeFlag",32,int.class);
+        } else if("U".equals(cfg.getDbOper())){
+            this.setObjAttrValue(param,"tmplCodeFlag",33,int.class);
+        } else if("IU".equals(cfg.getDbOper())){
+            this.setObjAttrValue(param,"tmplCodeFlag",34,int.class);
+        } else if("D".equals(cfg.getDbOper())){
+            this.setObjAttrValue(param,"tmplCodeFlag",35,int.class);
+        } else if("S01".equals(cfg.getDbOper())){
+            this.setObjAttrValue(param,"tmplCodeFlag",36,int.class);
+        }
+        this.setObjAttrValue(param,"servDir",cfg.getServDir());
+        this.setObjAttrValue(param,"psUri",cfg.getSoapPSUri());
+        this.setObjAttrValue(param,"psUri1",cfg.getRestPSUri());
+        this.setObjAttrValue(param,"isProfile","N");
+        this.setObjAttrValue(param,"provider",cfg.getToSystem());
+        this.setObjAttrValue(param,"servNameCode",cfg.getServNameCode());
+        this.setObjAttrValue(param,"sysCode",cfg.getAppCode());
+        this.setObjAttrValue(param,"needUpdStore",true,boolean.class);
+
+        //db个性化的设置
+        this.setObjAttrValue(param,"textAttr1",cfg.getDbConn());
+        this.setObjAttrValue(param,"textAttr2",cfg.getDbOper());
+        this.setObjAttrValue(param,"textAttr3",cfg.getSqlcode());
+        Object tbls = this.coverTToCommonTbls(cfg.getTbls());
+        if(tbls != null) {
+            this.setObjAttrValue(param,"tbls", tbls);
+        }
+        Object rsps = this.coverTToCommonRsps(cfg.getRsps());
+        if(rsps != null){
+            this.setObjAttrValue(param,"rsps",rsps);
+        }
+
+
+
+    }
+
+    private Object coverTToCommonTbls(TblDTO[] tbls) throws Exception {
+        if (tbls != null && tbls.length > 0) {
+            Class commonTblsCL = Class.forName("com.definesys.dsgc.svcgen.bean.db.TblDTO");
+            Class commonColsCL = Class.forName("com.definesys.dsgc.svcgen.bean.db.ColDTO");
+            Object commonTblArray = Array.newInstance(commonTblsCL,tbls.length);
+            for (int i = 0; i < tbls.length; i++) {
+                Object commonTbl = commonTblsCL.newInstance();
+                TblDTO t = tbls[i];
+                this.setObjAttrValue(commonTbl,"tblName",t.getTblName());
+                if (t.getPkCols() != null) {
+                    this.setObjAttrValue(commonTbl,"pkCols",t.getPkCols());
+                }
+                if (t.getCols() != null && t.getCols().length > 0) {
+                    Object commonColArray = Array.newInstance(commonColsCL,t.getCols().length);
+                    for (int j = 0; j < t.getCols().length; j++) {
+                        Object commonCol = commonColsCL.newInstance();
+                        ColDTO c = t.getCols()[j];
+                        this.setObjAttrValue(commonCol,"colName",c.getColName());
+                       // this.setObjAttrValue(commonCol,"colType",c.getColType());
+                        ///this.setObjAttrValue(commonCol,"isNull",c.getIsNull());
+                        Array.set(commonColArray,j,commonCol);
+                    }
+                    this.setObjAttrValue(commonTbl,"cols",commonColArray);
+                }
+                Array.set(commonTblArray,i,commonTbl);
+            }
+            return commonTblArray;
+        } else {
+            return null;
+        }
+    }
+
+    private Object coverTToCommonRsps(RspDTO[] rsps) throws Exception{
+        if(rsps != null && rsps.length >0){
+            Class commonRspCL = Class.forName("com.definesys.dsgc.svcgen.bean.db.RspDTO");
+            Object commonRspArray = Array.newInstance(commonRspCL,rsps.length);
+            for(int i = 0;i<rsps.length;i++){
+                Object commonRsp = commonRspCL.newInstance();
+                RspDTO r = rsps[i];
+                this.setObjAttrValue(commonRsp,"rspName",r.getRspName());
+                this.setObjAttrValue(commonRsp,"masterTbl",r.getMasterTbl());
+                this.setObjAttrValue(commonRsp,"masterCol",r.getMasterCol());
+                this.setObjAttrValue(commonRsp,"childTbl",r.getChildTbl());
+                this.setObjAttrValue(commonRsp,"childCol",r.getChildCol());
+                this.setObjAttrValue(commonRsp,"rspType",r.getRspType());
+                Array.set(commonRspArray,i,commonRsp);
+            }
+            return commonRspArray;
+        } else {
+            return null;
+        }
     }
 
 
