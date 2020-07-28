@@ -46,4 +46,8 @@ public class FndPropertiesService {
     public boolean checkPropertiesKeyIsExist(FndProperties properties) {
         return fndPropertiesDao.checkPropertiesKeyIsExist(properties);
     }
+
+    public FndProperties findFndPropertiesByKey(String key) {
+        return fndPropertiesDao.findFndPropertiesByKey(key);
+    }
 }
