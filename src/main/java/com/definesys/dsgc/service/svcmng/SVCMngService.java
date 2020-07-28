@@ -6,9 +6,7 @@ import com.definesys.dsgc.service.apimng.ApiMngDao;
 import com.definesys.dsgc.service.apimng.bean.DSGCApisBean;
 import com.definesys.dsgc.service.bpm.BpmDao;
 import com.definesys.dsgc.service.bpm.BpmService;
-import com.definesys.dsgc.service.bpm.bean.BpmCommonReqBean;
-import com.definesys.dsgc.service.bpm.bean.BpmInstanceBean;
-import com.definesys.dsgc.service.bpm.bean.BpmInstanceDTO;
+
 import com.definesys.dsgc.service.dagclient.DAGEnvDao;
 import com.definesys.dsgc.service.dagclient.bean.DAGEnvBean;
 import com.definesys.dsgc.service.lkv.FndLookupTypeDao;

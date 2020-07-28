@@ -2,6 +2,8 @@ package com.definesys.dsgc.service.apilr;
 
 import com.definesys.dsgc.service.apilr.bean.*;
 import com.definesys.dsgc.service.esbenv.bean.DSGCEnvInfoCfg;
+import com.definesys.dsgc.service.lkv.FndLookupTypeDao;
+import com.definesys.dsgc.service.svcmng.bean.DeployedEnvInfoBean;
 import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
 import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.mpaas.query.db.PageQueryResult;
@@ -13,13 +15,17 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ApiLrService {
     @Autowired
     private ApiLrDao apiLrDao;
+    @Autowired
+    private FndLookupTypeDao lkvDao;
 
     public PageQueryResult queryApiLrList(CommonReqBean param, String userId, String userRole, int pageSize, int pageIndex ){
+        Map<String,String> envColorLkv = this.lkvDao.getlookupValues("ENV_COLOR");
         List<String> sysCodeList = new ArrayList<>();
         if ("SystemLeader".equals(userRole)){
             List<DSGCSystemUser> dsgcSystemUsers =   apiLrDao.findUserSystemByUserId(userId);
@@ -42,18 +48,15 @@ public class ApiLrService {
             dagLrListDTO.setDlId(dagLrbean.getDlId());
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             dagLrListDTO.setCreationDate(sdf.format(dagLrbean.getCreationDate()));
-            if(dagLrbean.getEnvCode()!=null&&dagLrbean.getEnvCode().length()>0) {
-                List<DSGCEnvInfoCfg> value = apiLrDao.queryDeplogDev(dagLrbean.getEnvCode());
+            if(dagLrbean.getLrName()!=null) {
+                List<DeployedEnvInfoBean> value = apiLrDao.queryDeplogDev(dagLrbean.getLrName());
                 if (value != null) {
-                    for (DSGCEnvInfoCfg valueItem : value) {
-                        dagLrbean.setEnvName(dagLrbean.getEnvName() + valueItem.getEnvName()+",");
+                    for (DeployedEnvInfoBean valueItem : value) {
+                        String color = envColorLkv.get(valueItem.getEnvCode());
+                        valueItem.setColor(color);
                     }
-                    String envName=dagLrbean.getEnvName();
-                    dagLrbean.setEnvName(envName.trim().substring(0,envName.length()));
                 }
             }
-            dagLrListDTO.setEnvCode(dagLrbean.getEnvCode());
-            dagLrListDTO.setEnvName(dagLrbean.getEnvName());
             listDTOS.add(dagLrListDTO);
         }
         result.setCount(queryApiBsList.getCount());

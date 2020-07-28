@@ -1,5 +1,6 @@
 package com.definesys.dsgc.service.apiroute.bean;
 
+import com.definesys.dsgc.service.svcmng.bean.DeployedEnvInfoBean;
 import com.definesys.mpaas.query.annotation.*;
 import com.definesys.mpaas.query.json.MpaasDateTimeDeserializer;
 import com.definesys.mpaas.query.json.MpaasDateTimeSerializer;
@@ -9,6 +10,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Table(value = "DAG_ROUTES")
 public class DagRoutesBean extends MpaasBasePojo implements Serializable {
@@ -22,10 +24,7 @@ public class DagRoutesBean extends MpaasBasePojo implements Serializable {
     private String routeDesc;
     private String appCode;
     @Column(type = ColumnType.JAVA)
-    private String envCode;
-    @Column(type = ColumnType.JAVA)
-    private String envName="";
-
+    List<DeployedEnvInfoBean> envList;
     @Column(type = ColumnType.JAVA)
     private String appName;
     @SystemColumn(SystemColumnType.CREATE_BY)
@@ -160,19 +159,11 @@ public class DagRoutesBean extends MpaasBasePojo implements Serializable {
         this.appName = appName;
     }
 
-    public String getEnvCode() {
-        return envCode;
+    public List<DeployedEnvInfoBean> getEnvList() {
+        return envList;
     }
 
-    public void setEnvCode(String envCode) {
-        this.envCode = envCode;
-    }
-
-    public String getEnvName() {
-        return envName;
-    }
-
-    public void setEnvName(String envName) {
-        this.envName = envName;
+    public void setEnvList(List<DeployedEnvInfoBean> envList) {
+        this.envList = envList;
     }
 }

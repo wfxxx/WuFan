@@ -5,6 +5,7 @@ import com.definesys.dsgc.service.apideploylog.bean.DagDeployStatBean;
 import com.definesys.dsgc.service.apiroute.bean.DagEnvInfoCfgBean;
 import com.definesys.dsgc.service.apiroute.bean.DagRoutesBean;
 import com.definesys.dsgc.service.esbenv.bean.DSGCEnvInfoCfg;
+import com.definesys.dsgc.service.svcmng.bean.DeployedEnvInfoBean;
 import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.mpaas.query.MpaasQuery;
 import com.definesys.mpaas.query.MpaasQueryFactory;
@@ -24,15 +25,19 @@ public class ApiBsDao {
     private String dbType;
     public PageQueryResult queryApiBsList(CommonReqBean param, int pageSize, int pageIndex, String userRole,List<String> sysCodeList){
         StringBuffer sqlStr = null;
+        StringBuffer sqlend = null;
         if("oracle".equals(dbType)){
-             sqlStr = new StringBuffer("select t1.*,t2.env_code from \n" +
-                    "        (select db.*,dse.sys_name appName from dag_bs db,dsgc_system_entities dse where 1=1 and db.app_code = dse.sys_code) t1,\n" +
-                    "        (select * from( \n" +
-                    "select t.*,row_number() over(partition by sour_code order by env_code) as rowrid   from(    \n" +
-                    "  select v.vid,v.sour_code,stat.env_code \n" +
-                    "  from dag_code_version v \n" +
-                    "  left join (select t.vid,to_char(wm_concat(t.env_code)) as env_code from DAG_DEPLOY_STAT t  group by t.vid)  stat on stat.vid=v.vid  ) t) s where s.rowrid=1) t2\n" +
-                    "        where 1=1 and  t1.bs_code=t2.sour_code ");
+             sqlStr = new StringBuffer("  select * from (                               \n" +
+                     "    select t.*,row_number() over(partition by t.bs_code order by 1) as rowrid from \n" +
+                     "    (    " +
+                     "         select  db.*,dse.sys_name appName,stat.env_code from dag_bs db  \n" +
+                     "         left join dsgc_system_entities dse on   db.app_code = dse.sys_code\n" +
+                     "         left join  dag_code_version ver on db.bs_code =ver.sour_code\n" +
+                     "         left join  DAG_DEPLOY_STAT stat on stat.vid =ver.vid\n" +
+                     "        where 1=1 \n"
+                 );
+            sqlend =new StringBuffer( ") t \n" +
+                    "       ) where rowrid=1");
         }
     if ("mysql".equals(dbType)){
         sqlStr = new StringBuffer("SELECT t1.*,t2.env_code FROM (" +
@@ -73,8 +78,10 @@ public class ApiBsDao {
                 }
             }
         }
+
         if("oracle".equals(dbType)){
-            mq.sql(sqlStr.toString()+" order by t1.creation_date desc");
+            sqlStr.append(sqlend);
+            mq.sql(sqlStr.toString()+" order by creation_date desc");
         }
         if ("mysql".equals(dbType)){
             mq.sql(sqlStr.toString()+" GROUP BY bs_id   HAVING COUNT(1)>1  order by t1.creation_date desc");
@@ -230,9 +237,13 @@ public class ApiBsDao {
         return  sw.buildQuery().in("envCode",envCode).doQuery(DagEnvInfoCfgBean.class);
     }
 
-    public List<DSGCEnvInfoCfg> queryDeplogDev(String envCode){
-        String[] conArray = envCode.trim().split(",");
-        return sw.buildQuery().in("ENV_CODE",conArray).doQuery(DSGCEnvInfoCfg.class);
+    public List<DeployedEnvInfoBean> queryDeplogDev(String code){
+        return sw.buildQuery().sql("       select env.env_code,env.env_name from dag_code_version ver,DAG_DEPLOY_STAT stat,DSGC_ENV_INFO_CFG env \n" +
+                "              where ver.sour_code =#code  and stat.vid =ver.vid\n" +
+                "              and  stat.env_code =env.env_code")
+                .setVar("code",code)
+                .doQuery(DeployedEnvInfoBean.class);
+
     }
 
     public void updatePluginUsingConsumer(String consumer,String dupId){

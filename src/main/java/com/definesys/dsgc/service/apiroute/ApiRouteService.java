@@ -5,7 +5,9 @@ import com.definesys.dsgc.service.apiroute.bean.*;
 import com.definesys.dsgc.service.dagclient.DAGClientService;
 import com.definesys.dsgc.service.dagclient.bean.DAGDeployReqVO;
 import com.definesys.dsgc.service.esbenv.bean.DSGCEnvInfoCfg;
+import com.definesys.dsgc.service.lkv.FndLookupTypeDao;
 import com.definesys.dsgc.service.svclog.SVCLogDao;
+import com.definesys.dsgc.service.svcmng.bean.DeployedEnvInfoBean;
 import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
 import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.mpaas.common.http.Response;
@@ -26,9 +28,12 @@ public class ApiRouteService {
     private SVCLogDao sldao;
 
     @Autowired
+    private FndLookupTypeDao lkvDao;
+    @Autowired
     private DAGClientService dagClientService;
 
     public PageQueryResult queryApiRouteList(CommonReqBean param, String userId, String userRole, int pageSize, int pageIndex ){
+        Map<String,String> envColorLkv = this.lkvDao.getlookupValues("ENV_COLOR");
         List<String> sysCodeList = new ArrayList<>();
         if ("SystemLeader".equals(userRole)){
             List<DSGCSystemUser> dsgcSystemUsers =   sldao.findUserSystemByUserId(userId);
@@ -41,18 +46,15 @@ public class ApiRouteService {
         PageQueryResult pageQueryResult = apiRouteDao.queryApiRouteList(param,pageSize,pageIndex,userRole,sysCodeList);
         List<DagRoutesBean> queryPluginList= pageQueryResult.getResult();
         for(DagRoutesBean item:queryPluginList){
-            if(item.getEnvCode()!=null&&item.getEnvCode().length()>0) {
-                List<DSGCEnvInfoCfg> value = apiRouteDao.queryDeplogDev(item.getEnvCode());
+            if(item.getRouteCode()!=null) {
+                List<DeployedEnvInfoBean> value = apiRouteDao.queryDeplogDev(item.getRouteCode());
                 if (value != null) {
-                    for (DSGCEnvInfoCfg valueItem : value) {
-                        item.setEnvName(item.getEnvName() + valueItem.getEnvName()+",");
+                    for (DeployedEnvInfoBean valueItem : value) {
+                        String color = envColorLkv.get(valueItem.getEnvCode());
+                        valueItem.setColor(color);
                     }
-                    String envName=item.getEnvName();
-                    if(envName.length()> 0 ){
-                        item.setEnvName(envName.trim().substring(0,envName.length()-1));
-                    }
-
                 }
+                item.setEnvList(value);
             }
         }
         return pageQueryResult;
