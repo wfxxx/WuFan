@@ -39,28 +39,32 @@ public class DinstVO {
 
     public DinstVO(DinstBean dinstBean,DessBusiness dessBusiness){
         //DinstBean
-          jobNo=dinstBean.getJobNo();
-          businessId=dinstBean.getBusinessId();
-          jobName=dinstBean.getJobName();
-          jobType=dinstBean.getJobType();
-          //等待使用corn工具类转换
-          //frequency=dinstBean.getFrequency();
-          nextDoTime=dinstBean.getNextDoTime();
-          aliveStart=dinstBean.getAliveStart();
-          aliveEnd=dinstBean.getAliveEnd();
-          group=dinstBean.getGroup();
-          sucessTimes=dinstBean.getSucessTimes();
-          failTimes=dinstBean.getFailTimes();
-          avgRunTime=dinstBean.getAvgRunTime();
-          description=dinstBean.getDescription();
-          version=dinstBean.getVersion();
-        //DessBusiness
-          wsdlUrl=dessBusiness.getWsdlUrl();
-          webServiceType=dessBusiness.getWebServiceType();
-          service=dessBusiness.getWebServiceType();
-          portType=dessBusiness.getPortType();
-          operation=dessBusiness.getOperation();
-          payload=dessBusiness.getPayload();
+        if(dinstBean != null){
+            jobNo=dinstBean.getJobNo();
+            businessId=dinstBean.getBusinessId();
+            jobName=dinstBean.getJobName();
+            jobType=dinstBean.getJobType();
+            //等待使用corn工具类转换
+            //frequency=dinstBean.getFrequency();
+            nextDoTime=dinstBean.getNextDoTime();
+            aliveStart=dinstBean.getAliveStart();
+            aliveEnd=dinstBean.getAliveEnd();
+            group=dinstBean.getGroup();
+            sucessTimes=dinstBean.getSucessTimes();
+            failTimes=dinstBean.getFailTimes();
+            avgRunTime=dinstBean.getAvgRunTime();
+            description=dinstBean.getDescription();
+            version=dinstBean.getVersion();
+        }
+        if(dessBusiness != null){
+            //DessBusiness
+            wsdlUrl=dessBusiness.getWsdlUrl();
+            webServiceType=dessBusiness.getWebServiceType();
+            service=dessBusiness.getWebServiceType();
+            portType=dessBusiness.getPortType();
+            operation=dessBusiness.getOperation();
+            payload=dessBusiness.getPayload();
+        }
     }
 
     public  DinstBean getDinstBean(){

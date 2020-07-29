@@ -87,12 +87,12 @@ public class ApiRouteDao {
 
     private String generateLikeAndCluse(String con) {
         String conUpper = con.toUpperCase();
-        String conAnd = " and  (UPPER(t1.route_code) like '%" + conUpper + "%'";
-        conAnd += " or UPPER(t1.bs_code) like '%" + conUpper + "%'";
-        conAnd += " or UPPER(t1.route_path) like '%" + conUpper + "%'";
-        conAnd += " or UPPER(t1.route_method) like '%" + conUpper + "%'";
-        conAnd += " or UPPER(t1.route_desc) like '%" + conUpper + "%'";
-        conAnd += " or UPPER(t1.appName) like '%" + conUpper + "%' )";
+        String conAnd = " and  (UPPER(db.route_code) like '%" + conUpper + "%'";
+        conAnd += " or UPPER(db.bs_code) like '%" + conUpper + "%'";
+        conAnd += " or UPPER(db.route_path) like '%" + conUpper + "%'";
+        conAnd += " or UPPER(db.route_method) like '%" + conUpper + "%'";
+        conAnd += " or UPPER(db.route_desc) like '%" + conUpper + "%'";
+        conAnd += " or UPPER(dse.sys_name) like '%" + conUpper + "%' )";
 
         return conAnd;
     }

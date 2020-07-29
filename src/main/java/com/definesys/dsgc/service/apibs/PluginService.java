@@ -58,22 +58,15 @@ public class PluginService {
             case"jwt":
                 pluginDao.delPlJwtById(budId);
                 break;
-//            case"11":
-//                pluginDao.delPluginTcpLog(id);
-//                break;
-//            case"12":
-//                pluginDao.delplUdpLogById(id);
-//                break;
-//            case"13":
-//                pluginDao.delPlHttpLogById(id);
-//                break;
             default:
                 throw new Exception("插件"+pluginCode+"删除失败，没有对应的插件表");
 
         }
     }
     //  PlBasicAuthBean
-    public void addPlBasicAuthBean(PlBasicAuthBean plBasicAuthBean){ pluginDao.addPlBasicAuthBean(plBasicAuthBean); }
+    public void addPlBasicAuthBean(PlBasicAuthBean plBasicAuthBean){
+        pluginDao.addPlBasicAuthBean(plBasicAuthBean);
+    }
     public PlBasicAuthBean queryPlBasicAuthBeanById(String id){
         DagPlugUsingBean consumerValue=apiBsService.queryPluginUsingByid(id);
         PlBasicAuthBean result=pluginDao.queryPlBasicAuthBeanById(id);

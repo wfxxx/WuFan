@@ -90,9 +90,9 @@ public class ApiLrDao {
 
     private String generateLikeAndCluse(String con) {
         String conUpper = con.toUpperCase();
-        String conAnd = " and  (UPPER(t1.lr_name) like '%" + conUpper + "%'";
-        conAnd += " or UPPER(t1.lr_desc) like '%" + conUpper + "%'";
-        conAnd += " or UPPER(t1.appName) like '%" + conUpper + "%' )";
+        String conAnd = " and  (UPPER(db.lr_name) like '%" + conUpper + "%'";
+        conAnd += " or UPPER(db.lr_desc) like '%" + conUpper + "%'";
+        conAnd += " or UPPER(dse.sys_name) like '%" + conUpper + "%' )";
         return conAnd;
     }
 

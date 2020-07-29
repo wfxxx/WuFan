@@ -52,28 +52,6 @@ public class DessService {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     //添加任务 TODO
     public void addDessTask(HttpServletRequest request, DinstBean dinstBean){
         String dinstBeanStr = JSONObject.toJSONString(dinstBean);
@@ -102,7 +80,7 @@ public class DessService {
         HttpReqUtil.sendPostRequest(dessServiceUrl+"/dess/start",dinstBeanObject, request);
     }
 
-    //恢复暂停任务
+    //更新任务
     public void UpdateDessTask( HttpServletRequest request,DinstBean dinstBean){
         String dinstBeanStr = JSONObject.toJSONString(dinstBean);
         JSONObject dinstBeanObject = JSONObject.parseObject(dinstBeanStr);
