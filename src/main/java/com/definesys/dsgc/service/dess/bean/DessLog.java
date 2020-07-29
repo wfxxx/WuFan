@@ -1,5 +1,9 @@
 package com.definesys.dsgc.service.dess.bean;
 
+import com.definesys.mpaas.query.annotation.RowID;
+import com.definesys.mpaas.query.annotation.RowIDType;
+import com.definesys.mpaas.query.annotation.Table;
+
 import java.util.Date;
 
 /**
@@ -9,8 +13,9 @@ import java.util.Date;
  * @Date 2020-7-28 18:21
  * @Version 1.0
  **/
+@Table(value = "DESS_LOG")
 public class DessLog {
-
+    @RowID(sequence = "DESS_LOG_S",type= RowIDType.AUTO)
     private String logId;
     private String jobNo;
     private String groupName;

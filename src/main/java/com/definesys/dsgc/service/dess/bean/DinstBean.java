@@ -1,5 +1,7 @@
 package com.definesys.dsgc.service.dess.bean;
 
+import com.definesys.mpaas.query.annotation.Table;
+
 import java.util.Date;
 
 /**
@@ -9,8 +11,8 @@ import java.util.Date;
  * @Date 2020-7-28 18:18
  * @Version 1.0
  **/
+@Table(value = "DESS_INSTANCE")
 public class DinstBean {
-
 
     private String jobNo;
     private String businessId;

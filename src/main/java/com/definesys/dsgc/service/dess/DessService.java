@@ -4,11 +4,13 @@ import com.alibaba.fastjson.JSONObject;
 import com.definesys.dsgc.service.dess.bean.DinstBean;
 import com.definesys.dsgc.service.lkv.FndLookupTypeDao;
 import com.definesys.dsgc.service.lkv.FndPropertiesService;
+import com.definesys.dsgc.service.lkv.bean.FndProperties;
 import com.definesys.dsgc.service.utils.httpclient.HttpReqUtil;
 import com.definesys.mpaas.query.MpaasQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -22,11 +24,24 @@ import javax.servlet.http.HttpServletRequest;
 public class DessService {
 
     //服务调度程序的访问地址
-    private String dessServiceUrl=new FndPropertiesService().findFndPropertiesByKey("DESS_SERVICE_URL").getPropertyValue();
+    private  String dessServiceUrl;
 
     @Autowired
     private DessDao dessDao;
 
+    @Autowired
+    private FndPropertiesService fndPropertiesService;
+
+    @PostConstruct
+    private void getDessServiceUrl(){
+        FndProperties fndProperties =fndPropertiesService.findFndPropertiesByKey("DESS_SERVICE_URL");
+        if(fndProperties!=null){
+            dessServiceUrl=fndProperties.getPropertyValue();
+        }else{
+            dessServiceUrl="";
+        }
+        System.out.println(dessServiceUrl);
+    }
 
     //插入，删除，更新调用下列方法，查询要紫泥做
 

@@ -1,5 +1,9 @@
 package com.definesys.dsgc.service.dess.bean;
 
+import com.definesys.mpaas.query.annotation.RowID;
+import com.definesys.mpaas.query.annotation.RowIDType;
+import com.definesys.mpaas.query.annotation.Table;
+
 /**
  * @ClassName DessBusiness
  * @Description TODO
@@ -7,6 +11,7 @@ package com.definesys.dsgc.service.dess.bean;
  * @Date 2020-7-28 18:19
  * @Version 1.0
  **/
+@Table(value = "DESS_BUSINESS")
 public class DessBusiness {
 
     private String businessId;
