@@ -73,7 +73,7 @@ public class EsbHomeDao {
                 sql = "SELECT COUNT(1) as value FROM dsgc_services  t WHERE t.creation_date>=TRUNC(NEXT_DAY(SYSDATE-7,1)-6) and  t.creation_date<=TRUNC(NEXT_DAY(SYSDATE-7,1))";
             }
             if ("mysql".equals(dbType)){
-                sql = "SELECT COUNT(1) as value FROM dsgc_services  t WHERE t.creation_date>= DATE_FORMAT(date_sub(CURRENT_TIMESTAMP-7,interval+1 day)-6,'%Y-%m-%d %H:%i:%s') and  t.creation_date<=DATE_FORMAT(date_sub(CURRENT_TIMESTAMP-7,interval+1 day),'%Y-%m-%d %H:%i:%s')";
+                sql = "SELECT COUNT(1) as value FROM dsgc_services  t WHERE t.creation_date>= DATE_FORMAT(subdate(curdate(),date_format(curdate(),'%w')+6),'%Y-%m-%d %H:%i:%s') and  t.creation_date<=DATE_FORMAT(subdate(curdate(),date_format(curdate(),'%w')),'%Y-%m-%d %H:%i:%s')";
             }
         return sw.buildQuery().sql(sql).doQueryFirst(EsbHomeHisto.class);
         }
@@ -83,7 +83,7 @@ public class EsbHomeDao {
                 sql = " SELECT COUNT(1) as value FROM dsgc_services t WHERE t.creation_date>=TRUNC(NEXT_DAY(SYSDATE,1)-6) and  t.creation_date<=TRUNC(NEXT_DAY(SYSDATE,1))";
             }
             if ("mysql".equals(dbType)){
-                sql = " SELECT COUNT(1) as value FROM dsgc_services t WHERE t.creation_date >= DATE_FORMAT(date_sub(CURRENT_TIMESTAMP,interval+1 day)-6,'%Y-%m-%d %H:%i:%s') and  t.creation_date<=DATE_FORMAT(date_sub(CURRENT_TIMESTAMP,interval+1 day),'%Y-%m-%d %H:%i:%s')";
+                sql = " SELECT COUNT(1) as value FROM dsgc_services t WHERE t.creation_date >= DATE_FORMAT(subdate(curdate(),date_format(curdate(),'%w')-1),'%Y-%m-%d %H:%i:%s') and  t.creation_date<=DATE_FORMAT(subdate(curdate(),date_format(curdate(),'%w')-7),'%Y-%m-%d %H:%i:%s')";
             }
         return sw.buildQuery().sql(sql).doQueryFirst(EsbHomeHisto.class);
         }
@@ -109,7 +109,7 @@ public class EsbHomeDao {
             sql = "SELECT COUNT(1) as value FROM dsgc_system_entities t WHERE TO_CHAR(t.creation_date,'YYYY-MM-DD')=TO_CHAR(SYSDATE-1,'YYYY-MM-DD')";
         }
         if ("mysql".equals(dbType)){
-            sql = "SELECT COUNT(1) as value FROM dsgc_system_entities t WHERE DATE_FORMAT(t.creation_date,'%Y-%m-%d')=DATE_FORMAT(CURRENT_TIMESTAMP-1,'%Y-%m-%d')";
+            sql = "SELECT COUNT(1) as value FROM dsgc_system_entities t WHERE DATE_FORMAT(t.creation_date,'%Y-%m-%d')=DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 DAY),'%Y-%m-%d')";
         }
         return sw.buildQuery().sql(sql).doQueryFirst(EsbHomeHisto.class);
     }
@@ -119,7 +119,7 @@ public class EsbHomeDao {
             sql = "SELECT COUNT(1) as value FROM dsgc_system_entities  t WHERE t.creation_date>=TRUNC(NEXT_DAY(SYSDATE-7,1)-6) and  t.creation_date<=TRUNC(NEXT_DAY(SYSDATE-7,1))";
         }
         if ("mysql".equals(dbType)){
-            sql = "SELECT COUNT(1) as value FROM dsgc_system_entities  t WHERE t.creation_date>=DATE_FORMAT(date_sub(CURRENT_TIMESTAMP-7,interval+1 day)-6,'%Y-%m-%d %H:%i:%s') and  t.creation_date<=DATE_FORMAT(date_sub(CURRENT_TIMESTAMP-7,interval+1 day),'%Y-%m-%d %H:%i:%s')";
+            sql = "SELECT COUNT(1) as value FROM dsgc_system_entities  t WHERE t.creation_date>=DATE_FORMAT(subdate(curdate(),date_format(curdate(),'%w')+6),'%Y-%m-%d %H:%i:%s') and  t.creation_date<=DATE_FORMAT(subdate(curdate(),date_format(curdate(),'%w')),'%Y-%m-%d %H:%i:%s')";
         }
         return sw.buildQuery().sql(sql).doQueryFirst(EsbHomeHisto.class);
 
@@ -130,7 +130,7 @@ public class EsbHomeDao {
             sql = "SELECT COUNT(1) as value FROM dsgc_system_entities  t WHERE t.creation_date>=TRUNC(NEXT_DAY(SYSDATE,1)-6) and  t.creation_date<=TRUNC(NEXT_DAY(SYSDATE,1))";
         }
         if ("mysql".equals(dbType)){
-            sql = "SELECT COUNT(1) as value FROM dsgc_system_entities  t WHERE t.creation_date>=DATE_FORMAT(date_sub(CURRENT_TIMESTAMP,interval+1 day)-6,'%Y-%m-%d %H:%i:%s') and  t.creation_date<=DATE_FORMAT(date_sub(CURRENT_TIMESTAMP,interval+1 day),'%Y-%m-%d %H:%i:%s')";
+            sql = "SELECT COUNT(1) as value FROM dsgc_system_entities  t WHERE t.creation_date>=DATE_FORMAT(subdate(curdate(),date_format(curdate(),'%w')-1),'%Y-%m-%d %H:%i:%s') and  t.creation_date<=DATE_FORMAT(subdate(curdate(),date_format(curdate(),'%w')-7),'%Y-%m-%d %H:%i:%s')";
         }
         return sw.buildQuery().sql(sql).doQueryFirst(EsbHomeHisto.class);
 
@@ -146,7 +146,9 @@ public class EsbHomeDao {
             sql = "SELECT SUM(T.TOTAL_TIMES_F) as value FROM rp_serv_day t where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd')";
         }
         if ("mysql".equals(dbType)){
-            sql ="SELECT SUM(T.TOTAL_TIMES_F) as value FROM rp_serv_day t where str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d'),'%Y-%m-%d')";
+            sql ="SELECT count(1) as value FROM dsgc_log_instance t  \n" +
+                    "where DATE_FORMAT(t.creation_date,'%Y-%m-%d')=DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d')\n" +
+                    "and t.inst_status = '0';";
         }
         return sw.buildQuery().sql(sql).doQueryFirst();
     }
@@ -156,7 +158,7 @@ public class EsbHomeDao {
             sql = "SELECT SUM(T.TOTAL_TIMES_F) as value FROM rp_serv_day t WHERE  to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate-1,'yyyy-mm-dd'),'yyyy-mm-dd')";
         }
         if ("mysql".equals(dbType)){
-            sql = "SELECT SUM(T.TOTAL_TIMES_F) as value FROM rp_serv_day t WHERE  str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP-1,'%Y-%m-%d'),'%Y-%m-%d')";
+            sql = "SELECT SUM(T.TOTAL_TIMES_F) as value FROM rp_serv_day t WHERE  str_to_date(concat(t.year,'-',t.month,'-',t.day),'%Y-%m-%d')=str_to_date(DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 DAY),'%Y-%m-%d'),'%Y-%m-%d')";
         }
         return sw.buildQuery().sql(sql).doQueryFirst();
     }
@@ -166,7 +168,7 @@ public class EsbHomeDao {
             sql = "SELECT SUM(T.TOTAL_TIMES_F) as value FROM rp_serv_day  t WHERE to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')>=TRUNC(NEXT_DAY(SYSDATE-7,1)-6) and  to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')<=TRUNC(NEXT_DAY(SYSDATE-7,1))";
         }
         if ("mysql".equals(dbType)){
-            sql = "SELECT SUM(T.TOTAL_TIMES_F) as value FROM rp_serv_day  t WHERE str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')>=DATE_FORMAT(date_sub(CURRENT_TIMESTAMP-7,interval+1 day)-6,'%Y-%m-%d %H:%i:%s') and  str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')<=DATE_FORMAT(date_sub(CURRENT_TIMESTAMP-7,interval+1 day),'%Y-%m-%d %H:%i:%s')";
+            sql = "SELECT SUM(T.TOTAL_TIMES_F) as value FROM rp_serv_day  t WHERE str_to_date(concat(t.year,'-',t.month,'-',t.day),'%Y-%m-%d')>=DATE_FORMAT(subdate(curdate(),date_format(curdate(),'%w')+6),'%Y-%m-%d %H:%i:%s') and  str_to_date(concat(t.year,'-',t.month,'-',t.day),'%Y-%m-%d')<=DATE_FORMAT(subdate(curdate(),date_format(curdate(),'%w')),'%Y-%m-%d %H:%i:%s')";
         }
        // EsbHomeHisto d =  sw.buildQuery().sql(sql).doQueryFirst(EsbHomeHisto.class);
         Map<String, Object> map = sw.buildQuery().sql(sql).doQueryFirst();
@@ -179,7 +181,7 @@ public class EsbHomeDao {
             sql = " SELECT SUM(T.TOTAL_TIMES_F) as value FROM rp_serv_day  t WHERE to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')>=TRUNC(NEXT_DAY(SYSDATE,1)-6) and  to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')<=TRUNC(NEXT_DAY(SYSDATE,1))";
         }
         if ("mysql".equals(dbType)){
-            sql = " SELECT SUM(T.TOTAL_TIMES_F) as value FROM rp_serv_day  t WHERE str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')>=DATE_FORMAT(date_sub(CURRENT_TIMESTAMP,interval+1 day)-6,'%Y-%m-%d %H:%i:%s') and  str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')<=DATE_FORMAT(date_sub(CURRENT_TIMESTAMP,interval+1 day),'%Y-%m-%d %H:%i:%s')";
+            sql = " SELECT SUM(T.TOTAL_TIMES_F) as value FROM rp_serv_day  t WHERE str_to_date(concat(t.year,'-',t.month,'-',t.day),'%Y-%m-%d')>=DATE_FORMAT(subdate(curdate(),date_format(curdate(),'%w')-1),'%Y-%m-%d %H:%i:%s') and  str_to_date(concat(t.year,'-',t.month,'-',t.day),'%Y-%m-%d')<=DATE_FORMAT(subdate(curdate(),date_format(curdate(),'%w')-7),'%Y-%m-%d %H:%i:%s')";
         }
         return sw.buildQuery().sql(sql).doQueryFirst();
 
@@ -195,7 +197,8 @@ public class EsbHomeDao {
            sql = "SELECT SUM(T.TOTAL_TIMES) as value FROM rp_serv_day t where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd')";
         }
         if ("mysql".equals(dbType)){
-            sql ="SELECT SUM(T.TOTAL_TIMES) as value FROM rp_serv_day t where str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d'),'%Y-%m-%d')";
+            sql ="SELECT count(1) as value FROM dsgc_log_instance t \n" +
+                    "where DATE_FORMAT(creation_date,'%Y-%m-%d')=DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d');";
         }
         return sw.buildQuery().sql(sql).doQueryFirst();
     }
@@ -205,7 +208,7 @@ public class EsbHomeDao {
           sql = "SELECT SUM(T.TOTAL_TIMES) as value FROM rp_serv_day t WHERE  to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate-1,'yyyy-mm-dd'),'yyyy-mm-dd')";
         }
         if ("mysql".equals(dbType)){
-            sql = "SELECT SUM(T.TOTAL_TIMES) as value FROM rp_serv_day t WHERE  str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP-1,'%Y-%m-%d'),'%Y-%m-%d')";
+            sql = "SELECT SUM(T.TOTAL_TIMES) as value FROM rp_serv_day t WHERE  str_to_date(concat(t.year,'-',t.month,'-',t.day),'%Y-%m-%d')=str_to_date(DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 DAY),'%Y-%m-%d'),'%Y-%m-%d')";
         }
         return sw.buildQuery().sql(sql).doQueryFirst();
     }
@@ -215,7 +218,7 @@ public class EsbHomeDao {
             sql = "SELECT SUM(T.TOTAL_TIMES) as value FROM rp_serv_day  t WHERE to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')>=TRUNC(NEXT_DAY(SYSDATE-7,1)-6) and  to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')<=TRUNC(NEXT_DAY(SYSDATE-7,1))";
         }
         if ("mysql".equals(dbType)){
-            sql = "SELECT SUM(T.TOTAL_TIMES) as value FROM rp_serv_day  t WHERE str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')>=DATE_FORMAT(date_sub(CURRENT_TIMESTAMP-7,interval+1 day)-6,'%Y-%m-%d %H:%i:%s') and  str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')<=DATE_FORMAT(date_sub(CURRENT_TIMESTAMP-7,interval+1 day),'%Y-%m-%d %H:%i:%s')";
+            sql = "SELECT SUM(T.TOTAL_TIMES) as value FROM rp_serv_day  t WHERE str_to_date(concat(t.year,'-',t.month,'-',t.day),'%Y-%m-%d')>=DATE_FORMAT(subdate(curdate(),date_format(curdate(),'%w')+6),'%Y-%m-%d %H:%i:%s') and  str_to_date(concat(t.year,'-',t.month,'-',t.day),'%Y-%m-%d')<=DATE_FORMAT(subdate(curdate(),date_format(curdate(),'%w')),'%Y-%m-%d %H:%i:%s')";
         }
         return sw.buildQuery().sql(sql).doQueryFirst();
 
@@ -226,7 +229,7 @@ public class EsbHomeDao {
             sql = " SELECT SUM(T.TOTAL_TIMES) as value FROM rp_serv_day  t WHERE to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')>=TRUNC(NEXT_DAY(SYSDATE,1)-6) and  to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')<=TRUNC(NEXT_DAY(SYSDATE,1))";
         }
         if ("mysql".equals(dbType)){
-            sql = " SELECT SUM(T.TOTAL_TIMES) as value FROM rp_serv_day  t WHERE str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')>=DATE_FORMAT(date_sub(CURRENT_TIMESTAMP,interval+1 day)-6,'%Y-%m-%d %H:%i:%s') and  str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')<=DATE_FORMAT(date_sub(CURRENT_TIMESTAMP,interval+1 day),'%Y-%m-%d %H:%i:%s')";
+            sql = " SELECT SUM(T.TOTAL_TIMES) as value FROM rp_serv_day  t WHERE str_to_date(concat(t.year,'-',t.month,'-',t.day),'%Y-%m-%d')>=DATE_FORMAT(subdate(curdate(),date_format(curdate(),'%w')-1),'%Y-%m-%d %H:%i:%s') and  str_to_date(concat(t.year,'-',t.month,'-',t.day),'%Y-%m-%d')<=DATE_FORMAT(subdate(curdate(),date_format(curdate(),'%w')-7),'%Y-%m-%d %H:%i:%s')";
         }
         return sw.buildQuery().sql(sql).doQueryFirst();
 
@@ -351,7 +354,8 @@ public class EsbHomeDao {
                         " where to_date(t.year,'yyyy')=to_date(to_char(sysdate,'yyyy'),'yyyy') group  by t.month order by t.month desc";
             }
             if ("mysql".equals(dbType)){
-                sql = "select sum(t.total_times) as total,t.month month from rp_serv_year t where str_to_date(t.year,'%Y')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y'),'%Y') group  by t.month order by t.month desc";
+                sql = " select sum(t.total_times) as total,t.month month from rp_serv_month t where\n" +
+                        " t.year=LPAD(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y'),4,0) group  by t.month order by t.month desc";
             }
             resulSql .sql(sql);
         }else if(limitTime.equals("month")){
@@ -361,7 +365,10 @@ public class EsbHomeDao {
                         " where to_date(t.year||'-'||t.month,'yyyy-mm')=to_date(to_char(sysdate,'yyyy-mm'),'yyyy-mm') group  by t.day order by t.day desc";
             }
             if ("mysql".equals(dbType)){
-                sql = "select tsum(t.total_times) as total,t.day day from rp_serv_day t where str_to_date(t.year||'-'||t.month,'%Y-%m')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m'),'%Y-%m') group  by t.day order by t.day desc";
+                sql = " select sum(t.total_times) as total,t.day day from rp_serv_day t where \n" +
+                        "  LPAD(t.year,4,0)=DATE_FORMAT(CURRENT_TIMESTAMP,'%Y') and\n" +
+                        "  LPAD(t.month,2,0)=DATE_FORMAT(CURRENT_TIMESTAMP,'%m') \n" +
+                        "  group  by t.day order by t.day desc";
             }
             resulSql .sql(sql);
         }else if(limitTime.equals("week")){
@@ -371,7 +378,11 @@ public class EsbHomeDao {
                        " where to_char(to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd'),'iw')=to_char(sysdate,'iw') and t.year=to_char(sysdate,'yyyy') group  by t.day order by t.day desc";
            }
             if ("mysql".equals(dbType)){
-                sql = "select tsum(t.total_times) as total,t.day day from rp_serv_day t where DATE_FORMAT(str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d'),'iw')=DATE_FORMAT(CURRENT_TIMESTAMP,'iw') and t.year=DATE_FORMAT(CURRENT_TIMESTAMP,'%Y')group  by t.day order by t.day desc ";
+                sql = "  select sum(t.total_times) as total,t.day day from rp_serv_day t where \n" +
+                        "\tstr_to_date(concat(t.year,'-',t.month,'-',t.day),'%Y-%m-%d')>date_sub(curdate(),INTERVAL WEEKDAY(curdate()) + 0 DAY)\n" +
+                        "    and\n" +
+                        "    str_to_date(concat(t.year,'-',t.month,'-',t.day),'%Y-%m-%d')<date_sub(curdate(),INTERVAL WEEKDAY(curdate()) - 6 DAY)\n" +
+                        "  group  by t.day order by t.day desc; ";
             }
             resulSql.sql(sql);
         }else if(limitTime.equals("day")){
@@ -381,7 +392,9 @@ public class EsbHomeDao {
                         " where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') group  by t.hour order by t.hour desc";
             }
             if ("mysql".equals(dbType)){
-                sql = "select sum(t.total_times) as total,t.hour hour from rp_serv_day t where str_to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d'),'%Y-%m-%d')group  by t.hour order by t.hour desc";
+                sql = "select sum(t.total_times) as total,t.hour hour from rp_serv_hour t \n" +
+                        "where str_to_date(CONCAT(t.year,'-',t.month,'-',t.day),'%Y-%m-%d')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d'),'%Y-%m-%d')\n" +
+                        "group  by t.hour order by t.hour desc;";
             }
             resulSql .sql(sql);
         }
@@ -400,7 +413,8 @@ public class EsbHomeDao {
                         " where to_date(t.year,'yyyy')=to_date(to_char(sysdate,'yyyy'),'yyyy') group  by t.month order by t.month desc";
             }
             if ("mysql".equals(dbType)){
-                sql = "select sum(t.total_times_f) as total,t.month month from rp_serv_year t where str_to_date(t.year,'%Y')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y'),'%Y') group  by t.month order by t.month desc";
+                sql = " select sum(t.total_times_f) as total,t.month month from rp_serv_month t where\n" +
+                        " t.year=LPAD(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y'),4,0) group  by t.month order by t.month desc";
             }
             resulSql .sql(sql);
         }else if(limitTime.equals("month")){
@@ -410,7 +424,10 @@ public class EsbHomeDao {
                         " where to_date(t.year||'-'||t.month,'yyyy-mm')=to_date(to_char(sysdate,'yyyy-mm'),'yyyy-mm') group  by t.day order by t.day desc";
             }
             if ("mysql".equals(dbType)){
-                sql = "select tsum(t.total_times_f) as total,t.day day from rp_serv_day t where str_to_date(t.year||'-'||t.month,'%Y-%m')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m'),'%Y-%m') group  by t.day order by t.day desc";
+                sql = " select sum(t.total_times_f) as total,t.day day from rp_serv_day t where \n" +
+                        "  LPAD(t.year,4,0)=DATE_FORMAT(CURRENT_TIMESTAMP,'%Y') and\n" +
+                        "  LPAD(t.month,2,0)=DATE_FORMAT(CURRENT_TIMESTAMP,'%m') \n" +
+                        "  group  by t.day order by t.day desc";
             }
             resulSql .sql(sql);
         }else if(limitTime.equals("week")){
@@ -420,7 +437,11 @@ public class EsbHomeDao {
                         " where to_char(to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd'),'iw')=to_char(sysdate,'iw') and t.year=to_char(sysdate,'yyyy') group  by t.day order by t.day desc";
             }
             if ("mysql".equals(dbType)){
-                sql = "select tsum(t.total_times_f) as total,t.day day from rp_serv_day t where DATE_FORMAT(str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d'),'iw')=DATE_FORMAT(CURRENT_TIMESTAMP,'iw') and t.year=DATE_FORMAT(CURRENT_TIMESTAMP,'%Y')group  by t.day order by t.day desc ";
+                sql = "  select sum(t.total_times_f) as total,t.day day from rp_serv_day t where \n" +
+                        "\tstr_to_date(concat(t.year,'-',t.month,'-',t.day),'%Y-%m-%d')>date_sub(curdate(),INTERVAL WEEKDAY(curdate()) + 0 DAY)\n" +
+                        "    and\n" +
+                        "    str_to_date(concat(t.year,'-',t.month,'-',t.day),'%Y-%m-%d')<date_sub(curdate(),INTERVAL WEEKDAY(curdate()) - 6 DAY)\n" +
+                        "  group  by t.day order by t.day desc; ";
             }
             resulSql.sql(sql);
         }else if(limitTime.equals("day")){
@@ -430,7 +451,9 @@ public class EsbHomeDao {
                         " where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') group  by t.hour order by t.hour desc";
             }
             if ("mysql".equals(dbType)){
-                sql = "select sum(t.total_times_f) as total,t.hour hour from rp_serv_day t where str_to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d'),'%Y-%m-%d')group  by t.hour order by t.hour desc";
+                sql = "select sum(t.total_times_f) as total,t.hour hour from rp_serv_hour t \n" +
+                        "where str_to_date(CONCAT(t.year,'-',t.month,'-',t.day),'%Y-%m-%d')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d'),'%Y-%m-%d')\n" +
+                        "group  by t.hour order by t.hour desc;";
             }
             resulSql .sql(sql);
         }
@@ -507,7 +530,7 @@ public class EsbHomeDao {
                         " where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')<=to_date(#endTime,'yyyy-mm-dd') and to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')>to_date(#startTime,'yyyy-mm-dd') order by value desc";
             }
             if ("mysql".equals(dbType)){
-                sql = "select t.serv_no as name ,sum(t.total_times) as value from rp_serv_day t where str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')<=str_to_date(#endTime,'%Y-%m-%d') and str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')>str_to_date(#startTime,'%Y-%m-%d') order by t.serv_no,value desc";
+                sql = "select t.serv_no as name ,sum(t.total_times) as value from rp_serv_day t where str_to_date(concat(t.year,'-',t.month,'-',t.day),'%Y-%m-%d')<=str_to_date(#endTime,'%Y-%m-%d') and str_to_date(concat(t.year,'-',t.month,'-',t.day),'%Y-%m-%d')>str_to_date(#startTime,'%Y-%m-%d') order by t.serv_no,value desc";
             }
             resulSql.sql(sql)
                     .setVar("endTime",endTime).setVar("startTime",startTime);
@@ -530,7 +553,7 @@ public class EsbHomeDao {
                      " where to_date(t.year||'-'||t.month,'yyyy-mm')=to_date(to_char(sysdate,'yyyy-mm'),'yyyy-mm')  order by value desc";
             }
             if ("mysql".equals(dbType)){
-                sql = "select t.serv_no as name ,avg(t.avg_cost)  as value from rp_serv_month t where str_to_date(t.year||'-'||t.month,'%Y-%m')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m'),'%Y-%m')  order by t.serv_no,value desc";
+                sql = "select t.serv_no as name ,avg(t.avg_cost)  as value from rp_serv_month t where str_to_date(concat(t.year,'-',t.month),'%Y-%m')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m'),'%Y-%m')  order by t.serv_no,value desc";
             }
             resulSql .sql(sql);
         }else if(limitTime.equals("week")){
@@ -540,7 +563,7 @@ public class EsbHomeDao {
                         "  where to_char(to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd'),'iw')=to_char(sysdate,'iw') and t.year=to_char(sysdate,'yyyy') order by value desc";
             }
             if ("mysql".equals(dbType)){
-                sql = "select t.serv_no as name ,avg(t.avg_cost) as value from rp_serv_day t  where DATE_FORMAT(str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d'),'iw')=DATE_FORMAT(CURRENT_TIMESTAMP,'iw') and t.year=DATE_FORMAT(CURRENT_TIMESTAMP,'%Y') order by t.serv_no,value desc";
+                sql = "select t.serv_no as name ,avg(t.avg_cost) as value from rp_serv_day t  where DATE_FORMAT(str_to_date(concat(t.year,'-',t.month,'-',t.day),'%Y-%m-%d'),'iw')=DATE_FORMAT(CURRENT_TIMESTAMP,'iw') and t.year=DATE_FORMAT(CURRENT_TIMESTAMP,'%Y') order by t.serv_no,value desc";
             }
             resulSql.sql(sql);
         }else if(limitTime.equals("day")){
@@ -550,7 +573,7 @@ public class EsbHomeDao {
                         " where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') order by value desc";
             }
             if ("mysql".equals(dbType)){
-                sql = "select t.serv_no as name ,avg(t.avg_cost) as value from rp_serv_day t  where str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d'),'%Y-%m-%d') order by t.serv_no,value desc";
+                sql = "select t.serv_no as name ,avg(t.avg_cost) as value from rp_serv_day t  where str_to_date(concat(t.year,'-',t.month,'-',t.day),'%Y-%m-%d')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d'),'%Y-%m-%d') order by t.serv_no,value desc";
             }
             resulSql .sql(sql);
         }
@@ -567,7 +590,9 @@ public class EsbHomeDao {
                     " where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') group by t.creation_date order by t.creation_date ";
         }
         if ("mysql".equals(dbType)){
-            sql = "select DATE_FORMAT(t.creation_date,'%Y-%m') as name ,sum(t.total_times)  as value from rp_serv_hour t  where str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d'),'%Y-%m-%d') group by t.creation_date order by t.creation_date ";
+            sql = "select DATE_FORMAT(t.creation_date,'%H:%i') as name ,sum(t.total_times)  as value from rp_serv_hour t  \n" +
+                    "where str_to_date(concat(t.year,'-',t.month,'-',t.day),'%Y-%m-%d')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d'),'%Y-%m-%d') \n" +
+                    "group by t.creation_date order by t.creation_date ; ";
         }
        return sw.buildQuery().sql(sql)
                 .doQuery(EsbHomeHisto.class);
@@ -581,7 +606,7 @@ public class EsbHomeDao {
                     " where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') group by t.creation_date order by t.creation_date";
         }
         if ("mysql".equals(dbType)){
-            sql = "select DATE_FORMAT(t.creation_date,'%Y-%m') as name ,avg(t.avg_cost)  as value from rp_serv_hour t where str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d'),'%Y-%m-%d') group by t.creation_date order by t.creation_date";
+            sql = "select DATE_FORMAT(t.creation_date,'%H:%i') as name ,avg(t.avg_cost)  as value from rp_serv_hour t where str_to_date(concat(t.year,'-',t.month,'-',t.day),'%Y-%m-%d')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d'),'%Y-%m-%d') group by t.creation_date order by t.creation_date";
         }
         return  sw.buildQuery().sql(sql)
 
@@ -596,7 +621,9 @@ public class EsbHomeDao {
                      " where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') group by t.creation_date order by t.creation_date";
          }
          if ("mysql".equals(dbType)){
-             sql ="select DATE_FORMAT(t.creation_date,'%Y-%m') as name,sum(t.total_times_f)  as value from rp_serv_hour t where str_to_date(t.year||'-'||t.month||'-'||t.day,'%Y-%m-%d')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d'),'%Y-%m-%d') group by t.creation_date order by t.creation_date";
+             sql ="select DATE_FORMAT(t.creation_date,'%H-%i') as name,sum(t.total_times_f)  as value from rp_serv_hour t \n" +
+                     "where str_to_date(concat(t.year,'-',t.month,'-',t.day),'%Y-%m-%d')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d'),'%Y-%m-%d') \n" +
+                     "group by t.creation_date order by t.creation_date";
          }
          return   sw.buildQuery().sql(sql)
                  .doQuery(EsbHomeHisto.class);
@@ -626,7 +653,7 @@ public class EsbHomeDao {
                     "                order by t.creation_date";
         }
         if ("mysql".equals(dbType)){
-            sql = "select avg(t.req_msg_size)  as value from dsgc_log_instance t where t.creation_date>str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d %H'),'%Y-%m-%d %H') order by t.creation_date";
+            sql = "select avg(t.req_msg_size)  as value from dsgc_log_instance t where CURRENT_TIMESTAMP>str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d %H'),'%Y-%m-%d %H') order by t.creation_date";
         }
         return   sw.buildQuery().sql(sql)
                 .doQueryFirst(EsbHomeHisto.class);

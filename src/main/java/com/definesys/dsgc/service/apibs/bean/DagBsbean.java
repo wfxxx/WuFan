@@ -20,10 +20,6 @@ public class DagBsbean extends MpaasBasePojo implements Serializable {
     private String appCode;
     @Column(type = ColumnType.JAVA)
     private String appName;
-    @Column(type = ColumnType.JAVA)
-    private String envCode;
-    @Column(type = ColumnType.JAVA)
-    private String envName="";
     @SystemColumn(SystemColumnType.CREATE_BY)
     @Column(value = "created_by")
     private String createdBy;
@@ -124,19 +120,5 @@ public class DagBsbean extends MpaasBasePojo implements Serializable {
         this.appName = appName;
     }
 
-    public String getEnvCode() {
-        return envCode;
-    }
 
-    public void setEnvCode(String envCode) {
-        this.envCode = envCode;
-    }
-
-    public String getEnvName() {
-        return envName;
-    }
-
-    public void setEnvName(String envName) {
-        this.envName = envName;
-    }
 }

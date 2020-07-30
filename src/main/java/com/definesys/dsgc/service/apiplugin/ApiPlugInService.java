@@ -4,6 +4,8 @@ import com.definesys.dsgc.service.apilr.ApiLrDao;
 import com.definesys.dsgc.service.apiplugin.bean.CommonReqBean;
 import com.definesys.dsgc.service.apiplugin.bean.DAGPluginListVO;
 import com.definesys.dsgc.service.esbenv.bean.DSGCEnvInfoCfg;
+import com.definesys.dsgc.service.lkv.FndLookupTypeDao;
+import com.definesys.dsgc.service.svcmng.bean.DeployedEnvInfoBean;
 import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
 import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +23,12 @@ public class ApiPlugInService {
     private ApiPlugInDao apiPlugInDao;
     @Autowired
     private ApiLrDao apiLrDao;
+    @Autowired
+    private FndLookupTypeDao lkvDao;
 
 
     public PageQueryResult queryPluginList(CommonReqBean param, String userId, String userRole, int pageSize, int pageIndex ){
+        Map<String,String> envColorLkv = this.lkvDao.getlookupValues("ENV_COLOR");
         List<String> sysCodeList = new ArrayList<>();
         if ("SystemLeader".equals(userRole)){
             List<DSGCSystemUser> dsgcSystemUsers =   apiLrDao.findUserSystemByUserId(userId);
@@ -36,17 +41,15 @@ public class ApiPlugInService {
         PageQueryResult result=apiPlugInDao.queryPluginList(param,pageSize,pageIndex,userRole,sysCodeList);
         List<DAGPluginListVO> queryPluginList= result.getResult();
         for(DAGPluginListVO item:queryPluginList){
-            if(item.getEnvCode()!=null&&item.getEnvCode().length()>0) {
-                List<DSGCEnvInfoCfg> value = apiPlugInDao.queryDeplogDev(item.getEnvCode());
+            if(item.getSourCode()!=null) {
+                List<DeployedEnvInfoBean> value = apiPlugInDao.queryDeplogDev(item.getSourCode());
                 if (value != null) {
-                    for (DSGCEnvInfoCfg valueItem : value) {
-                        item.setDevName(item.getDevName() + valueItem.getEnvName()+",");
-                    }
-                    String envName=item.getDevName();
-                    if(envName.length()>0){
-                        item.setDevName(envName.trim().substring(0,envName.length()-1));
+                    for (DeployedEnvInfoBean valueItem : value) {
+                        String color = envColorLkv.get(valueItem.getEnvCode());
+                        valueItem.setColor(color);
                     }
                 }
+                item.setEnvList(value);
             }
         }
         result.setResult(queryPluginList);

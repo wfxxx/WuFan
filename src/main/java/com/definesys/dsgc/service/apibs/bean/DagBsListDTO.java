@@ -1,7 +1,11 @@
 package com.definesys.dsgc.service.apibs.bean;
 
+import com.definesys.dsgc.service.esbenv.bean.DSGCEnvInfoCfg;
+import com.definesys.dsgc.service.svcmng.bean.DeployedEnvInfoBean;
 import com.definesys.mpaas.query.annotation.Column;
 import com.definesys.mpaas.query.annotation.ColumnType;
+
+import java.util.List;
 
 public class DagBsListDTO {
     private String bsId;
@@ -9,9 +13,8 @@ public class DagBsListDTO {
     private String bsDesc;
     private String appName;
     private String appCode;
-    private String envCode;
-    @Column(type = ColumnType.JAVA)
-    private String envName="";
+    List<DeployedEnvInfoBean> envList;
+
     public String getBsId() {
         return bsId;
     }
@@ -52,19 +55,11 @@ public class DagBsListDTO {
         this.appCode = appCode;
     }
 
-    public String getEnvCode() {
-        return envCode;
+    public List<DeployedEnvInfoBean> getEnvList() {
+        return envList;
     }
 
-    public void setEnvCode(String envCode) {
-        this.envCode = envCode;
-    }
-
-    public String getEnvName() {
-        return envName;
-    }
-
-    public void setEnvName(String envName) {
-        this.envName = envName;
+    public void setEnvList(List<DeployedEnvInfoBean> envList) {
+        this.envList = envList;
     }
 }

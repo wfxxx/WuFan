@@ -5,7 +5,9 @@ import com.definesys.dsgc.service.apibs.bean.*;
 import com.definesys.dsgc.service.apiplugin.bean.DAGPluginListVO;
 import com.definesys.dsgc.service.apiroute.bean.DagEnvInfoCfgBean;
 import com.definesys.dsgc.service.esbenv.bean.DSGCEnvInfoCfg;
+import com.definesys.dsgc.service.lkv.FndLookupTypeDao;
 import com.definesys.dsgc.service.svclog.SVCLogDao;
+import com.definesys.dsgc.service.svcmng.bean.DeployedEnvInfoBean;
 import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
 import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +25,12 @@ public class ApiBsService {
     private PluginService pluginService;
 
     @Autowired
+    private FndLookupTypeDao lkvDao;
+    @Autowired
     private SVCLogDao sldao;
 
     public PageQueryResult queryApiBsList(CommonReqBean param,String userId,String userRole,int pageSize,int pageIndex ){
+        Map<String,String> envColorLkv = this.lkvDao.getlookupValues("ENV_COLOR");
         List<String> sysCodeList = new ArrayList<>();
         if ("SystemLeader".equals(userRole)){
             List<DSGCSystemUser> dsgcSystemUsers =   sldao.findUserSystemByUserId(userId);
@@ -47,24 +52,18 @@ public class ApiBsService {
             dagBsListDTO.setBsDesc(dagBsbean.getBsDesc());
             dagBsListDTO.setBsId(dagBsbean.getBsId());
             dagBsListDTO.setAppCode(dagBsbean.getAppCode());
-            if(dagBsbean.getEnvCode()!=null&&dagBsbean.getEnvCode().length()>0) {
-                List<DSGCEnvInfoCfg> value = apiBsDao.queryDeplogDev(dagBsbean.getEnvCode());
+            if(dagBsbean.getBsCode()!=null) {
+                List<DeployedEnvInfoBean> value = apiBsDao.queryDeplogDev(dagBsbean.getBsCode());
                 if (value != null) {
-                    for (DSGCEnvInfoCfg valueItem : value) {
-                        dagBsbean.setEnvName(dagBsbean.getEnvName() + valueItem.getEnvName()+",");
+                    for (DeployedEnvInfoBean valueItem : value) {
+                        String color = envColorLkv.get(valueItem.getEnvCode());
+                        valueItem.setColor(color);
                     }
-                    String envName=dagBsbean.getEnvName();
-                    dagBsbean.setEnvName(envName.trim().substring(0,envName.length()-1));
                 }
+                dagBsListDTO.setEnvList(value);
             }
-            dagBsListDTO.setEnvCode(dagBsbean.getEnvCode());
-            dagBsListDTO.setEnvName(dagBsbean.getEnvName());
             listDTOS.add(dagBsListDTO);
         }
-
-
-
-
         result.setCount(queryApiBsList.getCount());
         result.setResult(listDTOS);
         return result;

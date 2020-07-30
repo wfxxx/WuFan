@@ -1,5 +1,6 @@
 package com.definesys.dsgc.service.apiplugin.bean;
 
+import com.definesys.dsgc.service.svcmng.bean.DeployedEnvInfoBean;
 import com.definesys.mpaas.query.annotation.Column;
 import com.definesys.mpaas.query.annotation.SystemColumn;
 import com.definesys.mpaas.query.annotation.SystemColumnType;
@@ -9,6 +10,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @ClassName DAGPluginListVO
@@ -43,6 +45,8 @@ public class DAGPluginListVO {
     private String devName="";
     //插件部署环境code
     private String envCode;
+
+    List<DeployedEnvInfoBean> envList;
 
     @JsonSerialize(using = MpaasDateTimeSerializer.class)
     @JsonDeserialize(using = MpaasDateTimeDeserializer.class)
@@ -154,5 +158,13 @@ public class DAGPluginListVO {
 
     public void setEnvCode(String envCode) {
         this.envCode = envCode;
+    }
+
+    public List<DeployedEnvInfoBean> getEnvList() {
+        return envList;
+    }
+
+    public void setEnvList(List<DeployedEnvInfoBean> envList) {
+        this.envList = envList;
     }
 }
