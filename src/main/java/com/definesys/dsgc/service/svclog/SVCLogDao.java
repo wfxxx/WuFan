@@ -270,15 +270,21 @@ public class SVCLogDao {
                 .eq("servNo", servNo)
                 .doQuery(DSGCServInterfaceNode.class);
     }
-    public void addLogMark(List<Map<String,String>> list){
-        Iterator<Map<String,String>> iterator = list.iterator();
-        while (iterator.hasNext()){
-            Map<String,String> item = iterator.next();
-
-        }
+    public void addLogMark(DSGCLogInstanceTag dsgcLogInstanceTag ){
+            sw.buildQuery().doInsert(dsgcLogInstanceTag);
+//        Iterator<Map<String,String>> iterator = list.iterator();
+//        while (iterator.hasNext()){
+//            Map<String,String> item = iterator.next();
+//           Boolean isExist = checkLogMarkIsExist(item.get("trackId"),item.get("tagCode"));
+//           if(isExist){
+//               deleteLogMark(item.get("trackId"),item.get("tagCode"));
+//           }
+//
+//        }
     }
-    public void checkLogMarkIsExist(String trackId,String tagCode){
-        sw.buildQuery().eq("track_id",trackId).eq("tag_code",tagCode).doQueryFirst(DSGCLogInstanceTag.class);
+    public Boolean checkLogMarkIsExist(String trackId,String tagCode){
+        DSGCLogInstanceTag dsgcLogInstanceTag =  sw.buildQuery().eq("track_id",trackId).eq("tag_code",tagCode).doQueryFirst(DSGCLogInstanceTag.class);
+        return dsgcLogInstanceTag != null ?true:false;
     }
     public void deleteLogMark(String trackId,String tagCode){
         sw.buildQuery().eq("track_id",trackId).eq("tag_code",tagCode).doDelete(DSGCLogInstanceTag.class);

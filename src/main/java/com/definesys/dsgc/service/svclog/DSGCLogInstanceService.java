@@ -5,6 +5,9 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.definesys.dsgc.service.apilog.bean.ApiLogInstListDTO;
+import com.definesys.dsgc.service.lkv.FndLookupTypeDao;
+import com.definesys.dsgc.service.lkv.bean.FndLookupType;
+import com.definesys.dsgc.service.lkv.bean.FndLookupValue;
 import com.definesys.dsgc.service.svclog.bean.*;
 import com.definesys.dsgc.service.system.bean.DSGCSystemEntities;
 import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
@@ -16,6 +19,7 @@ import com.definesys.dsgc.service.utils.httpclient.ResultVO;
 import com.definesys.mpaas.common.exception.MpaasRuntimeException;
 import com.definesys.mpaas.common.http.Response;
 import com.definesys.mpaas.query.db.PageQueryResult;
+import org.omg.CORBA.IDLTypeHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -25,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -35,6 +40,9 @@ public class DSGCLogInstanceService {
     DSGCLogInstanceDao dsgcLogInstanceDao;
     @Autowired
     SVCLogDao svcLogDao;
+
+    @Autowired
+    FndLookupTypeDao fndLookupTypeDao;
 
     @Autowired
     private UserHelper userHelper;
@@ -72,6 +80,15 @@ public class DSGCLogInstanceService {
 //                return dsgcLogInstance;
 //            }
             dsgcLogInstance = this.dsgcLogInstanceDao.query(keyword,userRole ,uid, instance, pageSize, pageIndex,servNoList,codeList);
+            Iterator<DSGCLogInstance> instanceIterator = dsgcLogInstance.getResult().iterator();
+            FndLookupType log_inst_tag = fndLookupTypeDao.getFndLookupTypeByType("LOG_INST_TAG");
+            List<FndLookupValue> tagTypes = log_inst_tag.getValues();
+            while (instanceIterator.hasNext()){
+                DSGCLogInstance logInstance = instanceIterator.next();
+                Integer runTimes = logInstance.getRunTimes();
+                List<Map<String,String>> tags = dsgcLogInstanceDao.queryLogMark(logInstance.getTrackId(),tagTypes,runTimes);
+               logInstance.setTags(tags);
+            }
             return dsgcLogInstance;
         } catch (Exception e) {
             throw new MpaasRuntimeException(e);

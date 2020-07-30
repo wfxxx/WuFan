@@ -430,17 +430,19 @@ public PageQueryResult<SVCLogListBean> querySvcLogRecordListByCon(SVCLogQueryBea
     }
     @Transactional(rollbackFor = Exception.class)
     public void addLogMark(Map<String,Object> param){
-        System.out.println(param);
-        List<Map<String,String>> list = new ArrayList<>();
-        if(param.containsKey("checkServList")){
+        DSGCLogInstanceTag dsgcLogInstanceTag = new DSGCLogInstanceTag();
+        if(param.containsKey("checkServList") && (param.get("checkServList")) != null && ((List)param.get("checkServList")).size() > 0){
             List<String> checkServList = (List) param.get("checkServList");
             for (String str:checkServList) {
             Map<String,String> map = new HashMap<>();
-            map.put("trackId",str);
-            map.put("tagCode", (String) param.get("tagCode"));
-            map.put("tagDesc", (String) param.get("tagDesc"));
-            list.add(map);
-                this.sldao.addLogMark(list);
+            dsgcLogInstanceTag.setTrackId(str);
+            dsgcLogInstanceTag.setTagCode(String.valueOf(param.get("tagCode")));
+            dsgcLogInstanceTag.setTagDesc(String.valueOf(param.get("tagDesc")));
+                Boolean isExist = sldao.checkLogMarkIsExist(str,dsgcLogInstanceTag.getTagCode());
+                if(isExist){
+                    sldao.deleteLogMark(str,dsgcLogInstanceTag.getTagCode());
+                }
+                this.sldao.addLogMark(dsgcLogInstanceTag);
             }
         }
     }
