@@ -1,11 +1,16 @@
 package com.definesys.dsgc.service.apilog.bean;
 
+import java.util.List;
+import java.util.Map;
+
 public class QueryApiLogInstVO {
+
     private String startTime;
     private String endTime;
     private String env;
     private String apiCode;
     private String consumerCode;
+    private List<Map<String,String>> keywordForm;
 
     public String getStartTime() {
         return startTime;
@@ -45,5 +50,13 @@ public class QueryApiLogInstVO {
 
     public void setConsumerCode(String consumerCode) {
         this.consumerCode = consumerCode;
+    }
+
+    public List<Map<String, String>> getKeywordForm() {
+        return keywordForm;
+    }
+
+    public void setKeywordForm(List<Map<String, String>> keywordForm) {
+        this.keywordForm = keywordForm;
     }
 }

@@ -9,6 +9,9 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.io.Serializable;
 import java.util.Date;
+@SQLQuery(value = {
+        @SQL(view = "have_bizKey_log_view", sql = "select logs.* from (select track_id from dsgc_log_bizkey biz where biz.bus_serv_no = #apiCode and (biz.Col1 = #COL1 OR biz.Col2 = #COL2 OR biz.Col3 = #COL3 OR biz.Col4 = #COL4 OR biz.Col5 = #COL5 OR biz.Col6 = #COL6 OR biz.Col7 = #COL7 OR biz.Col8 = #COL8 OR biz.Col9 = #COL9 OR biz.Col10 = #COLTEN)) t_id, dag_log_instance logs where logs.track_id = t_id.track_id"),
+})
 @Table(value = "DAG_LOG_INSTANCE")
 public class DagLogInstanceBean extends MpaasBasePojo implements Serializable {
     @RowID(type = RowIDType.UUID)

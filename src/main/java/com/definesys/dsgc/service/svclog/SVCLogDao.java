@@ -1,5 +1,6 @@
 package com.definesys.dsgc.service.svclog;
 
+import com.definesys.dsgc.service.apilog.bean.DSGCApisBean;
 import com.definesys.dsgc.service.svclog.bean.*;
 import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
 import com.definesys.dsgc.service.svcmng.bean.DSGCServInterfaceNode;
@@ -14,7 +15,9 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 @Transactional
@@ -180,15 +183,30 @@ public class SVCLogDao {
         sw.buildQuery().doInsert(validResut);
     }
     public PageQueryResult<DSGCService> querySvcLogBizkeyByCon(SVCLogQueryBean q, int pageSize, int pageIndex, String userRole, List<String> sysCodeList) {
-        StringBuffer sqlStr = new StringBuffer(" select ds.serv_no servNo,ds.serv_name servName,ds.subordinate_system subordinateSystem,ds.biz_resolve bizResolve,dse.sys_name attribue1 " +
-                                                " from dsgc_services ds, dsgc_system_entities dse " +
-                                                " where exists (select serv_no " +
-                                                " from dsgc_serv_interface_node dsin " +
-                                                " where dsin.serv_no = ds.serv_no) " +
-                                                " and ds.subordinate_system = dse.sys_code ");
+        StringBuffer sqlStr = new StringBuffer();
         MpaasQuery mq = sw.buildQuery();
+        if("ESB".equals(q.getQueryType())){
+            sqlStr.append(" select ds.serv_no servNo,ds.serv_name servName,ds.subordinate_system subordinateSystem,ds.biz_resolve bizResolve,dse.sys_name attribue1 " +
+                    " from dsgc_services ds, dsgc_system_entities dse " +
+                    " where exists (select serv_no " +
+                    " from dsgc_serv_interface_node dsin " +
+                    " where dsin.serv_no = ds.serv_no) " +
+                    " and ds.subordinate_system = dse.sys_code ");
+        }else if("API".equals(q.getQueryType())){
+            sqlStr.append(" select da.api_code servNo,da.api_name servName,da.app_code subordinateSystem,da.biz_resolve bizResolve,dse.sys_name attribue1 " +
+                    " from dsgc_apis da, dsgc_system_entities dse " +
+                    " where exists (select serv_no " +
+                    " from dsgc_serv_interface_node dsin " +
+                    " where dsin.serv_no = da.api_code) " +
+                    " and da.app_code = dse.sys_code ");
+        }
+
         if ("SystemLeader".equals(userRole) && sysCodeList.size()>0){
-            sqlStr.append(" and ds.subordinate_system in ( ");
+            if("ESB".equals(q.getQueryType())){
+                sqlStr.append(" and ds.subordinate_system in ( ");
+            }else if("API".equals(q.getQueryType())){
+                sqlStr.append(" and da.app_code in ( ");
+            }
             for (int i = 0;i<sysCodeList.size();i++){
                 if(i<sysCodeList.size()-1){
                     sqlStr.append("'"+sysCodeList.get(i)+"',");
@@ -234,7 +252,12 @@ public class SVCLogDao {
                 .doQuery(DSGCServInterfaceNode.class);
     }
     public void updateBizResolve(UpdateBizResolveVO param){
-        sw.buildQuery().update("biz_resolve",param.getBizResolve()).eq("servNo",param.getServNo()).doUpdate(DSGCService.class);
+        if("ESB".equals(param.getType())){
+            sw.buildQuery().update("biz_resolve",param.getBizResolve()).eq("servNo",param.getServNo()).doUpdate(DSGCService.class);
+        }else if("API".equals(param.getType())){
+            sw.buildQuery().update("biz_resolve",param.getBizResolve()).eq("api_code",param.getServNo()).doUpdate(DSGCApisBean.class);
+        }
+
     }
     public List<DSGCEnvInfoCfg> queryEsbEnv(){
        return sw.buildQuery().eq("env_type","ESB").orderBy("env_seq","desc").doQuery(DSGCEnvInfoCfg.class);
@@ -246,5 +269,18 @@ public class SVCLogDao {
         return sw.buildQuery()
                 .eq("servNo", servNo)
                 .doQuery(DSGCServInterfaceNode.class);
+    }
+    public void addLogMark(List<Map<String,String>> list){
+        Iterator<Map<String,String>> iterator = list.iterator();
+        while (iterator.hasNext()){
+            Map<String,String> item = iterator.next();
+
+        }
+    }
+    public void checkLogMarkIsExist(String trackId,String tagCode){
+        sw.buildQuery().eq("track_id",trackId).eq("tag_code",tagCode).doQueryFirst(DSGCLogInstanceTag.class);
+    }
+    public void deleteLogMark(String trackId,String tagCode){
+        sw.buildQuery().eq("track_id",trackId).eq("tag_code",tagCode).doDelete(DSGCLogInstanceTag.class);
     }
 }
