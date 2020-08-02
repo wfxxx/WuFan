@@ -42,7 +42,7 @@ public class ApiPlugInService {
         List<DAGPluginListVO> queryPluginList= result.getResult();
         for(DAGPluginListVO item:queryPluginList){
             if(item.getSourCode()!=null) {
-                List<DeployedEnvInfoBean> value = apiPlugInDao.queryDeplogDev(item.getSourCode());
+                List<DeployedEnvInfoBean> value = apiPlugInDao.queryDeplogDev(item.getSourCode(),item.getSourType());
                 if (value != null) {
                     for (DeployedEnvInfoBean valueItem : value) {
                         String color = envColorLkv.get(valueItem.getEnvCode());
