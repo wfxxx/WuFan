@@ -3,6 +3,7 @@ package com.definesys.dsgc.service.svclog;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.definesys.dsgc.service.lkv.bean.FndLookupValue;
 import com.definesys.dsgc.service.rpt.bean.TopologyVO;
 import com.definesys.dsgc.service.svclog.bean.*;
 import com.definesys.dsgc.service.system.bean.DSGCSystemEntities;
@@ -19,10 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.sql.Clob;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Component("dsgcLogInstanceDao")
 public class DSGCLogInstanceDao {
@@ -374,5 +372,31 @@ public class DSGCLogInstanceDao {
                 .sql("select user_name from dsgc_user where user_id = #uid")
                 .setVar("uid",uid)
                 .doQueryFirst();
+    }
+    public List<Map<String,String>> queryLogMark(String trackId,List<FndLookupValue> tagTypes,Integer runTimes){
+        List<Map<String,String>> result = new ArrayList<>();
+
+        List<DSGCLogInstanceTag> logInstanceTags = sw.buildQuery().eq("track_id",trackId).doQuery(DSGCLogInstanceTag.class);
+        for (DSGCLogInstanceTag item :logInstanceTags) {
+            for (int i = 0; i < tagTypes.size(); i++) {
+                if(item.getTagCode().equals(tagTypes.get(i).getLookupCode())){
+                    Map<String,String> tag = new HashMap<>();
+                    tag.put("meaning",tagTypes.get(i).getMeaning());
+                    tag.put("tagColor",tagTypes.get(i).getTag());
+                    tag.put("tagCode",item.getTagCode());
+                    tag.put("tagDesc",item.getTagDesc());
+                    result.add(tag);
+                }
+                if("RETRY".equals(tagTypes.get(i).getLookupCode()) && runTimes > 1){
+                    Map<String,String> retryTag = new HashMap<>();
+                    retryTag.put("meaning",tagTypes.get(i).getMeaning());
+                    retryTag.put("tagColor",tagTypes.get(i).getTag());
+                    retryTag.put("tagCode","");
+                    retryTag.put("tagDesc","");
+                    result.add(retryTag);
+                }
+            }
+        }
+        return result;
     }
 }

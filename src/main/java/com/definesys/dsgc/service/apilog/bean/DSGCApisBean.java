@@ -21,6 +21,7 @@ public class DSGCApisBean extends MpaasBasePojo implements Serializable {
     private String marketCategory;
     private String marketStat;
     private String infoFull;
+    private String bizResolve;
     @Column(type = ColumnType.JAVA)
     private String appName;
     @Column(type = ColumnType.JAVA)
@@ -193,5 +194,13 @@ public class DSGCApisBean extends MpaasBasePojo implements Serializable {
 
     public void setIbUri(String ibUri) {
         this.ibUri = ibUri;
+    }
+
+    public String getBizResolve() {
+        return bizResolve;
+    }
+
+    public void setBizResolve(String bizResolve) {
+        this.bizResolve = bizResolve;
     }
 }

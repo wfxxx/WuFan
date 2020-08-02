@@ -12,6 +12,8 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 
 @SQLQuery(value = {
@@ -77,6 +79,9 @@ public class DSGCLogInstance {
     //日志实例对应的报文
     @Column(type = ColumnType.JAVA)
     private String payloadData;
+
+    @Column(type = ColumnType.JAVA)
+    private List<Map<String,String>> tags;
 
     @Column(type = ColumnType.JAVA)
     private Integer objectVersionNumber;
@@ -555,5 +560,13 @@ public class DSGCLogInstance {
     public void setUserHeaders(String userHeaders) {
 
         this.userHeaders = this.userHeadersFormat(userHeaders);
+    }
+
+    public List<Map<String, String>> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<Map<String, String>> tags) {
+        this.tags = tags;
     }
 }

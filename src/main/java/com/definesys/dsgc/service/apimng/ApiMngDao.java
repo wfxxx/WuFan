@@ -19,7 +19,7 @@ public class  ApiMngDao {
 
     public PageQueryResult<DSGCApisBean> queryApiMngList(CommonReqBean q, int pageIndex, int pageSize, String userId, String userRole, List<String> sysCodeList) {
         MpaasQuery query = sw.buildQuery()
-                .sql("select * from (select da.API_CODE,da.API_NAME,da.API_DESC,(select dse.SYS_NAME from DSGC_SYSTEM_ENTITIES dse where dse.SYS_CODE = da.APP_CODE) APP_CODE,da.APP_CODE sys_code,da.INFO_FULL,dsu.PROVIDER,dsu.HTTP_METHOD,dsu.IB_URI,da.CREATION_DATE from DSGC_APIS da left join DSGC_SERVICES_URI dsu on da.API_CODE = dsu.SERV_NO order by CREATION_DATE desc) t ");
+                .sql("select * from (select da.API_ID, da.API_CODE,da.API_NAME,da.API_DESC,(select dse.SYS_NAME from DSGC_SYSTEM_ENTITIES dse where dse.SYS_CODE = da.APP_CODE) APP_CODE,da.APP_CODE sys_code,da.INFO_FULL,dsu.PROVIDER,dsu.HTTP_METHOD,dsu.IB_URI,da.CREATION_DATE from DSGC_APIS da left join DSGC_SERVICES_URI dsu on da.API_CODE = dsu.SERV_NO order by CREATION_DATE desc) t ");
         if ("Y".equals(q.getIsComplete())) {
             query.and()
                     .ne("infoFull", "100")

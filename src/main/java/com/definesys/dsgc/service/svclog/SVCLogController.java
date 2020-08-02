@@ -177,4 +177,16 @@ public class SVCLogController {
         return Response.ok().data(list);
 
     }
+    @RequestMapping(value = "/addLogMark", method = RequestMethod.POST)
+    public Response addLogMark(@RequestBody Map<String,Object> param,
+                                     HttpServletRequest request) {
+        String userRole = request.getHeader("userRole");
+        String userId = request.getHeader("uid");
+        try {
+            this.sls.addLogMark(param);
+        } catch (Exception e) {
+            return Response.error("添加标记失败，请联系管理员");
+        }
+        return Response.ok();
+    }
 }

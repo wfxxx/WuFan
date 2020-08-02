@@ -1,5 +1,8 @@
 package com.definesys.dsgc.service.svclog;
 
+import com.definesys.dsgc.service.apimng.ApiMngDao;
+import com.definesys.dsgc.service.apimng.bean.CommonReqBean;
+import com.definesys.dsgc.service.apimng.bean.DSGCApisBean;
 import com.definesys.dsgc.service.lkv.FndPropertiesService;
 import com.definesys.dsgc.service.svclog.bean.*;
 import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
@@ -23,6 +26,9 @@ public class SVCLogService {
     private DSGCUserDao dsgcUserDao;
     @Autowired
     DSGCLogInstanceDao dsgcLogInstanceDao;
+
+    @Autowired
+    private ApiMngDao apiMngDao;
 
 public PageQueryResult<SVCLogListBean> querySvcLogRecordListByCon(SVCLogQueryBean q, int pageSize, int pageIndex,String userRole,String userId) {
     PageQueryResult<SVCLogListBean> result = new PageQueryResult<SVCLogListBean>();
@@ -127,20 +133,38 @@ public PageQueryResult<SVCLogListBean> querySvcLogRecordListByCon(SVCLogQueryBea
                         sysCodeList.add(s.getSysCode());
                     }
                 }
-                List<DSGCService> result =sldao.queryServCommonByCon(q,userRole,sysCodeList);
-                List<SVCCommonServResDTO> servResDTOs = new ArrayList<>();
-                for (DSGCService temp:result) {
-                    SVCCommonServResDTO svcCommonServResDTO = new SVCCommonServResDTO();
-                    svcCommonServResDTO.setServId(temp.getServId());
-                    svcCommonServResDTO.setServName(temp.getServName());
-                    svcCommonServResDTO.setServNo(temp.getServNo());
-                    svcCommonServResDTO.setSysCode(temp.getSubordinateSystem());
-                    svcCommonServResDTO.setSysName(temp.getAttribue1());
-                    servResDTOs.add(svcCommonServResDTO);
+                if("ESB".equals(q.getQueryType())){
+                    List<DSGCService> result =sldao.queryServCommonByCon(q,userRole,sysCodeList);
+                    List<SVCCommonServResDTO> servResDTOs = new ArrayList<>();
+                    for (DSGCService temp:result) {
+                        SVCCommonServResDTO svcCommonServResDTO = new SVCCommonServResDTO();
+                        svcCommonServResDTO.setServId(temp.getServId());
+                        svcCommonServResDTO.setServName(temp.getServName());
+                        svcCommonServResDTO.setServNo(temp.getServNo());
+                        svcCommonServResDTO.setSysCode(temp.getSubordinateSystem());
+                        svcCommonServResDTO.setSysName(temp.getAttribue1());
+                        servResDTOs.add(svcCommonServResDTO);
+                    }
+                    return servResDTOs;
+                }else if("API".equals(q.getQueryType())){
+                    CommonReqBean param = new CommonReqBean();
+                    param.setCon0(q.getCon0());
+                    PageQueryResult<DSGCApisBean> pageQueryResult = apiMngDao.queryApiMngList(param, 1, 1000, userId, userRole, sysCodeList);
+                    List<SVCCommonServResDTO> servResDTOs = new ArrayList<>();
+                    for (DSGCApisBean item:pageQueryResult.getResult()) {
+                        SVCCommonServResDTO svcCommonServResDTO = new SVCCommonServResDTO();
+                        svcCommonServResDTO.setServId(item.getApiId());
+                        svcCommonServResDTO.setServName(item.getApiName());
+                        svcCommonServResDTO.setServNo(item.getApiCode());
+                        svcCommonServResDTO.setSysCode(item.getSysCode());
+                        svcCommonServResDTO.setSysName(item.getAppCode());
+                        servResDTOs.add(svcCommonServResDTO);
+                    }
+                    return servResDTOs;
                 }
-                return servResDTOs;
-            }
 
+            }
+    return null;
         }
     public PageQueryResult<SVCLogResultResDTO> querySvcLogResultByCon(SVCLogQueryBean q,int pageSize,int pageIndex,String userRole,String userId){
         if ("Tourist".equals(userRole)){
@@ -403,6 +427,24 @@ public PageQueryResult<SVCLogListBean> querySvcLogRecordListByCon(SVCLogQueryBea
 
     public List<DSGCServInterfaceNode> getKeyword(String servNo) {
         return this.sldao.getKeyword(servNo);
+    }
+    @Transactional(rollbackFor = Exception.class)
+    public void addLogMark(Map<String,Object> param){
+        DSGCLogInstanceTag dsgcLogInstanceTag = new DSGCLogInstanceTag();
+        if(param.containsKey("checkServList") && (param.get("checkServList")) != null && ((List)param.get("checkServList")).size() > 0){
+            List<String> checkServList = (List) param.get("checkServList");
+            for (String str:checkServList) {
+            Map<String,String> map = new HashMap<>();
+            dsgcLogInstanceTag.setTrackId(str);
+            dsgcLogInstanceTag.setTagCode(String.valueOf(param.get("tagCode")));
+            dsgcLogInstanceTag.setTagDesc(String.valueOf(param.get("tagDesc")));
+                Boolean isExist = sldao.checkLogMarkIsExist(str,dsgcLogInstanceTag.getTagCode());
+                if(isExist){
+                    sldao.deleteLogMark(str,dsgcLogInstanceTag.getTagCode());
+                }
+                this.sldao.addLogMark(dsgcLogInstanceTag);
+            }
+        }
     }
 }
 //    insert into DSGC_SVCGEN_OBJ
