@@ -3,6 +3,8 @@ package com.definesys.dsgc.service.dess.bean;
 import com.alibaba.fastjson.JSONObject;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @ClassName DinstVO
@@ -13,6 +15,7 @@ import java.util.Date;
  **/
 public class DinstVO {
     //DinstBean
+    private String logId;
     private String jobNo;
     private String businessId;
     private String jobName;
@@ -22,7 +25,7 @@ public class DinstVO {
     private Date nextDoTime;
     private Date aliveStart;
     private Date aliveEnd;
-    private String group;
+    private String groupName;
     private Integer sucessTimes;
     private Integer failTimes;
     private Integer avgRunTime;
@@ -35,36 +38,34 @@ public class DinstVO {
     private String portType;
     private String operation;
     private String payload;
+    private List<Map<String,String>> dateList;
+    private String rate; // 频率类型方便前端展示定义时间
 
+    public DinstVO(){}
 
     public DinstVO(DinstBean dinstBean,DessBusiness dessBusiness){
         //DinstBean
-        if(dinstBean != null){
-            jobNo=dinstBean.getJobNo();
-            businessId=dinstBean.getBusinessId();
-            jobName=dinstBean.getJobName();
-            jobType=dinstBean.getJobType();
-            //等待使用corn工具类转换
-            //frequency=dinstBean.getFrequency();
-            nextDoTime=dinstBean.getNextDoTime();
-            aliveStart=dinstBean.getAliveStart();
-            aliveEnd=dinstBean.getAliveEnd();
-            group=dinstBean.getGroup();
-            sucessTimes=dinstBean.getSucessTimes();
-            failTimes=dinstBean.getFailTimes();
-            avgRunTime=dinstBean.getAvgRunTime();
-            description=dinstBean.getDescription();
-            version=dinstBean.getVersion();
-        }
-        if(dessBusiness != null){
-            //DessBusiness
-            wsdlUrl=dessBusiness.getWsdlUrl();
-            webServiceType=dessBusiness.getWebServiceType();
-            service=dessBusiness.getWebServiceType();
-            portType=dessBusiness.getPortType();
-            operation=dessBusiness.getOperation();
-            payload=dessBusiness.getPayload();
-        }
+          businessId=dinstBean.getBusinessId();
+          jobName=dinstBean.getJobName();
+          jobType=dinstBean.getJobType();
+          //等待使用corn工具类转换
+          //frequency=dinstBean.getFrequency();
+          nextDoTime=dinstBean.getNextDoTime();
+          aliveStart=dinstBean.getAliveStart();
+          aliveEnd=dinstBean.getAliveEnd();
+          groupName=dinstBean.getGroupName();
+          sucessTimes=dinstBean.getSucessTimes();
+          failTimes=dinstBean.getFailTimes();
+          avgRunTime=dinstBean.getAvgRunTime();
+          description=dinstBean.getDescription();
+          version=dinstBean.getVersion();
+        //DessBusiness
+          wsdlUrl=dessBusiness.getWsdlUrl();
+          webServiceType=dessBusiness.getWebServiceType();
+          service=dessBusiness.getWebServiceType();
+          portType=dessBusiness.getPortType();
+          operation=dessBusiness.getOperation();
+          payload=dessBusiness.getPayload();
     }
 
     public  DinstBean getDinstBean(){
@@ -77,7 +78,7 @@ public class DinstVO {
         dinstBean.setFailTimes(failTimes);
         //等待corn工具转换
         //dinstBean.setFrequency(frequency);
-        dinstBean.setGroup(group);
+        dinstBean.setGroupName(groupName);
         dinstBean.setJobName(jobName);
         dinstBean.setJobType(jobType);
         dinstBean.setJobNo(jobNo);
@@ -170,12 +171,12 @@ public class DinstVO {
         this.aliveEnd = aliveEnd;
     }
 
-    public String getGroup() {
-        return group;
+    public String getGroupName() {
+        return groupName;
     }
 
-    public void setGroup(String group) {
-        this.group = group;
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
     }
 
     public Integer getSucessTimes() {
@@ -266,6 +267,28 @@ public class DinstVO {
         this.payload = payload;
     }
 
+    public String getLogId() {
+        return logId;
+    }
+
+    public void setLogId(String logId) {
+        this.logId = logId;
+    }
+
+    public List<Map<String, String>> getDateList() {
+        return dateList;
+    }
+
+    public void setDateList(List<Map<String, String>> dateList) {
+        this.dateList = dateList;
+    }
 
 
+    public String getRate() {
+        return rate;
+    }
+
+    public void setRate(String rate) {
+        this.rate = rate;
+    }
 }

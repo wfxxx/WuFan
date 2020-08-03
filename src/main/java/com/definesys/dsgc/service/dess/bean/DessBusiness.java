@@ -1,8 +1,6 @@
 package com.definesys.dsgc.service.dess.bean;
 
-import com.definesys.mpaas.query.annotation.RowID;
-import com.definesys.mpaas.query.annotation.RowIDType;
-import com.definesys.mpaas.query.annotation.Table;
+import com.definesys.mpaas.query.annotation.*;
 
 /**
  * @ClassName DessBusiness
@@ -14,6 +12,8 @@ import com.definesys.mpaas.query.annotation.Table;
 @Table(value = "DESS_BUSINESS")
 public class DessBusiness {
 
+    private String jobNo;
+    @RowID(sequence = "dess_business_s",type= RowIDType.AUTO)
     private String businessId;
     private String wsdlUrl;
     private String webServiceType;
@@ -77,5 +77,13 @@ public class DessBusiness {
 
     public void setPayload(String payload) {
         this.payload = payload;
+    }
+
+    public String getJobNo() {
+        return jobNo;
+    }
+
+    public void setJobNo(String jobNo) {
+        this.jobNo = jobNo;
     }
 }

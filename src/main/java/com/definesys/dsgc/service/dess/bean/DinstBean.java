@@ -23,7 +23,7 @@ public class DinstBean {
     private Date nextDoTime;
     private Date aliveStart;
     private Date aliveEnd;
-    private String group="default";
+    private String groupName="default";
     private Integer sucessTimes;
     private Integer failTimes;
     private Integer avgRunTime;
@@ -102,12 +102,12 @@ public class DinstBean {
         this.aliveEnd = aliveEnd;
     }
 
-    public String getGroup() {
-        return group;
+    public String getGroupName() {
+        return groupName;
     }
 
-    public void setGroup(String group) {
-        this.group = group;
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
     }
 
     public Integer getSucessTimes() {
