@@ -38,7 +38,18 @@ public class DSGCLogInstanceDao {
         logger.debug(instance.toString());
         //不存在关键字时
         if (keyword == null) {
-            MpaasQuery mq = sw.buildQuery();
+            MpaasQuery mq;
+            if("SystemLeader".equals(userRole) || "Tourist".equals(userRole)){
+                StringBuffer sql = new StringBuffer(" select * from (select * from dsgc_log_instance ");
+                sql.append(mapping(sysNoList,sysList));
+                sql.append(" ) ");
+               mq = sw.buildQuery().sql(sql.toString());
+            }else {
+               mq = sw.buildQuery() ;
+            }
+
+            System.out.println(sysNoList);
+            System.out.println(sysList);
             mq.likeNocase("serv_no", instance.getServNo());
             mq.likeNocase("serv_name", instance.getServName());
             mq.likeNocase("token", instance.getToken());
@@ -49,10 +60,6 @@ public class DSGCLogInstanceDao {
             mq.likeNocase("biz_status_dtl",instance.getBizStatusDtl());
             mq.lteq("end_time", instance.getEndTimeDate());
             mq.gteq("start_time", instance.getStartTimeDate());
-            if("SystemLeader".equals(userRole) || "Tourist".equals(userRole)){
-                mq.and().in("serv_no",sysNoList).or().
-                        in("req_from",sysList);
-            }
             mq.orderBy("creation_date", "desc");
           return   mq.doPageQuery(pageIndex, pageSize, DSGCLogInstance.class);
 
@@ -106,8 +113,13 @@ public class DSGCLogInstanceDao {
                         break;
                 }
             }
-            mq = sw.buildViewQuery("Log_Instance_view")
-                    .setVar("COL1", COL1)
+            StringBuilder sql = new StringBuilder(" select * from select logs.* from(select track_id from dsgc_log_bizkey biz where biz.bus_serv_no = #servNo and (biz.Col1 = #COL1 OR biz.Col2 = #COL2 OR biz.Col3 = #COL3 OR biz.Col4 = #COL4 OR biz.Col5 = #COL5 OR biz.Col6 = #COL6 OR biz.Col7 = #COL7 OR biz.Col8 = #COL8 OR biz.Col9 = #COL9 OR biz.Col10 = #COLTEN)) t_id, (select insv.*, bpv.payload_data from dsgc_log_instance_v insv, (select pv.track_id, xmlagg(xmlparse(content to_char(pv.payload_data) || '<======报文结束======>' wellformed) order by pv.track_id asc) .getclobval() payload_data from dsgc_log_body_payload_v pv group by pv.track_id) bpv where insv.track_id = bpv.track_id) logs where logs.track_id = t_id.track_id(+)) ");
+            if("SystemLeader".equals(userRole) || "Tourist".equals(userRole)){
+                sql.append(mapping(sysNoList,sysList));
+            }
+            //   mq = sw.buildViewQuery("Log_Instance_view")
+            mq = sw.buildQuery().sql(sql.toString());
+                    mq.setVar("COL1", COL1)
                     .setVar("COL2", COL2)
                     .setVar("COL3", COL3)
                     .setVar("COL4", COL4)
@@ -117,8 +129,8 @@ public class DSGCLogInstanceDao {
                     .setVar("COL8", COL8)
                     .setVar("COL9", COL9)
                     .setVar("COLTEN", COLTEN)
-                    .setVar("servNo", instance.getServNo())
-                    .eq("serv_no", instance.getServNo())
+                    .setVar("servNo", instance.getServNo());
+                    mq.eq("serv_no", instance.getServNo())
                     .likeNocase("serv_name", instance.getServName())
                     .likeNocase("token", instance.getToken())
                     .likeNocase("inst_status", instance.getInstStatus())
@@ -129,15 +141,53 @@ public class DSGCLogInstanceDao {
                     .lteq("end_time", instance.getEndTimeDate())
                     .gteq("start_time", instance.getStartTimeDate())
                     .orderBy("creation_date", "desc");
-            if("SystemLeader".equals(userRole) || "Tourist".equals(userRole)){
-                mq.in("serv_no",sysNoList).or().
-                        in("req_from",sysList);
-            }
 
 
             return mq.doPageQuery(pageIndex, pageSize, DSGCLogInstance.class);
 
         }
+    }
+    public StringBuilder mapping(List<String> sysNoList,List<String> sysList){
+        StringBuilder sql = new StringBuilder("");
+        if(!(sysNoList.isEmpty() && sysList.isEmpty())){
+            sql.append(" where 1=1 ");
+            if(!sysNoList.isEmpty()){
+                StringBuilder stringBuilder = new StringBuilder(" and (");
+                for (int i = 0; i < sysNoList.size(); i++) {
+                    String temp =null;
+                    if(i == 0){
+                        temp ="serv_no = '"+ sysNoList.get(i)+"'";
+                    }else {
+                        temp =" or serv_no = '"+ sysNoList.get(i)+"'";
+                    }
+                    stringBuilder.append(temp);
+                }
+                stringBuilder.append(")");
+                sql.append(stringBuilder);
+            }
+            if(!sysList.isEmpty()){
+                StringBuilder stringBuilder = new StringBuilder();
+                if(!sysNoList.isEmpty()){
+                     stringBuilder = new StringBuilder(" or (");
+                }else {
+                    stringBuilder = new StringBuilder(" and (");
+                }
+
+                for (int i = 0; i <sysList.size() ; i++) {
+                    String temp =null;
+                    if(i == 0){
+                        temp ="req_from = '"+ sysList.get(i)+"'";
+                    }else {
+                        temp =" or req_from = '"+ sysList.get(i)+"'";
+                    }
+                    stringBuilder.append(temp);
+                }
+                stringBuilder.append(")");
+                sql.append(stringBuilder);
+            }
+
+        }
+        return sql;
     }
 
     public PageQueryResult<DSGCLogInstance> query1(String userRole, DSGCLogInstance instance, int pageSize, int pageIndex, DSGCSystemUser systemUser) throws Exception {

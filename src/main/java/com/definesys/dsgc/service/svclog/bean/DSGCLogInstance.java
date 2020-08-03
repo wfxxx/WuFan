@@ -27,7 +27,8 @@ import java.util.Map;
         @SQL(view = "HaveBizKey_Log_Ins_view",sql = " select logs.* from(select track_id from dsgc_log_bizkey biz where biz.bus_serv_no = #servNo and (biz.Col1 = #COL1 OR biz.Col2 = #COL2 OR biz.Col3 = #COL3 OR biz.Col4 = #COL4 OR biz.Col5 = #COL5 OR biz.Col6 = #COL6 OR biz.Col7 = #COL7 OR biz.Col8 = #COL8 OR biz.Col9 = #COL9 OR biz.Col10 = #COLTEN)) t_id, dsgc_log_instance logs where logs.track_id = t_id.track_id(+)  "),
 
         @SQL(view = "Tourist_Log_Instance_view",sql = "select temp.* from (select logs.* from(select track_id from dsgc_log_bizkey biz where biz.bus_serv_no = #servNo and (biz.Col1 = #COL1 OR biz.Col2 = #COL2 OR biz.Col3 = #COL3 OR biz.Col4 = #COL4 OR biz.Col5 = #COL5 OR biz.Col6 = #COL6 OR biz.Col7 = #COL7 OR biz.Col8 = #COL8 OR biz.Col9 = #COL9 OR biz.Col10 = #COLTEN)) t_id,dsgc_log_instance logs" +
-                " where logs.track_id = t_id.track_id) temp,dsgc_service_user su where su.serv_no = temp.serv_no AND su.user_id = #userId AND su.is_show = 'Y' ")
+                " where logs.track_id = t_id.track_id) temp,dsgc_service_user su where su.serv_no = temp.serv_no AND su.user_id = #userId AND su.is_show = 'Y' "),
+        @SQL(view = "role_control_instance_view",sql = "select * from (select * from dsgc_log_instance where serv_no in (#servNos)) ")
 })
 @Table(value = "dsgc_log_instance")
 public class DSGCLogInstance {
