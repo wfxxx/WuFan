@@ -183,9 +183,21 @@ public class SVCLogController {
         String userRole = request.getHeader("userRole");
         String userId = request.getHeader("uid");
         try {
-            this.sls.addLogMark(param);
+            this.sls.addLogMark(param,request);
         } catch (Exception e) {
             return Response.error("添加标记失败，请联系管理员");
+        }
+        return Response.ok();
+    }
+    @RequestMapping(value = "/onCloseTag", method = RequestMethod.POST)
+    public Response onCloseTag(@RequestBody Map<String,Object> param,
+                               HttpServletRequest request) {
+        String userRole = request.getHeader("userRole");
+        String userId = request.getHeader("uid");
+        try {
+            this.sls.onCloseTag(param,request);
+        } catch (Exception e) {
+            return Response.error("删除标记失败，请联系管理员");
         }
         return Response.ok();
     }

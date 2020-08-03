@@ -9,6 +9,9 @@ import com.definesys.dsgc.service.lkv.FndLookupTypeDao;
 import com.definesys.dsgc.service.lkv.bean.FndLookupType;
 import com.definesys.dsgc.service.lkv.bean.FndLookupValue;
 import com.definesys.dsgc.service.svclog.bean.*;
+import com.definesys.dsgc.service.svcmng.bean.DSGCService;
+import com.definesys.dsgc.service.system.DSGCSystemDao;
+import com.definesys.dsgc.service.system.bean.DSGCSystemAccess;
 import com.definesys.dsgc.service.system.bean.DSGCSystemEntities;
 import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
 import com.definesys.dsgc.service.rpt.bean.TopologyVO;
@@ -43,6 +46,9 @@ public class DSGCLogInstanceService {
 
     @Autowired
     FndLookupTypeDao fndLookupTypeDao;
+    
+    @Autowired
+    DSGCSystemDao systemDao;
 
     @Autowired
     private UserHelper userHelper;
@@ -70,9 +76,13 @@ public class DSGCLogInstanceService {
                         codeList.add(user.getSysCode());
                     }
                     // 根据系统查询接口名称
-                    List<TopologyVO> servNoBySystem = dsgcLogInstanceDao.getServNoBySystem(codeList);
-                    for (TopologyVO topologyVO: servNoBySystem) {
-                        servNoList.add(topologyVO.getServNo());
+//                    List<TopologyVO> servNoBySystem = dsgcLogInstanceDao.getServNoBySystem(codeList);
+//                    for (TopologyVO topologyVO: servNoBySystem) {
+//                        servNoList.add(topologyVO.getServNo());
+//                    }
+                    List<DSGCService> serviceList = systemDao.querySystemServBySysCodes(codeList);
+                    for (DSGCService item :serviceList) {
+                        servNoList.add(item.getServNo());
                     }
                 }
             }

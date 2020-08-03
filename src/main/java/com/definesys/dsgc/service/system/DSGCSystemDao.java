@@ -1,5 +1,6 @@
 package com.definesys.dsgc.service.system;
 
+import com.definesys.dsgc.service.svcmng.bean.DSGCService;
 import com.definesys.dsgc.service.system.bean.DSGCSystem;
 import com.definesys.dsgc.service.system.bean.DSGCServRouting;
 import com.definesys.dsgc.service.system.bean.DSGCSystemAccess;
@@ -212,5 +213,8 @@ public class DSGCSystemDao {
         return sw.buildQuery()
                 .eq("user_id",userId)
                 .doQuery(DSGCSystemUser.class);
+    }
+    public List<DSGCService> querySystemServBySysCodes(List<String> sysCodeList){
+        return sw.buildQuery().in("subordinate_system",sysCodeList).doQuery(DSGCService.class);
     }
 }

@@ -49,11 +49,11 @@ public class DSGCLogInstanceDao {
             mq.likeNocase("biz_status_dtl",instance.getBizStatusDtl());
             mq.lteq("end_time", instance.getEndTimeDate());
             mq.gteq("start_time", instance.getStartTimeDate());
-            mq.orderBy("creation_date", "desc");
             if("SystemLeader".equals(userRole) || "Tourist".equals(userRole)){
-                mq.in("serv_no",sysNoList).or().
-                in("req_from",sysList);
+                mq.and().in("serv_no",sysNoList).or().
+                        in("req_from",sysList);
             }
+            mq.orderBy("creation_date", "desc");
           return   mq.doPageQuery(pageIndex, pageSize, DSGCLogInstance.class);
 
         } else {
@@ -313,6 +313,7 @@ public class DSGCLogInstanceDao {
                 .in("sys_code",systenCode)
                 .doQuery(TopologyVO.class);
     }
+
     public FndProperties findFndPropertiesByKey(String key) {
         return sw.buildQuery()
                 .eq("property_key",key)
@@ -387,14 +388,17 @@ public class DSGCLogInstanceDao {
                     tag.put("tagDesc",item.getTagDesc());
                     result.add(tag);
                 }
-                if("RETRY".equals(tagTypes.get(i).getLookupCode()) && runTimes > 1){
-                    Map<String,String> retryTag = new HashMap<>();
-                    retryTag.put("meaning",tagTypes.get(i).getMeaning());
-                    retryTag.put("tagColor",tagTypes.get(i).getTag());
-                    retryTag.put("tagCode","");
-                    retryTag.put("tagDesc","");
-                    result.add(retryTag);
-                }
+            }
+        }
+        for (int i = 0; i <tagTypes.size() ; i++) {
+            if("RETRY".equals(tagTypes.get(i).getLookupCode()) && runTimes > 1){
+                Map<String,String> retryTag = new HashMap<>();
+                retryTag.put("meaning",tagTypes.get(i).getMeaning());
+                retryTag.put("tagColor",tagTypes.get(i).getTag());
+                retryTag.put("tagCode","RETRY");
+                retryTag.put("tagDesc","");
+                result.add(retryTag);
+                break;
             }
         }
         return result;

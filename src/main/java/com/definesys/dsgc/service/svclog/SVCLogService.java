@@ -1,5 +1,7 @@
 package com.definesys.dsgc.service.svclog;
 
+import com.alibaba.fastjson.JSONException;
+import com.alibaba.fastjson.JSONObject;
 import com.definesys.dsgc.service.apimng.ApiMngDao;
 import com.definesys.dsgc.service.apimng.bean.CommonReqBean;
 import com.definesys.dsgc.service.apimng.bean.DSGCApisBean;
@@ -10,11 +12,18 @@ import com.definesys.dsgc.service.svcmng.bean.DSGCServInterfaceNode;
 import com.definesys.dsgc.service.svcmng.bean.DSGCService;
 import com.definesys.dsgc.service.svclog.bean.DSGCValidResutl;
 import com.definesys.dsgc.service.users.DSGCUserDao;
+import com.definesys.dsgc.service.utils.httpclient.HttpReqUtil;
+import com.definesys.dsgc.service.utils.httpclient.ResultVO;
+import com.definesys.mpaas.common.exception.MpaasBusinessException;
+import com.definesys.mpaas.common.http.Response;
 import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 @Service
@@ -428,21 +437,96 @@ public PageQueryResult<SVCLogListBean> querySvcLogRecordListByCon(SVCLogQueryBea
     public List<DSGCServInterfaceNode> getKeyword(String servNo) {
         return this.sldao.getKeyword(servNo);
     }
+
     @Transactional(rollbackFor = Exception.class)
-    public void addLogMark(Map<String,Object> param){
+    public void addLogMark(Map<String,Object> param, HttpServletRequest request){
         DSGCLogInstanceTag dsgcLogInstanceTag = new DSGCLogInstanceTag();
-        if(param.containsKey("checkServList") && (param.get("checkServList")) != null && ((List)param.get("checkServList")).size() > 0){
-            List<String> checkServList = (List) param.get("checkServList");
-            for (String str:checkServList) {
-            Map<String,String> map = new HashMap<>();
-            dsgcLogInstanceTag.setTrackId(str);
-            dsgcLogInstanceTag.setTagCode(String.valueOf(param.get("tagCode")));
-            dsgcLogInstanceTag.setTagDesc(String.valueOf(param.get("tagDesc")));
-                Boolean isExist = sldao.checkLogMarkIsExist(str,dsgcLogInstanceTag.getTagCode());
-                if(isExist){
-                    sldao.deleteLogMark(str,dsgcLogInstanceTag.getTagCode());
+        if(!param.containsKey("envCode")){
+            throw new MpaasBusinessException("请求参数错误，请传入正确的环境代码");
+        }
+        FndProperties fndProperties =dsgcLogInstanceDao.findFndPropertiesByKey("DSGC_CURRENT_ENV");
+        if(fndProperties == null){
+            throw new MpaasBusinessException("请配置当前环境代码！");
+        }
+
+        if ( fndProperties.getPropertyValue().equals(param.get("envCode"))){
+            if(param.containsKey("checkServList") && (param.get("checkServList")) != null && ((List)param.get("checkServList")).size() > 0){
+                List<String> checkServList = (List) param.get("checkServList");
+                for (String str:checkServList) {
+                    Map<String,String> map = new HashMap<>();
+                    dsgcLogInstanceTag.setTrackId(str);
+                    dsgcLogInstanceTag.setTagCode(String.valueOf(param.get("tagCode")));
+                    dsgcLogInstanceTag.setTagDesc(String.valueOf(param.get("tagDesc")));
+                    Boolean isExist = sldao.checkLogMarkIsExist(str,dsgcLogInstanceTag.getTagCode());
+                    if(isExist){
+                        sldao.deleteLogMark(str,dsgcLogInstanceTag.getTagCode());
+                    }
+                    this.sldao.addLogMark(dsgcLogInstanceTag);
                 }
-                this.sldao.addLogMark(dsgcLogInstanceTag);
+            }
+        }else {
+            ResultVO<Response> resultvo = new ResultVO<>();
+            List<DSGCEnvInfoCfg> envList = sldao.queryEsbEnv();
+            for (int i = 0; i < envList.size(); i++) {
+                if(param.get("envCode").equals(envList.get(i).getEnvCode())){
+                    String logPath =envList.get(i).getDsgcAdmin();
+                    logPath += "/dsgc/svclog/addLogMark";
+                    try {
+                        String json = JSONObject.toJSONString(param);
+                        resultvo = HttpReqUtil.sendPostRequest(logPath,JSONObject.parseObject(json),request);
+
+                    }catch(JSONException jex){
+                        jex.printStackTrace();
+                        throw new JSONException("参数解析异常，请检查请求参数是否正确！");
+                    }catch (HttpClientErrorException hcex){
+                        hcex.printStackTrace();
+                        throw new HttpClientErrorException(HttpStatus.resolve(404));
+                    }catch (IllegalArgumentException ex){
+                        ex.printStackTrace();
+                        throw new IllegalArgumentException("环境信息配置的uri不能为空！");
+                    }
+                    break;
+                }
+            }
+        }
+
+    }
+    @Transactional(rollbackFor = Exception.class)
+    public void onCloseTag(Map<String,Object> param, HttpServletRequest request){
+    if(!param.containsKey("envCode")){
+        throw new MpaasBusinessException("请传入正确的环境代码！");
+    }
+        FndProperties fndProperties =dsgcLogInstanceDao.findFndPropertiesByKey("DSGC_CURRENT_ENV");
+        if(fndProperties == null){
+            throw new MpaasBusinessException("请配置当前环境代码！");
+        }
+        if ( fndProperties.getPropertyValue().equals(param.get("envCode"))){
+            Boolean isExist = sldao.checkLogMarkIsExist(String.valueOf(param.get("trackId")),String.valueOf(param.get("tagCode")));
+            if (isExist){
+                sldao.deleteLogMark(String.valueOf(param.get("trackId")),String.valueOf(param.get("tagCode")));
+            }
+        }else {
+            List<DSGCEnvInfoCfg> envList = sldao.queryEsbEnv();
+            for (int i = 0; i < envList.size(); i++) {
+                if(param.get("envCode").equals(envList.get(i).getEnvCode())){
+                    String logPath =envList.get(i).getDsgcAdmin();
+                    logPath += "/dsgc/svclog/onCloseTag";
+                    try {
+                        String json = JSONObject.toJSONString(param);
+                        HttpReqUtil.sendPostRequest(logPath,JSONObject.parseObject(json),request);
+
+                    }catch(JSONException jex){
+                        jex.printStackTrace();
+                        throw new JSONException("参数解析异常，请检查请求参数是否正确！");
+                    }catch (HttpClientErrorException hcex){
+                        hcex.printStackTrace();
+                        throw new HttpClientErrorException(HttpStatus.resolve(404));
+                    }catch (IllegalArgumentException ex){
+                        ex.printStackTrace();
+                        throw new IllegalArgumentException("环境信息配置的uri不能为空！");
+                    }
+                    break;
+                }
             }
         }
     }
