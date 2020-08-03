@@ -1,5 +1,6 @@
-package com.definesys.dsgc.service.dess.bean;
+package com.definesys.dsgc.service.dess;
 
+//DESS模块公用请求参数
 public class CommonReqBean {
     private String con0;
     private String con1;

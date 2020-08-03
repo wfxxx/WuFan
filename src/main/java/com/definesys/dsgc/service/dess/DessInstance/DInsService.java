@@ -1,11 +1,14 @@
-package com.definesys.dsgc.service.dess;
+package com.definesys.dsgc.service.dess.DessInstance;
 
 import com.alibaba.fastjson.JSONObject;
-import com.definesys.dsgc.service.apilr.bean.CommonReqBean;
-import com.definesys.dsgc.service.dess.bean.*;
+import com.definesys.dsgc.service.dess.CommonReqBean;
+import com.definesys.dsgc.service.dess.DessBusiness.bean.DessBusiness;
+import com.definesys.dsgc.service.dess.DessInstance.bean.DinstBean;
+import com.definesys.dsgc.service.dess.DessInstance.bean.DinstVO;
+import com.definesys.dsgc.service.dess.DessLog.bean.DessLog;
+import com.definesys.dsgc.service.dess.DessLog.bean.DessLogVO;
 import com.definesys.dsgc.service.lkv.FndPropertiesService;
 import com.definesys.dsgc.service.lkv.bean.FndProperties;
-import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.dsgc.service.utils.httpclient.HttpReqUtil;
 import com.definesys.mpaas.query.db.PageQueryResult;
 import org.apache.commons.lang.StringUtils;
@@ -15,25 +18,26 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * @ClassName DessService
+ * @ClassName DInsService
  * @Description TODO
  * @Author Xueyunlong
- * @Date 2020-7-28 14:35
+ * @Date 2020-8-3 13:29
  * @Version 1.0
  **/
+
 @Service
-public class DessService {
+public class DInsService {
+
 
     //服务调度程序的访问地址
     private  String dessServiceUrl;
 
     @Autowired
-    private DessDao dessDao;
+    private DInsDao dInsDao;
 
     @Autowired
     private FndPropertiesService fndPropertiesService;
@@ -53,23 +57,23 @@ public class DessService {
 
 
     public PageQueryResult queryJobInstaceList(CommonReqBean param, int pageSize, int pageIndex) {
-        return dessDao.queryJobInstaceList(param, pageSize, pageIndex);
+        return dInsDao.queryJobInstaceList(param, pageSize, pageIndex);
     }
 
 
     public void saveJobBaseInfo(DinstBean dinstBean){
-        dessDao.saveJobBaseInfo(dinstBean);
+        dInsDao.saveJobBaseInfo(dinstBean);
     }
 
 
     public boolean checkJobNoIsExist(CommonReqBean param){
-        return dessDao.checkJobNoIsExist(param.getCon0());
+        return dInsDao.checkJobNoIsExist(param.getCon0());
     }
 
     @Transactional(rollbackFor = Exception.class)
     public void delJobInstance (String jobNo)throws Exception{
         if(jobNo!=null){
-            dessDao.delJobInstance(jobNo);
+            dInsDao.delJobInstance(jobNo);
         }else{
             throw new Exception("编号不存在！");
         }
@@ -78,45 +82,23 @@ public class DessService {
     public void updateJobInstanceStatus(DinstBean dinstBean){
         if("3".equals(dinstBean.getStatus())){
             // 状态码为3 表明是停用作业调度
-            dessDao.updateJobInstanceStatus(dinstBean);
+            dInsDao.updateJobInstanceStatus(dinstBean);
         }else{
             // 状态码不确定 启用作业调度 获取作业实例
-            DinstBean jobInstance = dessDao.getJobInstance(dinstBean.getJobNo());
+            DinstBean jobInstance = dInsDao.getJobInstance(dinstBean.getJobNo());
             // 先判断该作业是否在存活时间以内
             boolean b = this.belongCalendar(jobInstance.getAliveStart(), jobInstance.getAliveEnd());
             if(b){
                 dinstBean.setStatus("2");
-                dessDao.updateJobInstanceStatus(dinstBean);
+                dInsDao.updateJobInstanceStatus(dinstBean);
             }else{
                 dinstBean.setStatus("1");
-                dessDao.updateJobInstanceStatus(dinstBean);
+                dInsDao.updateJobInstanceStatus(dinstBean);
             }
         }
     }
 
-    public PageQueryResult queryJobLogList(CommonReqBean param, int pageSize, int pageIndex){
-        PageQueryResult jobLogList = dessDao.queryJobLogList(param, pageSize, pageIndex);
-        PageQueryResult result = new PageQueryResult();
-        List<DessLogVO> listDTOS = new ArrayList<>();
-        Iterator<DessLog> iterator = jobLogList.getResult().iterator();
-        while (iterator.hasNext()){
-            DessLog dessLog = iterator.next();
-            DessLogVO dessLogVO = new DessLogVO();
-            dessLogVO.setLogId(dessLog.getLogId());
-            dessLogVO.setJobNo(dessLog.getJobNo());
-            dessLogVO.setJobName(dessLog.getJobName());
-            dessLogVO.setJobType(dessLog.getJobType());
-            dessLogVO.setStatus(dessLog.getStatus());
-            dessLogVO.setRetryTimes(dessLog.getRetryTimes());
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            dessLogVO.setCreationDate(sdf.format(dessLog.getCreationDate()));
-            dessLogVO.setDoTime(sdf.format(dessLog.getDoTime()));
-            listDTOS.add(dessLogVO);
-        }
-        result.setCount(jobLogList.getCount());
-        result.setResult(listDTOS);
-        return result;
-    }
+
 
     /**
      * 判断时间是否在时间段内
@@ -125,8 +107,7 @@ public class DessService {
      * @param endTime
      * @return
      */
-    public boolean belongCalendar(Date beginTime,Date endTime) {
-
+    public boolean belongCalendar(Date beginTime, Date endTime) {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date now = null;
         try {
@@ -152,11 +133,11 @@ public class DessService {
 
 
     public DinstBean getJobInstance(String jobNo){
-        return dessDao.getJobInstance(jobNo);
+        return dInsDao.getJobInstance(jobNo);
     }
 
     public void saveJobInsDeatail(DinstBean dinstBean){
-        dessDao.saveJobInsDeatail(dinstBean);
+        dInsDao.saveJobInsDeatail(dinstBean);
     }
 
     public void saveScheduling(DinstVO dinstVO){
@@ -179,20 +160,14 @@ public class DessService {
                 dinstBean.setFrequency(cornExpression);
             }
         }
-        dessDao.saveScheduling(dinstBean);
+        dInsDao.saveScheduling(dinstBean);
     }
 
-    public void saveJobDefinition(DessBusiness dessBusiness){
-        dessDao.saveJobDefinition(dessBusiness);
-    }
 
-    public DessBusiness getJobDefinition(String jobNo){
-       return dessDao.getJobDefinition(jobNo);
-    }
 
     public DinstVO getJobScheduling(String jobNo){
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        DinstBean job = dessDao.getJobInstance(jobNo);
+        DinstBean job = dInsDao.getJobInstance(jobNo);
         DinstVO dinstVO =new DinstVO();
         List<Map<String,String>> list = new ArrayList<>();
         // 判断是否是定制时间
@@ -274,5 +249,4 @@ public class DessService {
         JSONObject dinstBeanObject = JSONObject.parseObject(dinstBeanStr);
         HttpReqUtil.sendPostRequest(dessServiceUrl+"/dess/update",dinstBeanObject, request);
     }
-
 }

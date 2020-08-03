@@ -1,4 +1,4 @@
-package com.definesys.dsgc.service.dess.bean;
+package com.definesys.dsgc.service.dess.DessLog.bean;
 
 import com.definesys.mpaas.query.annotation.*;
 

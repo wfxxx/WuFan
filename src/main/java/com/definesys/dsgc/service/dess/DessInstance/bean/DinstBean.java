@@ -1,4 +1,4 @@
-package com.definesys.dsgc.service.dess.bean;
+package com.definesys.dsgc.service.dess.DessInstance.bean;
 
 import com.definesys.mpaas.query.annotation.Table;
 
@@ -28,7 +28,7 @@ public class DinstBean {
     private Integer failTimes;
     private Integer avgRunTime;
     private String description;
-    private String version;
+    private String businessType;
 
     public String getJobNo() {
         return jobNo;
@@ -142,11 +142,32 @@ public class DinstBean {
         this.description = description;
     }
 
-    public String getVersion() {
-        return version;
+    public String getBusinessType() {
+        return businessType;
     }
 
-    public void setVersion(String version) {
-        this.version = version;
+    public void setBusinessType(String businessType) {
+        this.businessType = businessType;
+    }
+
+    @Override
+    public String toString() {
+        return "DinstBean{" +
+                "jobNo='" + jobNo + '\'' +
+                ", businessId='" + businessId + '\'' +
+                ", jobName='" + jobName + '\'' +
+                ", jobType='" + jobType + '\'' +
+                ", status='" + status + '\'' +
+                ", frequency='" + frequency + '\'' +
+                ", nextDoTime=" + nextDoTime +
+                ", aliveStart=" + aliveStart +
+                ", aliveEnd=" + aliveEnd +
+                ", groupName='" + groupName + '\'' +
+                ", sucessTimes=" + sucessTimes +
+                ", failTimes=" + failTimes +
+                ", avgRunTime=" + avgRunTime +
+                ", description='" + description + '\'' +
+                ", businessType='" + businessType + '\'' +
+                '}';
     }
 }

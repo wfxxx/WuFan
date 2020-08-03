@@ -1,4 +1,4 @@
-package com.definesys.dsgc.service.dess.bean;
+package com.definesys.dsgc.service.dess.DessLog.bean;
 
 import com.definesys.mpaas.query.annotation.Column;
 import com.definesys.mpaas.query.annotation.ColumnType;
@@ -15,6 +15,8 @@ public class DessLogVO {
     private Integer retryTimes;
     private String jobName;
     private String jobType;
+    private DessLogPayload reqPayload;
+    private DessLogPayload resPayload;
 
     public String getLogId() {
         return logId;
@@ -79,5 +81,21 @@ public class DessLogVO {
 
     public void setJobType(String jobType) {
         this.jobType = jobType;
+    }
+
+    public DessLogPayload getReqPayload() {
+        return reqPayload;
+    }
+
+    public void setReqPayload(DessLogPayload reqPayload) {
+        this.reqPayload = reqPayload;
+    }
+
+    public DessLogPayload getResPayload() {
+        return resPayload;
+    }
+
+    public void setResPayload(DessLogPayload resPayload) {
+        this.resPayload = resPayload;
     }
 }

@@ -1,6 +1,8 @@
-package com.definesys.dsgc.service.dess.bean;
+package com.definesys.dsgc.service.dess.DessInstance.bean;
 
 import com.alibaba.fastjson.JSONObject;
+import com.definesys.dsgc.service.dess.DessBusiness.bean.DessBusiness;
+import com.definesys.dsgc.service.dess.DessInstance.bean.DinstBean;
 
 import java.util.Date;
 import java.util.List;
@@ -30,9 +32,11 @@ public class DinstVO {
     private Integer failTimes;
     private Integer avgRunTime;
     private String description;
-    private String version;
     //DessBusiness
-    private String wsdlUrl;
+    private String InvokeUrl;
+    private String businessName;
+    private String headerPayload;
+    private String businessDesc;
     private String webServiceType;
     private String service;
     private String portType;
@@ -40,10 +44,11 @@ public class DinstVO {
     private String payload;
     private List<Map<String,String>> dateList;
     private String rate; // 频率类型方便前端展示定义时间
+    private String businessType;
 
     public DinstVO(){}
 
-    public DinstVO(DinstBean dinstBean,DessBusiness dessBusiness){
+    public DinstVO(DinstBean dinstBean, DessBusiness dessBusiness){
         //DinstBean
           businessId=dinstBean.getBusinessId();
           jobName=dinstBean.getJobName();
@@ -58,14 +63,17 @@ public class DinstVO {
           failTimes=dinstBean.getFailTimes();
           avgRunTime=dinstBean.getAvgRunTime();
           description=dinstBean.getDescription();
-          version=dinstBean.getVersion();
         //DessBusiness
-          wsdlUrl=dessBusiness.getWsdlUrl();
+          InvokeUrl=dessBusiness.getInvokeUrl();
           webServiceType=dessBusiness.getWebServiceType();
           service=dessBusiness.getWebServiceType();
           portType=dessBusiness.getPortType();
           operation=dessBusiness.getOperation();
           payload=dessBusiness.getPayload();
+          businessDesc=dessBusiness.getBusinessDesc();
+          businessName=dessBusiness.getBusinessName();
+          headerPayload=dessBusiness.getHeaderPayload();
+          businessType=dessBusiness.getBusinessType();
     }
 
     public  DinstBean getDinstBean(){
@@ -82,7 +90,6 @@ public class DinstVO {
         dinstBean.setJobName(jobName);
         dinstBean.setJobType(jobType);
         dinstBean.setJobNo(jobNo);
-        dinstBean.setVersion(version);
         dinstBean.setNextDoTime(nextDoTime);
         return dinstBean;
     }
@@ -95,7 +102,11 @@ public class DinstVO {
         dessBusiness.setPortType(portType);
         dessBusiness.setService(service);
         dessBusiness.setWebServiceType(webServiceType);
-        dessBusiness.setWsdlUrl(wsdlUrl);
+        dessBusiness.setInvokeUrl(InvokeUrl);
+        dessBusiness.setBusinessDesc(businessDesc);
+        dessBusiness.setBusinessName(businessName);
+        dessBusiness.setHeaderPayload(headerPayload);
+        dessBusiness.setBusinessType(businessType);
         return dessBusiness;
     }
 
@@ -211,20 +222,21 @@ public class DinstVO {
         this.description = description;
     }
 
-    public String getVersion() {
-        return version;
+
+    public String getInvokeUrl() {
+        return InvokeUrl;
     }
 
-    public void setVersion(String version) {
-        this.version = version;
+    public void setInvokeUrl(String invokeUrl) {
+        InvokeUrl = invokeUrl;
     }
 
-    public String getWsdlUrl() {
-        return wsdlUrl;
+    public String getBusinessType() {
+        return businessType;
     }
 
-    public void setWsdlUrl(String wsdlUrl) {
-        this.wsdlUrl = wsdlUrl;
+    public void setBusinessType(String businessType) {
+        this.businessType = businessType;
     }
 
     public String getWebServiceType() {
@@ -290,5 +302,29 @@ public class DinstVO {
 
     public void setRate(String rate) {
         this.rate = rate;
+    }
+
+    public String getBusinessName() {
+        return businessName;
+    }
+
+    public void setBusinessName(String businessName) {
+        this.businessName = businessName;
+    }
+
+    public String getHeaderPayload() {
+        return headerPayload;
+    }
+
+    public void setHeaderPayload(String headerPayload) {
+        this.headerPayload = headerPayload;
+    }
+
+    public String getBusinessDesc() {
+        return businessDesc;
+    }
+
+    public void setBusinessDesc(String businessDesc) {
+        this.businessDesc = businessDesc;
     }
 }
