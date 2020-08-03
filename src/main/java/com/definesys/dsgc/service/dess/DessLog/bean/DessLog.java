@@ -1,8 +1,6 @@
-package com.definesys.dsgc.service.dess.bean;
+package com.definesys.dsgc.service.dess.DessLog.bean;
 
-import com.definesys.mpaas.query.annotation.RowID;
-import com.definesys.mpaas.query.annotation.RowIDType;
-import com.definesys.mpaas.query.annotation.Table;
+import com.definesys.mpaas.query.annotation.*;
 
 import java.util.Date;
 
@@ -25,6 +23,10 @@ public class DessLog {
     //实际执行时间
     private Date creationDate;
     private Integer retryTimes;
+    @Column(type = ColumnType.JAVA)
+    private String jobName;
+    @Column(type = ColumnType.JAVA)
+    private String jobType;
 
     public String getLogId() {
         return logId;
@@ -80,5 +82,21 @@ public class DessLog {
 
     public void setRetryTimes(Integer retryTimes) {
         this.retryTimes = retryTimes;
+    }
+
+    public String getJobName() {
+        return jobName;
+    }
+
+    public void setJobName(String jobName) {
+        this.jobName = jobName;
+    }
+
+    public String getJobType() {
+        return jobType;
+    }
+
+    public void setJobType(String jobType) {
+        this.jobType = jobType;
     }
 }

@@ -204,7 +204,9 @@ public class ApiBsDao {
     }
 
     public List<DagCodeVersionBean> queryDagCodeVersionBySource(String sourceId){
-        return sw.buildQuery().eq("sour_code",sourceId).doQuery(DagCodeVersionBean.class);
+        return sw.buildQuery().eq("sour_code",sourceId)
+                .eq("sour_type","bs").
+                        doQuery(DagCodeVersionBean.class);
     }
 
     public DagCodeVersionBean queryDagCodeVersionByid(String id){
@@ -240,7 +242,8 @@ public class ApiBsDao {
     public List<DeployedEnvInfoBean> queryDeplogDev(String code){
         return sw.buildQuery().sql("       select env.env_code,env.env_name from dag_code_version ver,DAG_DEPLOY_STAT stat,DSGC_ENV_INFO_CFG env \n" +
                 "              where ver.sour_code =#code  and stat.vid =ver.vid\n" +
-                "              and  stat.env_code =env.env_code")
+                "              and  stat.env_code =env.env_code" +
+                "              and ver.sour_type='bs'")
                 .setVar("code",code)
                 .doQuery(DeployedEnvInfoBean.class);
 
