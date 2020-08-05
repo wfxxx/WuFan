@@ -21,9 +21,8 @@ public class DinstVO {
     private String jobNo;
     private String businessId;
     private String jobName;
-    private String jobType;
-    private String status;
-    private JSONObject frequency; //json字符串，接收corn表达式
+    private String jobStatus;
+    private JSONObject jobFrequency; //json字符串，接收corn表达式
     private Date nextDoTime;
     private Date aliveStart;
     private Date aliveEnd;
@@ -31,19 +30,19 @@ public class DinstVO {
     private Integer sucessTimes;
     private Integer failTimes;
     private Integer avgRunTime;
-    private String description;
+    private String jobDescription;
     //DessBusiness
     private String InvokeUrl;
     private String businessName;
     private String headerPayload;
     private String businessDesc;
     private String webServiceType;
-    private String service;
+    private String serviceName;
     private String portType;
-    private String operation;
-    private String payload;
+    private String invokeOperation;
+    private String bodyPayload;
     private List<Map<String,String>> dateList;
-    private String rate; // 频率类型方便前端展示定义时间
+    private String jobRate; // 频率类型方便前端展示定义时间
     private String businessType;
 
     public DinstVO(){}
@@ -52,7 +51,6 @@ public class DinstVO {
         //DinstBean
           businessId=dinstBean.getBusinessId();
           jobName=dinstBean.getJobName();
-          jobType=dinstBean.getJobType();
           //等待使用corn工具类转换
           //frequency=dinstBean.getFrequency();
           nextDoTime=dinstBean.getNextDoTime();
@@ -62,14 +60,14 @@ public class DinstVO {
           sucessTimes=dinstBean.getSucessTimes();
           failTimes=dinstBean.getFailTimes();
           avgRunTime=dinstBean.getAvgRunTime();
-          description=dinstBean.getDescription();
+          jobDescription=dinstBean.getJobDescription();
         //DessBusiness
           InvokeUrl=dessBusiness.getInvokeUrl();
-          webServiceType=dessBusiness.getWebServiceType();
-          service=dessBusiness.getWebServiceType();
+          webServiceType=dessBusiness.getWebserviceType();
+          serviceName=dessBusiness.getWebserviceType();
           portType=dessBusiness.getPortType();
-          operation=dessBusiness.getOperation();
-          payload=dessBusiness.getPayload();
+          invokeOperation=dessBusiness.getInvokeOperation();
+          bodyPayload=dessBusiness.getBodyPayload();
           businessDesc=dessBusiness.getBusinessDesc();
           businessName=dessBusiness.getBusinessName();
           headerPayload=dessBusiness.getHeaderPayload();
@@ -82,13 +80,12 @@ public class DinstVO {
         dinstBean.setAliveStart(aliveStart);
         dinstBean.setAvgRunTime(avgRunTime);
         dinstBean.setBusinessId(businessId);
-        dinstBean.setDescription(description);
+        dinstBean.setJobDescription(jobDescription);
         dinstBean.setFailTimes(failTimes);
         //等待corn工具转换
         //dinstBean.setFrequency(frequency);
         dinstBean.setGroupName(groupName);
         dinstBean.setJobName(jobName);
-        dinstBean.setJobType(jobType);
         dinstBean.setJobNo(jobNo);
         dinstBean.setNextDoTime(nextDoTime);
         return dinstBean;
@@ -97,11 +94,11 @@ public class DinstVO {
     public  DessBusiness getDessBusiness(){
         DessBusiness dessBusiness = new DessBusiness();
         dessBusiness.setBusinessId(businessId);
-        dessBusiness.setOperation(operation);
-        dessBusiness.setPayload(payload);
+        dessBusiness.setInvokeOperation(invokeOperation);
+        dessBusiness.setBodyPayload(bodyPayload);
         dessBusiness.setPortType(portType);
-        dessBusiness.setService(service);
-        dessBusiness.setWebServiceType(webServiceType);
+        dessBusiness.setServiceName(serviceName);
+        dessBusiness.setWebserviceType(webServiceType);
         dessBusiness.setInvokeUrl(InvokeUrl);
         dessBusiness.setBusinessDesc(businessDesc);
         dessBusiness.setBusinessName(businessName);
@@ -134,28 +131,29 @@ public class DinstVO {
         this.jobName = jobName;
     }
 
-    public String getJobType() {
-        return jobType;
+
+    public String getJobStatus() {
+        return jobStatus;
     }
 
-    public void setJobType(String jobType) {
-        this.jobType = jobType;
+    public void setJobStatus(String jobStatus) {
+        this.jobStatus = jobStatus;
     }
 
-    public String getStatus() {
-        return status;
+    public JSONObject getJobFrequency() {
+        return jobFrequency;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setJobFrequency(JSONObject jobFrequency) {
+        this.jobFrequency = jobFrequency;
     }
 
-    public JSONObject getFrequency() {
-        return frequency;
+    public String getJobDescription() {
+        return jobDescription;
     }
 
-    public void setFrequency(JSONObject frequency) {
-        this.frequency = frequency;
+    public void setJobDescription(String jobDescription) {
+        this.jobDescription = jobDescription;
     }
 
     public Date getNextDoTime() {
@@ -214,14 +212,6 @@ public class DinstVO {
         this.avgRunTime = avgRunTime;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
 
     public String getInvokeUrl() {
         return InvokeUrl;
@@ -247,12 +237,12 @@ public class DinstVO {
         this.webServiceType = webServiceType;
     }
 
-    public String getService() {
-        return service;
+    public String getServiceName() {
+        return serviceName;
     }
 
-    public void setService(String service) {
-        this.service = service;
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
     }
 
     public String getPortType() {
@@ -263,20 +253,20 @@ public class DinstVO {
         this.portType = portType;
     }
 
-    public String getOperation() {
-        return operation;
+    public String getInvokeOperation() {
+        return invokeOperation;
     }
 
-    public void setOperation(String operation) {
-        this.operation = operation;
+    public void setInvokeOperation(String invokeOperation) {
+        this.invokeOperation = invokeOperation;
     }
 
-    public String getPayload() {
-        return payload;
+    public String getBodyPayload() {
+        return bodyPayload;
     }
 
-    public void setPayload(String payload) {
-        this.payload = payload;
+    public void setBodyPayload(String bodyPayload) {
+        this.bodyPayload = bodyPayload;
     }
 
     public String getLogId() {
@@ -295,13 +285,12 @@ public class DinstVO {
         this.dateList = dateList;
     }
 
-
-    public String getRate() {
-        return rate;
+    public String getJobRate() {
+        return jobRate;
     }
 
-    public void setRate(String rate) {
-        this.rate = rate;
+    public void setJobRate(String jobRate) {
+        this.jobRate = jobRate;
     }
 
     public String getBusinessName() {
