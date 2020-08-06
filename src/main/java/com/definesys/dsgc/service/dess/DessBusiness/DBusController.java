@@ -1,14 +1,16 @@
 package com.definesys.dsgc.service.dess.DessBusiness;
 
+import com.definesys.dsgc.service.apilr.bean.CommonReqBean;
 import com.definesys.dsgc.service.dess.DessBusiness.bean.DessBusiness;
 import com.definesys.dsgc.service.dess.DessInstance.DInsService;
+import com.definesys.dsgc.service.dess.DessInstance.bean.DinstBean;
 import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.mpaas.common.http.Response;
+import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @ClassName DBusController
@@ -61,5 +63,63 @@ public class DBusController {
             return Response.error("获取业务信息失败");
         }
         return Response.ok().setData(result);
+    }
+
+    /**
+     * 获取业务列表
+     * @param param
+     * @param pageSize
+     * @param pageIndex
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "/queryBusinessList",method = RequestMethod.POST)
+    public Response queryBusinessList(@RequestBody CommonReqBean param,
+                                    @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
+                                    @RequestParam(value = "pageIndex", required = false, defaultValue = "1") int pageIndex, HttpServletRequest request){
+        String userRole = request.getHeader("userRole");
+        if ("Tourist".equals(userRole)){
+            return Response.error("无权限操作");
+        }
+        PageQueryResult result;
+        try {
+            result = dBusService.queryBusinessList(param,pageSize,pageIndex);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("获取列表失败");
+        }
+        return Response.ok().setData(result);
+    }
+
+    /**
+     * 新增业务
+     * @param dessBusiness
+     * @return
+     */
+    @RequestMapping(value = "/addBusiness",method = RequestMethod.POST)
+    public Response addBusiness(@RequestBody DessBusiness dessBusiness){
+        try {
+            dBusService.addBusiness(dessBusiness);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("新增发生错误");
+        }
+        return Response.ok();
+    }
+
+    /**
+     * 验证业务名称
+     * @param param
+     * @return
+     */
+    @RequestMapping(value = "/checkBusinessName",method = RequestMethod.POST)
+    public Response checkBusinessName(@RequestBody CommonReqBean param){
+        try {
+            Boolean isExist = dBusService.checkBusinessName(param);
+            return Response.ok().setData(isExist);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.error("验证作业编号失败！");
+        }
     }
 }

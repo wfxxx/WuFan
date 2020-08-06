@@ -1,6 +1,7 @@
 package com.definesys.dsgc.service.dess.DessBusiness.bean;
 
 import com.definesys.mpaas.query.annotation.*;
+import com.definesys.mpaas.query.model.MpaasBasePojo;
 
 /**
  * @ClassName DessBusiness
@@ -12,16 +13,17 @@ import com.definesys.mpaas.query.annotation.*;
 @Table(value = "DESS_BUSINESS")
 public class DessBusiness {
     @Deprecated
+    @Column(type = ColumnType.JAVA)
     private String jobNo;
     @RowID(sequence = "dess_business_s",type= RowIDType.AUTO)
     private String businessId;
     private String businessName;
     private String invokeUrl;
-    private String webServiceType;
-    private String service;
+    private String webserviceType;
+    private String serviceName;
     private String portType;
-    private String operation;
-    private String payload;
+    private String invokeOperation;
+    private String bodyPayload;
     private String headerPayload;
     private String businessDesc;
     private String businessType;
@@ -52,21 +54,20 @@ public class DessBusiness {
     }
 
 
-
-    public String getWebServiceType() {
-        return webServiceType;
+    public String getWebserviceType() {
+        return webserviceType;
     }
 
-    public void setWebServiceType(String webServiceType) {
-        this.webServiceType = webServiceType;
+    public void setWebserviceType(String webserviceType) {
+        this.webserviceType = webserviceType;
     }
 
-    public String getService() {
-        return service;
+    public String getServiceName() {
+        return serviceName;
     }
 
-    public void setService(String service) {
-        this.service = service;
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
     }
 
     public String getPortType() {
@@ -77,20 +78,20 @@ public class DessBusiness {
         this.portType = portType;
     }
 
-    public String getOperation() {
-        return operation;
+    public String getInvokeOperation() {
+        return invokeOperation;
     }
 
-    public void setOperation(String operation) {
-        this.operation = operation;
+    public void setInvokeOperation(String invokeOperation) {
+        this.invokeOperation = invokeOperation;
     }
 
-    public String getPayload() {
-        return payload;
+    public String getBodyPayload() {
+        return bodyPayload;
     }
 
-    public void setPayload(String payload) {
-        this.payload = payload;
+    public void setBodyPayload(String bodyPayload) {
+        this.bodyPayload = bodyPayload;
     }
 
     public String getHeaderPayload() {

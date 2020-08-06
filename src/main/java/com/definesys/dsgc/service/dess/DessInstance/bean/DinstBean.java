@@ -1,5 +1,7 @@
 package com.definesys.dsgc.service.dess.DessInstance.bean;
 
+import com.definesys.mpaas.query.annotation.Column;
+import com.definesys.mpaas.query.annotation.ColumnType;
 import com.definesys.mpaas.query.annotation.Table;
 
 import java.util.Date;
@@ -17,9 +19,8 @@ public class DinstBean {
     private String jobNo;
     private String businessId;
     private String jobName;
-    private String jobType;
-    private String status;
-    private String frequency; //json字符串，接收corn表达式
+    private String jobStatus;
+    private String jobFrequency; //json字符串，接收corn表达式
     private Date nextDoTime;
     private Date aliveStart;
     private Date aliveEnd;
@@ -27,8 +28,11 @@ public class DinstBean {
     private Integer sucessTimes;
     private Integer failTimes;
     private Integer avgRunTime;
-    private String description;
+    private String jobDescription;
+    @Column(type = ColumnType.JAVA)
     private String businessType;
+    private String jobRate;
+
 
     public String getJobNo() {
         return jobNo;
@@ -54,29 +58,6 @@ public class DinstBean {
         this.jobName = jobName;
     }
 
-    public String getJobType() {
-        return jobType;
-    }
-
-    public void setJobType(String jobType) {
-        this.jobType = jobType;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getFrequency() {
-        return frequency;
-    }
-
-    public void setFrequency(String frequency) {
-        this.frequency = frequency;
-    }
 
     public Date getNextDoTime() {
         return nextDoTime;
@@ -134,13 +115,6 @@ public class DinstBean {
         this.avgRunTime = avgRunTime;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 
     public String getBusinessType() {
         return businessType;
@@ -150,15 +124,46 @@ public class DinstBean {
         this.businessType = businessType;
     }
 
+    public String getJobStatus() {
+        return jobStatus;
+    }
+
+    public void setJobStatus(String jobStatus) {
+        this.jobStatus = jobStatus;
+    }
+
+    public String getJobFrequency() {
+        return jobFrequency;
+    }
+
+    public void setJobFrequency(String jobFrequency) {
+        this.jobFrequency = jobFrequency;
+    }
+
+    public String getJobDescription() {
+        return jobDescription;
+    }
+
+    public void setJobDescription(String jobDescription) {
+        this.jobDescription = jobDescription;
+    }
+
+    public String getJobRate() {
+        return jobRate;
+    }
+
+    public void setJobRate(String jobRate) {
+        this.jobRate = jobRate;
+    }
+
     @Override
     public String toString() {
         return "DinstBean{" +
                 "jobNo='" + jobNo + '\'' +
                 ", businessId='" + businessId + '\'' +
                 ", jobName='" + jobName + '\'' +
-                ", jobType='" + jobType + '\'' +
-                ", status='" + status + '\'' +
-                ", frequency='" + frequency + '\'' +
+                ", jobStatus='" + jobStatus + '\'' +
+                ", jobFrequency='" + jobFrequency + '\'' +
                 ", nextDoTime=" + nextDoTime +
                 ", aliveStart=" + aliveStart +
                 ", aliveEnd=" + aliveEnd +
@@ -166,8 +171,9 @@ public class DinstBean {
                 ", sucessTimes=" + sucessTimes +
                 ", failTimes=" + failTimes +
                 ", avgRunTime=" + avgRunTime +
-                ", description='" + description + '\'' +
+                ", jobDescription='" + jobDescription + '\'' +
                 ", businessType='" + businessType + '\'' +
+                ", jobRate='" + jobRate + '\'' +
                 '}';
     }
 }

@@ -29,7 +29,7 @@ public class DInsDao {
 
 
     public PageQueryResult queryJobInstaceList(CommonReqBean param, int pageSize, int pageIndex) {
-        StringBuffer sqlStr = new StringBuffer("select * from dess_instance where 1=1 ");
+        StringBuffer sqlStr = new StringBuffer("select di.*,db.BUSINESS_TYPE from DESS_INSTANCE di left join DESS_BUSINESS db on di.BUSINESS_ID = db.BUSINESS_ID where 1=1 ");
         MpaasQuery mq = sw.buildQuery();
         // 检索搜索框条件
         if (StringUtil.isNotBlank(param.getCon0())) {
@@ -46,18 +46,18 @@ public class DInsDao {
             String[] conArray = param.getQueryType().trim().split(" ");
             for (String s : conArray) {
                 if (s != null && s.length() > 0) {
-                    sqlStr.append("and  job_type like '%" + s + "%'");
+                    sqlStr.append("and db.BUSINESS_TYPE like '%" + s + "%'");
                 }
             }
         }
-        mq.sql(sqlStr.toString() + " order by creation_date desc");
+        mq.sql(sqlStr.toString() + " order by di.creation_date desc");
         return mq.doPageQuery(pageIndex, pageSize, DinstBean.class);
     }
 
     private String generateLikeAndCluse(String con) {
         String conUpper = con.toUpperCase();
-        String conAnd = " and  (UPPER(job_no) like '%" + conUpper + "%'";
-        conAnd += " or UPPER(job_name) like '%" + conUpper + "%' )";
+        String conAnd = " and  (UPPER(di.job_no) like '%" + conUpper + "%'";
+        conAnd += " or UPPER(di.job_name) like '%" + conUpper + "%' )";
         return conAnd;
     }
 
@@ -86,14 +86,15 @@ public class DInsDao {
     public void updateJobInstanceStatus(DinstBean dinstBean){
         sw.buildQuery()
                 .eq("job_no",dinstBean.getJobNo())
-                .update("status",dinstBean.getStatus())
+                .update("job_status",dinstBean.getJobStatus())
                 .doUpdate(dinstBean);
     }
 
 
     public DinstBean getJobInstance(String jobNo){
         return sw.buildQuery()
-                .eq("job_no",jobNo)
+                .sql("select di.*,db.BUSINESS_TYPE from DESS_INSTANCE di left join DESS_BUSINESS db on di.BUSINESS_ID = db.BUSINESS_ID where di.JOB_NO = #jobNo ")
+                .setVar("jobNo",jobNo)
                 .doQueryFirst(DinstBean.class);
     }
 
@@ -101,7 +102,7 @@ public class DInsDao {
         sw.buildQuery()
                 .eq("job_no",dinstBean.getJobNo())
                 .update("job_name",dinstBean.getJobName())
-                .update("description",dinstBean.getDescription())
+                .update("job_description",dinstBean.getJobDescription())
                 .doUpdate(dinstBean);
     }
 
@@ -110,7 +111,8 @@ public class DInsDao {
                 .eq("job_no",dinstBean.getJobNo())
                 .update("alive_start",dinstBean.getAliveStart())
                 .update("alive_end",dinstBean.getAliveEnd())
-                .update("FREQUENCY",dinstBean.getFrequency())
+                .update("job_frequency",dinstBean.getJobFrequency())
+                .update("job_rate",dinstBean.getJobRate())
                 .doUpdate(dinstBean);
     }
 

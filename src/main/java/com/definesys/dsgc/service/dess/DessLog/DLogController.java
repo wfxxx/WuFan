@@ -52,11 +52,4 @@ public class DLogController {
         return Response.ok().setData(result);
     }
 
-    private String generateLikeAndCluseLog(String con) {
-        String conUpper = con.toUpperCase();
-        String conAnd = " and  (UPPER(dl.log_id) like '%" + conUpper + "%'";
-        conAnd += " or UPPER(dl.job_no) like '%" + conUpper + "%' ";
-        conAnd += " or UPPER(di.job_name) like '%" + conUpper + "%' )";
-        return conAnd;
-    }
 }
