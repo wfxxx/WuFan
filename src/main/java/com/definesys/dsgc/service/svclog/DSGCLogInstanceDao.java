@@ -186,6 +186,8 @@ public class DSGCLogInstanceDao {
                 sql.append(stringBuilder);
             }
 
+        }else {
+            sql.append(" where 1 !=1 ");
         }
         return sql;
     }
