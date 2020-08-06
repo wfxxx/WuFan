@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @ClassName DInsController
@@ -161,13 +163,14 @@ public class DInsController {
      */
     @RequestMapping(value = "/saveScheduling",method = RequestMethod.POST)
     public Response saveScheduling(@RequestBody DinstVO dinstVO){
+        List<Map<String, String>>  timeList = null;
         try {
-            dInsService.saveScheduling(dinstVO);
+            timeList = dInsService.saveScheduling(dinstVO);
         }catch (Exception e){
             e.printStackTrace();
             return Response.error("保存发生错误");
         }
-        return Response.ok();
+        return Response.ok().setData(timeList);
     }
 
 

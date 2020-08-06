@@ -13,12 +13,14 @@ import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.dsgc.service.utils.httpclient.HttpReqUtil;
 import com.definesys.mpaas.query.db.PageQueryResult;
 import org.apache.commons.lang.StringUtils;
+import org.quartz.CronExpression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -143,13 +145,14 @@ public class DInsService {
         dInsDao.saveJobInsDeatail(dinstBean);
     }
 
-    public void saveScheduling(DinstVO dinstVO){
+    public List<Map<String, String>>  saveScheduling(DinstVO dinstVO){
+        List<Map<String, String>>  parserList = new ArrayList<>();
         DinstBean dinstBean = new DinstBean();
         dinstBean.setJobNo(dinstVO.getJobNo());
         dinstBean.setAliveStart(dinstVO.getAliveStart());
         dinstBean.setAliveEnd(dinstVO.getAliveEnd());
         dinstBean.setJobRate(dinstVO.getJobRate());
-        // 判断是否是定制时间
+        // 定制时间无需corn表达式
         if("定制".equals(dinstVO.getJobRate())){
             List list = new ArrayList();
             for (Map<String,String> item: dinstVO.getDateList()) {
@@ -157,14 +160,19 @@ public class DInsService {
             };
             String frequency= StringUtils.join(list, ";");
             dinstBean.setJobFrequency(frequency);
+            dInsDao.saveScheduling(dinstBean);
         }else{
-            // 转换成corn表达式存入frequency
+            // 转换成corn表达式转为调度时间集合返回给前端
             if(dinstVO.getJobFrequency()!=null){
                 String cornExpression = this.getCornExpression(dinstVO);
                 dinstBean.setJobFrequency(cornExpression);
+                parserList = this.parser(cornExpression, dinstVO.getAliveStart(), dinstVO.getAliveEnd());
+                if(parserList.size()>0){
+                    dInsDao.saveScheduling(dinstBean);
+                }
             }
         }
-        dInsDao.saveScheduling(dinstBean);
+        return parserList;
     }
 
 
@@ -179,21 +187,13 @@ public class DInsService {
 
         JSONObject frequency = dinstVO.getJobFrequency();
         String str = "";
-        if("每日".equals(dinstVO.getJobRate())){
+        if("每日".equals(dinstVO.getJobRate())||"每周".equals(dinstVO.getJobRate())){
             str =   s.format(aliveStart) + " " +
                     m.format(aliveStart) + " " +
                     h.format(aliveStart) + " " +
                     frequency.getString("day") + " " +
                     frequency.getString("month") + " " +
                     frequency.getString("week") + " " +
-                    frequency.getString("year");
-        }else if("每周".equals(dinstVO.getJobRate())){
-            str =   s.format(aliveStart) + " " +
-                    m.format(aliveStart) + " " +
-                    h.format(aliveStart) + " " +
-                    frequency.getString("day") + " " +
-                    frequency.getString("month") + " " +
-                    d.format(aliveStart) + " " +
                     frequency.getString("year");
         }else{
             str =   s.format(aliveStart) + " " +
@@ -224,23 +224,11 @@ public class DInsService {
             dinstVO.setDateList(list);
             return dinstVO;
         }else{
-            // 不是定制时间则需要将正则转换为corn表达式
-            dinstVO.setAliveStart(job.getAliveStart());
-            dinstVO.setAliveEnd(job.getAliveEnd());
-            JSONObject jsonObject =JSONObject.parseObject(this.getJobFrequencyJsonText(job));
-            dinstVO.setJobFrequency(jsonObject);
+            // 将corn表达式转换成调度时间
+            List<Map<String, String>> parser = this.parser(job.getJobFrequency(), job.getAliveStart(), job.getAliveEnd());
+            dinstVO.setDateList(parser);
             return dinstVO;
         }
-    }
-
-    public String getJobFrequencyJsonText(DinstBean dinstBean){
-        String jobFrequency = dinstBean.getJobFrequency();
-        if (StringUtil.isBlank(jobFrequency)) {
-            return null;
-        }
-        String[] str = dinstBean.getJobFrequency().split(" ");
-        jobFrequency = "{year:'"+str[6]+"',week:'"+str[5]+"',month:'"+str[4]+"',day:'"+str[3]+"',hour:'"+str[2]+"',min:'"+str[1]+"',sec:'"+str[0]+"'}";
-        return jobFrequency;
     }
 
 
@@ -284,4 +272,34 @@ public class DInsService {
         JSONObject dinstBeanObject = JSONObject.parseObject(dinstBeanStr);
         HttpReqUtil.sendPostRequest(dessServiceUrl+"/dess/update",dinstBeanObject, request);
     }
+
+
+
+
+    public  List<Map<String,String>> parser(String cronExpression,Date aliveStart,Date aliveEnd) {
+        List<Map<String,String>> result = new ArrayList<>();
+        if (cronExpression == null || cronExpression.length() < 1) {
+            return result;
+        } else {
+            CronExpression exp = null;
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date dd = new Date();
+            try {
+                exp = new CronExpression(cronExpression);
+            } catch (ParseException e) {
+                e.printStackTrace();
+                return result;
+            }
+            dd = exp.getNextValidTimeAfter(aliveStart);
+            while (dd.getTime() >= aliveStart.getTime()&&dd.getTime() < aliveEnd.getTime()) {
+                Map<String,String> map = new HashMap<>();
+                map.put("time",sdf.format(dd));
+                result.add(map);
+                dd = exp.getNextValidTimeAfter(dd);
+            }
+            exp = null;
+        }
+        return result;
+    }
+
 }
