@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.StyledEditorKit;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -394,6 +395,33 @@ public class SVCAuthService {
     //检查该消费者是否持有服务权限
     public List<DSGCSystemAccess> checkSerAuthIsExist(String servNo, List<String> customerList){
         return svcAuthDao.checkSerAuthIsExist(servNo,customerList);
+    }
+    @Transactional(rollbackFor = Exception.class)
+    public void saveIpRuleConfig(IPRuleConfigVO ipRuleConfigVO){
+        DSGCIpLimitBean dsgcIpLimitBean = svcAuthDao.checkIpRuleConfigIsExist(ipRuleConfigVO);
+        if (dsgcIpLimitBean != null){
+            dsgcIpLimitBean.setRuleType(ipRuleConfigVO.getType());
+            dsgcIpLimitBean.setRuleCron(ipRuleConfigVO.getRule());
+            svcAuthDao.updateIpRuleConfig(dsgcIpLimitBean);
+        }else {
+            DSGCIpLimitBean ipLimitBean = new DSGCIpLimitBean();
+            ipLimitBean.setRuleCron(ipRuleConfigVO.getRule());
+            ipLimitBean.setRuleType(ipRuleConfigVO.getType());
+            ipLimitBean.setLimitTarget(ipRuleConfigVO.getLimitTarget());
+            ipLimitBean.setLimitType(ipRuleConfigVO.getLimitType());
+            svcAuthDao.addIpRuleConfig(ipLimitBean);
+        }
+    }
+    public IPRuleConfigVO queryIpRuleConfig( String limitType, String limitTarget){
+        DSGCIpLimitBean dsgcIpLimitBean = svcAuthDao.queryIpRuleConfig(limitType,limitTarget);
+        IPRuleConfigVO ipRuleConfigVO = new IPRuleConfigVO();
+        if (dsgcIpLimitBean != null){
+            ipRuleConfigVO.setType(dsgcIpLimitBean.getRuleType());
+            ipRuleConfigVO.setRule(dsgcIpLimitBean.getRuleCron());
+            ipRuleConfigVO.setLimitTarget(dsgcIpLimitBean.getLimitTarget());
+            ipRuleConfigVO.setLimitType(dsgcIpLimitBean.getLimitType());
+        }
+        return ipRuleConfigVO;
     }
 
 }

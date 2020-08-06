@@ -171,6 +171,23 @@ public class SVCAuthController {
     public Response checkSerAuthIsExist(@RequestBody CommonReqBean param, HttpServletRequest request){
         return Response.ok().setData(svcAuthService.checkSerAuthIsExist(param.getApiCode(),param.getSelectSystemList()));
     }
-
-
+    @RequestMapping(value="/saveIpRuleConfig",method = RequestMethod.POST)
+    public Response saveIpRuleConfig(@RequestBody IPRuleConfigVO ipRuleConfigVO){
+        try {
+            svcAuthService.saveIpRuleConfig(ipRuleConfigVO);
+            return Response.ok();
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("保存ip规则失败，请稍后再试！");
+        }
+    }
+    @RequestMapping(value = "/queryIpRuleConfig",method = RequestMethod.GET)
+    public Response queryIpRuleConfig(@RequestParam String limitType,@RequestParam String limitTarget){
+        try{
+            IPRuleConfigVO ipRuleConfigVO = svcAuthService.queryIpRuleConfig(limitType,limitTarget);
+            return Response.ok().setData(ipRuleConfigVO);
+        }catch (Exception e){
+            return Response.error("查询ip黑白名单失败！");
+        }
+    }
 }
