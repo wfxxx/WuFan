@@ -52,4 +52,10 @@ public class DBusService {
     public void delBusiness(String businessId){
         dBusDao.delBusiness(businessId);
     }
+    public DessBusiness getBusinessDtl(String id){
+        return dBusDao.getBusinessDtl(id);
+    }
+    public void updateBusinessDtl(DessBusiness dessBusiness){
+        dBusDao.updateBusinessDtl(dessBusiness);
+    }
 }

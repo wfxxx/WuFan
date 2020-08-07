@@ -165,8 +165,18 @@ public class DInsService {
             // 转换成corn表达式转为调度时间集合返回给前端
             if(dinstVO.getJobFrequency()!=null){
                 String cornExpression = this.getCornExpression(dinstVO);
-                dinstBean.setJobFrequency(cornExpression);
-                parserList = this.parser(cornExpression, dinstVO.getAliveStart(), dinstVO.getAliveEnd());
+                // 判断是否是每月或者每年 解决第几周与周几的冲突
+                if(cornExpression.contains("#")){
+                    String[] cronExpressionList = this.getCronExpressionList(cornExpression);
+                    for (int i = 0; i < cronExpressionList.length; i++) {
+                        List<Map<String, String>> parser = this.parser(cronExpressionList[i], dinstVO.getAliveStart(), dinstVO.getAliveEnd());
+                        parserList.addAll(parser);
+                    }
+                    dinstBean.setJobFrequency(StringUtils.join(cronExpressionList,";"));
+                }else{
+                    dinstBean.setJobFrequency(cornExpression);
+                    parserList = this.parser(cornExpression, dinstVO.getAliveStart(), dinstVO.getAliveEnd());
+                }
                 if(parserList.size()>0){
                     dInsDao.saveScheduling(dinstBean);
                 }
@@ -302,4 +312,34 @@ public class DInsService {
         return result;
     }
 
+    public String[] getCronExpressionList(String cronExpression){
+        String[] s = cronExpression.split(" ");
+        String dayofWeekStr = "";
+        StringBuffer newCronExpression = new StringBuffer();
+        for (int i = 0; i < s.length; i++) {
+            if(s[i].contains("#")){
+                dayofWeekStr = s[i];
+                break;
+            }
+        }
+        String strBf = StringUtils.substringBefore(dayofWeekStr, "#");
+        String strAf = StringUtils.substringAfter(dayofWeekStr, "#");
+        String[] bf = strBf.split(",");
+        String[] af = strAf.split(",");
+        StringBuffer dws = new StringBuffer();
+        for (int i = 0; i < bf.length; i++) {
+            for (int j = 0; j < af.length; j++) {
+                dws.append(bf[i]+"#"+af[j]+" ");
+            }
+        }
+        String nDws = dws.toString();
+        String[] allDws = nDws.split(" ");
+
+        for (int i = 0; i < allDws.length; i++) {
+            s[5] = allDws[i];
+            newCronExpression.append(StringUtils.join(s," ")+";");
+        }
+        String[] cronExpressionList = newCronExpression.toString().split(";");
+        return cronExpressionList;
+    }
 }

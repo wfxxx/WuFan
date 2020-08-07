@@ -102,4 +102,31 @@ public class DBusController {
         }
         return Response.ok();
     }
+
+    /**
+     * 获取业务详情
+     * @param param
+     * @return
+     */
+    @RequestMapping(value = "/getBusinessDtl",method = RequestMethod.POST)
+    public Response getBusinessDtl(@RequestBody CommonReqBean param){
+        DessBusiness dessBusiness = null;
+        try {
+            dessBusiness = dBusService.getBusinessDtl(param.getCon0());
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("获取失败");
+        }
+        return Response.ok().data(dessBusiness);
+    }
+    @RequestMapping(value = "/updateBusinessDtl",method = RequestMethod.POST)
+    public Response updateBusinessDtl(@RequestBody DessBusiness dessBusiness){
+        try {
+            dBusService.updateBusinessDtl(dessBusiness);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("修改失败");
+        }
+        return Response.ok();
+    }
 }

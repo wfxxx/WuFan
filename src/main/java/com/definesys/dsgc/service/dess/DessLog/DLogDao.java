@@ -28,10 +28,10 @@ public class DLogDao {
     public PageQueryResult queryJobLogList(CommonReqBean param, int pageSize, int pageIndex) {
         StringBuffer sqlStr = null;
         if("oracle".equals(dbType)){
-            sqlStr = new StringBuffer("select * from (select dl.*,di.JOB_NAME,(select distinct db.BUSINESS_TYPE from DESS_INSTANCE di,DESS_BUSINESS db  where di.BUSINESS_ID = db.BUSINESS_ID) BUSINESS_TYPE from dess_log dl LEFT JOIN DESS_INSTANCE di on dl.JOB_NO = di.JOB_NO)  where 1=1 ");
+            sqlStr = new StringBuffer("select dl.*,di.JOB_NAME,di.BUSINESS_ID,db.BUSINESS_TYPE from dess_log dl LEFT JOIN DESS_INSTANCE di on dl.JOB_NO = di.JOB_NO left join DESS_BUSINESS db on di.BUSINESS_ID = db.BUSINESS_ID where 1=1 ");
         }
         if ("mysql".equals(dbType)){
-            sqlStr = new StringBuffer("select * from (select dl.*,di.JOB_NAME,(select distinct db.BUSINESS_TYPE from DESS_INSTANCE di,DESS_BUSINESS db  where di.BUSINESS_ID = db.BUSINESS_ID) BUSINESS_TYPE from dess_log dl LEFT JOIN DESS_INSTANCE di on dl.JOB_NO = di.JOB_NO)  where 1=1 ");
+            sqlStr = new StringBuffer("select dl.*,di.JOB_NAME,di.BUSINESS_ID,db.BUSINESS_TYPE from dess_log dl LEFT JOIN DESS_INSTANCE di on dl.JOB_NO = di.JOB_NO left join DESS_BUSINESS db on di.BUSINESS_ID = db.BUSINESS_ID where 1=1 ");
         }
         MpaasQuery mq = sw.buildQuery();
         if (StringUtil.isNotBlank(param.getCon0())) {
@@ -47,17 +47,16 @@ public class DLogDao {
             String[] conArray = param.getQueryType().trim().split(" ");
             for (String s : conArray) {
                 if (s != null && s.length() > 0) {
-                    sqlStr.append("and  BUSINESS_TYPE like '%" + s + "%'");
+                    sqlStr.append("and  db.BUSINESS_TYPE like '%" + s + "%'");
                 }
             }
         }
         if("oracle".equals(dbType)){
-            mq.sql(sqlStr.toString()+" order by creation_date desc");
+            mq.sql(sqlStr.toString()+" order by dl.creation_date desc");
         }
         if ("mysql".equals(dbType)){
-            mq.sql(sqlStr.toString()+" GROUP BY log_id HAVING COUNT(1)>1  order by creation_date desc");
+            mq.sql(sqlStr.toString()+" GROUP BY dl.log_id HAVING COUNT(1)>1  order by dl.creation_date desc");
         }
-
         return mq.doPageQuery(pageIndex, pageSize, DessLog.class);
     }
 

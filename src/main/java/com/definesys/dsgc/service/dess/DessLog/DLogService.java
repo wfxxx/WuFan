@@ -40,8 +40,8 @@ public class DLogService {
             dessLogVO.setLogId(dessLog.getLogId());
             dessLogVO.setJobNo(dessLog.getJobNo());
             dessLogVO.setJobName(dessLog.getJobName());
-            dessLogVO.setJobType(dessLog.getJobType());
-            dessLogVO.setStatus(dessLog.getStatus());
+            dessLogVO.setBusinessType(dessLog.getBusinessType());
+            dessLogVO.setLogStatus(dessLog.getLogStatus());
             dessLogVO.setRetryTimes(dessLog.getRetryTimes());
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             dessLogVO.setCreationDate(sdf.format(dessLog.getCreationDate()));

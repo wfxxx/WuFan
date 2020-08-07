@@ -29,9 +29,11 @@ public class DinstBean {
     private Integer failTimes;
     private Integer avgRunTime;
     private String jobDescription;
+    private String jobRate; // 频率类型
     @Column(type = ColumnType.JAVA)
     private String businessType;
-    private String jobRate;
+    @Column(type = ColumnType.JAVA)
+    private String businessName;
 
 
     public String getJobNo() {
@@ -156,6 +158,14 @@ public class DinstBean {
         this.jobRate = jobRate;
     }
 
+    public String getBusinessName() {
+        return businessName;
+    }
+
+    public void setBusinessName(String businessName) {
+        this.businessName = businessName;
+    }
+
     @Override
     public String toString() {
         return "DinstBean{" +
@@ -172,8 +182,9 @@ public class DinstBean {
                 ", failTimes=" + failTimes +
                 ", avgRunTime=" + avgRunTime +
                 ", jobDescription='" + jobDescription + '\'' +
-                ", businessType='" + businessType + '\'' +
                 ", jobRate='" + jobRate + '\'' +
+                ", businessType='" + businessType + '\'' +
+                ", businessName='" + businessName + '\'' +
                 '}';
     }
 }

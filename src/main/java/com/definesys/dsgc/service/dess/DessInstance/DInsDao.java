@@ -29,7 +29,7 @@ public class DInsDao {
 
 
     public PageQueryResult queryJobInstaceList(CommonReqBean param, int pageSize, int pageIndex) {
-        StringBuffer sqlStr = new StringBuffer("select di.*,db.BUSINESS_TYPE from DESS_INSTANCE di left join DESS_BUSINESS db on di.BUSINESS_ID = db.BUSINESS_ID where 1=1 ");
+        StringBuffer sqlStr = new StringBuffer("select di.*,db.BUSINESS_TYPE,db.BUSINESS_NAME from DESS_INSTANCE di left join DESS_BUSINESS db on di.BUSINESS_ID = db.BUSINESS_ID where 1=1 ");
         MpaasQuery mq = sw.buildQuery();
         // 检索搜索框条件
         if (StringUtil.isNotBlank(param.getCon0())) {
