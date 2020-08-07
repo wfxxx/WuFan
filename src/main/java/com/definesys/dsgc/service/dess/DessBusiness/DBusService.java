@@ -8,6 +8,8 @@ import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @ClassName DBusService
  * @Description TODO
@@ -24,21 +26,30 @@ public class DBusService {
     @Autowired
     private FndPropertiesService fndPropertiesService;
 
-    public void saveJobDefinition(DessBusiness dessBusiness){
-        dBusDao.saveJobDefinition(dessBusiness);
-    }
 
-    public DessBusiness getJobDefinition(String jobNo){
-        return dBusDao.getJobDefinition(jobNo);
-    }
 
-    public PageQueryResult queryBusinessList(CommonReqBean param, int pageSize, int pageIndex){
-        return dBusDao.queryBusinessList(param,pageSize,pageIndex);
+    public PageQueryResult<DessBusiness> queryBusinessList(CommonReqBean param, int pageSize, int pageIndex){
+        PageQueryResult<DessBusiness> pageQueryResult = dBusDao.queryBusinessList(param,pageSize,pageIndex);
+        List<DessBusiness> cantDelbsName = dBusDao.checkDel();
+        for (DessBusiness item:pageQueryResult.getResult()) {
+            for (DessBusiness ele:cantDelbsName) {
+                if(item.getBusinessName().equals(ele.getBusinessName())){
+                    item.setIsDel("false");
+                    break;
+                }else{
+                    item.setIsDel("true");
+                }
+            }
+        }
+        return pageQueryResult;
     }
     public void addBusiness(DessBusiness dessBusiness){
         dBusDao.addBusiness(dessBusiness);
     }
     public boolean checkBusinessName(CommonReqBean param){
         return dBusDao.checkBusinessName(param.getCon0());
+    }
+    public void delBusiness(String businessId){
+        dBusDao.delBusiness(businessId);
     }
 }

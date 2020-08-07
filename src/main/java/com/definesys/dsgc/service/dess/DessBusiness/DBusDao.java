@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * @ClassName DBusDao
  * @Description TODO
@@ -27,25 +29,13 @@ public class DBusDao {
     @Value("${database.type}")
     private String dbType;
 
-
-    public void saveJobDefinition(DessBusiness dessBusiness){
-        sw.buildQuery()
-                .doInsert(dessBusiness);
-    }
-
-    public DessBusiness getJobDefinition(String jobNo){
-        return sw.buildQuery()
-                .eq("job_no",jobNo)
-                .doQueryFirst(DessBusiness.class);
-    }
-
-    public PageQueryResult queryBusinessList(CommonReqBean param, int pageSize, int pageIndex){
+    public PageQueryResult<DessBusiness> queryBusinessList(CommonReqBean param, int pageSize, int pageIndex){
         StringBuffer sqlStr = null;
         if("oracle".equals(dbType)){
-            sqlStr = new StringBuffer("select dl.BUSINESS_ID,dl.BUSINESS_NAME,dl.BUSINESS_DESC,dl.INVOKE_URL,dl.WEBSERVICE_TYPE,dl.INVOKE_OPERATION,dl.CREATION_DATE,dl.BUSINESS_TYPE from DESS_BUSINESS dl where 1=1");
+            sqlStr = new StringBuffer("select dl.BUSINESS_ID,dl.BUSINESS_NAME,dl.BUSINESS_DESC,dl.INVOKE_URL,dl.WEBSERVICE_TYPE,dl.INVOKE_OPERATION,dl.CREATION_DATE,dl.BUSINESS_TYPE from DESS_BUSINESS dl where 1=1 ");
         }
         if ("mysql".equals(dbType)){
-            sqlStr = new StringBuffer("select dl.BUSINESS_ID,dl.BUSINESS_NAME,dl.BUSINESS_DESC,dl.INVOKE_URL,dl.WEBSERVICE_TYPE,dl.INVOKE_OPERATION,dl.CREATION_DATE,dl.BUSINESS_TYPE from DESS_BUSINESS dl where 1=1");
+            sqlStr = new StringBuffer("select dl.BUSINESS_ID,dl.BUSINESS_NAME,dl.BUSINESS_DESC,dl.INVOKE_URL,dl.WEBSERVICE_TYPE,dl.INVOKE_OPERATION,dl.CREATION_DATE,dl.BUSINESS_TYPE from DESS_BUSINESS dl where 1=1 ");
         }
         MpaasQuery mq = sw.buildQuery();
         if (StringUtil.isNotBlank(param.getCon0())) {
@@ -97,7 +87,11 @@ public class DBusDao {
         }
     }
 
-//    public boolean
+    public List<DessBusiness> checkDel(){
+        return sw.buildQuery()
+                .sql("select db.BUSINESS_NAME from DESS_INSTANCE di left join DESS_BUSINESS db on db.BUSINESS_ID = DI.BUSINESS_ID")
+                .doQuery(DessBusiness.class);
+    }
 
     public void delBusiness(String businessId){
         sw.buildQuery()

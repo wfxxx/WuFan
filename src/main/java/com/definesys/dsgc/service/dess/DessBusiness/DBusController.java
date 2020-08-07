@@ -30,42 +30,6 @@ public class DBusController {
 
 
     /**
-     * 保存业job所属的业务信息
-     * @param dessBusiness
-     * @return
-     */
-    @RequestMapping(value = "/saveJobDefinition",method = RequestMethod.POST)
-    public Response saveJobDefinition(@RequestBody DessBusiness dessBusiness){
-        if(StringUtil.isBlank(dessBusiness.getJobNo())){
-            return Response.error("作业编号为空");
-        }
-        try {
-            dBusService.saveJobDefinition(dessBusiness);
-        }catch (Exception e){
-            e.printStackTrace();
-            return Response.error("保存发生错误");
-        }
-        return Response.ok();
-    }
-
-    /**
-     * 获取job所属的业务信息
-     * @param dessBusiness
-     * @return
-     */
-    @RequestMapping(value = "/getJobDefinition")
-    public Response getJobDefinition(@RequestBody DessBusiness dessBusiness){
-        DessBusiness result = new DessBusiness();
-        try {
-            result = dBusService.getJobDefinition(dessBusiness.getJobNo());
-        }catch (Exception e){
-            e.printStackTrace();
-            return Response.error("获取业务信息失败");
-        }
-        return Response.ok().setData(result);
-    }
-
-    /**
      * 获取业务列表
      * @param param
      * @param pageSize
@@ -81,7 +45,7 @@ public class DBusController {
         if ("Tourist".equals(userRole)){
             return Response.error("无权限操作");
         }
-        PageQueryResult result;
+        PageQueryResult<DessBusiness> result;
         try {
             result = dBusService.queryBusinessList(param,pageSize,pageIndex);
         }catch (Exception e){
@@ -121,5 +85,21 @@ public class DBusController {
             e.printStackTrace();
             return Response.error("验证作业编号失败！");
         }
+    }
+
+    /**
+     * 删除业务
+     * @param param
+     * @return
+     */
+    @RequestMapping(value = "/delBusiness",method = RequestMethod.POST)
+    public Response delBusiness(@RequestBody CommonReqBean param){
+        try {
+            dBusService.delBusiness(param.getCon0());
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("删除发生错误");
+        }
+        return Response.ok();
     }
 }

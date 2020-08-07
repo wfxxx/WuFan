@@ -12,9 +12,6 @@ import com.definesys.mpaas.query.model.MpaasBasePojo;
  **/
 @Table(value = "DESS_BUSINESS")
 public class DessBusiness {
-    @Deprecated
-    @Column(type = ColumnType.JAVA)
-    private String jobNo;
     @RowID(sequence = "dess_business_s",type= RowIDType.AUTO)
     private String businessId;
     private String businessName;
@@ -27,15 +24,8 @@ public class DessBusiness {
     private String headerPayload;
     private String businessDesc;
     private String businessType;
-
-
-    public String getJobNo() {
-        return jobNo;
-    }
-
-    public void setJobNo(String jobNo) {
-        this.jobNo = jobNo;
-    }
+    @Column(type = ColumnType.JAVA)
+    private String isDel;
 
     public String getBusinessId() {
         return businessId;
@@ -53,6 +43,13 @@ public class DessBusiness {
         this.businessName = businessName;
     }
 
+    public String getInvokeUrl() {
+        return invokeUrl;
+    }
+
+    public void setInvokeUrl(String invokeUrl) {
+        this.invokeUrl = invokeUrl;
+    }
 
     public String getWebserviceType() {
         return webserviceType;
@@ -118,11 +115,11 @@ public class DessBusiness {
         this.businessType = businessType;
     }
 
-    public String getInvokeUrl() {
-        return invokeUrl;
+    public String getIsDel() {
+        return isDel;
     }
 
-    public void setInvokeUrl(String invokeUrl) {
-        this.invokeUrl = invokeUrl;
+    public void setIsDel(String isDel) {
+        this.isDel = isDel;
     }
 }
