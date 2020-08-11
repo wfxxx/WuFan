@@ -27,7 +27,7 @@ public class DinstBean {
     private String groupName="default";
     private Integer sucessTimes;
     private Integer failTimes;
-    private Integer avgRunTime;
+    private Double avgRunTime;
     private String jobDescription;
     private String jobRate; // 频率类型
     @Column(type = ColumnType.JAVA)
@@ -109,14 +109,13 @@ public class DinstBean {
         this.failTimes = failTimes;
     }
 
-    public Integer getAvgRunTime() {
+    public Double getAvgRunTime() {
         return avgRunTime;
     }
 
-    public void setAvgRunTime(Integer avgRunTime) {
+    public void setAvgRunTime(Double avgRunTime) {
         this.avgRunTime = avgRunTime;
     }
-
 
     public String getBusinessType() {
         return businessType;

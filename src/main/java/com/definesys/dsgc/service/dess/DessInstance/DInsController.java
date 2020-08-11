@@ -5,10 +5,12 @@ import com.definesys.dsgc.service.dess.CommonReqBean;
 import com.definesys.dsgc.service.dess.DessBusiness.bean.DessBusiness;
 import com.definesys.dsgc.service.dess.DessInstance.bean.DinstBean;
 import com.definesys.dsgc.service.dess.DessInstance.bean.DinstVO;
+import com.definesys.dsgc.service.dess.DessInstance.bean.DinstVO2;
 import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.mpaas.common.http.Response;
 import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -63,9 +65,11 @@ public class DInsController {
      * @return
      */
     @RequestMapping(value = "/saveJobBaseInfo",method = RequestMethod.POST)
-    public Response saveJobBaseInfo(@RequestBody DinstBean dinstBean){
+    public Response saveJobBaseInfo(@RequestBody DinstBean dinstBean,HttpServletRequest request){
         try {
             dInsService.saveJobBaseInfo(dinstBean);
+            DinstVO2 sendDinstVO = dInsService.getDinstVO(dinstBean.getJobNo());
+            dInsService.UpdateDessTask(request,sendDinstVO);
         }catch (Exception e){
             e.printStackTrace();
             return Response.error("新增发生错误");
@@ -94,10 +98,13 @@ public class DInsController {
      * @param commonReqBean
      * @return
      */
+
     @RequestMapping(value = "/delJobInstance",method = RequestMethod.POST)
-    public Response delJobInstance(@RequestBody CommonReqBean commonReqBean){
+    public Response delJobInstance(@RequestBody CommonReqBean commonReqBean,HttpServletRequest request){
         try {
             dInsService.delJobInstance(commonReqBean.getCon0());
+            DinstVO2 sendDinstVO = dInsService.getDinstVO(commonReqBean.getCon0());
+            dInsService.pauseDessTask(request,sendDinstVO);
         }catch (Exception e){
             e.printStackTrace();
             return Response.error("删除发生错误");
@@ -111,9 +118,21 @@ public class DInsController {
      * @return
      */
     @RequestMapping(value = "/updateJobInstanceStatus",method = RequestMethod.POST)
-    public Response updateJobInstanceStatus(@RequestBody DinstBean dinstBean){
+    public Response updateJobInstanceStatus(@RequestBody DinstBean dinstBean,HttpServletRequest request){
         try {
+            if(dinstBean.getJobStatus().equals("0")){
+                //当用户停止调用时，下一次调度时间未知。
+                dinstBean.setNextDoTime(null);
+            }
             dInsService.updateJobInstanceStatus(dinstBean);
+            DinstVO2 sendDinstVO = dInsService.getDinstVO(dinstBean.getJobNo());
+            if(sendDinstVO.getJobStatus().equals("1")){
+                dInsService.addDessTask(request,sendDinstVO);
+            }
+            if(sendDinstVO.getJobStatus().equals("0")){
+                dInsService.pauseDessTask(request,sendDinstVO);
+            }
+
         }catch (Exception e){
             e.printStackTrace();
             return Response.error("停用发生错误");
@@ -146,9 +165,11 @@ public class DInsController {
      * @return
      */
     @RequestMapping(value = "/saveJobInsDeatail",method = RequestMethod.POST)
-    public Response saveJobInsDeatail(@RequestBody DinstBean dinstBean){
+    public Response saveJobInsDeatail(@RequestBody DinstBean dinstBean,HttpServletRequest request){
         try {
             dInsService.saveJobInsDeatail(dinstBean);
+            DinstVO2 sendDinstVO = dInsService.getDinstVO(dinstBean.getJobNo());
+            dInsService.UpdateDessTask(request,sendDinstVO);
         }catch (Exception e){
             e.printStackTrace();
             return Response.error("更新发生错误");
@@ -162,10 +183,12 @@ public class DInsController {
      * @return
      */
     @RequestMapping(value = "/saveScheduling",method = RequestMethod.POST)
-    public Response saveScheduling(@RequestBody DinstVO dinstVO){
+    public Response saveScheduling(@RequestBody DinstVO dinstVO,HttpServletRequest request){
         List<Map<String, String>>  timeList = null;
         try {
             timeList = dInsService.saveScheduling(dinstVO);
+            DinstVO2 sendDinstVO = dInsService.getDinstVO(dinstVO.getJobNo());
+            dInsService.UpdateDessTask(request,sendDinstVO);
         }catch (Exception e){
             e.printStackTrace();
             return Response.error("保存发生错误");

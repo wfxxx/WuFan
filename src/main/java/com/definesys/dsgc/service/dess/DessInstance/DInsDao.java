@@ -3,6 +3,8 @@ package com.definesys.dsgc.service.dess.DessInstance;
 import com.definesys.dsgc.service.dess.CommonReqBean;
 import com.definesys.dsgc.service.dess.DessBusiness.bean.DessBusiness;
 import com.definesys.dsgc.service.dess.DessInstance.bean.DinstBean;
+import com.definesys.dsgc.service.dess.DessInstance.bean.DinstVO;
+import com.definesys.dsgc.service.dess.DessInstance.bean.DinstVO2;
 import com.definesys.dsgc.service.dess.DessLog.bean.DessLog;
 import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.mpaas.query.MpaasQuery;
@@ -11,6 +13,8 @@ import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
+
+import java.util.Map;
 
 /**
  * @ClassName DInsDao
@@ -87,6 +91,7 @@ public class DInsDao {
         sw.buildQuery()
                 .eq("job_no",dinstBean.getJobNo())
                 .update("job_status",dinstBean.getJobStatus())
+                .update("NEXT_DO_TIME",dinstBean.getNextDoTime())
                 .doUpdate(dinstBean);
     }
 
@@ -97,6 +102,18 @@ public class DInsDao {
                 .setVar("jobNo",jobNo)
                 .doQueryFirst(DinstBean.class);
     }
+
+    public DinstVO2 getJobVO(String jobNo){
+        Map<String, Object> job_no = sw.buildQuery()
+                .sql("select * from DESS_INSTANCE i left join dess_business b on i.business_id=b.business_id ")
+                .eq("JOB_NO", jobNo)
+                .doQueryFirst();
+        return sw.buildQuery()
+                .sql("select * from DESS_INSTANCE i left join dess_business b on i.business_id=b.business_id ")
+                .eq("JOB_NO",jobNo)
+                .doQueryFirst(DinstVO2.class);
+    }
+
 
     public void saveJobInsDeatail(DinstBean dinstBean){
         sw.buildQuery()

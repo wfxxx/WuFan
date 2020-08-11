@@ -5,6 +5,7 @@ import com.definesys.dsgc.service.dess.CommonReqBean;
 import com.definesys.dsgc.service.dess.DessBusiness.bean.DessBusiness;
 import com.definesys.dsgc.service.dess.DessInstance.bean.DinstBean;
 import com.definesys.dsgc.service.dess.DessInstance.bean.DinstVO;
+import com.definesys.dsgc.service.dess.DessInstance.bean.DinstVO2;
 import com.definesys.dsgc.service.dess.DessLog.bean.DessLog;
 import com.definesys.dsgc.service.dess.DessLog.bean.DessLogVO;
 import com.definesys.dsgc.service.lkv.FndPropertiesService;
@@ -42,6 +43,8 @@ public class DInsService {
     @Autowired
     private DInsDao dInsDao;
 
+
+
     @Autowired
     private FndPropertiesService fndPropertiesService;
 
@@ -61,6 +64,10 @@ public class DInsService {
 
     public PageQueryResult queryJobInstaceList(CommonReqBean param, int pageSize, int pageIndex) {
         return dInsDao.queryJobInstaceList(param, pageSize, pageIndex);
+    }
+
+    public DinstVO2 getDinstVO(String jobNo) {
+        return dInsDao.getJobVO(jobNo);
     }
 
 
@@ -182,6 +189,8 @@ public class DInsService {
                 }
             }
         }
+
+
         return parserList;
     }
 
@@ -248,39 +257,27 @@ public class DInsService {
 
 
 
-    //添加任务 TODO
-    public void addDessTask(HttpServletRequest request, DinstBean dinstBean){
-        String dinstBeanStr = JSONObject.toJSONString(dinstBean);
+    //添加,启动任务 TODO
+    public void addDessTask(HttpServletRequest request, DinstVO2 dinstVO){
+        String dinstBeanStr = JSONObject.toJSONString(dinstVO);
         JSONObject dinstBeanObject = JSONObject.parseObject(dinstBeanStr);
         HttpReqUtil.sendPostRequest(dessServiceUrl+"/dess/add",dinstBeanObject, request);
     }
 
-    //删除任务
-    public void delDessTask( HttpServletRequest request,DinstBean dinstBean){
-        String dinstBeanStr = JSONObject.toJSONString(dinstBean);
+
+    //删除，暂停任务
+    public void pauseDessTask( HttpServletRequest request,DinstVO2 dinstVO){
+        String dinstBeanStr = JSONObject.toJSONString(dinstVO);
         JSONObject dinstBeanObject = JSONObject.parseObject(dinstBeanStr);
-        HttpReqUtil.sendPostRequest(dessServiceUrl+"/dess/delete",dinstBeanObject, request);
+        HttpReqUtil.sendPostRequest(dessServiceUrl+"/dess/pauseJob",dinstBeanObject, request);
     }
 
-    //暂停任务
-    public void pauseDessTask( HttpServletRequest request,DinstBean dinstBean){
-        String dinstBeanStr = JSONObject.toJSONString(dinstBean);
-        JSONObject dinstBeanObject = JSONObject.parseObject(dinstBeanStr);
-        HttpReqUtil.sendPostRequest(dessServiceUrl+"/dess/pause",dinstBeanObject, request);
-    }
 
-    //恢复暂停任务
-    public void startDessTask( HttpServletRequest request,DinstBean dinstBean){
-        String dinstBeanStr = JSONObject.toJSONString(dinstBean);
+    //更新，重启任务,注意重启会放弃之前的已有的调度。
+    public void UpdateDessTask( HttpServletRequest request,DinstVO2 dinstVO){
+        String dinstBeanStr = JSONObject.toJSONString(dinstVO);
         JSONObject dinstBeanObject = JSONObject.parseObject(dinstBeanStr);
-        HttpReqUtil.sendPostRequest(dessServiceUrl+"/dess/start",dinstBeanObject, request);
-    }
-
-    //恢复暂停任务
-    public void UpdateDessTask( HttpServletRequest request,DinstBean dinstBean){
-        String dinstBeanStr = JSONObject.toJSONString(dinstBean);
-        JSONObject dinstBeanObject = JSONObject.parseObject(dinstBeanStr);
-        HttpReqUtil.sendPostRequest(dessServiceUrl+"/dess/update",dinstBeanObject, request);
+        HttpReqUtil.sendPostRequest(dessServiceUrl+"/dess/refresh",dinstBeanObject, request);
     }
 
 
