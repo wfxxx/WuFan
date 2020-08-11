@@ -23,6 +23,7 @@ public class DessLog {
     //实际执行时间
     private Date creationDate;
     private Integer retryTimes;
+    private Integer runTime;
     @Column(type = ColumnType.JAVA)
     private String jobName;
     @Column(type = ColumnType.JAVA)
@@ -98,5 +99,13 @@ public class DessLog {
 
     public void setBusinessType(String businessType) {
         this.businessType = businessType;
+    }
+
+    public Integer getRunTime() {
+        return runTime;
+    }
+
+    public void setRunTime(Integer runTime) {
+        this.runTime = runTime;
     }
 }

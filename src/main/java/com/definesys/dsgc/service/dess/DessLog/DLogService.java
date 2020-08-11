@@ -2,6 +2,7 @@ package com.definesys.dsgc.service.dess.DessLog;
 
 import com.definesys.dsgc.service.apilr.bean.CommonReqBean;
 import com.definesys.dsgc.service.dess.DessLog.bean.DessLog;
+import com.definesys.dsgc.service.dess.DessLog.bean.DessLogPayload;
 import com.definesys.dsgc.service.dess.DessLog.bean.DessLogVO;
 import com.definesys.dsgc.service.lkv.FndPropertiesService;
 import com.definesys.mpaas.query.db.PageQueryResult;
@@ -12,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @ClassName DLogService
@@ -43,13 +45,20 @@ public class DLogService {
             dessLogVO.setBusinessType(dessLog.getBusinessType());
             dessLogVO.setLogStatus(dessLog.getLogStatus());
             dessLogVO.setRetryTimes(dessLog.getRetryTimes());
+            dessLogVO.setRunTime(dessLog.getRunTime());
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            dessLogVO.setCreationDate(sdf.format(dessLog.getCreationDate()));
             dessLogVO.setDoTime(sdf.format(dessLog.getDoTime()));
             listDTOS.add(dessLogVO);
         }
         result.setCount(jobLogList.getCount());
         result.setResult(listDTOS);
         return result;
+    }
+
+    public DessLogPayload findJobLogDetialByIdSwitch(String logId){
+        List<Map<String, Object>> url = dLogDao.getUrl();
+        DessLogPayload detial = dLogDao.findJobLogDetialByIdSwitch(logId);
+        detial.setInvokeUrl(url.get(0).get("INVOKE_URL").toString());
+        return detial;
     }
 }

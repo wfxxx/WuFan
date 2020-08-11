@@ -2,6 +2,7 @@ package com.definesys.dsgc.service.dess.DessLog;
 
 import com.definesys.dsgc.service.apilr.bean.CommonReqBean;
 import com.definesys.dsgc.service.dess.DessLog.bean.DessLog;
+import com.definesys.dsgc.service.dess.DessLog.bean.DessLogPayload;
 import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.mpaas.query.MpaasQuery;
 import com.definesys.mpaas.query.MpaasQueryFactory;
@@ -9,6 +10,9 @@ import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @ClassName DLogDao
@@ -68,4 +72,15 @@ public class DLogDao {
         return conAnd;
     }
 
+    public DessLogPayload findJobLogDetialByIdSwitch(String logId){
+        return sw.buildQuery()
+                .eq("log_id",logId)
+                .doQueryFirst(DessLogPayload.class);
+    }
+
+    public List<Map<String, Object>> getUrl(){
+        return sw.buildQuery()
+                .sql("select db.INVOKE_URL from DESS_LOG dl,DESS_INSTANCE di,DESS_BUSINESS db where dl.JOB_NO = di.JOB_NO and di.BUSINESS_ID  = db.BUSINESS_ID ")
+                .doQuery();
+    }
 }

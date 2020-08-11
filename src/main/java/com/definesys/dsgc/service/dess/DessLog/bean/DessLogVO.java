@@ -17,6 +17,7 @@ public class DessLogVO {
     private String businessType;
     private DessLogPayload reqPayload;
     private DessLogPayload resPayload;
+    private Integer runTime;
 
     public String getLogId() {
         return logId;
@@ -96,5 +97,13 @@ public class DessLogVO {
 
     public void setResPayload(DessLogPayload resPayload) {
         this.resPayload = resPayload;
+    }
+
+    public Integer getRunTime() {
+        return runTime;
+    }
+
+    public void setRunTime(Integer runTime) {
+        this.runTime = runTime;
     }
 }
