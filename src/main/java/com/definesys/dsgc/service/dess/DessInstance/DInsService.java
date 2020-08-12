@@ -206,7 +206,7 @@ public class DInsService {
 
         JSONObject frequency = dinstVO.getJobFrequency();
         String str = "";
-        if("每日".equals(dinstVO.getJobRate())||"每周".equals(dinstVO.getJobRate())){
+        if("每日".equals(dinstVO.getJobRate())||"每周".equals(dinstVO.getJobRate())||"每月".equals(dinstVO.getJobRate())||"每年".equals(dinstVO.getJobRate())){
             str =   s.format(aliveStart) + " " +
                     m.format(aliveStart) + " " +
                     h.format(aliveStart) + " " +
@@ -214,10 +214,26 @@ public class DInsService {
                     frequency.getString("month") + " " +
                     frequency.getString("week") + " " +
                     frequency.getString("year");
-        }else{
+        }else if("每小时".equals(dinstVO.getJobRate())){
             str =   s.format(aliveStart) + " " +
                     m.format(aliveStart) + " " +
-                    h.format(aliveStart) + " " +
+                    frequency.getString("hour") + " " +
+                    frequency.getString("day") + " " +
+                    frequency.getString("month") + " " +
+                    frequency.getString("week") + " " +
+                    frequency.getString("year");
+        }else if("每分钟".equals(dinstVO.getJobRate())){
+            str =   s.format(aliveStart) + " " +
+                    frequency.getString("min") + " " +
+                    frequency.getString("hour") + " " +
+                    frequency.getString("day") + " " +
+                    frequency.getString("month") + " " +
+                    frequency.getString("week") + " " +
+                    frequency.getString("year");
+        }else {
+            str =   frequency.getString("sec") + " " +
+                    frequency.getString("min") + " " +
+                    frequency.getString("hour") + " " +
                     frequency.getString("day") + " " +
                     frequency.getString("month") + " " +
                     frequency.getString("week") + " " +
