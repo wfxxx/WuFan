@@ -21,6 +21,7 @@ import com.definesys.dsgc.service.lkv.bean.FndLookupValue;
 import com.definesys.dsgc.service.users.DSGCUserDao;
 import com.definesys.dsgc.service.users.UsersDao;
 import com.definesys.dsgc.service.users.bean.DSGCUser;
+import com.definesys.dsgc.service.utils.IpUtils;
 import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,10 +29,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.swing.text.StyledEditorKit;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+import java.util.regex.Pattern;
 
 @Service
 public class SVCAuthService {
@@ -423,5 +422,78 @@ public class SVCAuthService {
         }
         return ipRuleConfigVO;
     }
-
+    public Map<String,Object> checkIpRule(List<String> ipList){
+        int b = 0;
+        List<String> result = new ArrayList<>();
+        Map<String,Object> map = new HashMap<>();
+        map.put("key",b);
+        map.put("value",null);
+        if (ipList != null && ipList.size()>0){
+            Pattern pattern = Pattern.compile(IpUtils.patternStr);
+            Pattern ptipv4 = Pattern.compile(IpUtils.ptipv4Str);
+            Pattern ptipv4s = Pattern.compile(IpUtils.ptipv4Strs);
+        //    Boolean bool = false;
+            List<String> errorIpList = new ArrayList<>();
+            for (String item: ipList) {
+               Boolean pattern6 = pattern.matcher(item).matches();    //IPV6
+                Boolean pattern4 = ptipv4.matcher(item).matches();    //IPV4
+                Boolean pattern4s = ptipv4s.matcher(item).matches();   //IPV4网段
+              //  bool = patternB || pattern4 || pattern4s;
+                if(!(pattern6 || pattern4 || pattern4s)){
+                    errorIpList.add(item);
+                }else if(pattern6){
+                    result.add(item);
+                }else if(pattern4){
+                    result.add(item);
+                }else if(pattern4s){
+                    int index = item.indexOf("/");
+                    String mask =item.substring(index+1);
+                    String ip = item.substring(0,index);
+                    List<String> list = IpUtils.parseIpMaskRange(ip,mask);
+                    result.addAll(list);
+                }
+//                int index = item.indexOf("/");
+//                if(index != -1){
+//                    String mask =item.substring(index+1);
+//                    String ip = item.substring(0,index);
+//                    List<String> list = IpUtils.parseIpMaskRange(ip,mask);
+//                    result.addAll(list);
+//                }else {
+//
+//                    result.add(item);
+//                }
+            }
+            if(errorIpList.size() > 0){             //有不合法ip地址
+                b = 3;
+                map.put("key",3);
+                map.put("value",errorIpList);
+                return map;
+            }
+            if(result.size() > 100){                //大于100
+                b = 2;
+                map.put("key",2);
+                map.put("value",null);
+                return map;
+            }
+            List<String> repetitionList = checkIpRepetition(result);
+            if(repetitionList != null && repetitionList.size()>0){                //是否有重复的
+                b = 1;
+                map.put("key",b);
+                map.put("value",repetitionList);
+                return map;
+            }
+        }
+        return map;
+    }
+    public List<String> checkIpRepetition(List<String> ipList){
+        Set<String> set = new HashSet<>();
+        List<String> repetitionList = new ArrayList<>();
+        for (String item: ipList) {
+            boolean b = set.add(item);
+            if(!b){
+                repetitionList.add(item);
+            }
+        }
+        return repetitionList;
+    }
 }

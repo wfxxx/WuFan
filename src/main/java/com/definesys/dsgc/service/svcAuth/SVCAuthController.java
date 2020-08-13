@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "dsgc/svcauth")
@@ -190,4 +192,15 @@ public class SVCAuthController {
             return Response.error("查询ip黑白名单失败！");
         }
     }
+    @RequestMapping(value = "/checkIpRule",method = RequestMethod.POST)
+    public Response checkIpRule(@RequestBody List<String> ipList){
+        try{
+           Map<String,Object> result= svcAuthService.checkIpRule(ipList);
+            return Response.ok().setData(result);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("检查ip值失败！");
+        }
+    }
+
 }

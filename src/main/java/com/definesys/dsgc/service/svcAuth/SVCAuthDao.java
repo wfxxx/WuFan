@@ -305,6 +305,9 @@ public class SVCAuthDao {
         sw.buildQuery().doInsert(ipLimitBean);
     }
     public DSGCIpLimitBean queryIpRuleConfig(String limitType, String limitTarget){
-       return sw.buildQuery().eq("limit_type",limitType).eq("limit_target",limitTarget).doQueryFirst(DSGCIpLimitBean.class);
+       return sw.buildQuery().sql("select limit_type,limit_target,rule_type,replace(replace(to_char(rule_cron),chr(10),'\n'),chr(13),'\r') rule_cron from dsgc_ip_limit where limit_type = #limitType and limit_target = #limitTarget")
+                .setVar("limitType",limitType).setVar("limitTarget",limitTarget)
+                .doQueryFirst(DSGCIpLimitBean.class);
+      // return sw.buildQuery().eq("limit_type",limitType).eq("limit_target",limitTarget).doQueryFirst(DSGCIpLimitBean.class);
     }
 }
