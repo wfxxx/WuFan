@@ -362,4 +362,29 @@ public class DSGCUserDao {
     }
 
 
+    public UserRoleBean getUserRoleByName(UserRoleBean userName) {
+        UserRoleBean s = new UserRoleBean();
+        s.setUserRole("Tourist");
+        s.setUserName(userName.getUserName());
+        if(userName != null && userName.getUserName() != null && userName.getUserName().length() > 0) {
+            UserRoleBean s1 = sw.buildQuery().sql("SELECT USER_NAME,USER_ROLE FROM DSGC_USER WHERE USER_NAME = '"+userName.getUserName()+"'").doQueryFirst(UserRoleBean.class);
+            s = s1 != null ? s1 : s;
+        }
+        return s;
+    }
+
+    public UserLoginType getLoginTypeByName(UserRoleBean userName){
+        UserLoginType ul = new UserLoginType();
+        ul.setLoginType("0");
+        UserRoleBean ur = this.getUserRoleByName(userName);
+        if(!"SuperAdministrators".equals(ur.getUserRole())){
+           Map<String,Object> lkv = sw.buildQuery().sql("SELECT PROPERTY_VALUE FROM FND_PROPERTIES WHERE PROPERTY_KEY = 'PLATFORM_LOGIN_DOMAIN_ENABLE'").doQueryFirst();
+           if(lkv != null && "Y".equals(lkv.get("PROPERTY_VALUE"))){
+               ul.setLoginType("1");
+           }
+        }
+        return ul;
+    }
+
+
 }

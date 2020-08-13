@@ -1118,4 +1118,30 @@ public class SVCGenService {
         }
     }
 
+    /**
+     * 新增DB部署配置项
+     *
+     * @param uid
+     * @param dbDpl
+     * @return
+     */
+    public Response newDBDeployProfile(String uid,DBDeployProfileBean dbDpl) {
+        UserHelper uh = this.userHelper.user(uid);
+        boolean isEditor = uh.isSvcGenEditorByServNo(dbDpl.getServNo());
+        if (!isEditor) {
+            return Response.error("您无权限执行此操作！");
+        } else {
+            try {
+                String dpId = this.sgProxy.newDBDeployProfile(uid,dbDpl.getServNo(),dbDpl.getDplName(),dbDpl.getEnvCode(),dbDpl.getJndiName());
+                return Response.ok().setData(this.getDBDeployProfileDetail(dpId)).setMessage("新增成功！");
+            } catch (Exception e) {
+                e.printStackTrace();
+                return Response.error("执行出错，请联系管理员处理！");
+            }
+        }
+    }
+    public DBDeployProfileBean getDBDeployProfileDetail(String dpId) {
+        return this.svcGenDao.getDBDeployProfileDetail(dpId);
+    }
+
 }

@@ -41,7 +41,7 @@ public class TmplConfigBean {
     private String dbOper;
     private TblDTO[] tbls;
     private RspDTO[] rsps;
-    private String sqlcode;
+    private String sqlCode;
 
 //    //创建服务代码并同时创建服务资产信息
 //    private String servAssetNo;
@@ -306,12 +306,12 @@ public class TmplConfigBean {
         this.rsps = rsps;
     }
 
-    public String getSqlcode() {
-        return sqlcode;
+    public String getSqlCode() {
+        return sqlCode;
     }
 
-    public void setSqlcode(String sqlcode) {
-        this.sqlcode = sqlcode;
+    public void setSqlCode(String sqlCode) {
+        this.sqlCode = sqlCode;
     }
 
     //    public String getServAssetNo() {

@@ -481,16 +481,14 @@ public class ServiceGenerateProxy {
         this.setObjAttrValue(param,"projDir",cfg.getProjDir());
         if("I".equals(cfg.getDbOper())){
             this.setObjAttrValue(param,"tmplCodeFlag",31,int.class);
-        } else if("I".equals(cfg.getDbOper())){
-            this.setObjAttrValue(param,"tmplCodeFlag",32,int.class);
         } else if("U".equals(cfg.getDbOper())){
-            this.setObjAttrValue(param,"tmplCodeFlag",33,int.class);
+            this.setObjAttrValue(param,"tmplCodeFlag",32,int.class);
         } else if("IU".equals(cfg.getDbOper())){
-            this.setObjAttrValue(param,"tmplCodeFlag",34,int.class);
+            this.setObjAttrValue(param,"tmplCodeFlag",33,int.class);
         } else if("D".equals(cfg.getDbOper())){
-            this.setObjAttrValue(param,"tmplCodeFlag",35,int.class);
+            this.setObjAttrValue(param,"tmplCodeFlag",34,int.class);
         } else if("S01".equals(cfg.getDbOper())){
-            this.setObjAttrValue(param,"tmplCodeFlag",36,int.class);
+            this.setObjAttrValue(param,"tmplCodeFlag",35,int.class);
         }
         this.setObjAttrValue(param,"servDir",cfg.getServDir());
         this.setObjAttrValue(param,"psUri",cfg.getSoapPSUri());
@@ -504,7 +502,7 @@ public class ServiceGenerateProxy {
         //db个性化的设置
         this.setObjAttrValue(param,"textAttr1",cfg.getDbConn());
         this.setObjAttrValue(param,"textAttr2",cfg.getDbOper());
-        this.setObjAttrValue(param,"textAttr3",cfg.getSqlcode());
+        this.setObjAttrValue(param,"textAttr3",cfg.getSqlCode());
         Object tbls = this.coverTToCommonTbls(cfg.getTbls());
         if(tbls != null) {
             this.setObjAttrValue(param,"tbls", tbls);
@@ -736,6 +734,16 @@ public class ServiceGenerateProxy {
             }
         }
         return cust;
+    }
+
+    public String newDBDeployProfile(String loginUser,String servNo,String dplName,String envCode,String jndiName) throws Exception {
+        Method newDBDeployProfile = this.generateServcieClass.getMethod("newDBDeployProfile",String.class,String.class,String.class,String.class,String.class);
+        Object res = newDBDeployProfile.invoke(this.generateServcie,loginUser,servNo,dplName,envCode,jndiName);
+        if (res != null) {
+            return res.toString();
+        } else {
+            return null;
+        }
     }
 
 

@@ -299,6 +299,12 @@ public class SVCGenController {
         }
     }
 
+    @RequestMapping(value = "/newDBDeployProfile", method = RequestMethod.POST)
+    public Response newDBDeployProfile(@RequestBody DBDeployProfileBean rfcDpl,HttpServletRequest request) {
+        String userId = request.getHeader("uid");
+        return this.svc.newDBDeployProfile(userId,rfcDpl);
+    }
+
 
     @RequestMapping(value = "/newRfcDeployProfile", method = RequestMethod.POST)
     public Response newRfcDeployProfile(@RequestBody RfcDeployProfileBean rfcDpl,HttpServletRequest request) {
