@@ -5,6 +5,7 @@ import com.definesys.dsgc.service.dess.CommonReqBean;
 import com.definesys.dsgc.service.dess.DessBusiness.bean.DessBusiness;
 import com.definesys.dsgc.service.dess.DessInstance.bean.DinstBean;
 import com.definesys.dsgc.service.dess.DessInstance.bean.DinstVO;
+import com.definesys.dsgc.service.dess.DessInstance.bean.DinstVO2;
 import com.definesys.dsgc.service.dess.DessLog.bean.DessLog;
 import com.definesys.dsgc.service.dess.DessLog.bean.DessLogVO;
 import com.definesys.dsgc.service.lkv.FndPropertiesService;
@@ -42,6 +43,8 @@ public class DInsService {
     @Autowired
     private DInsDao dInsDao;
 
+
+
     @Autowired
     private FndPropertiesService fndPropertiesService;
 
@@ -61,6 +64,10 @@ public class DInsService {
 
     public PageQueryResult queryJobInstaceList(CommonReqBean param, int pageSize, int pageIndex) {
         return dInsDao.queryJobInstaceList(param, pageSize, pageIndex);
+    }
+
+    public DinstVO2 getDinstVO(String jobNo) {
+        return dInsDao.getJobVO(jobNo);
     }
 
 
@@ -165,13 +172,25 @@ public class DInsService {
             // 转换成corn表达式转为调度时间集合返回给前端
             if(dinstVO.getJobFrequency()!=null){
                 String cornExpression = this.getCornExpression(dinstVO);
-                dinstBean.setJobFrequency(cornExpression);
-                parserList = this.parser(cornExpression, dinstVO.getAliveStart(), dinstVO.getAliveEnd());
+                // 判断是否是每月或者每年 解决第几周与周几的冲突
+                if(cornExpression.contains("#")){
+                    String[] cronExpressionList = this.getCronExpressionList(cornExpression);
+                    for (int i = 0; i < cronExpressionList.length; i++) {
+                        List<Map<String, String>> parser = this.parser(cronExpressionList[i], dinstVO.getAliveStart(), dinstVO.getAliveEnd());
+                        parserList.addAll(parser);
+                    }
+                    dinstBean.setJobFrequency(StringUtils.join(cronExpressionList,";"));
+                }else{
+                    dinstBean.setJobFrequency(cornExpression);
+                    parserList = this.parser(cornExpression, dinstVO.getAliveStart(), dinstVO.getAliveEnd());
+                }
                 if(parserList.size()>0){
                     dInsDao.saveScheduling(dinstBean);
                 }
             }
         }
+
+
         return parserList;
     }
 
@@ -187,7 +206,7 @@ public class DInsService {
 
         JSONObject frequency = dinstVO.getJobFrequency();
         String str = "";
-        if("每日".equals(dinstVO.getJobRate())||"每周".equals(dinstVO.getJobRate())){
+        if("每日".equals(dinstVO.getJobRate())||"每周".equals(dinstVO.getJobRate())||"每月".equals(dinstVO.getJobRate())||"每年".equals(dinstVO.getJobRate())){
             str =   s.format(aliveStart) + " " +
                     m.format(aliveStart) + " " +
                     h.format(aliveStart) + " " +
@@ -195,10 +214,26 @@ public class DInsService {
                     frequency.getString("month") + " " +
                     frequency.getString("week") + " " +
                     frequency.getString("year");
-        }else{
+        }else if("每小时".equals(dinstVO.getJobRate())){
             str =   s.format(aliveStart) + " " +
                     m.format(aliveStart) + " " +
-                    h.format(aliveStart) + " " +
+                    frequency.getString("hour") + " " +
+                    frequency.getString("day") + " " +
+                    frequency.getString("month") + " " +
+                    frequency.getString("week") + " " +
+                    frequency.getString("year");
+        }else if("每分钟".equals(dinstVO.getJobRate())){
+            str =   s.format(aliveStart) + " " +
+                    frequency.getString("min") + " " +
+                    frequency.getString("hour") + " " +
+                    frequency.getString("day") + " " +
+                    frequency.getString("month") + " " +
+                    frequency.getString("week") + " " +
+                    frequency.getString("year");
+        }else {
+            str =   frequency.getString("sec") + " " +
+                    frequency.getString("min") + " " +
+                    frequency.getString("hour") + " " +
                     frequency.getString("day") + " " +
                     frequency.getString("month") + " " +
                     frequency.getString("week") + " " +
@@ -238,39 +273,27 @@ public class DInsService {
 
 
 
-    //添加任务 TODO
-    public void addDessTask(HttpServletRequest request, DinstBean dinstBean){
-        String dinstBeanStr = JSONObject.toJSONString(dinstBean);
+    //添加,启动任务 TODO
+    public void addDessTask(HttpServletRequest request, DinstVO2 dinstVO){
+        String dinstBeanStr = JSONObject.toJSONString(dinstVO);
         JSONObject dinstBeanObject = JSONObject.parseObject(dinstBeanStr);
         HttpReqUtil.sendPostRequest(dessServiceUrl+"/dess/add",dinstBeanObject, request);
     }
 
-    //删除任务
-    public void delDessTask( HttpServletRequest request,DinstBean dinstBean){
-        String dinstBeanStr = JSONObject.toJSONString(dinstBean);
+
+    //删除，暂停任务
+    public void pauseDessTask( HttpServletRequest request,DinstVO2 dinstVO){
+        String dinstBeanStr = JSONObject.toJSONString(dinstVO);
         JSONObject dinstBeanObject = JSONObject.parseObject(dinstBeanStr);
-        HttpReqUtil.sendPostRequest(dessServiceUrl+"/dess/delete",dinstBeanObject, request);
+        HttpReqUtil.sendPostRequest(dessServiceUrl+"/dess/pauseJob",dinstBeanObject, request);
     }
 
-    //暂停任务
-    public void pauseDessTask( HttpServletRequest request,DinstBean dinstBean){
-        String dinstBeanStr = JSONObject.toJSONString(dinstBean);
-        JSONObject dinstBeanObject = JSONObject.parseObject(dinstBeanStr);
-        HttpReqUtil.sendPostRequest(dessServiceUrl+"/dess/pause",dinstBeanObject, request);
-    }
 
-    //恢复暂停任务
-    public void startDessTask( HttpServletRequest request,DinstBean dinstBean){
-        String dinstBeanStr = JSONObject.toJSONString(dinstBean);
+    //更新，重启任务,注意重启会放弃之前的已有的调度。
+    public void UpdateDessTask( HttpServletRequest request,DinstVO2 dinstVO){
+        String dinstBeanStr = JSONObject.toJSONString(dinstVO);
         JSONObject dinstBeanObject = JSONObject.parseObject(dinstBeanStr);
-        HttpReqUtil.sendPostRequest(dessServiceUrl+"/dess/start",dinstBeanObject, request);
-    }
-
-    //恢复暂停任务
-    public void UpdateDessTask( HttpServletRequest request,DinstBean dinstBean){
-        String dinstBeanStr = JSONObject.toJSONString(dinstBean);
-        JSONObject dinstBeanObject = JSONObject.parseObject(dinstBeanStr);
-        HttpReqUtil.sendPostRequest(dessServiceUrl+"/dess/update",dinstBeanObject, request);
+        HttpReqUtil.sendPostRequest(dessServiceUrl+"/dess/refresh",dinstBeanObject, request);
     }
 
 
@@ -302,4 +325,34 @@ public class DInsService {
         return result;
     }
 
+    public String[] getCronExpressionList(String cronExpression){
+        String[] s = cronExpression.split(" ");
+        String dayofWeekStr = "";
+        StringBuffer newCronExpression = new StringBuffer();
+        for (int i = 0; i < s.length; i++) {
+            if(s[i].contains("#")){
+                dayofWeekStr = s[i];
+                break;
+            }
+        }
+        String strBf = StringUtils.substringBefore(dayofWeekStr, "#");
+        String strAf = StringUtils.substringAfter(dayofWeekStr, "#");
+        String[] bf = strBf.split(",");
+        String[] af = strAf.split(",");
+        StringBuffer dws = new StringBuffer();
+        for (int i = 0; i < bf.length; i++) {
+            for (int j = 0; j < af.length; j++) {
+                dws.append(bf[i]+"#"+af[j]+" ");
+            }
+        }
+        String nDws = dws.toString();
+        String[] allDws = nDws.split(" ");
+
+        for (int i = 0; i < allDws.length; i++) {
+            s[5] = allDws[i];
+            newCronExpression.append(StringUtils.join(s," ")+";");
+        }
+        String[] cronExpressionList = newCronExpression.toString().split(";");
+        return cronExpressionList;
+    }
 }

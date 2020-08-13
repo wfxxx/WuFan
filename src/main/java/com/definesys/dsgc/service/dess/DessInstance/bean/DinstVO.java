@@ -29,7 +29,7 @@ public class DinstVO {
     private String groupName;
     private Integer sucessTimes;
     private Integer failTimes;
-    private Integer avgRunTime;
+    private Double avgRunTime;
     private String jobDescription;
     //DessBusiness
     private String InvokeUrl;
@@ -204,14 +204,13 @@ public class DinstVO {
         this.failTimes = failTimes;
     }
 
-    public Integer getAvgRunTime() {
+    public Double getAvgRunTime() {
         return avgRunTime;
     }
 
-    public void setAvgRunTime(Integer avgRunTime) {
+    public void setAvgRunTime(Double avgRunTime) {
         this.avgRunTime = avgRunTime;
     }
-
 
     public String getInvokeUrl() {
         return InvokeUrl;

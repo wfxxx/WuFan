@@ -17,16 +17,17 @@ public class DessLog {
     private String logId;
     private String jobNo;
     private String groupName;
-    private String status;
+    private String logStatus;
     //计划执行时间
     private Date doTime;
     //实际执行时间
     private Date creationDate;
     private Integer retryTimes;
+    private Integer runTime;
     @Column(type = ColumnType.JAVA)
     private String jobName;
     @Column(type = ColumnType.JAVA)
-    private String jobType;
+    private String businessType;
 
     public String getLogId() {
         return logId;
@@ -52,12 +53,12 @@ public class DessLog {
         this.groupName = groupName;
     }
 
-    public String getStatus() {
-        return status;
+    public String getLogStatus() {
+        return logStatus;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setLogStatus(String logStatus) {
+        this.logStatus = logStatus;
     }
 
     public Date getDoTime() {
@@ -92,11 +93,19 @@ public class DessLog {
         this.jobName = jobName;
     }
 
-    public String getJobType() {
-        return jobType;
+    public String getBusinessType() {
+        return businessType;
     }
 
-    public void setJobType(String jobType) {
-        this.jobType = jobType;
+    public void setBusinessType(String businessType) {
+        this.businessType = businessType;
+    }
+
+    public Integer getRunTime() {
+        return runTime;
+    }
+
+    public void setRunTime(Integer runTime) {
+        this.runTime = runTime;
     }
 }

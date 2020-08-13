@@ -98,4 +98,17 @@ public class DBusDao {
                 .eq("business_id",businessId)
                 .doDelete(DessBusiness.class);
     }
+
+    public DessBusiness getBusinessDtl(String id){
+        DessBusiness dessBusiness = sw.buildQuery()
+                .eq("business_id", id)
+                .doQueryFirst(DessBusiness.class);
+        return dessBusiness;
+    }
+
+    public void updateBusinessDtl(DessBusiness dessBusiness){
+        sw.buildQuery()
+                .eq("business_id",dessBusiness.getBusinessId())
+                .doUpdate(dessBusiness);
+    }
 }

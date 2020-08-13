@@ -1,8 +1,6 @@
 package com.definesys.dsgc.service.dess.DessLog.bean;
 
-import com.definesys.mpaas.query.annotation.RowID;
-import com.definesys.mpaas.query.annotation.RowIDType;
-import com.definesys.mpaas.query.annotation.Table;
+import com.definesys.mpaas.query.annotation.*;
 
 /**
  * @ClassName DessLogPayload
@@ -19,6 +17,8 @@ public class DessLogPayload {
     private String bodyPayload ;
     private String errPayload ;
     private String creationDate ;
+    @Column(type = ColumnType.JAVA)
+    private String invokeUrl;
 
     public String getLogId() {
         return logId;
@@ -58,5 +58,13 @@ public class DessLogPayload {
 
     public void setCreationDate(String creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public String getInvokeUrl() {
+        return invokeUrl;
+    }
+
+    public void setInvokeUrl(String invokeUrl) {
+        this.invokeUrl = invokeUrl;
     }
 }
