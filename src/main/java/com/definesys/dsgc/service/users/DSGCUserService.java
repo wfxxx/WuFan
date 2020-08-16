@@ -374,4 +374,12 @@ public class DSGCUserService {
     }
 
 
+    public UserRoleBean getUserRoleByName(UserRoleBean userName) {
+        return  this.userDao.getUserRoleByName(userName);
+    }
+
+    public UserLoginType getLoginTypeByName(UserRoleBean userName) {
+     return this.userDao.getLoginTypeByName(userName);
+    }
+
 }

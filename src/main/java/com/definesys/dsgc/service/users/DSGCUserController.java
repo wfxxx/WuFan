@@ -424,4 +424,26 @@ public class DSGCUserController {
             return Response.ok().setData(false);
         }
     }
+
+    @RequestMapping(value = "/getUserRoleByName", method = RequestMethod.POST)
+    public Response getUserRoleByName(@RequestBody UserRoleBean userName) {
+        try {
+            return Response.ok().setData( userService.getUserRoleByName(userName));
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.ok().setData(false);
+        }
+    }
+
+    @RequestMapping(value = "/getLoginTypeByName", method = RequestMethod.POST)
+    public Response getLoginTypeByName(@RequestBody UserRoleBean userName) {
+        try {
+            return Response.ok().setData( userService.getLoginTypeByName(userName));
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.ok().setData(false);
+        }
+    }
+
+
 }

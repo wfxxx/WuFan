@@ -1,5 +1,6 @@
 package com.definesys.dsgc.service.svcgen;
 
+import com.definesys.dsgc.service.svcgen.bean.DBDeployProfileBean;
 import com.definesys.dsgc.service.svcgen.bean.RFCInfoBean;
 import com.definesys.dsgc.service.svcgen.bean.RFCInfoQueryBean;
 import com.definesys.dsgc.service.svcgen.bean.RfcDeployProfileBean;
@@ -45,5 +46,7 @@ public class RFCStepsDao {
         }
         return dpl;
     }
+
+
 
 }
