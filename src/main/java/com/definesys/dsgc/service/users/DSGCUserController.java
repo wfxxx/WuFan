@@ -445,5 +445,16 @@ public class DSGCUserController {
         }
     }
 
+    @RequestMapping(value = "/getUserInfoByUserPhone",method = RequestMethod.POST)
+    public Response getUserInfoByUserPhone(@RequestBody String userPhone){
+        JSONObject object = JSONObject.parseObject(userPhone);
+        String phone = object.getString("userPhone");
+        try {
+            return Response.ok().setData( userService.getUserInfoByUserPhone(phone));
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.ok().setData(false);
+        }
+    }
 
 }

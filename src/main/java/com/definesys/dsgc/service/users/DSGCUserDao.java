@@ -386,5 +386,11 @@ public class DSGCUserDao {
         return ul;
     }
 
-
+    public Map<String, Object> getUserInfoByUserPhone(String userPhone){
+        Map<String,Object> map = sw.buildQuery()
+                .sql("select USER_ID,USER_NAME,USER_PHONE,USER_ROLE from DSGC_USER where USER_PHONE = #userPhone ")
+                .setVar("userPhone",userPhone)
+                .doQueryFirst();
+        return map;
+    }
 }

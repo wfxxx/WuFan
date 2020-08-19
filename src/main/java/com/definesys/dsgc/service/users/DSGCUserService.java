@@ -382,4 +382,8 @@ public class DSGCUserService {
      return this.userDao.getLoginTypeByName(userName);
     }
 
+    public Map<String, Object> getUserInfoByUserPhone(String userPhone){
+        Map<String, Object> userInfo = userDao.getUserInfoByUserPhone(userPhone);
+        return userInfo;
+    }
 }
