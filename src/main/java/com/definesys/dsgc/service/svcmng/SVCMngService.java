@@ -186,7 +186,6 @@ public class SVCMngService {
                     }
                 } else {
                     DAGEnvBean env = this.dagEnvDao.getESBCurrentEnvInfoByEnvCode();
-
                     if (env != null) {
                         String baseLocal = env.getReqLocation();
                         if (baseLocal != null) {
@@ -832,15 +831,14 @@ public class SVCMngService {
 
 
 
-
-
-
-    //返回解析的字段Map<name,value>集合，若va;ue=null，表示该name节点为父节点，不包含内容。
+    /**
+     * 返回解析的字段Map<name,value>集合，若value=null，表示该name节点为父节点，不包含内容。
+     * @param XMLDemo
+     * @return
+     */
     public List<Map<String,String>>  resloveXML(String XMLDemo){
         String patternXml="<(.*?)>";
-        // 创建 Pattern 对象
         Pattern r = Pattern.compile(patternXml);
-        // 现在创建 matcher 对象
         Matcher m = r.matcher(XMLDemo);
         Map<String,String> value=new HashMap<String,String>();
         while (m.find()) {
@@ -869,7 +867,7 @@ public class SVCMngService {
                 Pattern rr = Pattern.compile(patternXmlContext);
                 Matcher mm = rr.matcher(XMLDemo);
                 //<value>如果不是叶子标签，其值设置为null
-                value.put(nodetext,null);
+               //value.put(nodetext,null);
                 //<value>赋值内容
                 if(mm.find()){
                     String ContextResult=mm.group();
@@ -881,7 +879,7 @@ public class SVCMngService {
             }
 
         }
-        //返回结构
+        //重构返回结构
         List<Map<String,String>> result =new ArrayList<>();
         value.keySet().stream().forEach(e->{
             Map<String,String> node=new HashMap<String,String>();
@@ -899,6 +897,11 @@ public class SVCMngService {
         return result;
     }
 
+    /**
+     * 返回解析的字段Map<name,value>集合，若value=null，表示该name节点为父节点，不包含内容。
+     * @param JSONDemo
+     * @return
+     */
     public List<Map<String,String>> resloveJson(String JSONDemo){
         String patternJson="\"[^\"]{0,}\":";
         Pattern r = Pattern.compile(patternJson);
@@ -911,7 +914,7 @@ public class SVCMngService {
             String patternXmlContext=nodetext+"\":( *)\"(.*?)\"";
             Pattern rr = Pattern.compile(patternXmlContext);
             Matcher mm = rr.matcher(JSONDemo);
-            value.put(nodetext,null);
+           // value.put(nodetext,null);
             //匹配节点对应的内容
             if(mm.find()){
                 String ContextResult=mm.group();

@@ -428,6 +428,12 @@ public class SVCAuthService {
         Map<String,Object> map = new HashMap<>();
         map.put("key",b);
         map.put("value",null);
+        if(ipList.size() > 100){                //大于100
+            b = 2;
+            map.put("key",2);
+            map.put("value",null);
+            return map;
+        }
         if (ipList != null && ipList.size()>0){
             Pattern pattern = Pattern.compile(IpUtils.patternStr);
             Pattern ptipv4 = Pattern.compile(IpUtils.ptipv4Str);
@@ -467,12 +473,6 @@ public class SVCAuthService {
                 b = 3;
                 map.put("key",3);
                 map.put("value",errorIpList);
-                return map;
-            }
-            if(result.size() > 100){                //大于100
-                b = 2;
-                map.put("key",2);
-                map.put("value",null);
                 return map;
             }
             List<String> repetitionList = checkIpRepetition(result);

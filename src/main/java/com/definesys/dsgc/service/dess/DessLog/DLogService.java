@@ -9,6 +9,9 @@ import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -61,4 +64,33 @@ public class DLogService {
         detial.setInvokeUrl(url.get(0).get("INVOKE_URL").toString());
         return detial;
     }
+
+    public String getBodyPayload(String logId){
+        return dLogDao.getBodyPayload(logId);
+    }
+
+    public void showData(HttpServletResponse response, String str) {
+        if (str.startsWith("<")) {
+            response.setContentType("text/xml;charset=UTF-8");
+        } else {
+            response.setContentType("text/plain;charset=UTF-8");
+        }
+
+        PrintWriter out = null;
+        try {
+            out = response.getWriter();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        out.print(str);
+        out.flush();
+        out.close();
+    }
+
+    public void noPayload(HttpServletResponse response) {
+        String s = "该报文不存在，请联系管理员";
+        showData(response, s);
+    }
+
+
 }

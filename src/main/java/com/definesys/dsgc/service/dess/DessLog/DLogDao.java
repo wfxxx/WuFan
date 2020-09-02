@@ -4,6 +4,7 @@ import com.definesys.dsgc.service.apilr.bean.CommonReqBean;
 import com.definesys.dsgc.service.dess.DessLog.bean.DessLog;
 import com.definesys.dsgc.service.dess.DessLog.bean.DessLogPayload;
 import com.definesys.dsgc.service.utils.StringUtil;
+import com.definesys.dsgc.service.utils.StringUtils;
 import com.definesys.mpaas.query.MpaasQuery;
 import com.definesys.mpaas.query.MpaasQueryFactory;
 import com.definesys.mpaas.query.db.PageQueryResult;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Clob;
 import java.util.List;
 import java.util.Map;
 
@@ -82,5 +84,19 @@ public class DLogDao {
         return sw.buildQuery()
                 .sql("select db.INVOKE_URL from DESS_LOG dl,DESS_INSTANCE di,DESS_BUSINESS db where dl.JOB_NO = di.JOB_NO and di.BUSINESS_ID  = db.BUSINESS_ID ")
                 .doQuery();
+    }
+
+    public String getBodyPayload(String logId) {
+        List<Map<String, Object>> result = this.sw.buildQuery()
+                .sql("select * from DESS_LOG_PAYLOAD where log_id = #logId")
+                .setVar("logId",logId)
+                .doQuery();
+        for (Map<String, Object> item : result) {
+            Object BODY_PAYLOAD = item.get("BODY_PAYLOAD");
+            if (BODY_PAYLOAD != null) {
+                return StringUtils.ClobToString((Clob) BODY_PAYLOAD);
+            }
+        }
+        return "";
     }
 }
