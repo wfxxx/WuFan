@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:json="http://www.mulesoft.org/schema/mule/json"
+	xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:ftp="http://www.mulesoft.org/schema/mule/ee/ftp"
+	xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/ftp http://www.mulesoft.org/schema/mule/ee/ftp/current/mule-ftp-ee.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd">
+	<sub-flow name="FTP_Common">
+		<object-to-string-transformer encoding="GB18030" doc:name="Object to String"/>
+		<choice doc:name="Choice">
+			<when expression="#[message.inboundProperties.originalFilename.startsWith('Z')]">
+				<logger message="#[path]" level="INFO" category="------path----------" doc:name="Logger"/>
+				<custom-transformer class="com.definesys.dsgc.mule.processor.MuleMsgProcessor" doc:name="INST">
+					<spring:property name="stage" value="INST"/>
+				</custom-transformer>
+				<custom-transformer class="com.definesys.dsgc.mule.processor.MuleMsgProcessor" doc:name="OB">
+					<spring:property name="toSystem" value="ESB"/>
+					<spring:property name="stage" value="OB"/>
+				</custom-transformer>
+				<ftp:outbound-endpoint host="${esb.ftp.host}" port="${esb.ftp.port}" path="#[path]" user="${esb.ftp.user}" password="${esb.ftp.password}" passive="true" connector-ref="TG" outputPattern="#[path]/#[message.inboundProperties.originalFilename]" responseTimeout="10000" doc:name="FTP"/>
+				<custom-transformer class="com.definesys.dsgc.mule.processor.MuleMsgProcessor" doc:name="OB_RES">
+					<spring:property name="stage" value="OB_RES"/>
+				</custom-transformer>
+				<set-property propertyName="#['reqId']" value="#[message.id]" encoding="UTF-8" doc:name="Property"/>
+				<set-property propertyName="#['reqFrom']" value="#['ESB']" encoding="UTF-8" doc:name="Property"/>
+				<set-payload value="&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; xmlns:ser=&quot;http://services.chery.com/services/&quot;&gt;     &lt;soapenv:Header/&gt;     &lt;soapenv:Body&gt;         &lt;ser:CommonAsynNotification&gt;             &lt;SrcSystem&gt;SAP&lt;/SrcSystem&gt;             &lt;DestSystem&gt;LES&lt;/DestSystem&gt;             &lt;BusinessType&gt;#[businessType]&lt;/BusinessType&gt;             &lt;BusinessID&gt;#[message.id]&lt;/BusinessID&gt;             &lt;FileName&gt;#[message.inboundProperties.originalFilename]&lt;/FileName&gt;             &lt;ValidationCode&gt;8888&lt;/ValidationCode&gt;         &lt;/ser:CommonAsynNotification&gt;     &lt;/soapenv:Body&gt; &lt;/soapenv:Envelope&gt;" encoding="UTF-8" mimeType="application/xml" doc:name="Set Payload"/>
+<!-- 				<http:request config-ref="HTTP_Request_Configuration" path="/LES/RCV/003001" method="POST" doc:name="HTTP" metadata:id="6f106848-ec80-4b31-a6b1-872795011d44"/>
+ -->
+				<custom-transformer class="com.definesys.dsgc.mule.processor.MuleMsgProcessor" doc:name="INST_RES" >
+					<spring:property name="stage" value="INST_RES"/>
+				</custom-transformer>
+			</when>
+			<otherwise>
+				<logger message="#['']" level="INFO" category="----Header&#25991;&#20214;----&gt;" doc:name="Logger"/>
+			</otherwise>
+		</choice>
+	</sub-flow>
+
+	<flow
+		name="SAP-LES&#65288;LES&#65289;&#65306;&#37319;&#36141;&#35746;&#21333;&#25509;&#21475;&#65288;ZMM013_LES&#65289;">
+		<ftp:inbound-endpoint host="${esb.ftp.host}" port="${esb.ftp.port}" path="${sap.src.path.zmm013_les}" user="${esb.ftp.user}" password="${esb.ftp.password}" passive="true" connector-ref="RSC_013_LES" pollingFrequency="${esb.ftp.time}" responseTimeout="10000" doc:name="FTP" metadata:id="80c0cb35-4b7b-49c1-aab9-bf91aaaca0ed"/>
+		<set-property propertyName="#['reqId']" value="#[message.id]" doc:name="Property"/>
+		<set-property propertyName="#['reqFrom']" value="#['ESB']" doc:name="Property"/>
+		<set-property propertyName="#['host']" value="${esb.local.host}" doc:name="Property"/>
+		<set-variable variableName="uri" value="#['/ESB/CMN/000003']" doc:name="uri"/>
+		<set-variable variableName="path" value="${les.trg.path.zmm013_les}" doc:name="path"/>
+		<set-variable variableName="businessType" value="${les.businessType.zmm013_les}" doc:name="businessType"/>
+		<flow-ref name="FTP_Common" doc:name="Flow Reference" metadata:id="4b48137d-6c7f-47a2-941d-3e72fbe1704a"/>
+		<exception-strategy ref="global_Exception_Strategy" doc:name="Reference Exception Strategy"/>
+	</flow>
+	<flow
+		name="SAP-LES&#65288;SCM&#65289;&#65306;&#37319;&#36141;&#35746;&#21333;&#25509;&#21475;&#65288;ZMM013_SCM&#65289;">
+		<ftp:inbound-endpoint host="${esb.ftp.host}" port="${esb.ftp.port}"
+			path="${sap.src.path.zmm013_scm}" user="${esb.ftp.user}" password="${esb.ftp.password}"
+			passive="true" connector-ref="RSC_0131_SCM" pollingFrequency="${esb.ftp.time}"
+			responseTimeout="10000" doc:name="FTP" />
+		<set-property propertyName="#['reqId']" value="#[message.id]" doc:name="Property"/>
+		<set-property propertyName="#['reqFrom']" value="#['ESB']" doc:name="Property"/>
+		<set-property propertyName="#['host']" value="${esb.local.host}" doc:name="Property"/>
+		<set-variable variableName="uri" value="#['/ESB/CMN/000004']" doc:name="uri"/>
+		<set-variable variableName="path" value="${les.trg.path.zmm013_scm}" doc:name="path"/>
+		<set-variable variableName="businessType" value="${les.businessType.zmm013_scm}" doc:name="businessType"/>
+		<flow-ref name="FTP_Common" doc:name="Flow Reference" metadata:id="33e76295-5219-4238-bede-46e124a1d252"/>
+		<exception-strategy ref="global_Exception_Strategy" doc:name="Reference Exception Strategy"/>
+	</flow>
+
+	<flow
+		name="SAP-LES&#65306;&#35746;&#21333;&#26631;&#20934;&#32467;&#31639;&#25509;&#21475;&#65288;ZMM014&#65289;">
+		<ftp:inbound-endpoint host="${esb.ftp.host}" port="${esb.ftp.port}"
+			path="${sap.src.path.zmm014}" user="${esb.ftp.user}" password="${esb.ftp.password}"
+			passive="true" responseTimeout="10000" doc:name="FTP" connector-ref="RSC_014"
+			pollingFrequency="${esb.ftp.time}" />
+		<set-property propertyName="#['reqId']" value="#[message.id]" doc:name="Property"/>
+		<set-property propertyName="#['reqFrom']" value="#['ESB']" doc:name="Property"/>
+		<set-property propertyName="#['host']" value="${esb.local.host}" doc:name="Property"/>
+		<set-variable variableName="uri" value="#['/ESB/CMN/000002']" doc:name="uri"/>
+		<set-variable variableName="path" value="${les.trg.path.zmm014}" doc:name="path"/>
+		<set-variable variableName="businessType" value="${les.businessType.zmm014}" doc:name="businessType"/>
+		<flow-ref name="FTP_Common" doc:name="Flow Reference" />
+		<exception-strategy ref="global_Exception_Strategy" doc:name="Reference Exception Strategy"/>
+	</flow>
+
+	<flow
+		name="SAP-LES&#65306;&#23492;&#21806;&#35746;&#21333;&#32467;&#31639;&#25509;&#21475;&#65288;ZMM015&#65289;">
+		<ftp:inbound-endpoint host="${esb.ftp.host}" port="${esb.ftp.port}"
+			path="${sap.src.path.zmm015}" user="${esb.ftp.user}" password="${esb.ftp.password}"
+			passive="true" responseTimeout="10000" doc:name="FTP" connector-ref="RSC_015"
+			pollingFrequency="${esb.ftp.time}" />
+		<set-property propertyName="#['reqId']" value="#[message.id]" doc:name="Property"/>
+		<set-property propertyName="#['reqFrom']" value="#['ESB']" doc:name="Property"/>
+		<set-property propertyName="#['host']" value="${esb.local.host}" doc:name="Property"/>
+		<set-variable variableName="uri" value="#['/ESB/CMN/000005']" doc:name="uri"/>
+		<set-variable variableName="path" value="${les.trg.path.zmm015}" doc:name="path"/>
+		<set-variable variableName="businessType" value="${les.businessType.zmm015}" doc:name="businessType"/>
+		<flow-ref name="FTP_Common" doc:name="Flow Reference" />
+		<exception-strategy ref="global_Exception_Strategy" doc:name="Reference Exception Strategy"/>
+	</flow>
+
+	<flow
+		name="SAP-LES&#65306;&#23492;&#21806;&#25910;&#21457;&#23384;&#25968;&#25454;&#25509;&#21475;&#65288;ZMM016&#65289;">
+		<ftp:inbound-endpoint host="${esb.ftp.host}" port="${esb.ftp.port}"
+			path="${sap.src.path.zmm016}" user="${esb.ftp.user}" password="${esb.ftp.password}"
+			passive="true" responseTimeout="10000" doc:name="FTP" connector-ref="RSC_016"
+			pollingFrequency="${esb.ftp.time}" />
+		<set-property propertyName="#['reqId']" value="#[message.id]" doc:name="Property"/>
+		<set-property propertyName="#['reqFrom']" value="#['ESB']" doc:name="Property"/>
+		<set-property propertyName="#['host']" value="${esb.local.host}" doc:name="Property"/>
+		<set-variable variableName="uri" value="#['/ESB/CMN/000006']" doc:name="uri"/>
+		<set-variable variableName="path" value="${les.trg.path.zmm016}" doc:name="path"/>
+		<set-variable variableName="businessType" value="${les.businessType.zmm016}" doc:name="businessType"/>
+		<flow-ref name="FTP_Common" doc:name="Flow Reference" />
+		<exception-strategy ref="global_Exception_Strategy" doc:name="Reference Exception Strategy"/>
+		
+	</flow>
+	<flow
+		name="SAP-LES&#65306;&#38750;&#23492;&#21806;&#26376;&#20837;&#36864;&#25968;&#25454;&#25509;&#21475;&#65288;ZMM017&#65289;">
+		<ftp:inbound-endpoint host="${esb.ftp.host}" port="${esb.ftp.port}"
+			path="${sap.src.path.zmm017}" user="${esb.ftp.user}" password="${esb.ftp.password}"
+			passive="true" responseTimeout="10000" doc:name="FTP"
+			pollingFrequency="${esb.ftp.time}" connector-ref="RSC_017" />
+		<set-property propertyName="#['reqId']" value="#[message.id]" doc:name="Property"/>
+		<set-property propertyName="#['reqFrom']" value="#['ESB']" doc:name="Property"/>
+		<set-property propertyName="#['host']" value="${esb.local.host}" doc:name="Property"/>
+		<set-variable variableName="uri" value="#['/ESB/CMN/000007']" doc:name="uri"/>
+		<set-variable variableName="path" value="${les.trg.path.zmm017}" doc:name="path"/>
+		<set-variable variableName="businessType" value="${les.businessType.zmm017}" doc:name="businessType"/>
+		<flow-ref name="FTP_Common" doc:name="Flow Reference" />
+		<exception-strategy ref="global_Exception_Strategy" doc:name="Reference Exception Strategy"/>
+	</flow>
+	<flow
+		name="SAP-LES&#65306;&#25972;&#36710;&#37197;&#32622;&#28165;&#21333;(BOM)&#25509;&#21475;">
+		<ftp:inbound-endpoint host="${esb.ftp.host}" port="${esb.ftp.port}"
+			path="${sap.src.path.zmmbom}" user="${esb.ftp.user}" password="${esb.ftp.password}"
+			passive="true" connector-ref="RSC_018" pollingFrequency="${esb.ftp.time}"
+			responseTimeout="10000" doc:name="FTP" />
+		<set-property propertyName="#['reqId']" value="#[message.id]" doc:name="Property"/>
+		<set-property propertyName="#['reqFrom']" value="#['ESB']" doc:name="Property"/>
+		<set-property propertyName="#['host']" value="${esb.local.host}" doc:name="Property"/>
+		<set-variable variableName="uri" value="#['/ESB/CMN/000001']" doc:name="uri"/>
+		<set-variable variableName="path" value="${les.trg.path.zmmbom}" doc:name="path"/>
+		<set-variable variableName="businessType" value="${les.businessType.zmmbom}" doc:name="businessType"/>
+<!-- 		<flow-ref name="FTP_Common" doc:name="Flow Reference" />
+ -->		<exception-strategy ref="global_Exception_Strategy" doc:name="Reference Exception Strategy"/>
+	</flow>
+	
+	
+	<!-- 企业微信预警 -->
+	<flow name="&#20225;&#19994;&#24494;&#20449;&#33719;&#21462;Token&#25509;&#21475;(Https)">
+		<http:listener config-ref="HTTP_Listener_Configuration" path="/ESB/CMN/000008"
+			allowedMethods="GET" doc:name="HTTP" />
+		<http:request config-ref="HTTP_Request_Cfg_work_weixin"
+			path="/cgi-bin/gettoken" method="GET" doc:name="HTTP">
+			<http:request-builder>
+				<http:query-param paramName="corpid" value="${esb.wechat.corpid}"/>
+				<http:query-param paramName="corpsecret" value="${esb.wechat.corpsecret}"/>
+			</http:request-builder>
+		</http:request>
+	</flow>
+	<flow name="&#20225;&#19994;&#24494;&#20449;&#21457;&#36865;&#36890;&#30693;&#25509;&#21475;&#65288;Https&#65289;">
+		<http:listener config-ref="HTTP_Listener_Configuration" path="/ESB/CMN/000009" doc:name="HTTP"/>
+		<set-variable variableName="old_payload" value="#[payload]" encoding="UTF-8" mimeType="application/json" doc:name="Variable"/>
+		<http:request config-ref="HTTP_Request_Configuration" path="/ESB/CMN/000008" method="GET" doc:name="HTTP"/>
+		<json:json-to-object-transformer returnClass="java.lang.Object" doc:name="JSON to Object"/>
+		<set-variable variableName="access_token" value="#[payload.access_token]" encoding="UTF-8" doc:name="Variable"/>
+		<logger message="#[access_token]" level="INFO" category="--access_token-&gt;" doc:name="Logger"/>
+		<set-payload value="#[old_payload]" encoding="UTF-8" mimeType="application/json" doc:name="Set Payload"/>
+		<object-to-string-transformer encoding="UTF-8" doc:name="Object to String"/>
+		<http:request config-ref="HTTP_Request_Cfg_work_weixin" path="/cgi-bin/message/send" method="POST" doc:name="HTTP">
+			<http:request-builder>
+				<http:query-param paramName="access_token" value="#[access_token]"/>
+			</http:request-builder>
+		</http:request>
+		<json:json-to-object-transformer returnClass="java.lang.Object" doc:name="JSON to Object"/>
+		<expression-transformer expression="#[[ 'rtnCode': (payload.errcode == 0 ? &quot;S&quot; : &quot;F&quot;),  'rtnMsg':payload.errmsg,  'data':[ 'invaliduser':payload.invaliduser]  ]]" doc:name="Expression"/>
+		<json:object-to-json-transformer doc:name="Object to JSON"/>
+	</flow>
+	
+
+</mule>

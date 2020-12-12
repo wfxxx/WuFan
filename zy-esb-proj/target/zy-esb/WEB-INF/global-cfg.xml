@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ftp="http://www.mulesoft.org/schema/mule/ee/ftp"
+	xmlns:ws="http://www.mulesoft.org/schema/mule/ws" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/ftp http://www.mulesoft.org/schema/mule/ee/ftp/current/mule-ftp-ee.xsd
+http://www.mulesoft.org/schema/mule/ws http://www.mulesoft.org/schema/mule/ws/current/mule-ws.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-current.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+	
+	<!-- 引入properties -->
+	<context:property-placeholder location="prd.properties" />
+	
+	<!-- 企业微信的HTTP配置 -->
+	<http:request-config name="HTTP_Request_Cfg_work_weixin"
+	host="qyapi.weixin.qq.com" port="80" doc:name="HTTP Request Configuration" />
+	
+	
+	<http:listener-config name="HTTP_Listener_Configuration"
+		host="0.0.0.0" port="9000" doc:name="HTTP Listener Configuration">
+		<http:worker-threading-profile
+			maxThreadsActive="1000" maxThreadsIdle="10" threadTTL="5000"
+			threadWaitTimeout="500" maxBufferSize="100" />
+	</http:listener-config>
+	
+	<!-- Basic 认证 -->
+	<spring:beans>
+		<spring:bean id="Bean" name="doAuth"
+			class="com.definesys.dsgc.mule.security.SecurityHandler" />
+	</spring:beans>
+
+	<!-- 通知LES同步文件接口地址 -->
+	<http:request-config name="HTTP_Request_Configuration"
+		host="${esb.http.host}" port="${esb.http.port}" doc:name="HTTP Request Configuration" />
+
+	<!-- FTP配置 -->
+	<ftp:connector name="TG" pollingFrequency="1000"
+		validateConnections="true" doc:name="TG" />
+	<ftp:connector name="RSC_013_LES" pollingFrequency="1000"
+		validateConnections="true" moveToDirectory="${esb.bak.path.zmm013_les}"
+		doc:name="RSC_013_LES" />
+	<ftp:connector name="RSC_0131_SCM" pollingFrequency="1000"
+		validateConnections="true" moveToDirectory="${esb.bak.path.zmm013_scm}"
+		doc:name="RSC_013_SCM" />
+	<ftp:connector name="RSC_014" pollingFrequency="1000"
+		validateConnections="true" moveToDirectory="${esb.bak.path.zmm014}"
+		doc:name="RSC_014" />
+	<ftp:connector name="RSC_015" pollingFrequency="1000"
+		validateConnections="true" moveToDirectory="${esb.bak.path.zmm015}"
+		doc:name="RSC_015" />
+	<ftp:connector name="RSC_016" pollingFrequency="1000"
+		validateConnections="true" moveToDirectory="${esb.bak.path.zmm016}"
+		doc:name="RSC_016" />
+	<ftp:connector name="RSC_017" pollingFrequency="1000"
+		validateConnections="true" moveToDirectory="${esb.bak.path.zmm017}"
+		doc:name="RSC_017" />
+	<ftp:connector name="RSC_018" pollingFrequency="1000"
+		validateConnections="true" moveToDirectory="${esb.bak.path.zmmbom}"
+		doc:name="RSC_018" />
+	
+	<!-- 异常 -->
+	<catch-exception-strategy name="CatchExceptionStrategy">
+        <set-property propertyName="http.status" value="500" doc:name="Property"/>
+        <set-payload value="#['&quot;rtnCode&quot;:&quot;U&quot;,&quot;rtnMsg&quot;:&quot;访问失败！&quot;']" doc:name="Set Payload"/>
+        <custom-transformer class="com.definesys.dsgc.mule.processor.MuleMsgProcessor" doc:name="OB_RES">
+            <spring:property name="stage" value="OB_RES"/>
+        </custom-transformer>
+        <custom-transformer class="com.definesys.dsgc.mule.processor.MuleMsgProcessor" doc:name="INSR_RES">
+            <spring:property name="stage" value="INST_RES"/>
+        </custom-transformer>
+    </catch-exception-strategy>
+    <catch-exception-strategy when="#[exception.causeMatches('com.definesys.dsgc.mule.security.*')]" name="securityException">
+        <set-property propertyName="http.status" value="401" doc:name="Property"/>
+        <set-payload value="#['{&quot;rtnCode&quot;:&quot;401&quot;,&quot;rtnMsg&quot;:&quot;认证失败！&quot;']" doc:name="Set Payload"/>
+    </catch-exception-strategy>
+    <choice-exception-strategy name="global_Exception_Strategy">
+        <exception-strategy ref="securityException" doc:name="Reference Exception Strategy"/>
+        <exception-strategy ref="CatchExceptionStrategy" doc:name="Reference Exception Strategy"/>
+    </choice-exception-strategy>
+	
+
+</mule>
