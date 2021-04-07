@@ -9,6 +9,7 @@ import com.definesys.dsgc.service.system.bean.DSGCSystemEntities;
 import com.definesys.dsgc.service.svclog.DSGCLogInstanceService;
 import com.definesys.dsgc.service.utils.CommonUtils;
 import com.definesys.dsgc.service.utils.MsgCompressUtil;
+import com.definesys.dsgc.service.utils.es.PLFindRequestVO;
 import com.definesys.dsgc.service.utils.httpclient.HttpReqUtil;
 import com.definesys.dsgc.service.utils.httpclient.ResultVO;
 import com.definesys.mpaas.common.exception.MpaasBusinessException;
@@ -26,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -554,4 +556,16 @@ public class DSGCLogInstanceController {
         }
 
     }
+
+    @RequestMapping(value = "/getTrackIdListDemo", method = RequestMethod.POST)
+    public Response findLogById(@RequestBody PLFindRequestVO u) {
+
+        List<String> trs = new ArrayList<String>();
+        trs.add("<N53efaea4.f33f4.1d.177b9c633fb.N7fe5>");
+        trs.add("<N53efaea4.f33f4.18.177b9c3d025.N7fdf>");
+        return Response.ok().setData(trs);
+
+    }
+
+
 }

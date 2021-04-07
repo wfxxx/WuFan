@@ -10,6 +10,7 @@ import com.definesys.dsgc.service.system.bean.DSGCSystemEntities;
 import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
 import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.dsgc.service.utils.StringUtils;
+import com.definesys.dsgc.service.utils.es.ESClient;
 import com.definesys.mpaas.log.SWordLogger;
 import com.definesys.mpaas.query.MpaasQuery;
 import com.definesys.mpaas.query.MpaasQueryFactory;
@@ -36,32 +37,44 @@ public class DSGCLogInstanceDao {
 
     public PageQueryResult<DSGCLogInstance> query(List<Object> keyword,String userRole,String uid,LogInstanceQueryDTO instance,int pageSize,int pageIndex,List<String> sysNoList,List<String> sysList) throws Exception {
         logger.debug(instance.toString());
+        //如果全文检索条件不为空时需要通过报文检索
+        List<String> trackIdList = this.getTrackIdListFromPayloadMatch(instance.getPayloadMatch());
+        if (instance.getPayloadMatch() != null && instance.getPayloadMatch().trim().length() > 0 && (trackIdList == null || trackIdList.isEmpty())) {
+            //当payloadmatch不为空时，需要根据报文检索，如果报文检索ES中找不到匹配项，则返回为null;
+            return new PageQueryResult<DSGCLogInstance>();
+        }
+
         //不存在关键字时
         if (keyword == null) {
             MpaasQuery mq;
-            if("SystemLeader".equals(userRole) || "Tourist".equals(userRole)){
+            if ("SystemLeader".equals(userRole) || "Tourist".equals(userRole)) {
                 StringBuffer sql = new StringBuffer(" select * from (select * from dsgc_log_instance ");
                 sql.append(mapping(sysNoList,sysList));
                 sql.append(" ) ");
-               mq = sw.buildQuery().sql(sql.toString());
-            }else {
-               mq = sw.buildQuery() ;
+                mq = sw.buildQuery().sql(sql.toString());
+            } else {
+                mq = sw.buildQuery();
             }
 
             System.out.println(sysNoList);
             System.out.println(sysList);
-            mq.likeNocase("serv_no", instance.getServNo());
-            mq.likeNocase("serv_name", instance.getServName());
-            mq.likeNocase("token", instance.getToken());
-            mq.likeNocase("inst_status", instance.getInstStatus());
-            mq.likeNocase("biz_status", instance.getBizStatus());
-            mq.likeNocase("req_from", instance.getReqFrom());
-            mq.likeNocase("biz_key1", instance.getBizKey1());
+
+            if (trackIdList!=null && !trackIdList.isEmpty()) {
+                mq.in("trackId",trackIdList);
+            }
+
+            mq.likeNocase("serv_no",instance.getServNo());
+            mq.likeNocase("serv_name",instance.getServName());
+            mq.likeNocase("token",instance.getToken());
+            mq.likeNocase("inst_status",instance.getInstStatus());
+            mq.likeNocase("biz_status",instance.getBizStatus());
+            mq.likeNocase("req_from",instance.getReqFrom());
+            mq.likeNocase("biz_key1",instance.getBizKey1());
             mq.likeNocase("biz_status_dtl",instance.getBizStatusDtl());
-            mq.lteq("end_time", instance.getEndTimeDate());
-            mq.gteq("start_time", instance.getStartTimeDate());
-            mq.orderBy("creation_date", "desc");
-          return   mq.doPageQuery(pageIndex, pageSize, DSGCLogInstance.class);
+            mq.lteq("end_time",instance.getEndTimeDate());
+            mq.gteq("start_time",instance.getStartTimeDate());
+            mq.orderBy("creation_date","desc");
+            return mq.doPageQuery(pageIndex,pageSize,DSGCLogInstance.class);
 
         } else {
             //存在关键字时
@@ -114,39 +127,58 @@ public class DSGCLogInstanceDao {
                 }
             }
             StringBuilder sql = new StringBuilder(" select * from select logs.* from(select track_id from dsgc_log_bizkey biz where biz.bus_serv_no = #servNo and (biz.Col1 = #COL1 OR biz.Col2 = #COL2 OR biz.Col3 = #COL3 OR biz.Col4 = #COL4 OR biz.Col5 = #COL5 OR biz.Col6 = #COL6 OR biz.Col7 = #COL7 OR biz.Col8 = #COL8 OR biz.Col9 = #COL9 OR biz.Col10 = #COLTEN)) t_id, (select insv.*, bpv.payload_data from dsgc_log_instance_v insv, (select pv.track_id, xmlagg(xmlparse(content to_char(pv.payload_data) || '<======报文结束======>' wellformed) order by pv.track_id asc) .getclobval() payload_data from dsgc_log_body_payload_v pv group by pv.track_id) bpv where insv.track_id = bpv.track_id) logs where logs.track_id = t_id.track_id(+)) ");
-            if("SystemLeader".equals(userRole) || "Tourist".equals(userRole)){
+            if ("SystemLeader".equals(userRole) || "Tourist".equals(userRole)) {
                 sql.append(mapping(sysNoList,sysList));
             }
             //   mq = sw.buildViewQuery("Log_Instance_view")
             mq = sw.buildQuery().sql(sql.toString());
-                    mq.setVar("COL1", COL1)
-                    .setVar("COL2", COL2)
-                    .setVar("COL3", COL3)
-                    .setVar("COL4", COL4)
-                    .setVar("COL5", COL5)
-                    .setVar("COL6", COL6)
-                    .setVar("COL7", COL7)
-                    .setVar("COL8", COL8)
-                    .setVar("COL9", COL9)
-                    .setVar("COLTEN", COLTEN)
-                    .setVar("servNo", instance.getServNo());
-                    mq.eq("serv_no", instance.getServNo())
-                    .likeNocase("serv_name", instance.getServName())
-                    .likeNocase("token", instance.getToken())
-                    .likeNocase("inst_status", instance.getInstStatus())
-                    .likeNocase("biz_status", instance.getBizStatus())
-                    .likeNocase("req_from", instance.getReqFrom())
-                    .likeNocase("biz_key1", instance.getBizKey1())
+            mq.setVar("COL1",COL1)
+                    .setVar("COL2",COL2)
+                    .setVar("COL3",COL3)
+                    .setVar("COL4",COL4)
+                    .setVar("COL5",COL5)
+                    .setVar("COL6",COL6)
+                    .setVar("COL7",COL7)
+                    .setVar("COL8",COL8)
+                    .setVar("COL9",COL9)
+                    .setVar("COLTEN",COLTEN)
+                    .setVar("servNo",instance.getServNo());
+
+            if (trackIdList!=null && !trackIdList.isEmpty()) {
+                mq.in("trackId",trackIdList);
+            }
+
+            mq.eq("serv_no",instance.getServNo())
+                    .likeNocase("serv_name",instance.getServName())
+                    .likeNocase("token",instance.getToken())
+                    .likeNocase("inst_status",instance.getInstStatus())
+                    .likeNocase("biz_status",instance.getBizStatus())
+                    .likeNocase("req_from",instance.getReqFrom())
+                    .likeNocase("biz_key1",instance.getBizKey1())
                     .likeNocase("biz_status_dtl",instance.getBizStatusDtl())
-                    .lteq("end_time", instance.getEndTimeDate())
-                    .gteq("start_time", instance.getStartTimeDate())
-                    .orderBy("creation_date", "desc");
+                    .lteq("end_time",instance.getEndTimeDate())
+                    .gteq("start_time",instance.getStartTimeDate())
+                    .orderBy("creation_date","desc");
 
 
-            return mq.doPageQuery(pageIndex, pageSize, DSGCLogInstance.class);
+            return mq.doPageQuery(pageIndex,pageSize,DSGCLogInstance.class);
 
         }
     }
+
+    /**
+     * 根据条件通过报文查找，找出符合查询条件的trackid集合，最多返回2000个trackid
+     * @param payloadMatch
+     * @return
+     */
+    private List<String> getTrackIdListFromPayloadMatch(String payloadMatch){
+        List<String> trackIdList = ESClient.searchESPayload(payloadMatch);
+        if(trackIdList != null && !trackIdList.isEmpty() && trackIdList.size() >2000){
+            trackIdList = trackIdList.subList(0,2000);
+        }
+        return trackIdList;
+    }
+
     public StringBuilder mapping(List<String> sysNoList,List<String> sysList){
         StringBuilder sql = new StringBuilder("");
         if(!(sysNoList.isEmpty() && sysList.isEmpty())){

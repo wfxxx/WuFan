@@ -19,6 +19,7 @@ public class LogInstanceQueryDTO {
     private String bizKey1;
     private String history;
     private String bizStatusDtl;
+    private String payloadMatch;
 
     public String getTrackId() {
         return trackId;
@@ -143,5 +144,13 @@ public class LogInstanceQueryDTO {
 
         SimpleDateFormat sdf= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return sdf.parse(endTime);
+    }
+
+    public String getPayloadMatch() {
+        return payloadMatch;
+    }
+
+    public void setPayloadMatch(String payloadMatch) {
+        this.payloadMatch = payloadMatch;
     }
 }

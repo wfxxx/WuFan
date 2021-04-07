@@ -33,6 +33,7 @@ public class DSGCUser  extends MpaasBasePojo {
     private String userRole;
     private String isLocked;
     private String workNumber;
+    private String userDomain;
 
     @Column(type = ColumnType.JAVA)
     private String wechat;
@@ -213,6 +214,14 @@ public class DSGCUser  extends MpaasBasePojo {
 
     public void setAppCode(List<String> appCode) {
         this.appCode = appCode;
+    }
+
+    public String getUserDomain() {
+        return userDomain;
+    }
+
+    public void setUserDomain(String userDomain) {
+        this.userDomain = userDomain;
     }
 
     @Override

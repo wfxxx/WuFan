@@ -90,14 +90,16 @@ public class DSGCLogInstanceService {
 //                return dsgcLogInstance;
 //            }
             dsgcLogInstance = this.dsgcLogInstanceDao.query(keyword,userRole ,uid, instance, pageSize, pageIndex,servNoList,codeList);
-            Iterator<DSGCLogInstance> instanceIterator = dsgcLogInstance.getResult().iterator();
-            FndLookupType log_inst_tag = fndLookupTypeDao.getFndLookupTypeByType("LOG_INST_TAG");
-            List<FndLookupValue> tagTypes = log_inst_tag.getValues();
-            while (instanceIterator.hasNext()){
-                DSGCLogInstance logInstance = instanceIterator.next();
-                Integer runTimes = logInstance.getRunTimes();
-                List<Map<String,String>> tags = dsgcLogInstanceDao.queryLogMark(logInstance.getTrackId(),tagTypes,runTimes);
-               logInstance.setTags(tags);
+            if(dsgcLogInstance != null && dsgcLogInstance.getResult() != null) {
+                Iterator<DSGCLogInstance> instanceIterator = dsgcLogInstance.getResult().iterator();
+                FndLookupType log_inst_tag = fndLookupTypeDao.getFndLookupTypeByType("LOG_INST_TAG");
+                List<FndLookupValue> tagTypes = log_inst_tag.getValues();
+                while (instanceIterator.hasNext()) {
+                    DSGCLogInstance logInstance = instanceIterator.next();
+                    Integer runTimes = logInstance.getRunTimes();
+                    List<Map<String,String>> tags = dsgcLogInstanceDao.queryLogMark(logInstance.getTrackId(),tagTypes,runTimes);
+                    logInstance.setTags(tags);
+                }
             }
             return dsgcLogInstance;
         } catch (Exception e) {
