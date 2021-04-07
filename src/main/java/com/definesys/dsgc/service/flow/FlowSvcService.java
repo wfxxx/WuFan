@@ -4,9 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class FlowService {
+public class FlowSvcService {
     @Autowired
-    private FlowDao flowDao;
+    private FlowSvcDao flowSvcDao;
 
 
 }
