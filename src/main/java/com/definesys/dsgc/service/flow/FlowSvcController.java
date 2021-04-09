@@ -3,7 +3,9 @@ package com.definesys.dsgc.service.flow;
 
 import com.definesys.dsgc.service.flow.bean.FlowServices;
 import com.definesys.dsgc.service.flow.dto.FlowReqCommonDTO;
+import com.definesys.dsgc.service.flow.dto.FlowRoadQueryDTO;
 import com.definesys.mpaas.common.http.Response;
+import com.definesys.mpaas.query.session.MpaasSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +30,8 @@ public class FlowSvcController {
                                       @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
                                       @RequestParam(value = "pageIndex", required = false, defaultValue = "1") int pageIndex, HttpServletRequest request){
 
-        return null;
+        String uid  = MpaasSession.getCurrentUser();
+        return Response.ok().setData(this.flowSvcService.pageQueryFlowServices(param,uid,pageIndex,pageSize));
     }
 
 
@@ -37,9 +40,15 @@ public class FlowSvcController {
      * @param param
      * @return
      */
-    @RequestMapping(value = "/addFlowService",method = RequestMethod.POST)
-    public Response addFlowService(@RequestBody FlowServices param){
-        return null;
+    @RequestMapping(value = "/megreFlowService",method = RequestMethod.POST)
+    public Response megreFlowService(@RequestBody FlowServices param){
+        String uid = MpaasSession.getCurrentUser();
+        String res = this.flowSvcService.megreFlowServices(param,uid);
+        if("Y".equals(res)){
+            return Response.ok();
+        } else {
+            return Response.error(res);
+        }
     }
 
 
@@ -50,7 +59,36 @@ public class FlowSvcController {
      */
     @RequestMapping(value = "/deleteFlowService",method = RequestMethod.POST)
     public Response deleteFlowService(@RequestBody FlowReqCommonDTO param){
+        String uid = MpaasSession.getCurrentUser();
+        String res = this.flowSvcService.deleteFlowServcie(param.getFlowId(),uid);
+        if("Y".equals(res)){
+            return Response.ok();
+        } else {
+            return Response.error(res);
+        }
+    }
+
+
+    /**
+     * 获取flow路径图
+     * @param param
+     * @return
+     */
+    @RequestMapping(value = "/getFlowRoad",method = RequestMethod.POST)
+    public Response getFlowRoad(@RequestBody FlowRoadQueryDTO param){
         return null;
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
 }
