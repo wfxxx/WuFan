@@ -11,8 +11,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.Date;
 
-@Table(value = "FLOW_ROAD")
-public class FlowRoad extends MpaasBasePojo {
+@Table(value = "FLOW_ROADS")
+public class FlowRoads extends MpaasBasePojo {
 
     @Column(value = "road_id")
     @Style(displayName = "主键")

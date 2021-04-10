@@ -11,7 +11,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.Date;
 
-public class FlowNode extends MpaasBasePojo {
+@Table(value = "FLOW_NODES")
+public class FlowNodes extends MpaasBasePojo {
     @Column(value = "fn_id")
     @Style(displayName = "主键")
     @RowID(type = RowIDType.UUID)
@@ -37,9 +38,9 @@ public class FlowNode extends MpaasBasePojo {
     @Style(displayName = "input数据类型：none text json xml")
     private String inputType;
 
-    @Column(value = "input_format")
+    @Column(value = "input_meta")
     @Style(displayName = "input对象的数据结构")
-    private String inputFormat;
+    private String inputMeta;
 
     @Column(value = "input_value")
     @Style(displayName = "input对象")
@@ -49,13 +50,17 @@ public class FlowNode extends MpaasBasePojo {
     @Style(displayName = "输出数据类型：none text json xml")
     private String outputType;
 
-    @Column(value = "output_format")
+    @Column(value = "output_meta")
     @Style(displayName = "output对象的数据结构")
-    private String outputFormat;
+    private String outputMeta;
 
     @Column(value = "output_value")
     @Style(displayName = "output对象")
     private String outputValue;
+
+    @Column(value = "params")
+    @Style(displayName = "其它参数")
+    private String params;
 
     @JsonIgnore
     @SystemColumn(SystemColumnType.CREATE_BY)
@@ -138,12 +143,20 @@ public class FlowNode extends MpaasBasePojo {
         this.inputType = inputType;
     }
 
-    public String getInputFormat() {
-        return inputFormat;
+    public String getInputMeta() {
+        return inputMeta;
     }
 
-    public void setInputFormat(String inputFormat) {
-        this.inputFormat = inputFormat;
+    public void setInputMeta(String inputMeta) {
+        this.inputMeta = inputMeta;
+    }
+
+    public String getOutputMeta() {
+        return outputMeta;
+    }
+
+    public void setOutputMeta(String outputMeta) {
+        this.outputMeta = outputMeta;
     }
 
     public String getOutputType() {
@@ -152,14 +165,6 @@ public class FlowNode extends MpaasBasePojo {
 
     public void setOutputType(String outputType) {
         this.outputType = outputType;
-    }
-
-    public String getOutputFormat() {
-        return outputFormat;
-    }
-
-    public void setOutputFormat(String outputFormat) {
-        this.outputFormat = outputFormat;
     }
 
     public String getInputValue() {
@@ -176,6 +181,14 @@ public class FlowNode extends MpaasBasePojo {
 
     public void setOutputValue(String outputValue) {
         this.outputValue = outputValue;
+    }
+
+    public String getParams() {
+        return params;
+    }
+
+    public void setParams(String params) {
+        this.params = params;
     }
 
     public String getCreatedBy() {

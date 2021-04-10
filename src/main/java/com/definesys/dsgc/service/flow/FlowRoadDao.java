@@ -1,10 +1,10 @@
 package com.definesys.dsgc.service.flow;
 
-import com.definesys.dsgc.service.flow.bean.FlowNode;
-import com.definesys.dsgc.service.flow.bean.FlowRoad;
+import com.definesys.dsgc.service.flow.bean.FlowMetadatas;
+import com.definesys.dsgc.service.flow.bean.FlowNodes;
+import com.definesys.dsgc.service.flow.bean.FlowRoads;
 import com.definesys.dsgc.service.flow.dto.FlowConstants;
 import com.definesys.mpaas.query.MpaasQueryFactory;
-import com.definesys.mpaas.query.session.MpaasSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -21,12 +21,12 @@ public class FlowRoadDao {
      * @return
      */
     public boolean checkEditingIsExist(String flowId,String flowVersion) {
-        FlowRoad fr = sw.buildQuery()
+        FlowRoads fr = sw.buildQuery()
                 .select("roadId")
                 .eq("flowId",flowId)
                 .eq("flowVersion",flowVersion)
                 .eq("flowStat",FlowConstants.FLOW_STAT_EDITING)
-                .doQueryFirst(FlowRoad.class);
+                .doQueryFirst(FlowRoads.class);
         if (fr != null) {
             return true;
         } else {
@@ -40,11 +40,11 @@ public class FlowRoadDao {
      * @param flowVersion
      * @return
      */
-    public FlowRoad getEditingFlowRoad(String flowId,String flowVersion){
+    public FlowRoads getEditingFlowRoad(String flowId,String flowVersion){
         return sw.buildQuery().eq("flowId",flowId)
                 .eq("flowVersion",flowVersion)
                 .eq("flowStat",FlowConstants.FLOW_STAT_EDITING)
-                .doQueryFirst(FlowRoad.class);
+                .doQueryFirst(FlowRoads.class);
     }
 
     /**
@@ -53,11 +53,11 @@ public class FlowRoadDao {
      * @param flowVersion
      * @return
      */
-    public FlowRoad getSavedFlowRoad(String flowId,String flowVersion){
+    public FlowRoads getSavedFlowRoad(String flowId,String flowVersion){
         return sw.buildQuery().eq("flowId",flowId)
                 .eq("flowVersion",flowVersion)
                 .eq("flowStat",FlowConstants.FLOW_STAT_SAVED)
-                .doQueryFirst(FlowRoad.class);
+                .doQueryFirst(FlowRoads.class);
     }
 
 
@@ -67,22 +67,27 @@ public class FlowRoadDao {
      */
     public void startEditingFlowRoad(String flowId,String flowVersion) {
 
-        FlowRoad fr = sw.buildQuery()
+        FlowRoads fr = sw.buildQuery()
                 .eq("flowId",flowId)
                 .eq("flowVersion",flowVersion)
                 .eq("flowStat",FlowConstants.FLOW_STAT_SAVED)
-                .doQueryFirst(FlowRoad.class);
+                .doQueryFirst(FlowRoads.class);
 
-        List<FlowNode> nodeList = null;
+        List<FlowNodes> nodeList = null;
+        List<FlowMetadatas> metaList = null;
 
         if (fr == null) {
             //数据库中没有记录，则创建一条
-            fr = new FlowRoad();
+            fr = new FlowRoads();
             fr.setFlowId(flowId);
             fr.setFlowVersion(flowVersion);
         } else {
             nodeList = sw.buildQuery().eq("roadId",fr.getRoadId())
-                    .doQuery(FlowNode.class);
+                    .doQuery(FlowNodes.class);
+            metaList = sw.buildQuery().eq("roadId",fr.getRoadId())
+                    .doQuery(FlowMetadatas.class);
+
+
             fr.setRoadId(null);
         }
         //设置编辑状态
@@ -91,12 +96,21 @@ public class FlowRoadDao {
         sw.buildQuery().doInsert(fr);
 
         if (nodeList != null && !nodeList.isEmpty()) {
-            for (FlowNode n : nodeList) {
+            for (FlowNodes n : nodeList) {
                 n.setFnId(null);
                 n.setRoadId(fr.getRoadId());
             }
             sw.buildQuery().doBatchInsert(nodeList);
         }
+
+        if (metaList != null && !metaList.isEmpty()) {
+            for (FlowMetadatas m : metaList) {
+                m.setMetaId(null);
+                m.setRoadId(fr.getRoadId());
+            }
+            sw.buildQuery().doBatchInsert(nodeList);
+        }
+
     }
 
 
@@ -104,7 +118,7 @@ public class FlowRoadDao {
      * 保存flowroad
      * @param fr
      */
-    public void saveFlowRoad(FlowRoad fr){
+    public void saveFlowRoad(FlowRoads fr){
         if(fr.getRoadId() != null && fr.getRoadId().trim().length()>0) {
             sw.buildQuery().eq("roadId",fr.getRoadId()).doUpdate(fr);
         }
@@ -123,15 +137,15 @@ public class FlowRoadDao {
 //                    .eq("flowVersion",flowVersion)
 //                    .eq("flowStat",FlowConstants.FLOW_STAT_SAVED)
 //                    .update("flow_stat",FlowConstants.FLOW_STAT_OLD)
-//                    .doUpdate(FlowRoad.class);
+//                    .doUpdate(FlowRoads.class);
             //上述写法有框架bug，无法更新数据库的字段
-            List<FlowRoad> oldList = sw.buildQuery().eq("flowId",flowId)
+            List<FlowRoads> oldList = sw.buildQuery().eq("flowId",flowId)
                     .eq("flowVersion",flowVersion)
                     .eq("flowStat",FlowConstants.FLOW_STAT_SAVED)
-                    .doQuery(FlowRoad.class);
+                    .doQuery(FlowRoads.class);
 
             if(oldList != null && !oldList.isEmpty()){
-                for(FlowRoad fr : oldList){
+                for(FlowRoads fr : oldList){
                     fr.setFlowStat(FlowConstants.FLOW_STAT_OLD);
                     sw.buildQuery().doUpdate(fr);
                 }
@@ -145,8 +159,9 @@ public class FlowRoadDao {
      */
     public void deleteFlowRoadAndNodeInfoByRoadId(String roadId) {
         if (roadId != null && roadId.trim().length() > 0) {
-            sw.buildQuery().eq("roadId",roadId).doDelete(FlowRoad.class);
-            sw.buildQuery().eq("roadId",roadId).doDelete(FlowNode.class);
+            sw.buildQuery().eq("roadId",roadId).doDelete(FlowRoads.class);
+            sw.buildQuery().eq("roadId",roadId).doDelete(FlowNodes.class);
+            sw.buildQuery().eq("roadId",roadId).doDelete(FlowMetadatas.class);
         }
     }
 

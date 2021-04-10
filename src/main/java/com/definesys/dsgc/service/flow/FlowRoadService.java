@@ -1,7 +1,7 @@
 package com.definesys.dsgc.service.flow;
 
 import com.alibaba.fastjson.JSONObject;
-import com.definesys.dsgc.service.flow.bean.FlowRoad;
+import com.definesys.dsgc.service.flow.bean.FlowRoads;
 import com.definesys.dsgc.service.flow.bean.FlowServices;
 import com.definesys.dsgc.service.flow.dto.*;
 import com.definesys.dsgc.service.utils.UserHelper;
@@ -43,7 +43,7 @@ public class FlowRoadService {
         res.setFlowId(fs.getFlowId());
         res.setTitle(fs.getFlowName());
 
-        FlowRoad road = this.flowRoadDao.getSavedFlowRoad(param.getFlowId(),param.getFlowVersion());
+        FlowRoads road = this.flowRoadDao.getSavedFlowRoad(param.getFlowId(),param.getFlowVersion());
 
         if (road == null) {
             res.setFlowVersion(FlowConstants.FLOW_DFT_VERSION);
@@ -127,7 +127,7 @@ public class FlowRoadService {
             return "非法的操作权限！";
         }
 
-        FlowRoad road = this.flowRoadDao.getEditingFlowRoad(param.getFlowId(),param.getFlowVersion());
+        FlowRoads road = this.flowRoadDao.getEditingFlowRoad(param.getFlowId(),param.getFlowVersion());
 
         if (road != null) {
             String uid = MpaasSession.getCurrentUser();
@@ -169,7 +169,7 @@ public class FlowRoadService {
             return "非法的操作权限！";
         }
 
-        FlowRoad road = this.flowRoadDao.getEditingFlowRoad(param.getFlowId(),param.getFlowVersion());
+        FlowRoads road = this.flowRoadDao.getEditingFlowRoad(param.getFlowId(),param.getFlowVersion());
 
         if (road != null) {
             String uid = MpaasSession.getCurrentUser();
