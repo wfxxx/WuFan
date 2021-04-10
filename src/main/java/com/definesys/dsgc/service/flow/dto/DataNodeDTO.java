@@ -2,11 +2,11 @@ package com.definesys.dsgc.service.flow.dto;
 
 import java.util.List;
 
-public class DataNode {
+public class DataNodeDTO {
     private String title;
     private String key;
     private boolean expanded;
-    private List<DataNode> children;
+    private List<DataNodeDTO> children;
     private boolean isLeaf;
 
     public String getTitle() {
@@ -33,11 +33,11 @@ public class DataNode {
         this.expanded = expanded;
     }
 
-    public List<DataNode> getChildren() {
+    public List<DataNodeDTO> getChildren() {
         return children;
     }
 
-    public void setChildren(List<DataNode> children) {
+    public void setChildren(List<DataNodeDTO> children) {
         this.children = children;
     }
 

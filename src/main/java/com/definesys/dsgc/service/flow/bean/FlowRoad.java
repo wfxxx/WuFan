@@ -11,40 +11,33 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.Date;
 
-@SQLQuery(value={
-        @SQL(view="V_FLOW_SERVICE_INFO",sql="select f.* from (SELECT s.FLOW_ID, s.FLOW_NAME, s.FLOW_DESC, s.PROJECT_CODE, p.SYS_CODE AS APP_CODE , ( SELECT e.SYS_NAME FROM DSGC_SYSTEM_ENTITIES e WHERE e.SYS_CODE = p.SYS_CODE ) AS APP_NAME, s.DELETE_FLAG, s.CREATION_DATE, s.CREATED_BY , ( SELECT u.USER_NAME FROM DSGC_USER u WHERE u.USER_ID = s.CREATED_BY ) AS created_by_name, s.LAST_UPDATE_DATE, s.LAST_UPDATED_BY, s.OBJECT_VERSION_NUMBER FROM flow_services s, DSGC_SVCGEN_PROJ_INFO p WHERE s.PROJECT_CODE = p.PROJ_NAME and s.delete_flag = 'N' ORDER BY s.CREATION_DATE DESC) f")
-})
-@Table(value = "FLOW_SERVICES")
-public class FlowServices extends MpaasBasePojo {
-    @Column(value = "flow_id")
+@Table(value = "FLOW_ROAD")
+public class FlowRoad extends MpaasBasePojo {
+
+    @Column(value = "road_id")
     @Style(displayName = "主键")
     @RowID(type = RowIDType.UUID)
+    private String roadId;
+
+    @Column(value = "flow_id")
+    @Style(displayName = "flow_services表的外键id")
     private String flowId;
 
-    @Column(value = "flow_name")
-    @Style(displayName = "flow名称")
-    private String flowName;
+    @Column(value = "flow_version")
+    @Style(displayName = "flow版本号")
+    private String flowVersion;
 
-    @Column(value = "flow_desc")
-    @Style(displayName = "flow描述")
-    private String flowDesc;
+    @Column(value = "start_node_id")
+    @Style(displayName = "flow开始的节点id")
+    private String startNodeId;
 
-    @Column(value = "project_code")
-    @Style(displayName = "所属项目代码")
-    private String projectCode;
+    @Column(value = "flow_stat")
+    @Style(displayName = "flow的状态，editing编辑中，saved已保存,old被更新后的旧记录")
+    private String flowStat;
 
-    @Column(value = "app_code",type = ColumnType.CALCULATE)
-    @Style(displayName = "所属应用代码")
-    private String appCode;
-
-    @Column(value = "app_name",type = ColumnType.CALCULATE)
-    @Style(displayName = "所属应用名称")
-    private String appName;
-
-    @JsonIgnore
-    @Column(value = "delete_flag",type = ColumnType.CALCULATE)
-    @Style(displayName = "是否删除")
-    private String deleteFlag;
+    @Column(value = "road_graph")
+    @Style(displayName = "flow的编排图，用Json的结构保存")
+    private String roadGraph;
 
     @JsonIgnore
     @SystemColumn(SystemColumnType.CREATE_BY)
@@ -52,9 +45,6 @@ public class FlowServices extends MpaasBasePojo {
     @Style(displayName = "创建人")
     private String createdBy;
 
-    @Column(value = "created_by_name",type = ColumnType.CALCULATE)
-    @Style(displayName = "创建人名称")
-    private String createdByName;
 
     @JsonSerialize(using = MpaasDateTimeSerializer.class)
     @JsonDeserialize(using = MpaasDateTimeDeserializer.class)
@@ -83,6 +73,14 @@ public class FlowServices extends MpaasBasePojo {
     private Long objectVersionNumber;
 
 
+    public String getRoadId() {
+        return roadId;
+    }
+
+    public void setRoadId(String roadId) {
+        this.roadId = roadId;
+    }
+
     public String getFlowId() {
         return flowId;
     }
@@ -91,52 +89,36 @@ public class FlowServices extends MpaasBasePojo {
         this.flowId = flowId;
     }
 
-    public String getFlowName() {
-        return flowName;
+    public String getFlowVersion() {
+        return flowVersion;
     }
 
-    public void setFlowName(String flowName) {
-        this.flowName = flowName;
+    public void setFlowVersion(String flowVersion) {
+        this.flowVersion = flowVersion;
     }
 
-    public String getFlowDesc() {
-        return flowDesc;
+    public String getStartNodeId() {
+        return startNodeId;
     }
 
-    public void setFlowDesc(String flowDesc) {
-        this.flowDesc = flowDesc;
+    public void setStartNodeId(String startNodeId) {
+        this.startNodeId = startNodeId;
     }
 
-    public String getProjectCode() {
-        return projectCode;
+    public String getFlowStat() {
+        return flowStat;
     }
 
-    public void setProjectCode(String projectCode) {
-        this.projectCode = projectCode;
+    public void setFlowStat(String flowStat) {
+        this.flowStat = flowStat;
     }
 
-    public String getAppCode() {
-        return appCode;
+    public String getRoadGraph() {
+        return roadGraph;
     }
 
-    public void setAppCode(String appCode) {
-        this.appCode = appCode;
-    }
-
-    public String getAppName() {
-        return appName;
-    }
-
-    public void setAppName(String appName) {
-        this.appName = appName;
-    }
-
-    public String getDeleteFlag() {
-        return deleteFlag;
-    }
-
-    public void setDeleteFlag(String deleteFlag) {
-        this.deleteFlag = deleteFlag;
+    public void setRoadGraph(String roadGraph) {
+        this.roadGraph = roadGraph;
     }
 
     public String getCreatedBy() {
@@ -145,14 +127,6 @@ public class FlowServices extends MpaasBasePojo {
 
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
-    }
-
-    public String getCreatedByName() {
-        return createdByName;
-    }
-
-    public void setCreatedByName(String createdByName) {
-        this.createdByName = createdByName;
     }
 
     public Date getCreationDate() {

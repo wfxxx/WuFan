@@ -1,9 +1,10 @@
 package com.definesys.dsgc.service.flow.bean;
 
 import com.definesys.mpaas.query.annotation.*;
+import com.definesys.mpaas.query.model.MpaasBasePojo;
 
 @Table(value = "DSGC_SVCGEN_PROJ_INFO")
-public class DsgcSvcgenProjInfo {
+public class DsgcSvcgenProjInfo extends MpaasBasePojo {
 
     @Column(value = "PROJ_ID")
     @Style(displayName = "主键")

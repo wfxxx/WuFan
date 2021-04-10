@@ -2,7 +2,7 @@ package com.definesys.dsgc.service.flow.dto;
 
 import java.util.List;
 
-public class FlowNode {
+public class FlowNodeDTO {
     //节点id
     private String nodeId;
     //节点所使用的组件代码
@@ -18,7 +18,7 @@ public class FlowNode {
     //后置节点id
     private String afterNodeId;
     //子节点列表
-    private List<FlowNode> children;
+    private List<FlowNodeDTO> children;
 
     public String getNodeId() {
         return nodeId;
@@ -76,11 +76,11 @@ public class FlowNode {
         this.afterNodeId = afterNodeId;
     }
 
-    public List<FlowNode> getChildren() {
+    public List<FlowNodeDTO> getChildren() {
         return children;
     }
 
-    public void setChildren(List<FlowNode> children) {
+    public void setChildren(List<FlowNodeDTO> children) {
         this.children = children;
     }
 }
