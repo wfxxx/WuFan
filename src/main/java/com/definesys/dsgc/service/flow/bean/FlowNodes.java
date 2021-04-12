@@ -42,10 +42,6 @@ public class FlowNodes extends MpaasBasePojo {
     @Style(displayName = "外键字段，flow路线图引用的主键")
     private String roadId;
 
-    @Column(value = "input_type")
-    @Style(displayName = "input数据类型：none text json xml")
-    private String inputType;
-
     @Column(value = "input_meta")
     @Style(displayName = "input对象的数据结构")
     private String inputMeta;
@@ -53,10 +49,6 @@ public class FlowNodes extends MpaasBasePojo {
     @Column(value = "input_value")
     @Style(displayName = "input对象")
     private String inputValue;
-
-    @Column(value = "ouput_type")
-    @Style(displayName = "输出数据类型：none text json xml")
-    private String outputType;
 
     @Column(value = "output_meta")
     @Style(displayName = "output对象的数据结构")
@@ -159,14 +151,6 @@ public class FlowNodes extends MpaasBasePojo {
         this.roadId = roadId;
     }
 
-    public String getInputType() {
-        return inputType;
-    }
-
-    public void setInputType(String inputType) {
-        this.inputType = inputType;
-    }
-
     public String getInputMeta() {
         return inputMeta;
     }
@@ -181,14 +165,6 @@ public class FlowNodes extends MpaasBasePojo {
 
     public void setOutputMeta(String outputMeta) {
         this.outputMeta = outputMeta;
-    }
-
-    public String getOutputType() {
-        return outputType;
-    }
-
-    public void setOutputType(String outputType) {
-        this.outputType = outputType;
     }
 
     public String getInputValue() {

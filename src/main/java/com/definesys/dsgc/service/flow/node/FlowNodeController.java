@@ -50,11 +50,9 @@ public class FlowNodeController {
         panel.setFlowVersion(reqParam.getFlowVersion());
         panel.setNodeId(reqParam.getNodeId());
 
-        panel.setInputType(node != null ? node.getInputType() : null);
         panel.setInputMeta(node != null ? node.getInputMeta() : null);
         panel.setInputValue(node != null ? node.getInputValue() : null);
 
-        panel.setOutputType(node != null ? node.getOutputType() : null);
         panel.setOutputMeta(node != null ? node.getOutputMeta() : null);
         panel.setOutputValue(node != null ? node.getOutputValue() : null);
 
@@ -77,10 +75,8 @@ public class FlowNodeController {
         ParamPanelDTO panel  = new ParamPanelDTO();
         panel.setNodeId("111");
         panel.setInputMeta("sfsfsf");
-        panel.setInputType("sfsfsf");
         panel.setInputValue("sfsfsf");
         panel.setOutputMeta("sfsfsf");
-        panel.setOutputType("sfsfs");
         panel.setOutputValue("sfsfsfs");
 
         RestListenerParam p = new RestListenerParam();

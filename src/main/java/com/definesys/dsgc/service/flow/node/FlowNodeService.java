@@ -103,11 +103,9 @@ public class FlowNodeService {
             flowNode.setNodeType(nodeInfo != null ? nodeInfo.getType() : null);
             flowNode.setNodeDesc(nodeInfo != null ? nodeInfo.getDesc() : null);
 
-            flowNode.setInputType(panel.getInputType());
             flowNode.setInputMeta(panel.getInputMeta());
             flowNode.setInputValue(panel.getInputValue());
 
-            flowNode.setOutputType(panel.getOutputType());
             flowNode.setOutputMeta(panel.getOutputMeta());
             flowNode.setOutputValue(panel.getOutputValue());
 

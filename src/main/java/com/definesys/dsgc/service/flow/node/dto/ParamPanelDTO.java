@@ -8,10 +8,8 @@ public class ParamPanelDTO {
     private String flowVersion;
 
     private String nodeId;
-    private String inputType;
     private String inputMeta;
     private String inputValue;
-    private String outputType;
     private String outputMeta;
     private String outputValue;
 
@@ -44,14 +42,6 @@ public class ParamPanelDTO {
         this.nodeId = nodeId;
     }
 
-    public String getInputType() {
-        return inputType;
-    }
-
-    public void setInputType(String inputType) {
-        this.inputType = inputType;
-    }
-
     public String getInputMeta() {
         return inputMeta;
     }
@@ -66,14 +56,6 @@ public class ParamPanelDTO {
 
     public void setInputValue(String inputValue) {
         this.inputValue = inputValue;
-    }
-
-    public String getOutputType() {
-        return outputType;
-    }
-
-    public void setOutputType(String outputType) {
-        this.outputType = outputType;
     }
 
     public String getOutputMeta() {

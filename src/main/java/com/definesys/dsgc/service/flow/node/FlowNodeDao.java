@@ -1,7 +1,6 @@
 package com.definesys.dsgc.service.flow.node;
 
 
-import com.definesys.dsgc.service.flow.bean.FlowMetadatas;
 import com.definesys.dsgc.service.flow.bean.FlowNodes;
 import com.definesys.mpaas.query.MpaasQueryFactory;
 import org.apache.commons.lang.StringUtils;
