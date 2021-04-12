@@ -8,6 +8,9 @@ public class DataNodeDTO {
     private boolean expanded;
     private List<DataNodeDTO> children;
     private boolean isLeaf;
+    private String valueType;
+    private String minOccur;
+    private String maxOccur;
 
     public String getTitle() {
         return title;
@@ -47,5 +50,29 @@ public class DataNodeDTO {
 
     public void setLeaf(boolean leaf) {
         isLeaf = leaf;
+    }
+
+    public String getValueType() {
+        return valueType;
+    }
+
+    public void setValueType(String valueType) {
+        this.valueType = valueType;
+    }
+
+    public String getMinOccur() {
+        return minOccur;
+    }
+
+    public void setMinOccur(String minOccur) {
+        this.minOccur = minOccur;
+    }
+
+    public String getMaxOccur() {
+        return maxOccur;
+    }
+
+    public void setMaxOccur(String maxOccur) {
+        this.maxOccur = maxOccur;
     }
 }
