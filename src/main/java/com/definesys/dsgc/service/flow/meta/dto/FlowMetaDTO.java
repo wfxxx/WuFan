@@ -4,6 +4,7 @@ public class FlowMetaDTO {
     private String flowId;
     private String flowVersion;
     private String metaId;
+    private String metaName;
     private String sour;
     private String metaType;
     private DataNodeDTO metaTree;
@@ -26,6 +27,14 @@ public class FlowMetaDTO {
 
     public String getMetaId() {
         return metaId;
+    }
+
+    public String getMetaName() {
+        return metaName;
+    }
+
+    public void setMetaName(String metaName) {
+        this.metaName = metaName;
     }
 
     public void setMetaId(String metaId) {

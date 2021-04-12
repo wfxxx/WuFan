@@ -81,6 +81,7 @@ public class FlowMetaService {
             metaBean.setRoadId(road.getRoadId());
             metaBean.setSour(metaDto.getSour());
             metaBean.setMetaType(metaDto.getMetaType());
+            metaBean.setMetaName(metaDto.getMetaName());
             metaBean.setMetaTxt(metaDto.getMetaTree() != null ? JSONObject.toJSONString(metaDto.getMetaTree()): null);
 
             this.flowMetaDao.mergeFlowMeta(metaBean);
@@ -151,6 +152,7 @@ public class FlowMetaService {
             metaDto.setFlowId(flowId);
             metaDto.setFlowVersion(flowVersion);
             metaDto.setMetaId(metaBean.getMetaId());
+            metaDto.setMetaName(metaBean.getMetaName());
             metaDto.setMetaType(metaBean.getMetaType());
             metaDto.setSour(metaBean.getSour());
             if(StringUtils.isNotBlank(metaBean.getMetaTxt())){

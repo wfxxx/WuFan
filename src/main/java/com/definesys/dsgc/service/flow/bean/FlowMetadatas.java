@@ -24,6 +24,10 @@ public class FlowMetadatas extends MpaasBasePojo {
     @Style(displayName = "meta逻辑主键")
     private String metaId;
 
+    @Column(value = "meta_name")
+    @Style(displayName = "meta的名称")
+    private String metaName;
+
     @Column(value = "road_id")
     @Style(displayName = "外键字段，flow路线图引用的主键")
     private String roadId;
@@ -82,6 +86,14 @@ public class FlowMetadatas extends MpaasBasePojo {
 
     public String getMetaId() {
         return metaId;
+    }
+
+    public String getMetaName() {
+        return metaName;
+    }
+
+    public void setMetaName(String metaName) {
+        this.metaName = metaName;
     }
 
     public String getRoadId() {
