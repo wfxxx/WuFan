@@ -1,4 +1,4 @@
-package com.definesys.dsgc.service.flow;
+package com.definesys.dsgc.service.flow.road;
 
 import com.definesys.dsgc.service.flow.bean.FlowMetadatas;
 import com.definesys.dsgc.service.flow.bean.FlowNodes;

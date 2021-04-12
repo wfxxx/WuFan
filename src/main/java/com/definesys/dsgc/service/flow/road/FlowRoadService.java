@@ -1,9 +1,10 @@
-package com.definesys.dsgc.service.flow;
+package com.definesys.dsgc.service.flow.road;
 
 import com.alibaba.fastjson.JSONObject;
 import com.definesys.dsgc.service.flow.bean.FlowRoads;
 import com.definesys.dsgc.service.flow.bean.FlowServices;
 import com.definesys.dsgc.service.flow.dto.*;
+import com.definesys.dsgc.service.flow.mng.FlowSvcDao;
 import com.definesys.dsgc.service.utils.UserHelper;
 import com.definesys.mpaas.query.session.MpaasSession;
 import org.apache.commons.lang.StringUtils;
@@ -97,15 +98,6 @@ public class FlowRoadService {
      */
     public String startFlowRoadEdit(FlowRoadEditReqDTO param){
 
-        if(param == null || StringUtils.isBlank(param.getFlowId()) || StringUtils.isBlank(param.getFlowVersion())) {
-            return "无效的请求参数！";
-        }
-
-        if(!this.isAuthToEditFlow(param.getFlowId())){
-            return "非法的操作权限！";
-        }
-
-
         if(this.flowRoadDao.checkEditingIsExist(param.getFlowId(),param.getFlowVersion())) {
             return "编辑冲突，已存在编辑状态！";
         }
@@ -119,13 +111,6 @@ public class FlowRoadService {
      * 保存并退出编辑状态
      */
     public String saveFlowRoadWithCloseEditing(FlowRoadDTO param) {
-        if (param == null || StringUtils.isBlank(param.getFlowId()) || StringUtils.isBlank(param.getFlowVersion())) {
-            return "无效的请求参数！";
-        }
-
-        if (!this.isAuthToEditFlow(param.getFlowId())) {
-            return "非法的操作权限！";
-        }
 
         FlowRoads road = this.flowRoadDao.getEditingFlowRoad(param.getFlowId(),param.getFlowVersion());
 
@@ -161,14 +146,6 @@ public class FlowRoadService {
      * 放弃编辑的内容
      */
     public String backoffFlowRoadEdited(FlowRoadEditReqDTO param) {
-        if (param == null || StringUtils.isBlank(param.getFlowId()) || StringUtils.isBlank(param.getFlowVersion())) {
-            return "无效的请求参数！";
-        }
-
-        if (!this.isAuthToEditFlow(param.getFlowId())) {
-            return "非法的操作权限！";
-        }
-
         FlowRoads road = this.flowRoadDao.getEditingFlowRoad(param.getFlowId(),param.getFlowVersion());
 
         if (road != null) {
@@ -187,32 +164,6 @@ public class FlowRoadService {
     }
 
 
-    /**
-     * 判断当前用户是否对flow有编辑权限
-     * @param flowId
-     * @return
-     */
-    public boolean isAuthToEditFlow(String flowId){
-        String uid = MpaasSession.getCurrentUser();
-
-        UserHelper uh = this.userHelper.user(uid);
-        if(uh.isSuperAdministrator() || uh.isAdmin()) {
-            return true;
-        } else if(uh.isSystemMaintainer()) {
-            FlowServices fs = this.flowSvcDao.getFlowServcieByFlowId(flowId);
-            if(fs != null){
-                if(uh.isSpecifySystemMaintainer(fs.getAppCode())){
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
 
 
 }

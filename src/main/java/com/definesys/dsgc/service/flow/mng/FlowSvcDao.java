@@ -1,4 +1,4 @@
-package com.definesys.dsgc.service.flow;
+package com.definesys.dsgc.service.flow.mng;
 
 import com.definesys.dsgc.service.flow.bean.DsgcSvcgenProjInfo;
 import com.definesys.dsgc.service.flow.bean.FlowServices;

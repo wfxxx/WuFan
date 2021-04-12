@@ -7,4 +7,6 @@ public class FlowConstants {
     public final static String FLOW_STAT_EDITING = "editing";
     public final static String FLOW_STAT_SAVED = "saved";
     public final static String FLOW_DFT_VERSION = "default";
+
+    public final static String FLOW_PANEL_PARAMS = "params";
 }

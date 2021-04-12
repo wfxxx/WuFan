@@ -1,6 +1,7 @@
-package com.definesys.dsgc.service.flow;
+package com.definesys.dsgc.service.flow.mng;
 
 
+import com.definesys.dsgc.service.flow.road.FlowRoadService;
 import com.definesys.dsgc.service.flow.bean.FlowServices;
 import com.definesys.dsgc.service.flow.dto.FlowReqCommonDTO;
 import com.definesys.dsgc.service.flow.dto.FlowRoadDTO;
@@ -20,8 +21,7 @@ public class FlowSvcController {
     @Autowired
     private FlowSvcService flowSvcService;
 
-    @Autowired
-    private FlowRoadService flowRoadService;
+
 
     /**
      * 分页查询flowService列表
@@ -73,90 +73,6 @@ public class FlowSvcController {
             return Response.error(res);
         }
     }
-
-
-    /**
-     * 获取flow路径图
-     * @param param
-     * @return
-     */
-    @RequestMapping(value = "/road/getFlowRoad",method = RequestMethod.POST)
-    public Response getFlowRoad(@RequestBody FlowRoadQueryDTO param) {
-        if (param == null || StringUtils.isBlank(param.getFlowId()) || StringUtils.isBlank(param.getFlowVersion())) {
-            return Response.error("非法的请求参数！");
-        }
-        FlowRoadDTO res = this.flowRoadService.getFlowRoad(param);
-
-        if(res == null){
-            return Response.error("对象不存在！");
-        }
-
-        return Response.ok().setData(res);
-    }
-
-    /**
-     * 开启编辑模式
-     * @param param
-     * @return
-     */
-    @RequestMapping(value = "/road/startFlowRoadEditting",method = RequestMethod.POST)
-    public Response startFlowRoadEditting(@RequestBody FlowRoadEditReqDTO param){
-       String res  = this.flowRoadService.startFlowRoadEdit(param);
-       if("Y".equals(res)){
-           return Response.ok();
-       } else {
-           return Response.error(res);
-       }
-    }
-
-    /**
-     * 放弃编辑
-     * @param param
-     * @return
-     */
-    @RequestMapping(value = "/road/backoffFlowRoadEditting",method = RequestMethod.POST)
-    public Response backoffFlowRoadEditting(@RequestBody FlowRoadEditReqDTO param){
-        String res = this.flowRoadService.backoffFlowRoadEdited(param);
-        if("Y".equals(res)){
-            return Response.ok();
-        } else {
-            return Response.error(res);
-        }
-    }
-
-    /**
-     * 保存编辑
-     * @param param
-     * @return
-     */
-    @RequestMapping(value = "/road/saveFlowRoad",method = RequestMethod.POST)
-    public Response saveFlowRoad(@RequestBody FlowRoadDTO param){
-        String res = this.flowRoadService.saveFlowRoadWithCloseEditing(param);
-        if("Y".equals(res)){
-            return Response.ok();
-        } else {
-            return Response.error(res);
-        }
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }

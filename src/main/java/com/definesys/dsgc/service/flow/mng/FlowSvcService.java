@@ -1,4 +1,4 @@
-package com.definesys.dsgc.service.flow;
+package com.definesys.dsgc.service.flow.mng;
 
 import com.definesys.dsgc.service.flow.bean.DsgcSvcgenProjInfo;
 import com.definesys.dsgc.service.flow.bean.FlowServices;
@@ -7,6 +7,7 @@ import com.definesys.dsgc.service.svclog.SVCLogDao;
 import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
 import com.definesys.dsgc.service.utils.UserHelper;
 import com.definesys.mpaas.query.db.PageQueryResult;
+import com.definesys.mpaas.query.session.MpaasSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -136,6 +137,33 @@ public class FlowSvcService {
         return "Y";
     }
 
+
+    /**
+     * 判断当前用户是否对flow有编辑权限
+     * @param flowId
+     * @return
+     */
+    public boolean isAuthToEditFlow(String flowId){
+        String uid = MpaasSession.getCurrentUser();
+
+        UserHelper uh = this.userHelper.user(uid);
+        if(uh.isSuperAdministrator() || uh.isAdmin()) {
+            return true;
+        } else if(uh.isSystemMaintainer()) {
+            FlowServices fs = this.flowSvcDao.getFlowServcieByFlowId(flowId);
+            if(fs != null){
+                if(uh.isSpecifySystemMaintainer(fs.getAppCode())){
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
 
 
 

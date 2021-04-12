@@ -30,6 +30,14 @@ public class FlowNodes extends MpaasBasePojo {
     @Style(displayName = "节点所使用组件唯一编码")
     private String cnptCode;
 
+    @Column(value = "node_type")
+    @Style(displayName = "节点类型")
+    private String nodeType;
+
+    @Column(value = "node_desc")
+    @Style(displayName = "节点描述")
+    private String nodeDesc;
+
     @Column(value = "road_id")
     @Style(displayName = "外键字段，flow路线图引用的主键")
     private String roadId;
@@ -117,6 +125,22 @@ public class FlowNodes extends MpaasBasePojo {
 
     public void setNodeName(String nodeName) {
         this.nodeName = nodeName;
+    }
+
+    public String getNodeType() {
+        return nodeType;
+    }
+
+    public void setNodeType(String nodeType) {
+        this.nodeType = nodeType;
+    }
+
+    public String getNodeDesc() {
+        return nodeDesc;
+    }
+
+    public void setNodeDesc(String nodeDesc) {
+        this.nodeDesc = nodeDesc;
     }
 
     public String getCnptCode() {

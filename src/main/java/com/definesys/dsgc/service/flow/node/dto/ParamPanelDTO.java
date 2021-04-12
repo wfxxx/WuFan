@@ -1,8 +1,11 @@
-package com.definesys.dsgc.service.flow.param;
+package com.definesys.dsgc.service.flow.node.dto;
 
 import com.definesys.dsgc.service.flow.dto.FlowRoadDTO;
 
-public class CommonParamPanelDTO {
+public class ParamPanelDTO {
+
+    private String flowId;
+    private String flowVersion;
 
     private String nodeId;
     private String inputType;
@@ -12,9 +15,26 @@ public class CommonParamPanelDTO {
     private String outputMeta;
     private String outputValue;
 
+    private Param params;
+
     //流路径图
     private FlowRoadDTO flow;
 
+    public String getFlowId() {
+        return flowId;
+    }
+
+    public void setFlowId(String flowId) {
+        this.flowId = flowId;
+    }
+
+    public String getFlowVersion() {
+        return flowVersion;
+    }
+
+    public void setFlowVersion(String flowVersion) {
+        this.flowVersion = flowVersion;
+    }
 
     public String getNodeId() {
         return nodeId;
@@ -78,5 +98,13 @@ public class CommonParamPanelDTO {
 
     public void setFlow(FlowRoadDTO flow) {
         this.flow = flow;
+    }
+
+    public Param getParams() {
+        return params;
+    }
+
+    public void setParams(Param params) {
+        this.params = params;
     }
 }
