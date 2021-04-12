@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping(value = "/dsgc/flow/node")
 public class FlowNodeController {
@@ -124,8 +127,13 @@ public class FlowNodeController {
         if(body != null){
             ParamPanelDTO panel = JSONObject.parseObject(body,ParamPanelDTO.class);
             if(panel == null || StringUtils.isBlank(panel.getFlowId()) || StringUtils.isBlank(panel.getFlowVersion())
-            || StringUtils.isBlank(panel.getNodeId())) {
+              || StringUtils.isBlank(panel.getNodeId())
+            ) {
                 return Response.error("非法的请求参数！");
+            }
+
+            if(!this.flowSvcService.isAuthToEditFlow(panel.getFlowId())){
+                return Response.error("非法的操作权限！");
             }
 
             String paramJsonTxt = null;
@@ -134,16 +142,18 @@ public class FlowNodeController {
                 paramJsonTxt = param.toJSONString();
             }
 
-            if(!this.flowSvcService.isAuthToEditFlow(panel.getFlowId())){
-                return Response.error("非法的操作权限！");
+            String res = this.flowNodeService.mergeFlowNodeParam(panel,paramJsonTxt);
+            if(res != null && !res.startsWith("error:")){
+                Map<String,String> resMap = new HashMap<String,String>();
+                resMap.put("nodeId",res);
+                return Response.ok().data(resMap);
+            } else {
+                return Response.error(res);
             }
 
-            String res = this.flowNodeService.mergeFlowNodeParam(panel,paramJsonTxt);
-            return "Y".equals(res) ? Response.ok() : Response.error(res);
-
+        } else {
+            return Response.error("非法的请求参数！");
         }
-
-        return Response.ok();
     }
 
     /**

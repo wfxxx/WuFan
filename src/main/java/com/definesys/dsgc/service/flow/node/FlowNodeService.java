@@ -5,9 +5,12 @@ import com.definesys.dsgc.service.flow.bean.FlowRoads;
 import com.definesys.dsgc.service.flow.dto.FlowNodeCommonDTO;
 import com.definesys.dsgc.service.flow.dto.FlowNodeDTO;
 import com.definesys.dsgc.service.flow.dto.FlowRoadDTO;
+import com.definesys.dsgc.service.flow.meta.FlowMetaDao;
 import com.definesys.dsgc.service.flow.node.dto.ParamPanelDTO;
 import com.definesys.dsgc.service.flow.road.FlowRoadDao;
+import com.definesys.mpaas.common.util.MpaasUtil;
 import com.definesys.mpaas.query.session.MpaasSession;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +22,9 @@ public class FlowNodeService {
 
     @Autowired
     private FlowRoadDao flowRoadDao;
+
+    @Autowired
+    private FlowMetaDao flowMetaDao;
 
 
     /**
@@ -33,8 +39,8 @@ public class FlowNodeService {
                 return "非法的操作权限！";
             }
 
-            this.flowNodeDao.deleteFlowNodeMeta(road.getRoadId(),param.getNodeId());
-            this.flowNodeDao.deleteFlowNodeMeta(road.getRoadId(),param.getNodeId());
+            this.flowNodeDao.deleteFlowNode(road.getRoadId(),param.getNodeId());
+            this.flowMetaDao.deleteFlowNodeMetaByNodeId(road.getRoadId(),param.getNodeId());
 
         } else {
             return "无效的编辑状态！";
@@ -58,7 +64,7 @@ public class FlowNodeService {
         if (road != null) {
             String uid = MpaasSession.getCurrentUser();
             if (uid == null || uid != null && !uid.equals(road.getCreatedBy())) {
-                return "非法的操作权限！";
+                return "error:非法的操作权限！";
             }
 
 
@@ -74,16 +80,23 @@ public class FlowNodeService {
                 }
             }
 
+            FlowNodes flowNode = null;
 
-            //查询数据库中是否已经存在
-            FlowNodes flowNode = this.flowNodeDao.getFlowNode(road.getRoadId(),panel.getNodeId());
-            if (flowNode == null) {
-                //存在则更新
+            if(StringUtils.isBlank(panel.getNodeId())) {
                 flowNode = new FlowNodes();
+                //生成nodeid，后续返回给前端
+                flowNode.setNodeId(MpaasUtil.guuid());
+            } else {
+                flowNode = this.flowNodeDao.getFlowNode(road.getRoadId(),panel.getNodeId());
+                //查询数据库中是否已经存在
+                if(flowNode == null){
+                    flowNode = new FlowNodes();
+                    //生成nodeid，后续返回给前端
+                    flowNode.setNodeId(MpaasUtil.guuid());
+                }
             }
 
             flowNode.setRoadId(road.getRoadId());
-            flowNode.setNodeId(panel.getNodeId());
 
             flowNode.setCnptCode(nodeInfo != null ? nodeInfo.getCnptCode() : null);
             flowNode.setNodeName(nodeInfo != null ? nodeInfo.getTitle() : null);
@@ -101,13 +114,11 @@ public class FlowNodeService {
             flowNode.setParams(paramsJsonTxt);
 
             this.flowNodeDao.mergeFlowNode(flowNode);
+            return flowNode.getNodeId();
 
         } else {
-            return "无效的编辑状态！";
+            return "error:无效的编辑状态！";
         }
-
-        return "Y";
-
     }
 
 
@@ -119,7 +130,7 @@ public class FlowNodeService {
      * @return
      */
     public FlowNodes getFlowNode(String flowId,String flowVersion,String nodeId){
-        //有限获取正在编辑的
+        //优先获取正在编辑的
         FlowRoads road = this.flowRoadDao.getEditingFlowRoad(flowId,flowVersion);
         if(road == null){
             //没有开启编辑状态，则获取保存状态的

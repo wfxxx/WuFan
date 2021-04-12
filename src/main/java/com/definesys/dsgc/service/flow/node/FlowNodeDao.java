@@ -25,17 +25,6 @@ public class FlowNodeDao {
                 .doDelete(FlowNodes.class);
     }
 
-    /**
-     * 删除节点自动创建的meta
-     * @param roadId
-     * @param nodeId
-     */
-    public void deleteFlowNodeMeta(String roadId,String nodeId){
-        this.sw.buildQuery().eq("roadId",roadId)
-                .eq("sour",nodeId)
-                .doDelete(FlowMetadatas.class);
-    }
-
 
     /**
      * 查询flowNodes
@@ -58,7 +47,7 @@ public class FlowNodeDao {
     public void mergeFlowNode(FlowNodes flowNode) {
         if (flowNode != null) {
             if (StringUtils.isNotBlank(flowNode.getFnId())) {
-                this.sw.buildQuery().doUpdate(flowNode);
+                this.sw.buildQuery().eq("fnId",flowNode.getFnId()).doUpdate(flowNode);
             } else {
                 this.sw.buildQuery().doInsert(flowNode);
             }

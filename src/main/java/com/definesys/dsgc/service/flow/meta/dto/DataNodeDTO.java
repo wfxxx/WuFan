@@ -1,4 +1,4 @@
-package com.definesys.dsgc.service.flow.dto;
+package com.definesys.dsgc.service.flow.meta.dto;
 
 import java.util.List;
 

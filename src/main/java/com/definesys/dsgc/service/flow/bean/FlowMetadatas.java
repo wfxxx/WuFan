@@ -13,9 +13,15 @@ import java.util.Date;
 
 @Table(value = "FLOW_METADATAS")
 public class FlowMetadatas extends MpaasBasePojo {
-    @Column(value = "meta_id")
+
+
+    @Column(value = "fm_id")
     @Style(displayName = "主键")
     @RowID(type = RowIDType.UUID)
+    private String fmId;
+
+    @Column(value = "meta_id")
+    @Style(displayName = "meta逻辑主键")
     private String metaId;
 
     @Column(value = "road_id")
@@ -65,6 +71,14 @@ public class FlowMetadatas extends MpaasBasePojo {
     @Column(value = "object_version_number")
     @Style(displayName = "行版本号，用来处理锁")
     private Long objectVersionNumber;
+
+    public String getFmId() {
+        return fmId;
+    }
+
+    public void setFmId(String fmId) {
+        this.fmId = fmId;
+    }
 
     public String getMetaId() {
         return metaId;
