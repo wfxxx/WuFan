@@ -7,6 +7,8 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public class FlowNodeDao {
     @Autowired
@@ -52,5 +54,21 @@ public class FlowNodeDao {
             }
         }
     }
+
+
+    /**
+     * 根据roadid获取数据库中的所有节点
+     * @param roadId
+     * @return
+     */
+    public List<FlowNodes> getFlowNodeList(String roadId){
+        if(StringUtils.isBlank(roadId)){
+            return null;
+        }
+        return this.sw.buildQuery().eq("roadId",roadId).doQuery(FlowNodes.class);
+    }
+
+
+
 
 }

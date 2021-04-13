@@ -6,6 +6,7 @@ import com.definesys.dsgc.service.flow.dto.FlowConstants;
 import com.definesys.dsgc.service.flow.dto.FlowNodeCommonDTO;
 import com.definesys.dsgc.service.flow.mng.FlowSvcService;
 import com.definesys.dsgc.service.flow.node.dto.ParamPanelDTO;
+import com.definesys.dsgc.service.flow.node.dto.VariablePreviewReqDTO;
 import com.definesys.dsgc.service.flow.node.dto.param.RestListenerParam;
 import com.definesys.mpaas.common.http.Response;
 import org.apache.commons.lang.StringUtils;
@@ -171,6 +172,21 @@ public class FlowNodeController {
         String res = this.flowNodeService.removeFlowNode(param);
         return "Y".equals(res) ? Response.ok() : Response.error(res);
     }
+
+
+
+    @RequestMapping(value = "/listUpstreamVariables",method = RequestMethod.POST)
+    public Response listUpstreamVariables(@RequestBody VariablePreviewReqDTO reqParam){
+        if(reqParam == null || StringUtils.isBlank(reqParam.getNodeId())
+        || reqParam.getFlow() == null){
+            return Response.error("非法的请求参数！");
+        }
+
+        return Response.ok().data(this.flowNodeService.listUpstreamVariables(reqParam));
+    }
+
+
+
 
 
 }

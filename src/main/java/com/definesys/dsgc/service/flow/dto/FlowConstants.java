@@ -9,4 +9,8 @@ public class FlowConstants {
     public final static String FLOW_DFT_VERSION = "default";
 
     public final static String FLOW_PANEL_PARAMS = "params";
+
+    public final static String FLOW_VAR_PAYLOAD ="Payload";
+
+    public final static String FLOW_VAR_TYPE_ANY = "Any";
 }
