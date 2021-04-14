@@ -99,16 +99,18 @@ public class FlowRoadDao {
             for (FlowNodes n : nodeList) {
                 n.setFnId(null);
                 n.setRoadId(fr.getRoadId());
+                sw.buildQuery().doInsert(n);
             }
-            sw.buildQuery().doBatchInsert(nodeList);
+//            sw.buildQuery().doBatchInsert(nodeList);
         }
 
         if (metaList != null && !metaList.isEmpty()) {
             for (FlowMetadatas m : metaList) {
-                m.setMetaId(null);
+                m.setFmId(null);
                 m.setRoadId(fr.getRoadId());
+                sw.buildQuery().doInsert(m);
             }
-            sw.buildQuery().doBatchInsert(nodeList);
+//            sw.buildQuery().doBatchInsert(nodeList);
         }
 
     }

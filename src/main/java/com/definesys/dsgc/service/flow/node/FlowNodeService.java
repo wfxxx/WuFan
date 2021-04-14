@@ -99,7 +99,7 @@ public class FlowNodeService {
                 if(flowNode == null){
                     flowNode = new FlowNodes();
                     //生成nodeid，后续返回给前端
-                    flowNode.setNodeId(MpaasUtil.guuid());
+                    flowNode.setNodeId(panel.getNodeId());
                 }
             }
 
