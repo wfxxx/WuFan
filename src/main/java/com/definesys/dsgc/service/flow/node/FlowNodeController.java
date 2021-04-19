@@ -40,7 +40,7 @@ public class FlowNodeController {
                 || StringUtils.isBlank(reqParam.getFlowId())
                 || StringUtils.isBlank(reqParam.getNodeId())
                 || StringUtils.isBlank(reqParam.getFlowVersion())) {
-            return Response.error("非法的请求参数！");
+            return Response.error(FlowConstants.FLOW_TIPS_INVAILD_PARAMS);
         }
 
         FlowNodes node = this.flowNodeService.getFlowNode(reqParam.getFlowId(),reqParam.getFlowVersion(),reqParam.getNodeId());
@@ -126,11 +126,11 @@ public class FlowNodeController {
             if(panel == null || StringUtils.isBlank(panel.getFlowId()) || StringUtils.isBlank(panel.getFlowVersion())
               || StringUtils.isBlank(panel.getNodeId())
             ) {
-                return Response.error("非法的请求参数！");
+                return Response.error(FlowConstants.FLOW_TIPS_INVAILD_PARAMS);
             }
 
             if(!this.flowSvcService.isAuthToEditFlow(panel.getFlowId())){
-                return Response.error("非法的操作权限！");
+                return Response.error(FlowConstants.FLOW_TIPS_INVAILD_AUTH);
             }
 
             String paramJsonTxt = null;
@@ -149,7 +149,7 @@ public class FlowNodeController {
             }
 
         } else {
-            return Response.error("非法的请求参数！");
+            return Response.error(FlowConstants.FLOW_TIPS_INVAILD_PARAMS);
         }
     }
 
@@ -162,11 +162,11 @@ public class FlowNodeController {
     public Response removeFlowNode(@RequestBody FlowNodeCommonDTO param){
         if(param == null || StringUtils.isBlank(param.getFlowId()) || StringUtils.isBlank(param.getFlowVersion())
         || StringUtils.isBlank(param.getNodeId())) {
-            return Response.error("非法的请求参数！");
+            return Response.error(FlowConstants.FLOW_TIPS_INVAILD_PARAMS);
         }
 
         if(!this.flowSvcService.isAuthToEditFlow(param.getFlowId())){
-            return Response.error("非法的操作权限！");
+            return Response.error(FlowConstants.FLOW_TIPS_INVAILD_AUTH);
         }
 
         String res = this.flowNodeService.removeFlowNode(param);
@@ -179,7 +179,7 @@ public class FlowNodeController {
     public Response listUpstreamVariables(@RequestBody VariablePreviewReqDTO reqParam){
         if(reqParam == null || StringUtils.isBlank(reqParam.getNodeId())
         || reqParam.getFlow() == null){
-            return Response.error("非法的请求参数！");
+            return Response.error(FlowConstants.FLOW_TIPS_INVAILD_PARAMS);
         }
 
         return Response.ok().data(this.flowNodeService.listUpstreamVariables(reqParam));

@@ -40,18 +40,14 @@ public class FlowNodeService {
     public String removeFlowNode(FlowNodeCommonDTO param) {
         FlowRoads road = this.flowRoadDao.getEditingFlowRoad(param.getFlowId(),param.getFlowVersion());
 
-        if (road != null) {
-            String uid = MpaasSession.getCurrentUser();
-            if (uid == null || uid != null && !uid.equals(road.getCreatedBy())) {
-                return "非法的操作权限！";
-            }
-
-            this.flowNodeDao.deleteFlowNode(road.getRoadId(),param.getNodeId());
-            this.flowMetaDao.deleteFlowNodeMetaByNodeId(road.getRoadId(),param.getNodeId());
-
-        } else {
-            return "无效的编辑状态！";
+        String checRes = FlowUtils.checkFlowEditingUserAuth(road);
+        if (!"Y".equals(checRes)) {
+            return checRes;
         }
+
+        this.flowNodeDao.deleteFlowNode(road.getRoadId(),param.getNodeId());
+        this.flowMetaDao.deleteFlowNodeMetaByNodeId(road.getRoadId(),param.getNodeId());
+
 
         return "Y";
 
@@ -68,62 +64,57 @@ public class FlowNodeService {
     public String mergeFlowNodeParam(ParamPanelDTO panel,String paramsJsonTxt) {
         FlowRoads road = this.flowRoadDao.getEditingFlowRoad(panel.getFlowId(),panel.getFlowVersion());
 
-        if (road != null) {
-            String uid = MpaasSession.getCurrentUser();
-            if (uid == null || uid != null && !uid.equals(road.getCreatedBy())) {
-                return "error:非法的操作权限！";
-            }
+        String checRes = FlowUtils.checkFlowEditingUserAuth(road);
+        if (!"Y".equals(checRes)) {
+            return "error:" + checRes;
+        }
 
 
-            //获取节点的信息
-            FlowNodeDTO nodeInfo = null;
-            FlowRoadDTO newRoad = panel.getFlow();
-            if (newRoad != null && newRoad.getNodeList() != null && !newRoad.getNodeList().isEmpty()) {
-                for (FlowNodeDTO n : newRoad.getNodeList()) {
-                    if (panel.getNodeId().equals(n.getNodeId())) {
-                        nodeInfo = n;
-                        break;
-                    }
+        //获取节点的信息
+        FlowNodeDTO nodeInfo = null;
+        FlowRoadDTO newRoad = panel.getFlow();
+        if (newRoad != null && newRoad.getNodeList() != null && !newRoad.getNodeList().isEmpty()) {
+            for (FlowNodeDTO n : newRoad.getNodeList()) {
+                if (panel.getNodeId().equals(n.getNodeId())) {
+                    nodeInfo = n;
+                    break;
                 }
             }
+        }
 
-            FlowNodes flowNode = null;
+        FlowNodes flowNode = null;
 
-            if(StringUtils.isBlank(panel.getNodeId())) {
+        if (StringUtils.isBlank(panel.getNodeId())) {
+            flowNode = new FlowNodes();
+            //生成nodeid，后续返回给前端
+            flowNode.setNodeId(MpaasUtil.guuid());
+        } else {
+            flowNode = this.flowNodeDao.getFlowNode(road.getRoadId(),panel.getNodeId());
+            //查询数据库中是否已经存在
+            if (flowNode == null) {
                 flowNode = new FlowNodes();
                 //生成nodeid，后续返回给前端
-                flowNode.setNodeId(MpaasUtil.guuid());
-            } else {
-                flowNode = this.flowNodeDao.getFlowNode(road.getRoadId(),panel.getNodeId());
-                //查询数据库中是否已经存在
-                if(flowNode == null){
-                    flowNode = new FlowNodes();
-                    //生成nodeid，后续返回给前端
-                    flowNode.setNodeId(panel.getNodeId());
-                }
+                flowNode.setNodeId(panel.getNodeId());
             }
-
-            flowNode.setRoadId(road.getRoadId());
-
-            flowNode.setCnptCode(nodeInfo != null ? nodeInfo.getCnptCode() : null);
-            flowNode.setNodeName(nodeInfo != null ? nodeInfo.getTitle() : null);
-            flowNode.setNodeType(nodeInfo != null ? nodeInfo.getType() : null);
-            flowNode.setNodeDesc(nodeInfo != null ? nodeInfo.getDesc() : null);
-
-            flowNode.setInputMeta(panel.getInputMeta());
-            flowNode.setInputValue(panel.getInputValue());
-
-            flowNode.setOutputMeta(panel.getOutputMeta());
-            flowNode.setOutputValue(panel.getOutputValue());
-
-            flowNode.setParams(paramsJsonTxt);
-
-            this.flowNodeDao.mergeFlowNode(flowNode);
-            return flowNode.getNodeId();
-
-        } else {
-            return "error:无效的编辑状态！";
         }
+
+        flowNode.setRoadId(road.getRoadId());
+
+        flowNode.setCnptCode(nodeInfo != null ? nodeInfo.getCnptCode() : null);
+        flowNode.setNodeName(nodeInfo != null ? nodeInfo.getTitle() : null);
+        flowNode.setNodeType(nodeInfo != null ? nodeInfo.getType() : null);
+        flowNode.setNodeDesc(nodeInfo != null ? nodeInfo.getDesc() : null);
+
+        flowNode.setInputMeta(panel.getInputMeta());
+        flowNode.setInputValue(panel.getInputValue());
+
+        flowNode.setOutputMeta(panel.getOutputMeta());
+        flowNode.setOutputValue(panel.getOutputValue());
+
+        flowNode.setParams(paramsJsonTxt);
+
+        this.flowNodeDao.mergeFlowNode(flowNode);
+        return flowNode.getNodeId();
     }
 
 

@@ -115,6 +115,49 @@ public class ServiceGenerateProxy {
         }
     }
 
+    public String createXsdTree(String loginUser,TmplConfigBean cfg,Map<String,Object> paramMap) throws Exception{
+        Method generateXsdTree = this.generateServcieClass.getMethod("generateXsdTree",String.class,Map.class);
+
+        Class paramTcbClass = Class.forName("com.definesys.dsgc.svcgen.bean.TmplCntBean");
+        Object paramTcb = paramTcbClass.newInstance();
+        if ("30".equals(cfg.getTmplFlag())) {
+            //db配置方式
+            this.updateDBSvcGenConfig(cfg,paramTcb);
+        } else if ("3".equals(cfg.getTmplFlag())) {
+            //rfc配置方式
+            this.updateRfcSvcGenConfig(cfg,paramTcb);
+        } else if ("2".equals(cfg.getTmplFlag())) {
+            //ide配置方式
+            this.updateIDESvcGenConfig(cfg,paramTcb,2,true);
+        } else if ("1".equals(cfg.getTmplFlag())) {
+            //Rest配置方式
+            this.updateRestSvcGenConfig(cfg,paramTcb,true);
+        } else if ("0".equals(cfg.getTmplFlag())) {
+            //SOAP配置方式
+            this.updateSoapSvcGenConfig(cfg,paramTcb,true);
+        } else if ("51".equals(cfg.getTmplFlag())) {
+            //静态sa
+            this.updateSaCmptGenConfig(cfg,paramTcb,true);
+        } else if ("71".equals(cfg.getTmplFlag())) {
+            //杂项
+            this.updateIDESvcGenConfig(cfg,paramTcb,71,true);
+        } else if ("101".equals(cfg.getTmplFlag())) {
+            //杂项
+            this.updateIDESvcGenConfig(cfg,paramTcb,101,true);
+        }
+        //设置httpheaders
+        List<OBHeaderBean> ohList = cfg.getObHeaders();
+        if (ohList != null && !ohList.isEmpty()) {
+            this.setObjAttrValue(paramTcb,"obHeaders",this.covertListToMap(ohList),Map.class);
+        }
+        paramMap.put("tcb",paramTcb);
+        Object res = generateXsdTree.invoke(this.generateServcie,loginUser,paramMap);
+        return res == null ? null : res.toString();
+    }
+
+
+
+
 
 
 

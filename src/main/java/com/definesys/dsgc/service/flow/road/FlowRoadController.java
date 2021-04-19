@@ -1,5 +1,6 @@
 package com.definesys.dsgc.service.flow.road;
 
+import com.definesys.dsgc.service.flow.dto.FlowConstants;
 import com.definesys.dsgc.service.flow.dto.FlowRoadDTO;
 import com.definesys.dsgc.service.flow.dto.FlowRoadEditReqDTO;
 import com.definesys.dsgc.service.flow.dto.FlowRoadQueryDTO;
@@ -31,7 +32,7 @@ public class FlowRoadController {
     @RequestMapping(value = "/getFlowRoad", method = RequestMethod.POST)
     public Response getFlowRoad(@RequestBody FlowRoadQueryDTO param) {
         if (param == null || StringUtils.isBlank(param.getFlowId()) || StringUtils.isBlank(param.getFlowVersion())) {
-            return Response.error("非法的请求参数！");
+            return Response.error(FlowConstants.FLOW_TIPS_INVAILD_PARAMS);
         }
         FlowRoadDTO res = this.flowRoadService.getFlowRoad(param);
 
@@ -51,11 +52,11 @@ public class FlowRoadController {
     @RequestMapping(value = "/startEditting", method = RequestMethod.POST)
     public Response startFlowRoadEditting(@RequestBody FlowRoadEditReqDTO param) {
         if(param == null || StringUtils.isBlank(param.getFlowId()) || StringUtils.isBlank(param.getFlowVersion())) {
-            return Response.error("无效的请求参数！");
+            return Response.error(FlowConstants.FLOW_TIPS_INVAILD_PARAMS);
         }
 
         if(!this.flowSvcService.isAuthToEditFlow(param.getFlowId())){
-            return Response.error("非法的操作权限！");
+            return Response.error(FlowConstants.FLOW_TIPS_INVAILD_AUTH);
         }
 
         String res = this.flowRoadService.startFlowRoadEdit(param);
@@ -75,11 +76,11 @@ public class FlowRoadController {
     @RequestMapping(value = "/backoffEditting", method = RequestMethod.POST)
     public Response backoffFlowRoadEditting(@RequestBody FlowRoadEditReqDTO param) {
         if (param == null || StringUtils.isBlank(param.getFlowId()) || StringUtils.isBlank(param.getFlowVersion())) {
-            return Response.error("无效的请求参数！");
+            return Response.error(FlowConstants.FLOW_TIPS_INVAILD_PARAMS);
         }
 
         if (!this.flowSvcService.isAuthToEditFlow(param.getFlowId())) {
-            return Response.error("非法的操作权限！");
+            return Response.error(FlowConstants.FLOW_TIPS_INVAILD_AUTH);
         }
 
         String res = this.flowRoadService.backoffFlowRoadEdited(param);
@@ -99,11 +100,11 @@ public class FlowRoadController {
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public Response saveFlowRoad(@RequestBody FlowRoadDTO param) {
         if (param == null || StringUtils.isBlank(param.getFlowId()) || StringUtils.isBlank(param.getFlowVersion())) {
-            return Response.error("无效的请求参数！");
+            return Response.error(FlowConstants.FLOW_TIPS_INVAILD_PARAMS);
         }
 
         if (!this.flowSvcService.isAuthToEditFlow(param.getFlowId())) {
-            return Response.error("非法的操作权限！");
+            return Response.error(FlowConstants.FLOW_TIPS_INVAILD_AUTH);
         }
         String res = this.flowRoadService.saveFlowRoadWithCloseEditing(param);
         if ("Y".equals(res)) {

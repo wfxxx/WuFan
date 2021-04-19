@@ -5,9 +5,9 @@ import com.definesys.dsgc.service.flow.bean.FlowRoads;
 import com.definesys.dsgc.service.flow.bean.FlowServices;
 import com.definesys.dsgc.service.flow.dto.*;
 import com.definesys.dsgc.service.flow.mng.FlowSvcDao;
+import com.definesys.dsgc.service.flow.utils.FlowUtils;
 import com.definesys.dsgc.service.utils.UserHelper;
 import com.definesys.mpaas.query.session.MpaasSession;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -113,30 +113,25 @@ public class FlowRoadService {
     public String saveFlowRoadWithCloseEditing(FlowRoadDTO param) {
 
         FlowRoads road = this.flowRoadDao.getEditingFlowRoad(param.getFlowId(),param.getFlowVersion());
-
-        if (road != null) {
-            String uid = MpaasSession.getCurrentUser();
-            if (uid == null || uid != null && !uid.equals(road.getCreatedBy())) {
-                return "非法的操作权限！";
-            }
-
-            //将之前的配置更新为旧的状态
-            this.flowRoadDao.changeFlowRoadToOldStat(param.getFlowId(),param.getFlowVersion());
-
-            //将当前的编辑状态更新为新的状态
-            road.setFlowStat(FlowConstants.FLOW_STAT_SAVED);
-            road.setStartNodeId(param.getStartNodeId());
-            if (param.getNodeList() != null && !param.getNodeList().isEmpty()) {
-                road.setRoadGraph(JSONObject.toJSONString(param.getNodeList()));
-            } else {
-                road.setRoadGraph(null);
-            }
-
-            this.flowRoadDao.saveFlowRoad(road);
-
-        } else {
-            return "无效的编辑状态！";
+        String checRes = FlowUtils.checkFlowEditingUserAuth(road);
+        if (!"Y".equals(checRes)) {
+            return checRes;
         }
+
+        //将之前的配置更新为旧的状态
+        this.flowRoadDao.changeFlowRoadToOldStat(param.getFlowId(),param.getFlowVersion());
+
+        //将当前的编辑状态更新为新的状态
+        road.setFlowStat(FlowConstants.FLOW_STAT_SAVED);
+        road.setStartNodeId(param.getStartNodeId());
+        if (param.getNodeList() != null && !param.getNodeList().isEmpty()) {
+            road.setRoadGraph(JSONObject.toJSONString(param.getNodeList()));
+        } else {
+            road.setRoadGraph(null);
+        }
+
+        this.flowRoadDao.saveFlowRoad(road);
+
 
         return "Y";
     }
@@ -148,22 +143,24 @@ public class FlowRoadService {
     public String backoffFlowRoadEdited(FlowRoadEditReqDTO param) {
         FlowRoads road = this.flowRoadDao.getEditingFlowRoad(param.getFlowId(),param.getFlowVersion());
 
-        if (road != null) {
-            String uid = MpaasSession.getCurrentUser();
-            if (uid == null || uid !=null && !uid.equals(road.getCreatedBy())) {
-                return "非法的操作权限！";
-            }
-
-            this.flowRoadDao.deleteFlowRoadAndNodeInfoByRoadId(road.getRoadId());
-        } else {
-            return "无效的编辑状态！";
+        String checRes = FlowUtils.checkFlowEditingUserAuth(road);
+        if (!"Y".equals(checRes)) {
+            return checRes;
         }
+
+        this.flowRoadDao.deleteFlowRoadAndNodeInfoByRoadId(road.getRoadId());
 
         return "Y";
 
     }
 
 
+    public FlowRoads getEditingFlowRoad(String flowId,String flowVersion){
+        return this.flowRoadDao.getEditingFlowRoad(flowId,flowVersion);
+    }
 
+    public FlowRoads getSavedFlowRoad(String flowId,String flowVersion){
+        return this.flowRoadDao.getSavedFlowRoad(flowId,flowVersion);
+    }
 
 }

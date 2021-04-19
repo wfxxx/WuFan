@@ -1,9 +1,14 @@
 package com.definesys.dsgc.service.flow.meta;
 
+import com.definesys.dsgc.service.flow.bean.FlowRoads;
+import com.definesys.dsgc.service.flow.dto.FlowConstants;
 import com.definesys.dsgc.service.flow.meta.dto.DataNodeDTO;
 import com.definesys.dsgc.service.flow.meta.dto.FlowMetaCommonDTO;
 import com.definesys.dsgc.service.flow.meta.dto.FlowMetaDTO;
+import com.definesys.dsgc.service.flow.meta.dto.FlowMetaGenerateReqDTO;
 import com.definesys.dsgc.service.flow.mng.FlowSvcService;
+import com.definesys.dsgc.service.flow.road.FlowRoadService;
+import com.definesys.dsgc.service.flow.utils.FlowUtils;
 import com.definesys.mpaas.common.http.Response;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +32,9 @@ public class FlowMetaController {
     @Autowired
     private FlowSvcService flowSvcService;
 
+    @Autowired
+    private FlowRoadService flowRoadService;
+
 
     /**
      * 根据metaId获取meta
@@ -39,7 +47,7 @@ public class FlowMetaController {
                 || StringUtils.isBlank(param.getFlowId())
                 || StringUtils.isBlank(param.getMetaId())
                 || StringUtils.isBlank(param.getFlowVersion())) {
-            return Response.error("非法的请求参数！");
+            return Response.error(FlowConstants.FLOW_TIPS_INVAILD_PARAMS);
         }
 //return Response.ok().data(this.getDemo(param.getFlowId(),param.getFlowVersion(),param.getMetaId()));
        return Response.ok().data(this.flowMetaService.getFlowMeta(param.getFlowId(),param.getFlowVersion(),param.getMetaId()));
@@ -94,7 +102,7 @@ public class FlowMetaController {
         if (param == null
                 || StringUtils.isBlank(param.getFlowId())
                 || StringUtils.isBlank(param.getFlowVersion())) {
-            return Response.error("非法的请求参数！");
+            return Response.error(FlowConstants.FLOW_TIPS_INVAILD_PARAMS);
         }
         return Response.ok().data(this.flowMetaService.getAllFlowMeta(param.getFlowId(),param.getFlowVersion()));
     }
@@ -107,11 +115,11 @@ public class FlowMetaController {
     public Response mergeFlowMeta(@RequestBody FlowMetaDTO meta){
 
         if(meta == null || StringUtils.isBlank(meta.getFlowId()) || StringUtils.isBlank(meta.getFlowVersion())) {
-            return Response.error("非法的请求参数！");
+            return Response.error(FlowConstants.FLOW_TIPS_INVAILD_PARAMS);
         }
 
         if(!this.flowSvcService.isAuthToEditFlow(meta.getFlowId())){
-            return Response.error("非法的操作权限！");
+            return Response.error(FlowConstants.FLOW_TIPS_INVAILD_AUTH);
         }
 
         String res = this.flowMetaService.mergeFlowMeta(meta);
@@ -137,15 +145,44 @@ public class FlowMetaController {
                 || StringUtils.isBlank(param.getFlowId())
                 || StringUtils.isBlank(param.getMetaId())
                 || StringUtils.isBlank(param.getFlowVersion())) {
-            return Response.error("非法的请求参数！");
+            return Response.error(FlowConstants.FLOW_TIPS_INVAILD_PARAMS);
         }
 
         if(!this.flowSvcService.isAuthToEditFlow(param.getFlowId())){
-            return Response.error("非法的操作权限！");
+            return Response.error(FlowConstants.FLOW_TIPS_INVAILD_AUTH);
         }
 
         String res =this.flowMetaService.removeFlowMetaByMetaId(param.getFlowId(),param.getFlowVersion(),param.getMetaId());
         return "Y".equals(res) ? Response.ok() :Response.error(res);
+    }
+
+
+    @RequestMapping(value = "/generate",method = RequestMethod.POST)
+    public Response generateNodeMeta(@RequestBody  FlowMetaGenerateReqDTO param){
+        if (param == null
+                || StringUtils.isBlank(param.getFlowId())
+                || StringUtils.isBlank(param.getNodeId())
+                || StringUtils.isBlank(param.getInOrOut())
+                || StringUtils.isBlank(param.getFlowVersion())) {
+            return Response.error(FlowConstants.FLOW_TIPS_INVAILD_PARAMS);
+        }
+
+        if(!this.flowSvcService.isAuthToEditFlow(param.getFlowId())){
+            return Response.error(FlowConstants.FLOW_TIPS_INVAILD_AUTH);
+        }
+
+        FlowRoads road = this.flowRoadService.getEditingFlowRoad(param.getFlowId(),param.getFlowVersion());
+
+        String checRes = FlowUtils.checkFlowEditingUserAuth(road);
+        if (!"Y".equals(checRes)) {
+            return Response.error(checRes);
+        }
+
+        FlowMetaDTO res = this.flowMetaService.generateNodeMeta(param,road);
+
+
+
+        return Response.ok().data(res);
     }
 
 }
