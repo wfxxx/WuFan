@@ -3,6 +3,7 @@ package com.definesys.dsgc.service.flow.meta.dto;
 import java.util.List;
 
 public class DataNodeDTO {
+    private String id;
     private String title;
     private String key;
     private boolean expanded;
@@ -11,6 +12,14 @@ public class DataNodeDTO {
     private String valueType;
     private String minOccur;
     private String maxOccur;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getTitle() {
         return title;
