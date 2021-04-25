@@ -102,6 +102,7 @@ public class FlowNodeService {
 
         flowNode.setCnptCode(nodeInfo != null ? nodeInfo.getCnptCode() : null);
         flowNode.setNodeName(nodeInfo != null ? nodeInfo.getTitle() : null);
+
         flowNode.setNodeType(nodeInfo != null ? nodeInfo.getType() : null);
         flowNode.setNodeDesc(nodeInfo != null ? nodeInfo.getDesc() : null);
 

@@ -7,6 +7,8 @@ import com.definesys.dsgc.service.flow.dto.FlowRoadDTO;
 import com.definesys.mpaas.query.session.MpaasSession;
 import org.apache.commons.lang.StringUtils;
 
+import java.util.List;
+
 public class FlowUtils {
 
     /**
@@ -38,6 +40,20 @@ public class FlowUtils {
                 return "Y";
             }
         }
+    }
+
+
+    public static String getAfterNodeId(List<FlowNodeDTO> nodelist,String nodeId){
+        if(nodelist == null || nodelist.isEmpty() || StringUtils.isBlank(nodeId)) {
+            return null;
+        } else {
+            for(FlowNodeDTO n : nodelist){
+                if(nodeId.equals(n.getNodeId())){
+                    return n.getAfterNodeId();
+                }
+            }
+        }
+        return null;
     }
 
 

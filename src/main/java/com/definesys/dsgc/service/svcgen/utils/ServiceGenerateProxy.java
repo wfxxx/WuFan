@@ -546,6 +546,11 @@ public class ServiceGenerateProxy {
         this.setObjAttrValue(param,"textAttr1",cfg.getDbConn());
         this.setObjAttrValue(param,"textAttr2",cfg.getDbOper());
         this.setObjAttrValue(param,"textAttr3",cfg.getSqlCode());
+        this.setObjAttrValue(param,"inputMeta",cfg.getInputMeta());
+        this.setObjAttrValue(param,"inputTransMapping",cfg.getInputTransMapping());
+        this.setObjAttrValue(param,"outputMeta",cfg.getOutputMeta());
+        this.setObjAttrValue(param,"outputTransMapping",cfg.getOutputTransMapping());
+
         Object tbls = this.coverTToCommonTbls(cfg.getTbls());
         if(tbls != null) {
             this.setObjAttrValue(param,"tbls", tbls);
@@ -626,6 +631,12 @@ public class ServiceGenerateProxy {
         this.setObjAttrValue(param,"textAttr2",cfg.getRfcName());
         this.setObjAttrValue(param,"servNameCode",cfg.getServNameCode());
         this.setObjAttrValue(param,"sysCode",cfg.getAppCode());
+
+        this.setObjAttrValue(param,"inputMeta",cfg.getInputMeta());
+        this.setObjAttrValue(param,"inputTransMapping",cfg.getInputTransMapping());
+        this.setObjAttrValue(param,"outputMeta",cfg.getOutputMeta());
+        this.setObjAttrValue(param,"outputTransMapping",cfg.getOutputTransMapping());
+
         this.setObjAttrValue(param,"needUpdStore",true,boolean.class);
     }
 
@@ -644,6 +655,12 @@ public class ServiceGenerateProxy {
         this.setObjAttrValue(param,"isProfile","N");
         this.setObjAttrValue(param,"provider",cfg.getToSystem());
         this.setObjAttrValue(param,"saCode",cfg.getSaCode());
+
+        this.setObjAttrValue(param,"inputMeta",cfg.getInputMeta());
+        this.setObjAttrValue(param,"inputTransMapping",cfg.getInputTransMapping());
+        this.setObjAttrValue(param,"outputMeta",cfg.getOutputMeta());
+        this.setObjAttrValue(param,"outputTransMapping",cfg.getOutputTransMapping());
+
         this.setObjAttrValue(param,"needUpdStore",needUpdStore,boolean.class);
     }
 
@@ -657,6 +674,13 @@ public class ServiceGenerateProxy {
         this.setObjAttrValue(param,"sgObjDesc",cfg.getServDesc());
         this.setObjAttrValue(param,"bsUserName",cfg.getSaUN());
         this.setObjAttrValue(param,"bsPasswd",cfg.getSaPD());
+
+
+        this.setObjAttrValue(param,"inputMeta",cfg.getInputMeta());
+        this.setObjAttrValue(param,"inputTransMapping",cfg.getInputTransMapping());
+        this.setObjAttrValue(param,"outputMeta",cfg.getOutputMeta());
+        this.setObjAttrValue(param,"outputTransMapping",cfg.getOutputTransMapping());
+
         this.setObjAttrValue(param,"needUpdStore",needUpdStore,boolean.class);
     }
 
@@ -683,6 +707,12 @@ public class ServiceGenerateProxy {
         this.setObjAttrValue(param,"textAttr2",cfg.getWsdlUN());
         this.setObjAttrValue(param,"textAttr3",cfg.getWsdlPD());
         this.setObjAttrValue(param,"sltPort",cfg.getSltPort());
+
+        this.setObjAttrValue(param,"inputMeta",cfg.getInputMeta());
+        this.setObjAttrValue(param,"inputTransMapping",cfg.getInputTransMapping());
+        this.setObjAttrValue(param,"outputMeta",cfg.getOutputMeta());
+        this.setObjAttrValue(param,"outputTransMapping",cfg.getOutputTransMapping());
+
         this.setObjAttrValue(param,"needUpdStore",needUpdStore,boolean.class);
     }
 
@@ -695,6 +725,12 @@ public class ServiceGenerateProxy {
         this.setObjAttrValue(param,"servNameCode",cfg.getServNameCode());
         this.setObjAttrValue(param,"sysCode",cfg.getAppCode());
         this.setObjAttrValue(param,"sgObjDesc",cfg.getServDesc());
+
+        this.setObjAttrValue(param,"inputMeta",cfg.getInputMeta());
+        this.setObjAttrValue(param,"inputTransMapping",cfg.getInputTransMapping());
+        this.setObjAttrValue(param,"outputMeta",cfg.getOutputMeta());
+        this.setObjAttrValue(param,"outputTransMapping",cfg.getOutputTransMapping());
+
         this.setObjAttrValue(param,"needUpdStore",needUpdStore,boolean.class);
     }
 

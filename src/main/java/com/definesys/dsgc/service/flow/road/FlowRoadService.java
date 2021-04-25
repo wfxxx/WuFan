@@ -1,19 +1,22 @@
 package com.definesys.dsgc.service.flow.road;
 
 import com.alibaba.fastjson.JSONObject;
-import com.definesys.dsgc.service.flow.bean.FlowRoads;
-import com.definesys.dsgc.service.flow.bean.FlowServices;
+import com.definesys.dsgc.service.flow.bean.*;
 import com.definesys.dsgc.service.flow.dto.*;
+import com.definesys.dsgc.service.flow.meta.FlowMetaDao;
 import com.definesys.dsgc.service.flow.mng.FlowSvcDao;
+import com.definesys.dsgc.service.flow.node.FlowNodeDao;
 import com.definesys.dsgc.service.flow.utils.FlowUtils;
+import com.definesys.dsgc.service.svcgen.bean.TmplConfigBean;
 import com.definesys.dsgc.service.utils.UserHelper;
+import com.definesys.mpaas.common.http.Response;
 import com.definesys.mpaas.query.session.MpaasSession;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.NodeList;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class FlowRoadService {
@@ -22,6 +25,12 @@ public class FlowRoadService {
 
     @Autowired
     private FlowSvcDao flowSvcDao;
+
+    @Autowired
+    private FlowNodeDao flowNodeDao;
+
+    @Autowired
+    private FlowMetaDao flowMetaDao;
 
     @Autowired
     private UserHelper userHelper;
@@ -162,5 +171,152 @@ public class FlowRoadService {
     public FlowRoads getSavedFlowRoad(String flowId,String flowVersion){
         return this.flowRoadDao.getSavedFlowRoad(flowId,flowVersion);
     }
+
+
+    public TmplConfigBean getSvcGenConfig(String flowId,String flowVersion){
+        TmplConfigBean tc = new TmplConfigBean();
+        FlowServices fs = this.flowSvcDao.getFlowServcieByFlowId(flowId);
+        FlowRoads road = this.flowRoadDao.getSavedFlowRoad(fs.getFlowId(),flowVersion);
+
+
+        if(road == null  || StringUtils.isBlank(road.getRoadGraph())){
+            tc.setErroMsg("不完整的集成流，无法发布！");
+            return tc;
+        }
+
+        //目前写死只支持db查询服务
+        if(StringUtils.isNotBlank(road.getRoadGraph())){
+            List<FlowNodeDTO> nodelist = JSONObject.parseArray(road.getRoadGraph(),FlowNodeDTO.class);
+
+            if(nodelist == null || nodelist.isEmpty() || nodelist.size() == 1) {
+                tc.setErroMsg("不完整的集成流，无法发布！");
+                return tc;
+            }
+
+            //写死的逻辑，由于前端有bug无法正常设置node的 input还是Output
+            for(FlowNodeDTO n : nodelist){
+                if(road.getStartNodeId() != null && road.getStartNodeId().equals(n.getNodeId())){
+                    n.setType("INPUT");
+                } else {
+                    n.setType("OUTPUT");
+                }
+            }
+
+            tc.setServNo(flowId+"-"+flowVersion);
+            tc.setServNameCode(fs.getFlowName());
+            tc.setProjDir(fs.getProjectCode());
+            tc.setServDir("flow");
+            tc.setAppCode(fs.getAppCode());
+            tc.setToSystem(fs.getAppCode());
+
+            Set<String> scanedSet = new HashSet<String>();
+
+
+            this.processFlowRoadNode(road,road.getStartNodeId(),nodelist,tc,scanedSet);
+        }
+
+        return tc;
+    }
+
+
+    private void processFlowRoadNode(FlowRoads road,String nodeId,List<FlowNodeDTO> nodeList,TmplConfigBean tc,Set<String> scanedSet){
+        if(StringUtils.isBlank(nodeId) || scanedSet.contains(nodeId)){
+            return;
+        }
+        //标记当前node为scaned
+        scanedSet.add(nodeId);
+
+        String nextNodeId = FlowUtils.getAfterNodeId(nodeList,nodeId);
+        //获取监听的类型
+        FlowNodes node = this.flowNodeDao.getFlowNode(road.getRoadId(),nodeId);
+
+        //写死的逻辑，前端目前还有bug
+        if(road.getStartNodeId().equals(nodeId)){
+            node.setNodeType("INPUT");
+        } else {
+            node.setNodeType("OUTPUT");
+        }
+
+        if("REST".equals(node.getCnptCode()) && "INPUT".equals(node.getNodeType())){
+            JSONObject paramsJO =  JSONObject.parseObject(node.getParams());
+            String path = paramsJO.getString("path");
+            if(path == null || StringUtils.isBlank(path)){
+                tc.setErroMsg("REST发布路径不能为空！");
+                return;
+            }
+            tc.setRestPSUri(path);
+        } else if("SOAP".equals(node.getCnptCode()) && "INPUT".equals(node.getNodeType())){
+            JSONObject paramsJO =  JSONObject.parseObject(node.getParams());
+            String path = paramsJO.getString("path");
+            if(path == null || StringUtils.isBlank(path)){
+                tc.setErroMsg("SOAP发布路径不能为空！");
+                return;
+            }
+            tc.setSoapPSUri(path);
+        } else if("DATA_CONVERT".equals(node.getCnptCode())){
+            if(StringUtils.isNotBlank(node.getParams())) {
+                DataCovertParamDTO coverParam = JSONObject.parseObject(node.getParams(),DataCovertParamDTO.class);
+
+                if (coverParam != null) {
+                    //判断转换的类型
+                    if (StringUtils.isBlank(nextNodeId)) {
+                        //最后一个节点，作为Rest的Input转换
+                        if (StringUtils.isNotBlank(node.getOutputMeta())) {
+                            FlowMetadatas restInputMeta = this.flowMetaDao.getFlowMetaByMetaId(road.getRoadId(),node.getOutputMeta());
+
+                            if (restInputMeta != null && StringUtils.isNotBlank(restInputMeta.getMetaTxt()) && coverParam.getConvertList() != null
+                                    && !coverParam.getConvertList().isEmpty()) {
+                                tc.setInputMeta(restInputMeta.getMetaTxt());
+                                tc.setOutputTransMapping(JSONObject.toJSONString(coverParam.getConvertList()));
+                            }
+                        }
+
+
+                    } else {
+                        String inputPayloadMetaId = null;
+                        //第一个转换，作为Rest的output转换
+                        if (coverParam.getInput() != null && !coverParam.getInput().isEmpty()) {
+                            for (VarDTO var : coverParam.getInput()) {
+                                if ("Payload".equals(var.getVarName())) {
+                                    inputPayloadMetaId = var.getVarMeta();
+                                }
+                            }
+                        }
+
+                        if (StringUtils.isNotBlank(inputPayloadMetaId)) {
+                            FlowMetadatas restOutputMeta = this.flowMetaDao.getFlowMetaByMetaId(road.getRoadId(),inputPayloadMetaId);
+                            if (restOutputMeta != null && StringUtils.isNotBlank(restOutputMeta.getMetaTxt())
+                                    && coverParam.getConvertList() != null && !coverParam.getConvertList().isEmpty()) {
+                                tc.setOutputMeta(restOutputMeta.getMetaTxt());
+                                tc.setInputTransMapping(JSONObject.toJSONString(coverParam.getConvertList()));
+                            }
+                        }
+
+
+                    }
+                }
+            }
+
+        } else if("DB".equals(node.getCnptCode()) && "OUTPUT".equals(node.getNodeType())){
+            if(StringUtils.isNotBlank(node.getParams())) {
+                TmplConfigBean dbParam = JSONObject.parseObject(node.getParams(),TmplConfigBean.class);
+                if(dbParam != null){
+                    tc.setDbConn(dbParam.getDbConn());
+                    tc.setTmplFlag(dbParam.getTmplFlag());
+                    tc.setDbOper(dbParam.getDbOper());
+                    tc.setRsps(dbParam.getRsps());
+                    tc.setTbls(dbParam.getTbls());
+                    tc.setSqlCode(dbParam.getSqlCode());
+                }
+            }
+        }
+
+        //继续处理下一个节点
+        this.processFlowRoadNode(road,nextNodeId,nodeList,tc,scanedSet);
+    }
+
+
+
+
 
 }

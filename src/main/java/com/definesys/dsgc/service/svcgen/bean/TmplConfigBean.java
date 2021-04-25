@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TmplConfigBean {
+    private String erroMsg = null;
+
     private String dpName;
     private String envCode;
     private String isEnable;
@@ -43,11 +45,59 @@ public class TmplConfigBean {
     private RspDTO[] rsps;
     private String sqlCode;
 
+    private String inputMeta;
+    private String outputMeta;
+
+
+    private String inputTransMapping;
+    private String outputTransMapping;
+
 //    //创建服务代码并同时创建服务资产信息
 //    private String servAssetNo;
 //    private String servName;
 //    private String servSystem;
 //    private String servShareType;
+
+
+    public String getErroMsg() {
+        return erroMsg;
+    }
+
+    public void setErroMsg(String erroMsg) {
+        this.erroMsg = erroMsg;
+    }
+
+    public String getInputMeta() {
+        return inputMeta;
+    }
+
+    public void setInputMeta(String inputMeta) {
+        this.inputMeta = inputMeta;
+    }
+
+    public String getOutputMeta() {
+        return outputMeta;
+    }
+
+    public void setOutputMeta(String outputMeta) {
+        this.outputMeta = outputMeta;
+    }
+
+    public String getInputTransMapping() {
+        return inputTransMapping;
+    }
+
+    public void setInputTransMapping(String inputTransMapping) {
+        this.inputTransMapping = inputTransMapping;
+    }
+
+    public String getOutputTransMapping() {
+        return outputTransMapping;
+    }
+
+    public void setOutputTransMapping(String outputTransMapping) {
+        this.outputTransMapping = outputTransMapping;
+    }
 
     public String getDpName() {
         return dpName;
