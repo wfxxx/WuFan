@@ -186,356 +186,356 @@ public class FlowMetaService {
 
 
        meta.setMetaType("XML");
-//       String jsonInput ="{\n" +
-//               "            \"id\": \"QueryParams\",\n" +
-//               "            \"title\": \"QueryParams\",\n" +
-//               "            \"key\": \"ff9a8228-5cf1-4846-8805-e4f1f5c26e65\",\n" +
-//               "            \"expanded\": true,\n" +
-//               "            \"children\": [\n" +
-//               "                {\n" +
-//               "                    \"id\": \"QueryParams.bsId\",\n" +
-//               "                    \"title\": \"bsId\",\n" +
-//               "                    \"key\": \"19ab30c0-d695-4078-ba5b-206a37719dce\",\n" +
-//               "                    \"expanded\": false,\n" +
-//               "                    \"children\": null,\n" +
-//               "                    \"valueType\": \"String\",\n" +
-//               "                    \"minOccur\": \"1\",\n" +
-//               "                    \"maxOccur\": \"1\",\n" +
-//               "                    \"leaf\": true\n" +
-//               "                },\n" +
-//               "                {\n" +
-//               "                    \"id\": \"QueryParams.tstId\",\n" +
-//               "                    \"title\": \"tstId\",\n" +
-//               "                    \"key\": \"af51f5f6-42e4-4b7e-811a-e899aeb5fa73\",\n" +
-//               "                    \"expanded\": false,\n" +
-//               "                    \"children\": null,\n" +
-//               "                    \"valueType\": \"String\",\n" +
-//               "                    \"minOccur\": \"1\",\n" +
-//               "                    \"maxOccur\": \"1\",\n" +
-//               "                    \"leaf\": true\n" +
-//               "                }\n" +
-//               "            ],\n" +
-//               "            \"valueType\": \"Object\",\n" +
-//               "            \"minOccur\": \"1\",\n" +
-//               "            \"maxOccur\": \"1\",\n" +
-//               "            \"leaf\": false\n" +
-//               "        }";
-////
-//       String jsonOutput = "{\n" +
-//               "            \"id\": \"DagBsCollection\",\n" +
-//               "            \"title\": \"DagBsCollection\",\n" +
-//               "            \"key\": \"8fc57be8-fa1e-4999-be61-6a67f5af5211\",\n" +
-//               "            \"expanded\": true,\n" +
-//               "            \"children\": [\n" +
-//               "                {\n" +
-//               "                    \"id\": \"DagBsCollection.DagBs\",\n" +
-//               "                    \"title\": \"DagBs\",\n" +
-//               "                    \"key\": \"99ec5502-c480-4848-841f-c6d5dd846fdd\",\n" +
-//               "                    \"expanded\": true,\n" +
-//               "                    \"children\": [\n" +
-//               "                        {\n" +
-//               "                            \"id\": \"DagBsCollection.DagBs.bsId\",\n" +
-//               "                            \"title\": \"bsId\",\n" +
-//               "                            \"key\": \"2ae9bca0-008b-40f0-be13-98ca9acd15fd\",\n" +
-//               "                            \"expanded\": false,\n" +
-//               "                            \"children\": null,\n" +
-//               "                            \"valueType\": \"String\",\n" +
-//               "                            \"minOccur\": \"1\",\n" +
-//               "                            \"maxOccur\": \"1\",\n" +
-//               "                            \"leaf\": true\n" +
-//               "                        },\n" +
-//               "                        {\n" +
-//               "                            \"id\": \"DagBsCollection.DagBs.bsCode\",\n" +
-//               "                            \"title\": \"bsCode\",\n" +
-//               "                            \"key\": \"c338e2da-b1ee-4533-a631-3b93ad2f4e52\",\n" +
-//               "                            \"expanded\": false,\n" +
-//               "                            \"children\": null,\n" +
-//               "                            \"valueType\": \"String\",\n" +
-//               "                            \"minOccur\": \"0\",\n" +
-//               "                            \"maxOccur\": \"1\",\n" +
-//               "                            \"leaf\": true\n" +
-//               "                        },\n" +
-//               "                        {\n" +
-//               "                            \"id\": \"DagBsCollection.DagBs.bsDesc\",\n" +
-//               "                            \"title\": \"bsDesc\",\n" +
-//               "                            \"key\": \"2ecc2942-f23a-4ee6-bead-1f6b3d091d3a\",\n" +
-//               "                            \"expanded\": false,\n" +
-//               "                            \"children\": null,\n" +
-//               "                            \"valueType\": \"String\",\n" +
-//               "                            \"minOccur\": \"0\",\n" +
-//               "                            \"maxOccur\": \"1\",\n" +
-//               "                            \"leaf\": true\n" +
-//               "                        },\n" +
-//               "                        {\n" +
-//               "                            \"id\": \"DagBsCollection.DagBs.appCode\",\n" +
-//               "                            \"title\": \"appCode\",\n" +
-//               "                            \"key\": \"5635dba1-b4a2-4cb5-a929-e74196276405\",\n" +
-//               "                            \"expanded\": false,\n" +
-//               "                            \"children\": null,\n" +
-//               "                            \"valueType\": \"String\",\n" +
-//               "                            \"minOccur\": \"0\",\n" +
-//               "                            \"maxOccur\": \"1\",\n" +
-//               "                            \"leaf\": true\n" +
-//               "                        },\n" +
-//               "                        {\n" +
-//               "                            \"id\": \"DagBsCollection.DagBs.createdBy\",\n" +
-//               "                            \"title\": \"createdBy\",\n" +
-//               "                            \"key\": \"12057ad7-8ef7-4b21-9407-7d8a5b9caed0\",\n" +
-//               "                            \"expanded\": false,\n" +
-//               "                            \"children\": null,\n" +
-//               "                            \"valueType\": \"String\",\n" +
-//               "                            \"minOccur\": \"0\",\n" +
-//               "                            \"maxOccur\": \"1\",\n" +
-//               "                            \"leaf\": true\n" +
-//               "                        },\n" +
-//               "                        {\n" +
-//               "                            \"id\": \"DagBsCollection.DagBs.creationDate\",\n" +
-//               "                            \"title\": \"creationDate\",\n" +
-//               "                            \"key\": \"c7da1a4f-7eb1-4425-abb7-7bc42fba62cd\",\n" +
-//               "                            \"expanded\": false,\n" +
-//               "                            \"children\": null,\n" +
-//               "                            \"valueType\": \"Date\",\n" +
-//               "                            \"minOccur\": \"0\",\n" +
-//               "                            \"maxOccur\": \"1\",\n" +
-//               "                            \"leaf\": true\n" +
-//               "                        },\n" +
-//               "                        {\n" +
-//               "                            \"id\": \"DagBsCollection.DagBs.lastUpdatedBy\",\n" +
-//               "                            \"title\": \"lastUpdatedBy\",\n" +
-//               "                            \"key\": \"b4e5e03a-8209-4cb1-b964-c3c850087c4a\",\n" +
-//               "                            \"expanded\": false,\n" +
-//               "                            \"children\": null,\n" +
-//               "                            \"valueType\": \"String\",\n" +
-//               "                            \"minOccur\": \"0\",\n" +
-//               "                            \"maxOccur\": \"1\",\n" +
-//               "                            \"leaf\": true\n" +
-//               "                        },\n" +
-//               "                        {\n" +
-//               "                            \"id\": \"DagBsCollection.DagBs.lastUpdateDate\",\n" +
-//               "                            \"title\": \"lastUpdateDate\",\n" +
-//               "                            \"key\": \"7aedd3ee-5cb1-4776-9f0f-bc4a94a4505c\",\n" +
-//               "                            \"expanded\": false,\n" +
-//               "                            \"children\": null,\n" +
-//               "                            \"valueType\": \"Date\",\n" +
-//               "                            \"minOccur\": \"0\",\n" +
-//               "                            \"maxOccur\": \"1\",\n" +
-//               "                            \"leaf\": true\n" +
-//               "                        },\n" +
-//               "                        {\n" +
-//               "                            \"id\": \"DagBsCollection.DagBs.objectVersionNumber\",\n" +
-//               "                            \"title\": \"objectVersionNumber\",\n" +
-//               "                            \"key\": \"d748aa7d-04dc-4158-9fbb-426cb0ad265b\",\n" +
-//               "                            \"expanded\": false,\n" +
-//               "                            \"children\": null,\n" +
-//               "                            \"valueType\": \"Number\",\n" +
-//               "                            \"minOccur\": \"0\",\n" +
-//               "                            \"maxOccur\": \"1\",\n" +
-//               "                            \"leaf\": true\n" +
-//               "                        },\n" +
-//               "                        {\n" +
-//               "                            \"id\": \"DagBsCollection.DagBs.sfsfs\",\n" +
-//               "                            \"title\": \"sfsfs\",\n" +
-//               "                            \"key\": \"86f8c797-7e1e-4e8e-ac27-11211d678498\",\n" +
-//               "                            \"expanded\": true,\n" +
-//               "                            \"children\": [\n" +
-//               "                                {\n" +
-//               "                                    \"id\": \"DagBsCollection.DagBs.sfsfs.DagBsDtl\",\n" +
-//               "                                    \"title\": \"DagBsDtl\",\n" +
-//               "                                    \"key\": \"2fcdf783-af56-4356-aa02-98f24d1bb06c\",\n" +
-//               "                                    \"expanded\": true,\n" +
-//               "                                    \"children\": [\n" +
-//               "                                        {\n" +
-//               "                                            \"id\": \"DagBsCollection.DagBs.sfsfs.DagBsDtl.vid\",\n" +
-//               "                                            \"title\": \"vid\",\n" +
-//               "                                            \"key\": \"e61f34f7-558a-4e29-b277-fa96a15580ab\",\n" +
-//               "                                            \"expanded\": false,\n" +
-//               "                                            \"children\": null,\n" +
-//               "                                            \"valueType\": \"String\",\n" +
-//               "                                            \"minOccur\": \"0\",\n" +
-//               "                                            \"maxOccur\": \"1\",\n" +
-//               "                                            \"leaf\": true\n" +
-//               "                                        },\n" +
-//               "                                        {\n" +
-//               "                                            \"id\": \"DagBsCollection.DagBs.sfsfs.DagBsDtl.protocal\",\n" +
-//               "                                            \"title\": \"protocal\",\n" +
-//               "                                            \"key\": \"811b37bb-287a-49a5-97ff-f5f786554643\",\n" +
-//               "                                            \"expanded\": false,\n" +
-//               "                                            \"children\": null,\n" +
-//               "                                            \"valueType\": \"String\",\n" +
-//               "                                            \"minOccur\": \"0\",\n" +
-//               "                                            \"maxOccur\": \"1\",\n" +
-//               "                                            \"leaf\": true\n" +
-//               "                                        },\n" +
-//               "                                        {\n" +
-//               "                                            \"id\": \"DagBsCollection.DagBs.sfsfs.DagBsDtl.hostName\",\n" +
-//               "                                            \"title\": \"hostName\",\n" +
-//               "                                            \"key\": \"4e607d22-e2c0-4eeb-b218-c4701fafd6e5\",\n" +
-//               "                                            \"expanded\": false,\n" +
-//               "                                            \"children\": null,\n" +
-//               "                                            \"valueType\": \"String\",\n" +
-//               "                                            \"minOccur\": \"0\",\n" +
-//               "                                            \"maxOccur\": \"1\",\n" +
-//               "                                            \"leaf\": true\n" +
-//               "                                        },\n" +
-//               "                                        {\n" +
-//               "                                            \"id\": \"DagBsCollection.DagBs.sfsfs.DagBsDtl.port\",\n" +
-//               "                                            \"title\": \"port\",\n" +
-//               "                                            \"key\": \"0904ab9b-1628-491c-8931-917cc8568ea7\",\n" +
-//               "                                            \"expanded\": false,\n" +
-//               "                                            \"children\": null,\n" +
-//               "                                            \"valueType\": \"String\",\n" +
-//               "                                            \"minOccur\": \"0\",\n" +
-//               "                                            \"maxOccur\": \"1\",\n" +
-//               "                                            \"leaf\": true\n" +
-//               "                                        },\n" +
-//               "                                        {\n" +
-//               "                                            \"id\": \"DagBsCollection.DagBs.sfsfs.DagBsDtl.paths\",\n" +
-//               "                                            \"title\": \"paths\",\n" +
-//               "                                            \"key\": \"0638a7d3-a144-4dfc-8786-d45349d66730\",\n" +
-//               "                                            \"expanded\": false,\n" +
-//               "                                            \"children\": null,\n" +
-//               "                                            \"valueType\": \"String\",\n" +
-//               "                                            \"minOccur\": \"0\",\n" +
-//               "                                            \"maxOccur\": \"1\",\n" +
-//               "                                            \"leaf\": true\n" +
-//               "                                        },\n" +
-//               "                                        {\n" +
-//               "                                            \"id\": \"DagBsCollection.DagBs.sfsfs.DagBsDtl.rtyCount\",\n" +
-//               "                                            \"title\": \"rtyCount\",\n" +
-//               "                                            \"key\": \"2144739a-fe1f-4517-b9c8-78abacb2f46a\",\n" +
-//               "                                            \"expanded\": false,\n" +
-//               "                                            \"children\": null,\n" +
-//               "                                            \"valueType\": \"Number\",\n" +
-//               "                                            \"minOccur\": \"0\",\n" +
-//               "                                            \"maxOccur\": \"1\",\n" +
-//               "                                            \"leaf\": true\n" +
-//               "                                        },\n" +
-//               "                                        {\n" +
-//               "                                            \"id\": \"DagBsCollection.DagBs.sfsfs.DagBsDtl.connectTimeout\",\n" +
-//               "                                            \"title\": \"connectTimeout\",\n" +
-//               "                                            \"key\": \"54e45ee6-31f9-444a-9cdf-e55e3147ff68\",\n" +
-//               "                                            \"expanded\": false,\n" +
-//               "                                            \"children\": null,\n" +
-//               "                                            \"valueType\": \"Number\",\n" +
-//               "                                            \"minOccur\": \"0\",\n" +
-//               "                                            \"maxOccur\": \"1\",\n" +
-//               "                                            \"leaf\": true\n" +
-//               "                                        },\n" +
-//               "                                        {\n" +
-//               "                                            \"id\": \"DagBsCollection.DagBs.sfsfs.DagBsDtl.sendTimeout\",\n" +
-//               "                                            \"title\": \"sendTimeout\",\n" +
-//               "                                            \"key\": \"aaec6e24-dbe5-4a35-8a97-e72fb4523655\",\n" +
-//               "                                            \"expanded\": false,\n" +
-//               "                                            \"children\": null,\n" +
-//               "                                            \"valueType\": \"Number\",\n" +
-//               "                                            \"minOccur\": \"0\",\n" +
-//               "                                            \"maxOccur\": \"1\",\n" +
-//               "                                            \"leaf\": true\n" +
-//               "                                        },\n" +
-//               "                                        {\n" +
-//               "                                            \"id\": \"DagBsCollection.DagBs.sfsfs.DagBsDtl.readTimeout\",\n" +
-//               "                                            \"title\": \"readTimeout\",\n" +
-//               "                                            \"key\": \"1859a59e-d096-4a8e-b670-f317ff8d3b58\",\n" +
-//               "                                            \"expanded\": false,\n" +
-//               "                                            \"children\": null,\n" +
-//               "                                            \"valueType\": \"Number\",\n" +
-//               "                                            \"minOccur\": \"0\",\n" +
-//               "                                            \"maxOccur\": \"1\",\n" +
-//               "                                            \"leaf\": true\n" +
-//               "                                        },\n" +
-//               "                                        {\n" +
-//               "                                            \"id\": \"DagBsCollection.DagBs.sfsfs.DagBsDtl.createdBy\",\n" +
-//               "                                            \"title\": \"createdBy\",\n" +
-//               "                                            \"key\": \"a05d6e3a-6140-48b4-a8f3-d710819c7ec7\",\n" +
-//               "                                            \"expanded\": false,\n" +
-//               "                                            \"children\": null,\n" +
-//               "                                            \"valueType\": \"String\",\n" +
-//               "                                            \"minOccur\": \"0\",\n" +
-//               "                                            \"maxOccur\": \"1\",\n" +
-//               "                                            \"leaf\": true\n" +
-//               "                                        },\n" +
-//               "                                        {\n" +
-//               "                                            \"id\": \"DagBsCollection.DagBs.sfsfs.DagBsDtl.creationDate\",\n" +
-//               "                                            \"title\": \"creationDate\",\n" +
-//               "                                            \"key\": \"7c7886ca-86f6-467f-acbb-e4d5ca36e77d\",\n" +
-//               "                                            \"expanded\": false,\n" +
-//               "                                            \"children\": null,\n" +
-//               "                                            \"valueType\": \"Date\",\n" +
-//               "                                            \"minOccur\": \"0\",\n" +
-//               "                                            \"maxOccur\": \"1\",\n" +
-//               "                                            \"leaf\": true\n" +
-//               "                                        },\n" +
-//               "                                        {\n" +
-//               "                                            \"id\": \"DagBsCollection.DagBs.sfsfs.DagBsDtl.lastUpdatedBy\",\n" +
-//               "                                            \"title\": \"lastUpdatedBy\",\n" +
-//               "                                            \"key\": \"71d9393f-7366-4c0b-8993-4155c465fe32\",\n" +
-//               "                                            \"expanded\": false,\n" +
-//               "                                            \"children\": null,\n" +
-//               "                                            \"valueType\": \"String\",\n" +
-//               "                                            \"minOccur\": \"0\",\n" +
-//               "                                            \"maxOccur\": \"1\",\n" +
-//               "                                            \"leaf\": true\n" +
-//               "                                        },\n" +
-//               "                                        {\n" +
-//               "                                            \"id\": \"DagBsCollection.DagBs.sfsfs.DagBsDtl.lastUpdateDate\",\n" +
-//               "                                            \"title\": \"lastUpdateDate\",\n" +
-//               "                                            \"key\": \"3dc1ae79-793a-40e4-a383-081616d4b9e9\",\n" +
-//               "                                            \"expanded\": false,\n" +
-//               "                                            \"children\": null,\n" +
-//               "                                            \"valueType\": \"Date\",\n" +
-//               "                                            \"minOccur\": \"0\",\n" +
-//               "                                            \"maxOccur\": \"1\",\n" +
-//               "                                            \"leaf\": true\n" +
-//               "                                        },\n" +
-//               "                                        {\n" +
-//               "                                            \"id\": \"DagBsCollection.DagBs.sfsfs.DagBsDtl.objectVersionNumber\",\n" +
-//               "                                            \"title\": \"objectVersionNumber\",\n" +
-//               "                                            \"key\": \"a1f8e747-cc69-4fdc-9beb-bb786cdcc12b\",\n" +
-//               "                                            \"expanded\": false,\n" +
-//               "                                            \"children\": null,\n" +
-//               "                                            \"valueType\": \"Number\",\n" +
-//               "                                            \"minOccur\": \"0\",\n" +
-//               "                                            \"maxOccur\": \"1\",\n" +
-//               "                                            \"leaf\": true\n" +
-//               "                                        }\n" +
-//               "                                    ],\n" +
-//               "                                    \"valueType\": \"Object\",\n" +
-//               "                                    \"minOccur\": \"0\",\n" +
-//               "                                    \"maxOccur\": \"2147483647\",\n" +
-//               "                                    \"leaf\": false\n" +
-//               "                                }\n" +
-//               "                            ],\n" +
-//               "                            \"valueType\": \"Object\",\n" +
-//               "                            \"minOccur\": \"0\",\n" +
-//               "                            \"maxOccur\": \"1\",\n" +
-//               "                            \"leaf\": false\n" +
-//               "                        }\n" +
-//               "                    ],\n" +
-//               "                    \"valueType\": \"Object\",\n" +
-//               "                    \"minOccur\": \"0\",\n" +
-//               "                    \"maxOccur\": \"2147483647\",\n" +
-//               "                    \"leaf\": false\n" +
-//               "                }\n" +
-//               "            ],\n" +
-//               "            \"valueType\": \"Object\",\n" +
-//               "            \"minOccur\": \"1\",\n" +
-//               "            \"maxOccur\": \"1\",\n" +
-//               "            \"leaf\": false\n" +
-//               "        }";
+       String jsonInput ="{\n" +
+               "            \"id\": \"QueryParams\",\n" +
+               "            \"title\": \"QueryParams\",\n" +
+               "            \"key\": \"ff9a8228-5cf1-4846-8805-e4f1f5c26e65\",\n" +
+               "            \"expanded\": true,\n" +
+               "            \"children\": [\n" +
+               "                {\n" +
+               "                    \"id\": \"QueryParams.bsId\",\n" +
+               "                    \"title\": \"bsId\",\n" +
+               "                    \"key\": \"19ab30c0-d695-4078-ba5b-206a37719dce\",\n" +
+               "                    \"expanded\": false,\n" +
+               "                    \"children\": null,\n" +
+               "                    \"valueType\": \"String\",\n" +
+               "                    \"minOccur\": \"1\",\n" +
+               "                    \"maxOccur\": \"1\",\n" +
+               "                    \"leaf\": true\n" +
+               "                },\n" +
+               "                {\n" +
+               "                    \"id\": \"QueryParams.tstId\",\n" +
+               "                    \"title\": \"tstId\",\n" +
+               "                    \"key\": \"af51f5f6-42e4-4b7e-811a-e899aeb5fa73\",\n" +
+               "                    \"expanded\": false,\n" +
+               "                    \"children\": null,\n" +
+               "                    \"valueType\": \"String\",\n" +
+               "                    \"minOccur\": \"1\",\n" +
+               "                    \"maxOccur\": \"1\",\n" +
+               "                    \"leaf\": true\n" +
+               "                }\n" +
+               "            ],\n" +
+               "            \"valueType\": \"Object\",\n" +
+               "            \"minOccur\": \"1\",\n" +
+               "            \"maxOccur\": \"1\",\n" +
+               "            \"leaf\": false\n" +
+               "        }";
 //
-//       if("INPUT".equals(param.getInOrOut())) {
-//           meta.setMetaTree(JSONObject.parseObject(jsonInput,DataNodeDTO.class));
-//       } else {
-//           meta.setMetaTree(JSONObject.parseObject(jsonOutput,DataNodeDTO.class));
-//       }
+       String jsonOutput = "{\n" +
+               "            \"id\": \"DagBsCollection\",\n" +
+               "            \"title\": \"DagBsCollection\",\n" +
+               "            \"key\": \"8fc57be8-fa1e-4999-be61-6a67f5af5211\",\n" +
+               "            \"expanded\": true,\n" +
+               "            \"children\": [\n" +
+               "                {\n" +
+               "                    \"id\": \"DagBsCollection.DagBs\",\n" +
+               "                    \"title\": \"DagBs\",\n" +
+               "                    \"key\": \"99ec5502-c480-4848-841f-c6d5dd846fdd\",\n" +
+               "                    \"expanded\": true,\n" +
+               "                    \"children\": [\n" +
+               "                        {\n" +
+               "                            \"id\": \"DagBsCollection.DagBs.bsId\",\n" +
+               "                            \"title\": \"bsId\",\n" +
+               "                            \"key\": \"2ae9bca0-008b-40f0-be13-98ca9acd15fd\",\n" +
+               "                            \"expanded\": false,\n" +
+               "                            \"children\": null,\n" +
+               "                            \"valueType\": \"String\",\n" +
+               "                            \"minOccur\": \"1\",\n" +
+               "                            \"maxOccur\": \"1\",\n" +
+               "                            \"leaf\": true\n" +
+               "                        },\n" +
+               "                        {\n" +
+               "                            \"id\": \"DagBsCollection.DagBs.bsCode\",\n" +
+               "                            \"title\": \"bsCode\",\n" +
+               "                            \"key\": \"c338e2da-b1ee-4533-a631-3b93ad2f4e52\",\n" +
+               "                            \"expanded\": false,\n" +
+               "                            \"children\": null,\n" +
+               "                            \"valueType\": \"String\",\n" +
+               "                            \"minOccur\": \"0\",\n" +
+               "                            \"maxOccur\": \"1\",\n" +
+               "                            \"leaf\": true\n" +
+               "                        },\n" +
+               "                        {\n" +
+               "                            \"id\": \"DagBsCollection.DagBs.bsDesc\",\n" +
+               "                            \"title\": \"bsDesc\",\n" +
+               "                            \"key\": \"2ecc2942-f23a-4ee6-bead-1f6b3d091d3a\",\n" +
+               "                            \"expanded\": false,\n" +
+               "                            \"children\": null,\n" +
+               "                            \"valueType\": \"String\",\n" +
+               "                            \"minOccur\": \"0\",\n" +
+               "                            \"maxOccur\": \"1\",\n" +
+               "                            \"leaf\": true\n" +
+               "                        },\n" +
+               "                        {\n" +
+               "                            \"id\": \"DagBsCollection.DagBs.appCode\",\n" +
+               "                            \"title\": \"appCode\",\n" +
+               "                            \"key\": \"5635dba1-b4a2-4cb5-a929-e74196276405\",\n" +
+               "                            \"expanded\": false,\n" +
+               "                            \"children\": null,\n" +
+               "                            \"valueType\": \"String\",\n" +
+               "                            \"minOccur\": \"0\",\n" +
+               "                            \"maxOccur\": \"1\",\n" +
+               "                            \"leaf\": true\n" +
+               "                        },\n" +
+               "                        {\n" +
+               "                            \"id\": \"DagBsCollection.DagBs.createdBy\",\n" +
+               "                            \"title\": \"createdBy\",\n" +
+               "                            \"key\": \"12057ad7-8ef7-4b21-9407-7d8a5b9caed0\",\n" +
+               "                            \"expanded\": false,\n" +
+               "                            \"children\": null,\n" +
+               "                            \"valueType\": \"String\",\n" +
+               "                            \"minOccur\": \"0\",\n" +
+               "                            \"maxOccur\": \"1\",\n" +
+               "                            \"leaf\": true\n" +
+               "                        },\n" +
+               "                        {\n" +
+               "                            \"id\": \"DagBsCollection.DagBs.creationDate\",\n" +
+               "                            \"title\": \"creationDate\",\n" +
+               "                            \"key\": \"c7da1a4f-7eb1-4425-abb7-7bc42fba62cd\",\n" +
+               "                            \"expanded\": false,\n" +
+               "                            \"children\": null,\n" +
+               "                            \"valueType\": \"Date\",\n" +
+               "                            \"minOccur\": \"0\",\n" +
+               "                            \"maxOccur\": \"1\",\n" +
+               "                            \"leaf\": true\n" +
+               "                        },\n" +
+               "                        {\n" +
+               "                            \"id\": \"DagBsCollection.DagBs.lastUpdatedBy\",\n" +
+               "                            \"title\": \"lastUpdatedBy\",\n" +
+               "                            \"key\": \"b4e5e03a-8209-4cb1-b964-c3c850087c4a\",\n" +
+               "                            \"expanded\": false,\n" +
+               "                            \"children\": null,\n" +
+               "                            \"valueType\": \"String\",\n" +
+               "                            \"minOccur\": \"0\",\n" +
+               "                            \"maxOccur\": \"1\",\n" +
+               "                            \"leaf\": true\n" +
+               "                        },\n" +
+               "                        {\n" +
+               "                            \"id\": \"DagBsCollection.DagBs.lastUpdateDate\",\n" +
+               "                            \"title\": \"lastUpdateDate\",\n" +
+               "                            \"key\": \"7aedd3ee-5cb1-4776-9f0f-bc4a94a4505c\",\n" +
+               "                            \"expanded\": false,\n" +
+               "                            \"children\": null,\n" +
+               "                            \"valueType\": \"Date\",\n" +
+               "                            \"minOccur\": \"0\",\n" +
+               "                            \"maxOccur\": \"1\",\n" +
+               "                            \"leaf\": true\n" +
+               "                        },\n" +
+               "                        {\n" +
+               "                            \"id\": \"DagBsCollection.DagBs.objectVersionNumber\",\n" +
+               "                            \"title\": \"objectVersionNumber\",\n" +
+               "                            \"key\": \"d748aa7d-04dc-4158-9fbb-426cb0ad265b\",\n" +
+               "                            \"expanded\": false,\n" +
+               "                            \"children\": null,\n" +
+               "                            \"valueType\": \"Number\",\n" +
+               "                            \"minOccur\": \"0\",\n" +
+               "                            \"maxOccur\": \"1\",\n" +
+               "                            \"leaf\": true\n" +
+               "                        },\n" +
+               "                        {\n" +
+               "                            \"id\": \"DagBsCollection.DagBs.sfsfs\",\n" +
+               "                            \"title\": \"sfsfs\",\n" +
+               "                            \"key\": \"86f8c797-7e1e-4e8e-ac27-11211d678498\",\n" +
+               "                            \"expanded\": true,\n" +
+               "                            \"children\": [\n" +
+               "                                {\n" +
+               "                                    \"id\": \"DagBsCollection.DagBs.sfsfs.DagBsDtl\",\n" +
+               "                                    \"title\": \"DagBsDtl\",\n" +
+               "                                    \"key\": \"2fcdf783-af56-4356-aa02-98f24d1bb06c\",\n" +
+               "                                    \"expanded\": true,\n" +
+               "                                    \"children\": [\n" +
+               "                                        {\n" +
+               "                                            \"id\": \"DagBsCollection.DagBs.sfsfs.DagBsDtl.vid\",\n" +
+               "                                            \"title\": \"vid\",\n" +
+               "                                            \"key\": \"e61f34f7-558a-4e29-b277-fa96a15580ab\",\n" +
+               "                                            \"expanded\": false,\n" +
+               "                                            \"children\": null,\n" +
+               "                                            \"valueType\": \"String\",\n" +
+               "                                            \"minOccur\": \"0\",\n" +
+               "                                            \"maxOccur\": \"1\",\n" +
+               "                                            \"leaf\": true\n" +
+               "                                        },\n" +
+               "                                        {\n" +
+               "                                            \"id\": \"DagBsCollection.DagBs.sfsfs.DagBsDtl.protocal\",\n" +
+               "                                            \"title\": \"protocal\",\n" +
+               "                                            \"key\": \"811b37bb-287a-49a5-97ff-f5f786554643\",\n" +
+               "                                            \"expanded\": false,\n" +
+               "                                            \"children\": null,\n" +
+               "                                            \"valueType\": \"String\",\n" +
+               "                                            \"minOccur\": \"0\",\n" +
+               "                                            \"maxOccur\": \"1\",\n" +
+               "                                            \"leaf\": true\n" +
+               "                                        },\n" +
+               "                                        {\n" +
+               "                                            \"id\": \"DagBsCollection.DagBs.sfsfs.DagBsDtl.hostName\",\n" +
+               "                                            \"title\": \"hostName\",\n" +
+               "                                            \"key\": \"4e607d22-e2c0-4eeb-b218-c4701fafd6e5\",\n" +
+               "                                            \"expanded\": false,\n" +
+               "                                            \"children\": null,\n" +
+               "                                            \"valueType\": \"String\",\n" +
+               "                                            \"minOccur\": \"0\",\n" +
+               "                                            \"maxOccur\": \"1\",\n" +
+               "                                            \"leaf\": true\n" +
+               "                                        },\n" +
+               "                                        {\n" +
+               "                                            \"id\": \"DagBsCollection.DagBs.sfsfs.DagBsDtl.port\",\n" +
+               "                                            \"title\": \"port\",\n" +
+               "                                            \"key\": \"0904ab9b-1628-491c-8931-917cc8568ea7\",\n" +
+               "                                            \"expanded\": false,\n" +
+               "                                            \"children\": null,\n" +
+               "                                            \"valueType\": \"String\",\n" +
+               "                                            \"minOccur\": \"0\",\n" +
+               "                                            \"maxOccur\": \"1\",\n" +
+               "                                            \"leaf\": true\n" +
+               "                                        },\n" +
+               "                                        {\n" +
+               "                                            \"id\": \"DagBsCollection.DagBs.sfsfs.DagBsDtl.paths\",\n" +
+               "                                            \"title\": \"paths\",\n" +
+               "                                            \"key\": \"0638a7d3-a144-4dfc-8786-d45349d66730\",\n" +
+               "                                            \"expanded\": false,\n" +
+               "                                            \"children\": null,\n" +
+               "                                            \"valueType\": \"String\",\n" +
+               "                                            \"minOccur\": \"0\",\n" +
+               "                                            \"maxOccur\": \"1\",\n" +
+               "                                            \"leaf\": true\n" +
+               "                                        },\n" +
+               "                                        {\n" +
+               "                                            \"id\": \"DagBsCollection.DagBs.sfsfs.DagBsDtl.rtyCount\",\n" +
+               "                                            \"title\": \"rtyCount\",\n" +
+               "                                            \"key\": \"2144739a-fe1f-4517-b9c8-78abacb2f46a\",\n" +
+               "                                            \"expanded\": false,\n" +
+               "                                            \"children\": null,\n" +
+               "                                            \"valueType\": \"Number\",\n" +
+               "                                            \"minOccur\": \"0\",\n" +
+               "                                            \"maxOccur\": \"1\",\n" +
+               "                                            \"leaf\": true\n" +
+               "                                        },\n" +
+               "                                        {\n" +
+               "                                            \"id\": \"DagBsCollection.DagBs.sfsfs.DagBsDtl.connectTimeout\",\n" +
+               "                                            \"title\": \"connectTimeout\",\n" +
+               "                                            \"key\": \"54e45ee6-31f9-444a-9cdf-e55e3147ff68\",\n" +
+               "                                            \"expanded\": false,\n" +
+               "                                            \"children\": null,\n" +
+               "                                            \"valueType\": \"Number\",\n" +
+               "                                            \"minOccur\": \"0\",\n" +
+               "                                            \"maxOccur\": \"1\",\n" +
+               "                                            \"leaf\": true\n" +
+               "                                        },\n" +
+               "                                        {\n" +
+               "                                            \"id\": \"DagBsCollection.DagBs.sfsfs.DagBsDtl.sendTimeout\",\n" +
+               "                                            \"title\": \"sendTimeout\",\n" +
+               "                                            \"key\": \"aaec6e24-dbe5-4a35-8a97-e72fb4523655\",\n" +
+               "                                            \"expanded\": false,\n" +
+               "                                            \"children\": null,\n" +
+               "                                            \"valueType\": \"Number\",\n" +
+               "                                            \"minOccur\": \"0\",\n" +
+               "                                            \"maxOccur\": \"1\",\n" +
+               "                                            \"leaf\": true\n" +
+               "                                        },\n" +
+               "                                        {\n" +
+               "                                            \"id\": \"DagBsCollection.DagBs.sfsfs.DagBsDtl.readTimeout\",\n" +
+               "                                            \"title\": \"readTimeout\",\n" +
+               "                                            \"key\": \"1859a59e-d096-4a8e-b670-f317ff8d3b58\",\n" +
+               "                                            \"expanded\": false,\n" +
+               "                                            \"children\": null,\n" +
+               "                                            \"valueType\": \"Number\",\n" +
+               "                                            \"minOccur\": \"0\",\n" +
+               "                                            \"maxOccur\": \"1\",\n" +
+               "                                            \"leaf\": true\n" +
+               "                                        },\n" +
+               "                                        {\n" +
+               "                                            \"id\": \"DagBsCollection.DagBs.sfsfs.DagBsDtl.createdBy\",\n" +
+               "                                            \"title\": \"createdBy\",\n" +
+               "                                            \"key\": \"a05d6e3a-6140-48b4-a8f3-d710819c7ec7\",\n" +
+               "                                            \"expanded\": false,\n" +
+               "                                            \"children\": null,\n" +
+               "                                            \"valueType\": \"String\",\n" +
+               "                                            \"minOccur\": \"0\",\n" +
+               "                                            \"maxOccur\": \"1\",\n" +
+               "                                            \"leaf\": true\n" +
+               "                                        },\n" +
+               "                                        {\n" +
+               "                                            \"id\": \"DagBsCollection.DagBs.sfsfs.DagBsDtl.creationDate\",\n" +
+               "                                            \"title\": \"creationDate\",\n" +
+               "                                            \"key\": \"7c7886ca-86f6-467f-acbb-e4d5ca36e77d\",\n" +
+               "                                            \"expanded\": false,\n" +
+               "                                            \"children\": null,\n" +
+               "                                            \"valueType\": \"Date\",\n" +
+               "                                            \"minOccur\": \"0\",\n" +
+               "                                            \"maxOccur\": \"1\",\n" +
+               "                                            \"leaf\": true\n" +
+               "                                        },\n" +
+               "                                        {\n" +
+               "                                            \"id\": \"DagBsCollection.DagBs.sfsfs.DagBsDtl.lastUpdatedBy\",\n" +
+               "                                            \"title\": \"lastUpdatedBy\",\n" +
+               "                                            \"key\": \"71d9393f-7366-4c0b-8993-4155c465fe32\",\n" +
+               "                                            \"expanded\": false,\n" +
+               "                                            \"children\": null,\n" +
+               "                                            \"valueType\": \"String\",\n" +
+               "                                            \"minOccur\": \"0\",\n" +
+               "                                            \"maxOccur\": \"1\",\n" +
+               "                                            \"leaf\": true\n" +
+               "                                        },\n" +
+               "                                        {\n" +
+               "                                            \"id\": \"DagBsCollection.DagBs.sfsfs.DagBsDtl.lastUpdateDate\",\n" +
+               "                                            \"title\": \"lastUpdateDate\",\n" +
+               "                                            \"key\": \"3dc1ae79-793a-40e4-a383-081616d4b9e9\",\n" +
+               "                                            \"expanded\": false,\n" +
+               "                                            \"children\": null,\n" +
+               "                                            \"valueType\": \"Date\",\n" +
+               "                                            \"minOccur\": \"0\",\n" +
+               "                                            \"maxOccur\": \"1\",\n" +
+               "                                            \"leaf\": true\n" +
+               "                                        },\n" +
+               "                                        {\n" +
+               "                                            \"id\": \"DagBsCollection.DagBs.sfsfs.DagBsDtl.objectVersionNumber\",\n" +
+               "                                            \"title\": \"objectVersionNumber\",\n" +
+               "                                            \"key\": \"a1f8e747-cc69-4fdc-9beb-bb786cdcc12b\",\n" +
+               "                                            \"expanded\": false,\n" +
+               "                                            \"children\": null,\n" +
+               "                                            \"valueType\": \"Number\",\n" +
+               "                                            \"minOccur\": \"0\",\n" +
+               "                                            \"maxOccur\": \"1\",\n" +
+               "                                            \"leaf\": true\n" +
+               "                                        }\n" +
+               "                                    ],\n" +
+               "                                    \"valueType\": \"Object\",\n" +
+               "                                    \"minOccur\": \"0\",\n" +
+               "                                    \"maxOccur\": \"2147483647\",\n" +
+               "                                    \"leaf\": false\n" +
+               "                                }\n" +
+               "                            ],\n" +
+               "                            \"valueType\": \"Object\",\n" +
+               "                            \"minOccur\": \"0\",\n" +
+               "                            \"maxOccur\": \"1\",\n" +
+               "                            \"leaf\": false\n" +
+               "                        }\n" +
+               "                    ],\n" +
+               "                    \"valueType\": \"Object\",\n" +
+               "                    \"minOccur\": \"0\",\n" +
+               "                    \"maxOccur\": \"2147483647\",\n" +
+               "                    \"leaf\": false\n" +
+               "                }\n" +
+               "            ],\n" +
+               "            \"valueType\": \"Object\",\n" +
+               "            \"minOccur\": \"1\",\n" +
+               "            \"maxOccur\": \"1\",\n" +
+               "            \"leaf\": false\n" +
+               "        }";
 
-
-       if(node != null && "DB".equals(node.getCnptCode())){
-           //解析db请求的参数
-           meta.setMetaType("XML");
-           this.createSampleMetaForDBConnector(param,road,node,meta);
-
+       if("INPUT".equals(param.getInOrOut())) {
+           meta.setMetaTree(JSONObject.parseObject(jsonInput,DataNodeDTO.class));
+       } else {
+           meta.setMetaTree(JSONObject.parseObject(jsonOutput,DataNodeDTO.class));
        }
+
+
+//       if(node != null && "DB".equals(node.getCnptCode())){
+//           //解析db请求的参数
+//           meta.setMetaType("XML");
+//           this.createSampleMetaForDBConnector(param,road,node,meta);
+//
+//       }
 
        return meta;
     }
