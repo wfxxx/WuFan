@@ -56,9 +56,9 @@ public class DSGCLogInstanceDao {
             } else {
                 mq = sw.buildQuery();
             }
-
-            System.out.println(sysNoList);
-            System.out.println(sysList);
+//
+//            System.out.println(sysNoList);
+//            System.out.println(sysList);
 
             if (trackIdList!=null && !trackIdList.isEmpty()) {
                 mq.in("trackId",trackIdList);
@@ -72,8 +72,10 @@ public class DSGCLogInstanceDao {
             mq.likeNocase("req_from",instance.getReqFrom());
             mq.likeNocase("biz_key1",instance.getBizKey1());
             mq.likeNocase("biz_status_dtl",instance.getBizStatusDtl());
-            mq.lteq("end_time",instance.getEndTimeDate());
-            mq.gteq("start_time",instance.getStartTimeDate());
+        //    mq.lteq("end_time",instance.getEndTimeDate());
+         //   mq.gteq("start_time",instance.getStartTimeDate());
+            mq.lteq("creation_date",instance.getEndTimeDate());
+            mq.gteq("creation_date",instance.getStartTimeDate());
             mq.orderBy("creation_date","desc");
             return mq.doPageQuery(pageIndex,pageSize,DSGCLogInstance.class);
 
