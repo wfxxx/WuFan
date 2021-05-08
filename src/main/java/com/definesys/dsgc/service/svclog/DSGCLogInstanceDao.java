@@ -38,6 +38,7 @@ public class DSGCLogInstanceDao {
     public PageQueryResult<DSGCLogInstance> query(List<Object> keyword,String userRole,String uid,LogInstanceQueryDTO instance,int pageSize,int pageIndex,List<String> sysNoList,List<String> sysList) throws Exception {
         logger.debug(instance.toString());
         //如果全文检索条件不为空时需要通过报文检索
+
         List<String> trackIdList = this.getTrackIdListFromPayloadMatch(instance.getPayloadMatch());
         if (instance.getPayloadMatch() != null && instance.getPayloadMatch().trim().length() > 0 && (trackIdList == null || trackIdList.isEmpty())) {
             //当payloadmatch不为空时，需要根据报文检索，如果报文检索ES中找不到匹配项，则返回为null;
@@ -172,9 +173,12 @@ public class DSGCLogInstanceDao {
      * @return
      */
     private List<String> getTrackIdListFromPayloadMatch(String payloadMatch){
+        if(org.apache.commons.lang.StringUtils.isBlank(payloadMatch)) {
+            return null;
+        }
         List<String> trackIdList = ESClient.searchESPayload(payloadMatch);
-        if(trackIdList != null && !trackIdList.isEmpty() && trackIdList.size() >2000){
-            trackIdList = trackIdList.subList(0,2000);
+        if(trackIdList != null && !trackIdList.isEmpty() && trackIdList.size() >1000){
+            trackIdList = trackIdList.subList(0,1000);
         }
         return trackIdList;
     }
