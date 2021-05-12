@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Created-By: IntelliJ IDEA
+Built-By: ystar
+Build-Jdk: 1.8.0_251
+Implementation-Title: dsgcService
+Implementation-Version: 1.0
+Implementation-Vendor-Id: com.definesys.dsgc.service
+Main-Class: ${start-class}
+

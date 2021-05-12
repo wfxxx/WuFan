@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<store>
+    <sql id="SQL_GET_DB_LOCK">
+        <oracle>
+            <![CDATA[
+            select o.TOKEN,l.START_TIME REQ_TIME,nvl(o.serv_no,'N/A'） as SVC_CODE,o.serv_name as SVC_NAME,nvl(o.REQ_FROM,'N/A') as SYS_CODE,
+            (select e.SYS_NAME from dsgc_system_entities e where e.SYS_CODE = o.REQ_FROM) as SYS_NAME,nvl(o.SEND_TO,'N/A') as TRG_SYS_CODE,
+            (select e.SYS_NAME from dsgc_system_entities e where e.SYS_CODE = o.SEND_TO) as TRG_SYS_NAME,
+            NVL(EXTRACT(SECOND FROM(o.RES_TIME-o.REQ_TIME)) * 1000,0)  as TRG_COST,
+            NVL( EXTRACT(SECOND FROM(l.END_TIME-l.START_TIME)) * 1000,0) as TOTAL_COST,
+            NVL( EXTRACT(SECOND FROM((l.END_TIME-l.START_TIME) - (o.RES_TIME-o.REQ_TIME))) * 1000,0) as ESB_COST,
+            o.STATUS,l.CLIENT_IP as REQ_IP from dsgc_log_outbound o
+            LEFT JOIN dsgc_log_instance l on o.TRACK_ID = l.TRACK_ID
+            where l.START_TIME is not null
+            ]]>
+        </oracle>
+        <mysql>
+            <![CDATA[ select o.TOKEN,l.START_TIME REQ_TIME,
+            IFNULL(o.SERV_NO,'N/A')  as SVC_CODE,o.serv_name as SVC_NAME,IFNULL(o.REQ_FROM,'N/A') as SYS_CODE,
+            (select e.SYS_NAME from dsgc_system_entities e where e.SYS_CODE = o.REQ_FROM) as SYS_NAME,
+            IFNULL(o.SEND_TO,'N/A') as TRG_SYS_CODE,(select e.SYS_NAME from dsgc_system_entities e where e.SYS_CODE = o.SEND_TO) as TRG_SYS_NAME,
+            IFNULL(TIMESTAMPDIFF(SECOND,o.RES_TIME,o.REQ_TIME) * 1000,0)  as TRG_COST,IFNULL( TIMESTAMPDIFF(SECOND,l.START_TIME,l.END_TIME)*1000,0) as TOTAL_COST,
+            IFNULL( TIMESTAMPDIFF(SECOND ,(l.END_TIME-l.START_TIME) , (o.RES_TIME-o.REQ_TIME)) * 1000,0) as ESB_COST,
+            o.STATUS,l.CLIENT_IP as REQ_IP from dsgc_log_outbound o LEFT JOIN dsgc_log_instance l on o.TRACK_ID = l.TRACK_ID where l.START_TIME is not null ]]>
+        </mysql>
+    </sql>
+</store>

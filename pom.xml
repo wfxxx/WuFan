@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.1.3.RELEASE</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+    <groupId>com.definesys.dsgc.service</groupId>
+    <artifactId>dsgcappServices</artifactId>
+    <version>1.0</version>
+    <packaging>war</packaging>
+    <name>dsgcService</name>
+    <description>service for dsgc</description>
+
+    <properties>
+        <java.version>1.8</java.version>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>nexus-aliyun</id>
+            <name>Nexus aliyun</name>
+            <url>http://maven.aliyun.com/nexus/content/groups/public</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+            <!-- <version>1.3.5.RELEASE</version> -->
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+            <version>5.1.5.RELEASE</version>
+            <!--<scope>provided</scope>-->
+        </dependency>
+
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>2.7.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>2.7.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.definesys.mpaas</groupId>
+            <artifactId>query</artifactId>
+            <version>1.1.0-beta4</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.json-lib</groupId>
+            <artifactId>json-lib</artifactId>
+            <version>2.4</version>
+            <classifier>jdk15</classifier>
+        </dependency>
+        <dependency>
+            <groupId>dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <version>1.6.1</version>
+            <!--<scope>provided</scope>-->
+        </dependency>
+
+        <dependency>
+            <groupId>jaxen</groupId>
+            <artifactId>jaxen</artifactId>
+            <version>1.1.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.47</version>
+        </dependency>
+
+        <!--        <dependency>-->
+        <!--            <groupId>org.quartz-scheduler</groupId>-->
+        <!--            <artifactId>quartz</artifactId>-->
+        <!--            <version>2.3.0</version>-->
+        <!--&lt;!&ndash;            <scope>provided</scope>&ndash;&gt;-->
+        <!--        </dependency>-->
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20160810</version>
+        </dependency>
+
+        <!-- poi -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-excelant</artifactId>
+            <version>3.14</version>
+        </dependency>
+        <!--本地测试-->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <scope>system</scope>
+            <version>8.0.22</version>
+            <systemPath>${project.basedir}/lib/mysql-connector-java-8.0.22.jar</systemPath>
+        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>mysql</groupId>-->
+        <!--            <artifactId>mysql-connector-java</artifactId>-->
+        <!--            <scope>system</scope>-->
+        <!--            <version>5.1.34</version>-->
+        <!--            <systemPath>${project.basedir}/lib/mysql-connector-java-5.1.34.jar</systemPath>-->
+        <!--        </dependency>-->
+        <dependency>
+            <groupId>dsgc.common</groupId>
+            <artifactId>common</artifactId>
+            <scope>system</scope>
+            <version>20200217</version>
+            <systemPath>${project.basedir}/lib/com.definesys.dsgc.common.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>xml.xmlbeans</groupId>
+            <artifactId>xmlbeans</artifactId>
+            <scope>system</scope>
+            <version>20200217</version>
+            <systemPath>${project.basedir}/lib/com.bea.core.xml.xmlbeans.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>commons.io</groupId>
+            <artifactId>commons.io</artifactId>
+            <scope>system</scope>
+            <version>20200217</version>
+            <systemPath>${project.basedir}/lib/commons-io-2.4.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <scope>system</scope>
+            <version>20200217</version>
+            <systemPath>${project.basedir}/lib/log4j-1.2.17.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>wsdl4j</groupId>
+            <artifactId>wsdl4j</artifactId>
+            <scope>system</scope>
+            <version>20200217</version>
+            <systemPath>${project.basedir}/lib/wsdl4j.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.json-lib</groupId>
+            <artifactId>json-lib</artifactId>
+            <version>2.4</version>
+            <classifier>jdk15</classifier>
+        </dependency>
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>3.1</version>
+        </dependency>
+        <!--JWT-->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.9.1</version>
+        </dependency>
+
+        <!--  Mule  start-->
+        <!--操作Git命令-->
+        <dependency>
+            <groupId>org.eclipse.jgit</groupId>
+            <artifactId>org.eclipse.jgit</artifactId>
+            <version>4.11.0.201803080745-r</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jgit</groupId>
+            <artifactId>org.eclipse.jgit.archive</artifactId>
+            <version>4.11.0.201803080745-r</version>
+        </dependency>
+        <!--Maven操作-->
+        <dependency>
+            <groupId>org.apache.maven.shared</groupId>
+            <artifactId>maven-invoker</artifactId>
+            <version>3.0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ow2.easywsdl</groupId>
+            <artifactId>easywsdl-wsdl</artifactId>
+            <version>2.1</version>
+        </dependency>
+        <!--  Mule  End-->
+
+    </dependencies>
+
+    <build>
+        <finalName>dsgcappServices</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.10</version>
+
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/lib
+                            </outputDirectory>
+                            <includeScope>system</includeScope>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.2.3</version>
+                <configuration>
+                    <packagingExcludes>
+                        WEB-INF/lib/dom4j*.jar,
+                        WEB-INF/lib/jaxen*.jar,
+                        WEB-INF/lib/tomcat*.jar,
+                        WEB-INF/lib/xml-apis*.jar,
+                        WEB-INF/lib/log4j*.jar,
+                        WEB-INF/lib/logback*.jar,
+                        WEB-INF/lib/slf4j-api-*.jar,
+                        WEB-INF/lib/*-20200217.jar,
+                        WEB-INF/lib/tools-*.jar,
+                        WEB-INF/lib/jconsole-*.jar,
+                        WEB-INF/lib/byte-buddy-*.jar,
+                        WEB-INF/lib/mysql-connector-java-8.0.22.jar
+                    </packagingExcludes>
+                    <outputDirectory>${pom.basedir}/deploy/</outputDirectory>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+
