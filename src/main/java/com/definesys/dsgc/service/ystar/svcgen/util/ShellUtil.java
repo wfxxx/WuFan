@@ -55,11 +55,11 @@ public class ShellUtil {
     }
 
     public static void main(String[] args) throws UnsupportedEncodingException {
-        String encodeStr = "%E2%9C%93";
-        String res = URLDecoder.decode(encodeStr, "utf-8");
+//        String encodeStr = "%E2%9C%93";
+//        String res = URLDecoder.decode(encodeStr, "utf-8");
 
+        checkValid("git.definesys.com", 80, "dongdong.yuan@definesys.com111", "YStarYdd089", "http://git.definesys.com/ystar/dsgcapp.git");
 
-        System.out.println(res);
-        checkValid("git.definesys.com", 80, "dongdong.yuan@definesys.com", "YStarYdd089", "http://git.definesys.com/ystar/dsgcapp.git");
+        //System.out.println(res);
     }
 }
