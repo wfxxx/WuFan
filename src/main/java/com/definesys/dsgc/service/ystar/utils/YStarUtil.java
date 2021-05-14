@@ -2,6 +2,9 @@ package com.definesys.dsgc.service.ystar.utils;
 
 import com.definesys.dsgc.service.utils.StringUtils;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -87,6 +90,12 @@ public class YStarUtil {
             res = "'" + code + "'";
         }
         return res;
+    }
+
+
+
+    public static void main(String[] args) throws IOException {
+
     }
 
 }

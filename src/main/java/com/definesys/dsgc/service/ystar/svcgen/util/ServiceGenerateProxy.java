@@ -19,7 +19,6 @@ public class ServiceGenerateProxy {
         try {
             ServiceGenerateProxy proxy = new ServiceGenerateProxy();
             proxy.sapUtilsClass = Class.forName("com.definesys.dsgc.sap.SapUtils");
-
             return proxy;
         } catch (Exception e) {
             e.printStackTrace();
@@ -91,7 +90,7 @@ public class ServiceGenerateProxy {
     public String validSapConnInfo(SapConnInfoJsonBean connInfo) throws Exception {
         String rtn = null;
         Class cfgCl = Class.forName("com.definesys.dsgc.sap.bean.SapConfiguration");
-        Method validSapConnInfo = this.sapUtilsClass.getMethod("vaildSapConnInfo", String.class, cfgCl);
+        Method validSapConnInfo = this.sapUtilsClass.getMethod("validSapConnInfo", String.class, cfgCl);
         if (connInfo != null) {
             Object param = cfgCl.newInstance();
             this.setObjAttrValue(param, "client", connInfo.getSapClient());

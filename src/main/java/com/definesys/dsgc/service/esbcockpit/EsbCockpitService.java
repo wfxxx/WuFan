@@ -283,7 +283,13 @@ public class EsbCockpitService {
         result.put("doughnut",selectDoughnutChart());//查询驾驶舱下方数据
         result.put("dayBusTimes",queryDayBusTimes());//查询当日交易量
         result.put("totalBusTimes",queryTotalBusTimes());//查询交易总量
+        result.put("maxDayRunTimes",queryMaxDayRunTimes());//查询今日接口调用TOP3
         return result;
+    }
+
+    //查询驾驶舱左上方今日调用接口次数Top3
+    public List<Map<String, Object>> queryMaxDayRunTimes(){
+        return esbCockpitDao.queryMaxDayRunTimes();
     }
 
 

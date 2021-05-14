@@ -499,7 +499,18 @@ public class EsbCockpitDao {
 //                "ORDER BY r.BUS_TOTAL_TIMES desc LIMIT 0,3"
                 "SELECT r.SERV_NO serv_no, d.SERV_NAME serv_name, r.BUS_COUNT all_count from dsgc_log_instance r, dsgc_services d\n" +
                         "where date(r.CREATION_DATE) = curdate() and d.SERV_NO = r.SERV_NO and r.BUS_COUNT is not null and r.BUS_COUNT <> 0\n" +
-                        "ORDER BY r.BUS_COUNT desc LIMIT 0,3"
+                        "GROUP BY r.SERV_NO,d.SERV_NAME ORDER BY r.BUS_COUNT desc LIMIT 0,3"
+        )
+                .doQuery();
+    }
+
+    //查询今日3个最大的接口调用次数
+    public List<Map<String, Object>> queryMaxDayRunTimes() {
+        return sw.buildQuery().sql(
+                "SELECT r.SERV_NO serv_no, d.SERV_NAME serv_name, count(*) all_count from dsgc_log_instance r, dsgc_services d\n" +
+                        "where date(r.CREATION_DATE) = curdate() and d.SERV_NO = r.SERV_NO \n" +
+                        "GROUP BY r.SERV_NO, d.SERV_NAME\n" +
+                        "ORDER BY all_count desc LIMIT 0,3"
         )
                 .doQuery();
     }

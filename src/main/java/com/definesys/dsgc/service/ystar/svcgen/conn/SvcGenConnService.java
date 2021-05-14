@@ -7,6 +7,7 @@ import com.definesys.dsgc.service.ystar.svcgen.conn.bean.SapConnValidBean;
 import com.definesys.dsgc.service.ystar.svcgen.conn.bean.SvcgenConnBean;
 import com.definesys.dsgc.service.ystar.svcgen.util.FtpUtil;
 import com.definesys.dsgc.service.ystar.svcgen.util.ServiceGenerateProxy;
+import com.definesys.dsgc.service.ystar.svcgen.util.ShellUtil;
 import com.definesys.dsgc.service.ystar.utils.JdbcConnection;
 import com.definesys.mpaas.common.exception.MpaasBusinessException;
 import com.definesys.mpaas.common.http.Response;
@@ -51,13 +52,13 @@ public class SvcGenConnService {
     public Response checkConnInfoValid(SvcgenConnBean svcgenConnBean) {
         String connType = svcgenConnBean.getConnType();
         String attr1 = svcgenConnBean.getAttr1();//数据库类型
-        String attr2 = svcgenConnBean.getAttr2();
-        String attr3 = svcgenConnBean.getAttr3();
-        String attr4 = svcgenConnBean.getAttr4();
-        String attr5 = svcgenConnBean.getAttr5();
+        String attr2 = svcgenConnBean.getAttr2(); //IP
+        String attr3 = svcgenConnBean.getAttr3(); //Port
+        String attr4 = svcgenConnBean.getAttr4(); //用户名
+        String attr5 = svcgenConnBean.getAttr5(); //密码
         String attr6 = svcgenConnBean.getAttr6();//RFC系统编号或数据库SID/服务名
         String attr7 = svcgenConnBean.getAttr7();//数据库实例名
-        Boolean connSuccess = false;
+        boolean connSuccess = false;
         try {
             if ("DB".equals(connType)) {
                 connSuccess = this.checkDBConnInfoValid(attr1, attr2, attr3, attr4, attr5, attr6, attr7);
@@ -67,6 +68,10 @@ public class SvcGenConnService {
                 connSuccess = sapConnValidBean.isSapConnValid();
             } else if ("FTP".equals(connType)) {
                 connSuccess = this.checkFtpConnInfoValid(attr1, attr2, attr3, attr4, attr5);
+            } else if ("IP:Port".equals(connType)) {
+                connSuccess = this.checkIpPortConnInfoValid(attr2, attr3);
+            } else if ("GIT".equals(connType)) {
+                connSuccess = this.checkGitConnInfoValid(attr2, attr3, attr4, attr5, attr6);
             }
             if (connSuccess) {
                 return Response.ok().setMessage("连接成功！").data(true);
@@ -79,7 +84,7 @@ public class SvcGenConnService {
     }
 
 
-    public Boolean checkDBConnInfoValid(String dbType, String ip, String port, String username, String password, String sidOrServNameValue, String dbName) {
+    public boolean checkDBConnInfoValid(String dbType, String ip, String port, String username, String password, String sidOrServNameValue, String dbName) {
         Boolean connSuccess = false;
         String url = "";
         if ("oracle".equals(dbType)) {
@@ -138,9 +143,19 @@ public class SvcGenConnService {
         return res;
     }
 
-    public Boolean checkFtpConnInfoValid(String ftpType, String ip, String port, String username, String password) {
+    public boolean checkFtpConnInfoValid(String ftpType, String ip, String port, String username, String password) {
         int ftpPort = Integer.parseInt(port);
         return FtpUtil.checkFtpConnect(ip, ftpPort, username, password);
+    }
+
+    public boolean checkIpPortConnInfoValid(String ip, String port) {
+        int ftpPort = Integer.parseInt(port);
+        return ShellUtil.checkIpPortValid(ip, ftpPort);
+    }
+
+    public boolean checkGitConnInfoValid(String ip, String port, String username, String password, String branch) {
+        int ftpPort = Integer.parseInt(port);
+        return ShellUtil.checkIpPortValid(ip, ftpPort);
     }
 
 
