@@ -2,7 +2,6 @@ package com.definesys.dsgc.service.dagclient;
 
 import com.definesys.dsgc.service.dagclient.bean.DAGEnvBean;
 import com.definesys.dsgc.service.dagclient.proxy.ConsumerProxy;
-import com.definesys.dsgc.service.dagclient.proxy.OSBConsumerProxy;
 import com.definesys.dsgc.service.dagclient.proxy.bean.JWTAuthBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,7 +28,7 @@ public class ConsumerDeployService {
      * @param envCode
      * @return
      */
-    public boolean deployConsumer(String consumerCode,String envCode,String loginUser) {
+    public boolean deployConsumer(String consumerCode, String envCode, String loginUser) {
         DAGEnvBean env = this.dagEnvDao.getDAGEnvInfoByEnvCode(envCode);
 
         if (env == null || env.getAdminLocation() == null) {
@@ -40,43 +39,40 @@ public class ConsumerDeployService {
 
         if ("DAG".equals(env.getEnvType())) {
             //网关环境添加用户
-            ConsumerProxy cp = new ConsumerProxy(env.getAdminLocation(),consumerCode);
+            ConsumerProxy cp = new ConsumerProxy(env.getAdminLocation(), consumerCode);
             if (!cp.isFound()) {
-                res = cp.add(consumerCode,null);
+                res = cp.add(consumerCode, null);
             }
 
             if (res) {
                 //设置认证
-                String basicAuthPd = this.consumerDeployDao.getConsumerBasicAuth(consumerCode,envCode);
-                if(basicAuthPd != null && basicAuthPd.trim().length() > 0) {
+                String basicAuthPd = this.consumerDeployDao.getConsumerBasicAuth(consumerCode, envCode);
+                if (basicAuthPd != null && basicAuthPd.trim().length() > 0) {
                     res = cp.setBasicAuth(basicAuthPd);
                 }
 
                 //设置jwt token
-                List<JWTAuthBean> jaList = this.consumerDeployDao.getJwtAuthList(consumerCode,envCode);
-                Map<String,JWTAuthBean> jaMap = new HashMap<String,JWTAuthBean>();
-                if(jaList != null && jaList.size() >0){
+                List<JWTAuthBean> jaList = this.consumerDeployDao.getJwtAuthList(consumerCode, envCode);
+                Map<String, JWTAuthBean> jaMap = new HashMap<String, JWTAuthBean>();
+                if (jaList != null && jaList.size() > 0) {
                     Iterator<JWTAuthBean> iter = jaList.iterator();
-                    while(iter.hasNext()){
+                    while (iter.hasNext()) {
                         JWTAuthBean jb = iter.next();
-                        if(jb != null && jb.getIssKey() != null && jb.getIssKey().trim().length() >0){
+                        if (jb != null && jb.getIssKey() != null && jb.getIssKey().trim().length() > 0) {
                             jb.setIssKey(jb.getIssKey().trim());
-                            jaMap.put(jb.getIssKey(),jb);
+                            jaMap.put(jb.getIssKey(), jb);
                         }
                     }
                 }
-                cp.setAllTokenAuth(jaMap,true);
+                cp.setAllTokenAuth(jaMap, true);
 
                 //设置groups
                 List<String> groups = this.consumerDeployDao.getConsumerGroups(consumerCode);
                 res = cp.setGroups(groups);
-
             }
+        } else if ("ESB".equals(env.getEnvType()) && "MULE".equals(env.getTechType())) {
+            //undo   部署用户名密码，更新表数据
 
-        } else if ("ESB".equals(env.getEnvType()) && "OSB".equals(env.getTechType())) {
-            //OSB总线环境添加用户
-            String basicAuthPd = this.consumerDeployDao.getConsumerBasicAuth(consumerCode,envCode);
-            OSBConsumerProxy.newInstance().setUser(envCode,loginUser,consumerCode,basicAuthPd);
         }
 
         return res;
@@ -85,22 +81,23 @@ public class ConsumerDeployService {
 
     /**
      * 添加group至所有已部署环境
+     *
      * @param consumerCode
      * @param apiCode
      * @return
      */
-    public boolean addDAGConsumerAcl(String consumerCode,String apiCode){
+    public boolean addDAGConsumerAcl(String consumerCode, String apiCode) {
 
         List<DAGEnvBean> envList = this.dagEnvDao.getConsumerDeployedDAGEnvInfo(consumerCode);
 
         String group = this.consumerDeployDao.getGroupByApiCode(apiCode);
 
-        if(envList != null && group != null && group.trim().length() >0){
+        if (envList != null && group != null && group.trim().length() > 0) {
             Iterator<DAGEnvBean> envIter = envList.iterator();
-            while(envIter.hasNext()){
+            while (envIter.hasNext()) {
                 DAGEnvBean env = envIter.next();
-                if(env != null && "DAG".equals(env.getEnvType())){
-                    ConsumerProxy cp = new ConsumerProxy(env.getAdminLocation(),consumerCode);
+                if (env != null && "DAG".equals(env.getEnvType())) {
+                    ConsumerProxy cp = new ConsumerProxy(env.getAdminLocation(), consumerCode);
                     if (cp.isFound()) {
                         cp.addGroup(group);
                     }
@@ -112,22 +109,23 @@ public class ConsumerDeployService {
 
     /**
      * 取消group至所有已部署环境
+     *
      * @param consumerCode
      * @param apiCode
      * @return
      */
-    public boolean removeDAGConsumerAcl(String consumerCode,String apiCode){
+    public boolean removeDAGConsumerAcl(String consumerCode, String apiCode) {
 
         List<DAGEnvBean> envList = this.dagEnvDao.getConsumerDeployedDAGEnvInfo(consumerCode);
 
         String group = this.consumerDeployDao.getGroupByApiCode(apiCode);
 
-        if(envList != null && group != null && group.trim().length() >0){
+        if (envList != null && group != null && group.trim().length() > 0) {
             Iterator<DAGEnvBean> envIter = envList.iterator();
-            while(envIter.hasNext()){
+            while (envIter.hasNext()) {
                 DAGEnvBean env = envIter.next();
-                if(env != null && "DAG".equals(env.getEnvType())){
-                    ConsumerProxy cp = new ConsumerProxy(env.getAdminLocation(),consumerCode);
+                if (env != null && "DAG".equals(env.getEnvType())) {
+                    ConsumerProxy cp = new ConsumerProxy(env.getAdminLocation(), consumerCode);
                     if (cp.isFound()) {
                         cp.removeGroup(group);
                     }
@@ -140,10 +138,11 @@ public class ConsumerDeployService {
 
     /**
      * 从所有已部署环境移除group
+     *
      * @param group
      * @return
      */
-    public boolean removeGroupToALLEnv(String group){
+    public boolean removeGroupToALLEnv(String group) {
         return true;
     }
 
@@ -154,23 +153,20 @@ public class ConsumerDeployService {
      * @param envCode
      * @return
      */
-    public boolean undeployConsumer(String consumerCode,String envCode,String loginUser) {
+    public boolean undeployConsumer(String consumerCode, String envCode, String loginUser) {
         DAGEnvBean env = this.dagEnvDao.getDAGEnvInfoByEnvCode(envCode);
-
         if (env == null || env.getAdminLocation() == null) {
             return false;
         }
 
         if ("DAG".equals(env.getEnvType())) {
             //网关环境取消部署消费者
-            ConsumerProxy cp = new ConsumerProxy(env.getAdminLocation(),consumerCode);
+            ConsumerProxy cp = new ConsumerProxy(env.getAdminLocation(), consumerCode);
             if (cp.isFound()) {
                 cp.delete();
             }
-
-        } else if ("ESB".equals(env.getEnvType()) && "OSB".equals(env.getTechType())) {
-            //OSB总线环境取消部署消费者
-            OSBConsumerProxy.newInstance().removeUser(envCode,loginUser,consumerCode);
+        } else if ("ESB".equals(env.getEnvType()) && "MULE".equals(env.getTechType())) {
+            //undo   取消部署用户名密码，更新表数据
 
         }
 
@@ -185,7 +181,7 @@ public class ConsumerDeployService {
      * @param envCode
      * @return
      */
-    public boolean updateBasicAuth(String consumerCode,String newPd,String envCode,String loginUser) {
+    public boolean updateBasicAuth(String consumerCode, String newPd, String envCode, String loginUser) {
 
         DAGEnvBean env = this.dagEnvDao.getDAGEnvInfoByEnvCode(envCode);
 
@@ -201,19 +197,12 @@ public class ConsumerDeployService {
 
         if ("DAG".equals(env.getEnvType())) {
             //网关环境查找用户
-            ConsumerProxy cp = new ConsumerProxy(env.getAdminLocation(),consumerCode);
-//            if (!cp.isFound()) {
-//                res = cp.add(consumerCode,null);
-//            }
-//            if (res) {
-//                res = cp.setBasicAuth(newPd);
-//            }
+            ConsumerProxy cp = new ConsumerProxy(env.getAdminLocation(), consumerCode);
             if (cp.isFound()) {
                 res = cp.setBasicAuth(newPd);
             }
-        } else if ("ESB".equals(env.getEnvType()) && "OSB".equals(env.getTechType())) {
-            //OSB总线环境添加用户
-            OSBConsumerProxy.newInstance().setUser(envCode,loginUser,consumerCode,newPd);
+        } else if ("ESB".equals(env.getEnvType()) && "MULE".equals(env.getTechType())) {
+            //直接返回，更新用户名密码信息
         }
 
         return res;
@@ -221,6 +210,7 @@ public class ConsumerDeployService {
 
     /**
      * 删除jwtauth认证
+     *
      * @param dcjId
      * @return
      */
@@ -234,7 +224,7 @@ public class ConsumerDeployService {
             }
             if ("DAG".equals(env.getEnvType())) {
                 //网关环境查找用户
-                ConsumerProxy cp = new ConsumerProxy(env.getAdminLocation(),jb.getCsmCode());
+                ConsumerProxy cp = new ConsumerProxy(env.getAdminLocation(), jb.getCsmCode());
                 if (cp.isFound()) {
                     cp.deleteTokenAuth(jb.getIssKey());
                 }
@@ -249,6 +239,7 @@ public class ConsumerDeployService {
 
     /**
      * 添加JWT Token
+     *
      * @param jb
      * @return
      */
@@ -261,7 +252,7 @@ public class ConsumerDeployService {
             }
             if ("DAG".equals(env.getEnvType())) {
                 //网关环境查找用户
-                ConsumerProxy cp = new ConsumerProxy(env.getAdminLocation(),jb.getCsmCode());
+                ConsumerProxy cp = new ConsumerProxy(env.getAdminLocation(), jb.getCsmCode());
                 if (cp.isFound()) {
                     cp.addTokenAuth(jb);
                 }

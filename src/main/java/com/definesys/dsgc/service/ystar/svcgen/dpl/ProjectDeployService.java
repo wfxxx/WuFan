@@ -5,9 +5,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.definesys.dsgc.service.esbenv.DSGCBusCfgDao;
 import com.definesys.dsgc.service.esbenv.bean.DSGCEnvMachineCfg;
 import com.definesys.dsgc.service.lkv.FndPropertiesDao;
-import com.definesys.dsgc.service.projdir.DSGCProjDirManagerDao;
-import com.definesys.dsgc.service.projdir.bean.DSGCSysProfileDir;
+import com.definesys.dsgc.service.lkv.bean.FndProperties;
+import com.definesys.dsgc.service.ystar.svcgen.proj.DSGCProjDirManagerDao;
+import com.definesys.dsgc.service.ystar.svcgen.proj.bean.DSGCSysProfileDir;
 import com.definesys.dsgc.service.utils.StringUtil;
+import com.definesys.dsgc.service.ystar.svcgen.conn.SvcGenConnDao;
+import com.definesys.dsgc.service.ystar.svcgen.conn.bean.SvcgenConnBean;
 import com.definesys.dsgc.service.ystar.svcgen.svcdpl.bean.SvcGenDeployLogVO;
 import com.definesys.dsgc.service.ystar.utils.FileUtils;
 import com.definesys.dsgc.service.ystar.utils.JGitUtils;
@@ -37,13 +40,11 @@ import java.util.*;
 
 /**
  * @Description: 项目编译部署服务类
- * @Author：afan
- * @Date : 2020/1/7 15:18
+ * @Author：ystar
+ * @Date : 2021/5/21 15:18
  */
 @Service
 public class ProjectDeployService {
-    @Value("${ystar.git.repo_home}")
-    private String repoHome;
     @Value("${ystar.git.deploy_proj_name}")
     private String deployProjName;
     @Value("${ystar.git.maven_home}")
@@ -58,6 +59,8 @@ public class ProjectDeployService {
     private String muleHome;
     @Value("${ystar.esb.dsgc_home}")
     private String dsgcHome;
+    @Value("${ystar.git.repo_home}")
+    private String repoHome;
     @Value("${ystar.esb.esb_port}")
     private String esbPort;
 
@@ -75,7 +78,8 @@ public class ProjectDeployService {
 
     @Autowired
     private ProjectDeployDao projectDeployDao;
-
+    @Autowired
+    private SvcGenConnDao svcGenConnDao;
 
     /**
      * @Description: 从远程仓库拉取代码
@@ -85,10 +89,8 @@ public class ProjectDeployService {
      */
     public Response cloneProject(Map<String, String> map) {
         //git远程仓库地址
-        //String gitRepoUri = fndPropertiesDao.findFndPropertiesByKey("GIT_REPO_URI").getPropertyValue();
         String gitRepoUri = map.get("gitUrl");
         String projectName = map.get("projectName");
-        Map<String, Object> tagByCode = fndPropertiesDao.getTagByCode(gitRepoUri);
         //git远程仓库分支,分支名从tag中获取
         branchName = StringUtil.isNotBlank(branchName) ? branchName : fndPropertiesDao.findFndPropertiesByKey("GIT_BRANCH_NAME").getPropertyValue();
         //String branchName = map.get("TAG");
@@ -118,11 +120,11 @@ public class ProjectDeployService {
      */
     public Response doCommitAndPush(String message) {
         //git访问用户
-        gitUsername = StringUtil.isNotBlank(gitUsername) ? gitUsername : fndPropertiesDao.findFndPropertiesByKey("GIT_USERNAME").getPropertyValue();
+        gitUsername = getFndCfgPath("GIT_USERNAME");//StringUtil.isNotBlank(gitUsername) ? gitUsername : fndPropertiesDao.findFndPropertiesByKey("GIT_USERNAME").getPropertyValue();
         //git用户密码
-        gitPassword = StringUtil.isNotBlank(gitPassword) ? gitPassword : fndPropertiesDao.findFndPropertiesByKey("GIT_PASSWORD").getPropertyValue();
+        gitPassword = getFndCfgPath("GIT_PASSWORD");//StringUtil.isNotBlank(gitPassword) ? gitPassword : fndPropertiesDao.findFndPropertiesByKey("GIT_PASSWORD").getPropertyValue();
         // 本地仓库地址
-        repoHome = StringUtil.isNotBlank(repoHome) ? repoHome : fndPropertiesDao.findFndPropertiesByKey("REPO_HOME").getPropertyValue();
+        repoHome = getFndCfgPath("dsgc") + "/git-repo";//StringUtil.isNotBlank(repoHome) ? repoHome : fndPropertiesDao.findFndPropertiesByKey("REPO_HOME").getPropertyValue();
         boolean b = JGitUtils.doCommitAndPush(repoHome, message, gitUsername, gitPassword);
         if (b) {
             return Response.ok().setMessage("提交代码成功");
@@ -137,12 +139,10 @@ public class ProjectDeployService {
      * @return: com.definesys.mpaas.common.http.Response
      */
     public Response packageProject() {
-
         //maven安装目录
-        mavenHome = StringUtil.isNotBlank(mavenHome) ? mavenHome : fndPropertiesDao.findFndPropertiesByKey("MAVEN_HOME")
-                .getPropertyValue();
+        mavenHome = getFndCfgPath("maven");
         // 本地仓库地址
-        repoHome = StringUtil.isNotBlank(repoHome) ? repoHome : fndPropertiesDao.findFndPropertiesByKey("REPO_HOME").getPropertyValue();
+        repoHome = getFndCfgPath("dsgc") + "/git-repo";
         // 打包
         boolean b = MavenUtils.mvnCleanPackage(repoHome, mavenHome);
         if (b) {
@@ -167,7 +167,8 @@ public class ProjectDeployService {
         deployProjName = StringUtil.isNotBlank(deployProjName) ? deployProjName : fndPropertiesDao.findFndPropertiesByKey("DEPLOY_PROJ_NAME")
                 .getPropertyValue();
         // 本地仓库地址
-        repoHome = StringUtil.isNotBlank(repoHome) ? repoHome : fndPropertiesDao.findFndPropertiesByKey("REPO_HOME").getPropertyValue();
+        dsgcHome = getFndCfgPath("dsgc");
+        repoHome = dsgcHome + "/git-repo";//StringUtil.isNotBlank(repoHome) ? repoHome : fndPropertiesDao.findFndPropertiesByKey("REPO_HOME").getPropertyValue();
         //curEnv = fndPropertiesDao.findFndPropertiesByKey("DSGC_CURRENT_ENV").getPropertyValue();
         String warPath = repoHome + "/target/" + deployProjName + ".war";
         File projectFile = new File(repoHome + "/target/");
@@ -410,16 +411,16 @@ public class ProjectDeployService {
      */
     public Response packageMuleProject(String proId) {
         //maven安装目录
-        String mavenHome1 = StringUtil.isNotBlank(mavenHome) ? mavenHome : fndPropertiesDao.findFndPropertiesByKey("MAVEN_HOME")
-                .getPropertyValue();
+        mavenHome = getFndCfgPath("maven");//StringUtil.isNotBlank(mavenHome) ? mavenHome : fndPropertiesDao.findFndPropertiesByKey("MAVEN_HOME").getPropertyValue();
         // 本地仓库地址
-        String repoHome1 = StringUtil.isNotBlank(repoHome) ? repoHome : fndPropertiesDao.findFndPropertiesByKey("REPO_HOME").getPropertyValue();
+        dsgcHome = getFndCfgPath("dsgc");// StringUtil.isNotBlank(dsgcHome) ? dsgcHome : fndPropertiesDao.findFndPropertiesByKey("DSGC_HOME").getPropertyValue();
+        repoHome = dsgcHome + "/git-repo";
         //根据proId查询projectName
         String projectName = projDirManagerDao.getSysProfileDirByProId(proId).getProjName();
         //项目地址
-        String proAddress = repoHome1 + "/" + projectName;
+        String proAddress = repoHome + "/" + projectName;
         // 打包
-        boolean b = MavenUtils.mvnCleanPackage(proAddress, mavenHome1);
+        boolean b = MavenUtils.mvnCleanPackage(proAddress, mavenHome);
         if (b) {
             //String warPath = proAddress + "/target/" + projectName + ".war";
             return Response.ok().setMessage("编译打包成功!").data("{repoHome}/" + projectName + "/target/" + projectName + ".war");
@@ -445,13 +446,13 @@ public class ProjectDeployService {
             try {
                 String fileName = projectName + ".war";
                 // mule安装目录
-                String muleHome1 = StringUtil.isNotBlank(muleHome) ? muleHome : fndPropertiesDao.findFndPropertiesByKey("MULE_HOME").getPropertyValue();
-                String esbPort1 = StringUtil.isNotBlank(esbPort) ? esbPort : fndPropertiesDao.findFndPropertiesByKey("MULE_ESB_PORT").getPropertyValue();
-                String dsgcHome1 = StringUtil.isNotBlank(dsgcHome) ? dsgcHome : fndPropertiesDao.findFndPropertiesByKey("DSGC_HOME").getPropertyValue();
+                muleHome = getFndCfgPath("mule");//StringUtil.isNotBlank(muleHome) ? muleHome : fndPropertiesDao.findFndPropertiesByKey("MULE_HOME").getPropertyValue();
+                esbPort = getFndCfgPath("MULE_ESB_PORT");//StringUtil.isNotBlank(esbPort) ? esbPort : fndPropertiesDao.findFndPropertiesByKey("MULE_ESB_PORT").getPropertyValue();
+                dsgcHome = getFndCfgPath("dsgc");//StringUtil.isNotBlank(dsgcHome) ? dsgcHome : fndPropertiesDao.findFndPropertiesByKey("DSGC_HOME").getPropertyValue();
                 // 本地仓库地址
-                String repoHome1 = StringUtil.isNotBlank(repoHome) ? repoHome : fndPropertiesDao.findFndPropertiesByKey("REPO_HOME").getPropertyValue();
+                repoHome = dsgcHome + "/git-repo";//StringUtil.isNotBlank(repoHome) ? repoHome : fndPropertiesDao.findFndPropertiesByKey("REPO_HOME").getPropertyValue();
                 //备份目录
-                String bakFilePath = dsgcHome1 + "/bak";
+                String bakFilePath = dsgcHome + "/bak";
                 String version = deployLog.getvId();
                 String dplMsg = deployLog.getDplMsg();
                 String envCode = deployLog.getEnvCode();
@@ -461,7 +462,7 @@ public class ProjectDeployService {
                 String timestamp = dateFormat.format(date);
                 SvcGenDeployLog svcgenDeployLog = new SvcGenDeployLog();
                 if (version == null) {//部署
-                    String warPath = repoHome1 + "/" + projectName + "/target/" + fileName;
+                    String warPath = repoHome + "/" + projectName + "/target/" + fileName;
                     version = projectName + timestamp + ".war";
                     //备份至本地
                     System.out.println("warPath->" + warPath + "\nbakFilePath->" + bakFilePath + "/" + version);
@@ -480,7 +481,7 @@ public class ProjectDeployService {
                 //本地文件路径
                 //String curFilePath = dsgcHome + "/bak";
                 //上传文件至服务器
-                uploadProjectFile(envCode, fileName, muleHome1, esbPort1, bakFilePath + "/" + version);
+                uploadProjectFile(envCode, fileName, muleHome, esbPort, bakFilePath + "/" + version);
                 //更新项目目录最新版本信息
                 projDirManagerDao.updateProjectVersion(proId, version);
                 return Response.ok().setMessage("部署成功！").data(svcgenDeployLog);
@@ -554,44 +555,79 @@ public class ProjectDeployService {
         return log;
     }
 
+
+
+
+
     public Response initProject(String proId) {
         DSGCSysProfileDir profileDir = projDirManagerDao.getSysProfileDirByProId(proId);
-        if (profileDir != null) {
-            // 本地仓库地址
-            String repoHome1 = StringUtil.isNotBlank(repoHome) ? repoHome : fndPropertiesDao.findFndPropertiesByKey("REPO_HOME").getPropertyValue();
-            //git访问用户
-            String gitUsername1 = StringUtil.isNotBlank(gitUsername) ? gitUsername : fndPropertiesDao.findFndPropertiesByKey("GIT_USERNAME").getPropertyValue();
-            //git用户密码
-            String gitPassword1 = StringUtil.isNotBlank(gitPassword) ? gitPassword : fndPropertiesDao.findFndPropertiesByKey("GIT_PASSWORD").getPropertyValue();
-            boolean initFlag = true;
-            String projectName = profileDir.getProjName();
-            String gitRepoUri = profileDir.getRepoUri();
-            String branchName = profileDir.getBranchName();
-            String proType = profileDir.getProjType();
-            String projectPort = profileDir.getProjPort();
-            String curProjectPath = repoHome1 + File.separator + projectName;
-            //1-克隆远程空仓库至本地
-            JGitUtils.clone(gitRepoUri, branchName, gitUsername1, gitPassword1, curProjectPath);
-            //2-添加项目初始化配置文件
-            Response res = this.projectDeployDao.initCfgFile(curProjectPath, projectName, proType, projectPort);
-            if (!"ok".equals(res.getCode())) {
-                return res;
-            }
-            //3-提交代码
-            initFlag = JGitUtils.doCommitAndPush(curProjectPath, "first commit", gitUsername1, gitPassword1);
-            if (!initFlag) {
-                return Response.error("初始化代码提交失败！");
-            }
-            //4-更新初始化状态
-            this.projectDeployDao.updProfileDirInitStatusByProId(proId, "Y");
-            return Response.ok().data("初始化成功");
+        SvcgenConnBean svcgenConnBean = svcGenConnDao.querySvcGenConnectById(profileDir.getConnId());
+        // 本地仓库地址
+        dsgcHome = getFndCfgPath("dsgc");
+        repoHome = dsgcHome + "/git-repo";
+        //git访问用户
+        String gitUsername1 = svcgenConnBean.getAttr4();
+        //git用户密码
+        String gitPassword1 = svcgenConnBean.getAttr5();
+        boolean initFlag = true;
+        String projectName = profileDir.getProjName();
+        String gitRepoUri = profileDir.getRepoUri();
+        String branchName = profileDir.getBranchName();
+        String proType = profileDir.getProjType();
+        String projectPort = profileDir.getProjPort();
+        String curProjectPath = repoHome + File.separator + projectName;
+        //1-克隆远程空仓库至本地
+        JGitUtils.clone(gitRepoUri, branchName, gitUsername1, gitPassword1, curProjectPath);
+        //2-添加项目初始化配置文件
+        Response res = this.projectDeployDao.initCfgFile(curProjectPath, projectName, proType, projectPort);
+        if (!"ok".equals(res.getCode())) {
+            return res;
         }
-        return Response.error("项目目录为空！");
+        //3-提交代码
+        initFlag = JGitUtils.doCommitAndPush(curProjectPath, "first commit", gitUsername1, gitPassword1);
+        if (!initFlag) {
+            return Response.error("初始化代码提交失败！");
+        }
+        //4-更新初始化状态
+        this.projectDeployDao.updProfileDirInitStatusByProId(proId, "Y");
+        return Response.ok().data("初始化成功");
     }
 
 
     public List<DSGCSysProfileDir> getSvcGenProjectList(DSGCSysProfileDir project) {
         return this.projectDeployDao.getSvcGenProjectList(project);
+    }
+
+
+    public String getFndCfgPath(String type) {
+        String key = type;
+        switch (type) {
+            case "dsgc":
+                if (StringUtil.isNotBlank(dsgcHome)) {
+                    return dsgcHome;
+                } else {
+                    key = "DSGC_HOME";
+                }
+                break;
+            case "mule":
+                if (StringUtil.isNotBlank(muleHome)) {
+                    return muleHome;
+                } else {
+                    key = "MULE_HOME";
+                }
+                break;
+            case "maven":
+                if (StringUtil.isNotBlank(mavenHome)) {
+                    return mavenHome;
+                } else {
+                    key = "MAVEN_HOME";
+                }
+                break;
+            default:
+                break;
+        }
+        FndProperties properties = fndPropertiesDao.findFndPropertiesByKey(key);
+        return properties != null ? properties.getPropertyValue() : null;
     }
 
 

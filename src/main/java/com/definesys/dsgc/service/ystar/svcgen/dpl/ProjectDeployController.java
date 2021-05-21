@@ -1,6 +1,6 @@
 package com.definesys.dsgc.service.ystar.svcgen.dpl;
 
-import com.definesys.dsgc.service.projdir.bean.DSGCSysProfileDir;
+import com.definesys.dsgc.service.ystar.svcgen.proj.bean.DSGCSysProfileDir;
 import com.definesys.dsgc.service.ystar.svcgen.svcdpl.bean.SvcGenDeployLog;
 import com.definesys.mpaas.common.http.Response;
 import io.swagger.annotations.Api;

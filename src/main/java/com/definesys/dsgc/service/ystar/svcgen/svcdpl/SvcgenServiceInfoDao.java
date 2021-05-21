@@ -32,16 +32,15 @@ public class SvcgenServiceInfoDao {
         return sw.buildQuery().eq("SERV_NO", svcCode).doQueryFirst(SvcgenServiceInfo.class);
     }
 
-    public PageQueryResult querySvcGenInfo(String q, int page, int
+    public PageQueryResult<SvcgenServiceInfo> querySvcGenInfo(String q, int page, int
             pageSize) {
-        PageQueryResult result = sw.buildViewQuery("svggen_service_v")
+        return sw.buildViewQuery("v_dsgc_svcgen_service_info")
                 .or()
-                .likeNocase("SERV_NO", q)
-                .like("SERV_NAME", q)
-                .likeNocase("SYS_CODE", q)
+                .like("svcCode", q)
+                .like("svcName", q)
+                .likeNocase("sysCode", q)
                 .orderBy("creationDate", "desc")
                 .doPageQuery(page, pageSize, SvcgenServiceInfo.class);
-        return result;
     }
 
     public void updateRestStatus(String servNo) {
@@ -51,7 +50,7 @@ public class SvcgenServiceInfoDao {
                 .doUpdate(SvcgenServiceInfo.class);
     }
 
-    public void updatePublishStatus(String svcCode,String status) {
+    public void updatePublishStatus(String svcCode, String status) {
         sw.buildQuery()
                 .update("TEXT_ATTRIBUTE3", status)
                 .eq("servNo", svcCode)

@@ -261,7 +261,7 @@ public class DInsService {
         System.out.println(dInstBeanObject);
         ResultVO resultVO = HttpReqUtil.sendPostRequest(dessServiceUrl + "/dess/add", dInstBeanObject, request);
 
-        System.out.println("data1111->"+resultVO);
+        System.out.println("data1111->" + resultVO);
 
     }
 
@@ -285,6 +285,9 @@ public class DInsService {
     //手动调用定时任务 TODO
     public JSONObject manualJobInstance(HttpServletRequest request, HashMap reqParam) {
         List<String> jobNoList = (List<String>) reqParam.get("jobNo");
+        String body = String.valueOf(reqParam.get("body"));
+        String header = String.valueOf(reqParam.get("header"));
+
         List<String> failList = jobNoList;
         for (String jobNo : jobNoList) {
             DInstBean dinstBean = dInsDao.getBusinessIdByJobNo(jobNo);
@@ -292,6 +295,8 @@ public class DInsService {
             if (StringUtil.isNotBlank(businessId)) {
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("businessId", businessId);
+                jsonObject.put("header", header);
+                jsonObject.put("body", body);
                 HttpReqUtil.sendPostRequest(dessServiceUrl + "/dess/manualJob", jsonObject, request);
             } else {
                 jobNoList.remove(jobNo);

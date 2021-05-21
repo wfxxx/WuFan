@@ -68,11 +68,14 @@ public class SvcGenConnService {
                 connSuccess = sapConnValidBean.isSapConnValid();
             } else if ("FTP".equals(connType)) {
                 connSuccess = this.checkFtpConnInfoValid(attr1, attr2, attr3, attr4, attr5);
-            } else if ("IP:Port".equals(connType)) {
+            } else if ("IP".equals(connType) || "GIT".equals(connType)) {
                 connSuccess = this.checkIpPortConnInfoValid(attr2, attr3);
-            } else if ("GIT".equals(connType)) {
-                connSuccess = this.checkGitConnInfoValid(attr2, attr3, attr4, attr5, attr6);
+            } else if ("Shell".equals(connType)) {
+                connSuccess = this.checkShellConnInfoValid(attr2, attr4, attr5);
             }
+//            else if ("GIT".equals(connType)) {
+//                connSuccess = this.checkGitConnInfoValid(attr2, attr3, attr4, attr5);
+//            }
             if (connSuccess) {
                 return Response.ok().setMessage("连接成功！").data(true);
             } else {
@@ -153,9 +156,12 @@ public class SvcGenConnService {
         return ShellUtil.checkIpPortValid(ip, ftpPort);
     }
 
-    public boolean checkGitConnInfoValid(String ip, String port, String username, String password, String branch) {
-        int ftpPort = Integer.parseInt(port);
-        return ShellUtil.checkIpPortValid(ip, ftpPort);
+    public boolean checkGitConnInfoValid(String ip, String port, String username, String password) {
+        return ShellUtil.checkGitRepoValid("http://" + ip + ":" + port, username, password);
+    }
+
+    public boolean checkShellConnInfoValid(String ip, String username, String password) {
+        return ShellUtil.checkShellConnValid(ip, username, password);
     }
 
 

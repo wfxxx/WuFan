@@ -41,4 +41,11 @@ public class SvcGenConnDao {
         this.sw.buildQuery().eq("connId", connId).doDelete(SvcgenConnBean.class);
     }
 
+    public SvcgenConnBean querySvcGenConnectById(String  connId) {
+        return sw.buildQuery().eq("connId", connId).doQueryFirst(SvcgenConnBean.class);
+    }
+    public SvcgenConnBean querySvcGenConnectByName(String  connName) {
+        return sw.buildQuery().eq("connName", connName).doQueryFirst(SvcgenConnBean.class);
+    }
+
 }

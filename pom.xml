@@ -212,8 +212,20 @@
             <artifactId>easywsdl-wsdl</artifactId>
             <version>2.1</version>
         </dependency>
-        <!--  Mule  End-->
 
+        <!-- scp上传文件至远程服务器 -->
+        <dependency>
+            <groupId>ch.ethz.ganymed</groupId>
+            <artifactId>ganymed-ssh2</artifactId>
+            <version>262</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jsch</artifactId>
+            <version>0.1.55</version>
+        </dependency>
+
+        <!--  Mule  End-->
     </dependencies>
 
     <build>

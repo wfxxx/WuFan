@@ -1,10 +1,16 @@
 package com.definesys.dsgc.service.ystar.utils;
 
 import com.definesys.dsgc.service.utils.StringUtils;
+import com.definesys.dsgc.service.ystar.svcgen.util.ShellUtil;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Socket;
+import java.lang.reflect.Method;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -93,9 +99,55 @@ public class YStarUtil {
     }
 
 
+    /***
+     * 方法参数说明
+     * @param target 调用方法的当前对象
+     * @param methodName 方法名称
+     * @param parameterTypes 调用方法的参数类型
+     * @param params 参数  可以传递多个参数
+     *
+     * */
+    public static Object callMethod(final Object target, final String methodName, int second, final Class<?>[] parameterTypes, final Object[] params) throws ExecutionException, InterruptedException, TimeoutException {
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        FutureTask<String> future = new FutureTask<String>(new Callable<String>() {
+            @Override
+            public String call() throws Exception {
+                Method method = target.getClass().getDeclaredMethod(methodName, parameterTypes);
+                Object returnValue = method.invoke(target, params);
+                return returnValue != null ? returnValue.toString() : null;
+            }
+        });
 
-    public static void main(String[] args) throws IOException {
+        executorService.execute(future);
+        String result = null;
+        try {
+            /**获取方法返回值 并设定方法执行的时间为10秒*/
+            result = future.get(second, TimeUnit.SECONDS);
+        } catch (TimeoutException | InterruptedException | ExecutionException e) {
+            future.cancel(true);
+            executorService.shutdownNow();
+            System.out.println("--0---");
+            throw e;
+        } finally {
+            System.out.println("--1---");
+            executorService.shutdownNow();
+            System.out.println("--2---");
+        }
+        return result;
+    }
+
+    public static void main(String[] args) {
+        try {
+            callMethod(new ShellUtil(), "checkValid", 5, new Class<?>[]{String.class, String.class, String.class},
+                    new Object[]{"dongdong.yuan@definesys.com", "YStarYdd089", "http://git.definesys.com/ystar/dsgcapp.git"});
+        } catch (RuntimeException | ExecutionException | InterruptedException | TimeoutException e) {
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+        }
+
+        System.out.println("11111");
 
     }
+
 
 }

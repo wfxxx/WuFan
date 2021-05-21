@@ -1,5 +1,14 @@
 package com.definesys.dsgc.service.ystar.utils;
 
+import ch.ethz.ssh2.Connection;
+import ch.ethz.ssh2.SCPClient;
+import ch.ethz.ssh2.SCPOutputStream;
+import ch.ethz.ssh2.Session;
+import com.definesys.dsgc.service.ystar.file.bean.ResultEntity;
+import com.definesys.dsgc.service.ystar.file.bean.ScpConnectEntity;
+import com.jcraft.jsch.*;
+import org.springframework.scheduling.annotation.Async;
+
 import java.io.*;
 import java.nio.channels.FileChannel;
 
@@ -103,32 +112,129 @@ public class FileUtils {
         }
     }
 
+
+    public static void remoteUploadFile(ScpConnectEntity scpConnectEntity, File file,
+                                        String remoteFileName) throws JSchException, IOException {
+        Connection connection = null;
+        Session session = null;
+        SCPOutputStream scpOs = null;
+        FileInputStream fis = null;
+        try {
+            createDir(scpConnectEntity);
+        } catch (JSchException e) {
+            throw e;
+        }
+        try {
+            connection = new Connection(scpConnectEntity.getTrgIp());
+            connection.connect();
+            if (!connection.authenticateWithPassword(scpConnectEntity.getUserName(), scpConnectEntity.getPassWord())) {
+                throw new RuntimeException("SSH连接服务器失败");
+            }
+            session = connection.openSession();
+            SCPClient scpClient = connection.createSCPClient();
+
+            scpOs = scpClient.put(remoteFileName, file.length(), scpConnectEntity.getTrgPath(), "0666");
+            fis = new FileInputStream(file);
+
+            byte[] buf = new byte[1024];
+            int hasMore = fis.read(buf);
+
+            while (hasMore != -1) {
+                scpOs.write(buf);
+                hasMore = fis.read(buf);
+            }
+        } catch (IOException e) {
+            throw new IOException("SSH上传文件至服务器出错" + e.getMessage());
+        } finally {
+            if (null != fis) {
+                try {
+                    fis.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (null != scpOs) {
+                try {
+                    scpOs.flush();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (null != session) {
+                session.close();
+            }
+            if (null != connection) {
+                connection.close();
+            }
+        }
+    }
+
+    private static boolean createDir(ScpConnectEntity scpConnectEntity) throws JSchException {
+        JSch jsch = new JSch();
+        com.jcraft.jsch.Session sshSession = null;
+        Channel channel = null;
+        try {
+            sshSession = jsch.getSession(scpConnectEntity.getUserName(), scpConnectEntity.getTrgIp(), 22);
+            sshSession.setPassword(scpConnectEntity.getPassWord());
+            sshSession.setConfig("StrictHostKeyChecking", "no");
+            sshSession.connect();
+            channel = sshSession.openChannel("sftp");
+            channel.connect();
+        } catch (JSchException e) {
+            e.printStackTrace();
+            throw new JSchException("SFTP连接服务器失败" + e.getMessage());
+        }
+        ChannelSftp channelSftp = (ChannelSftp) channel;
+        if (isDirExist(scpConnectEntity.getTrgPath(), channelSftp)) {
+            channel.disconnect();
+            channelSftp.disconnect();
+            sshSession.disconnect();
+            return true;
+        } else {
+            String pathArray[] = scpConnectEntity.getTrgPath().split("/");
+            StringBuffer filePath = new StringBuffer("/");
+            for (String path : pathArray) {
+                if (path.equals("")) {
+                    continue;
+                }
+                filePath.append(path + "/");
+                try {
+                    if (isDirExist(filePath.toString(), channelSftp)) {
+                        channelSftp.cd(filePath.toString());
+                    } else {
+                        // 建立目录
+                        channelSftp.mkdir(filePath.toString());
+                        // 进入并设置为当前目录
+                        channelSftp.cd(filePath.toString());
+                    }
+                } catch (SftpException e) {
+                    e.printStackTrace();
+                    throw new JSchException("SFTP无法正常操作服务器" + e.getMessage());
+                }
+            }
+        }
+        channel.disconnect();
+        channelSftp.disconnect();
+        sshSession.disconnect();
+        return true;
+    }
+
+    private static boolean isDirExist(String directory, ChannelSftp channelSftp) {
+        boolean isDirExistFlag = false;
+        try {
+            SftpATTRS sftpATTRS = channelSftp.lstat(directory);
+            isDirExistFlag = true;
+            return sftpATTRS.isDir();
+        } catch (Exception e) {
+            if (e.getMessage().toLowerCase().equals("no such file")) {
+                isDirExistFlag = false;
+            }
+        }
+        return isDirExistFlag;
+    }
+
     public static void main(String[] args) throws IOException {
-        String fileNameWithPath = replaceFileSeparator("/Users/ystar/mywords/ZhenYi/Git/ESB_DEV_Demo/zy-demo-proj/aaaa/test.xml");
-        String fileContent = "<text>1234444</text>";
-        createFile(fileNameWithPath, fileContent);
 
-
-//        String fileName = "test.txt";
-//        System.out.println("File.separator:" + File.separator);
-//        File testFile = new File("D:" + File.separator + "filepath" + File.separator + "test" + File.separator + fileName);
-//        File fileParent = testFile.getParentFile();//返回的是File类型,可以调用exsit()等方法
-//        String fileParentPath = testFile.getParent();//返回的是String类型
-//        System.out.println("fileParent:" + fileParent);
-//        System.out.println("fileParentPath:" + fileParentPath);
-//        if (!fileParent.exists()) {
-//            fileParent.mkdirs();// 能创建多级目录
-//        }
-//        if (!testFile.exists())
-//            testFile.createNewFile();//有路径才能创建文件
-//        System.out.println(testFile);
-//
-//        String path = testFile.getPath();
-//        String absolutePath = testFile.getAbsolutePath();//得到文件/文件夹的绝对路径
-//        String getFileName = testFile.getName();//得到文件/文件夹的名字
-//        System.out.println("path:" + path);
-//        System.out.println("absolutePath:" + absolutePath);
-//        System.out.println("getFileName:" + getFileName);
     }
 }
 

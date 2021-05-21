@@ -11,7 +11,9 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * @ClassName: SvcgenServiceInfo
@@ -20,103 +22,103 @@ import java.util.Date;
  * @Date : 2020/1/10 10:30
  */
 @SQLQuery(value = {
-        @SQL(view = "svggen_service_v", sql = "select a.serv_no,a.serv_name,a.res_name,a" +
-                ".sys_code,a.servicetype,a.text_attribute1,a.text_attribute2,a.text_attribute3,a.created_by,a.creation_date,b.sys_name from dsgc_svcgen_service_info a ," +
-                "dsgc_system_entities b where a.sys_code = b.sys_code")
+        @SQL(view = "v_dsgc_svcgen_service_info", sql = "select a.svc_code,a.svc_name,a.proj_id,(select p.proj_name from dsgc_svcgen_proj_info p where p.proj_id = a.proj_id)as proj_name,a.sys_code,a.svc_type,a.text_attribute1,a.text_attribute2,a.text_attribute3,a.created_by,a.creation_date,(select b.sys_name from\n" +
+                " dsgc_system_entities  b where a.sys_code = b.sys_code) sys_name from dsgc_svcgen_service_info a ")
 })
 @Component
 @Table("dsgc_svcgen_service_info")
 @ApiModel(value = "服务快速配置表", description = "服务配置信息")
-public class SvcgenServiceInfo extends MpaasBasePojo {
-
+public class SvcgenServiceInfo extends MpaasBasePojo implements Serializable {
     @ApiModelProperty(value = "服务编号")
-    @Column(value = "SERV_NO")
-    private String servNo;
-
+    @RowID(sequence = "DSGC_SVCGEN_SERVICE_INFO_S", type = RowIDType.UUID)
+    private String svgId;
+    @ApiModelProperty(value = "服务编号")
+    private String svcCode;
     @ApiModelProperty(value = "服务名称")
-    @Column(value = "SERV_NAME")
-    private String servName;
-
+    private String svcName;
     @ApiModelProperty(value = "项目目录名称")
-    @Column(value = "RES_NAME")
-    private String resName;
-
+    private String projId;
+    @Column(type = ColumnType.JAVA)
+    private String projName;
     @ApiModelProperty(value = "所属系统")
-    @Column(value = "SYS_CODE")
     private String sysCode;
-
+    @Column(type = ColumnType.JAVA)
+    private String sysName;
     @ApiModelProperty(value = "接口类型")
-    @Column(value = "SERVICETYPE")
-    private String serviceType;
-
-    @Column(value = "TEXT_ATTRIBUTE1")
+    private String svcType;
+    @ApiModelProperty(value = "部署状态")
+    private String dplStatus;
+    @ApiModelProperty(value = "快速配置信息")
+    private String svcInfo;
+    @ApiModelProperty(value = "备用字段1", notes = "")
     private String textAttribute1;
-
-    @ApiModelProperty(value = "是否部署")
-    @Column(value = "TEXT_ATTRIBUTE2")
+    @ApiModelProperty(value = "备用字段2", notes = "")
     private String textAttribute2;
-
-    @Column(value = "TEXT_ATTRIBUTE3")
+    @ApiModelProperty(value = "备用字段3", notes = "")
     private String textAttribute3;
     @Column(value = "OBJECT_VERSION_NUMBER")
     private String objectVersionNumber;
-
     @ApiModelProperty(value = "创建者")
     @Column(value = "CREATED_BY")
     private String createdBy;
-
     @JsonSerialize(using = MpaasDateTimeSerializer.class)
-    //@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @SystemColumn(SystemColumnType.CREATE_ON)
     @Column(value = "CREATION_DATE")
     private Date creationDate;
-
-
     @SystemColumn(SystemColumnType.LASTUPDATE_BY)
     @Column(value = "LAST_UPDATED_BY")
     private String lastUpdatedBy;
-
     @JsonSerialize(using = MpaasDateSerializer.class)
     @JsonDeserialize(using = MpaasDateDeserializer.class)
     @SystemColumn(SystemColumnType.LASTUPDATE_ON)
     @Column(value = "LAST_UPDATE_DATE")
     private Date lastUpdatedDate;
 
-
-    @Column(type = ColumnType.JAVA)
-    private String sysName;
-
-
-    public String getSysName() {
-        return sysName;
+    public SvcgenServiceInfo() {
     }
 
-    public void setSysName(String sysName) {
-        this.sysName = sysName;
+    public SvcgenServiceInfo(String svgId) {
+        this.svgId = svgId;
     }
 
-    public String getServNo() {
-        return servNo;
+    public String getSvgId() {
+        return svgId;
     }
 
-    public void setServNo(String servNo) {
-        this.servNo = servNo;
+    public void setSvgId(String svgId) {
+        this.svgId = svgId;
     }
 
-    public String getServName() {
-        return servName;
+    public String getSvcCode() {
+        return svcCode;
     }
 
-    public void setServName(String servName) {
-        this.servName = servName;
+    public void setSvcCode(String svcCode) {
+        this.svcCode = svcCode;
     }
 
-    public String getResName() {
-        return resName;
+    public String getSvcName() {
+        return svcName;
     }
 
-    public void setResName(String resName) {
-        this.resName = resName;
+    public void setSvcName(String svcName) {
+        this.svcName = svcName;
+    }
+
+    public String getProjId() {
+        return projId;
+    }
+
+    public void setProjId(String projId) {
+        this.projId = projId;
+    }
+
+    public String getProjName() {
+        return projName;
+    }
+
+    public void setProjName(String projName) {
+        this.projName = projName;
     }
 
     public String getSysCode() {
@@ -127,12 +129,36 @@ public class SvcgenServiceInfo extends MpaasBasePojo {
         this.sysCode = sysCode;
     }
 
-    public String getServiceType() {
-        return serviceType;
+    public String getSysName() {
+        return sysName;
     }
 
-    public void setServiceType(String serviceType) {
-        this.serviceType = serviceType;
+    public void setSysName(String sysName) {
+        this.sysName = sysName;
+    }
+
+    public String getSvcType() {
+        return svcType;
+    }
+
+    public void setSvcType(String svcType) {
+        this.svcType = svcType;
+    }
+
+    public String getDplStatus() {
+        return dplStatus;
+    }
+
+    public void setDplStatus(String dplStatus) {
+        this.dplStatus = dplStatus;
+    }
+
+    public String getSvcInfo() {
+        return svcInfo;
+    }
+
+    public void setSvcInfo(String svcInfo) {
+        this.svcInfo = svcInfo;
     }
 
     public String getTextAttribute1() {
@@ -202,11 +228,16 @@ public class SvcgenServiceInfo extends MpaasBasePojo {
     @Override
     public String toString() {
         return "SvcgenServiceInfo{" +
-                "servNo='" + servNo + '\'' +
-                ", servName='" + servName + '\'' +
-                ", resName='" + resName + '\'' +
+                "svgId='" + svgId + '\'' +
+                ", svcCode='" + svcCode + '\'' +
+                ", svcName='" + svcName + '\'' +
+                ", projId='" + projId + '\'' +
+                ", projName='" + projName + '\'' +
                 ", sysCode='" + sysCode + '\'' +
-                ", serviceType='" + serviceType + '\'' +
+                ", sysName='" + sysName + '\'' +
+                ", svcType='" + svcType + '\'' +
+                ", dplStatus='" + dplStatus + '\'' +
+                ", svcInfo='" + svcInfo + '\'' +
                 ", textAttribute1='" + textAttribute1 + '\'' +
                 ", textAttribute2='" + textAttribute2 + '\'' +
                 ", textAttribute3='" + textAttribute3 + '\'' +
@@ -215,7 +246,6 @@ public class SvcgenServiceInfo extends MpaasBasePojo {
                 ", creationDate=" + creationDate +
                 ", lastUpdatedBy='" + lastUpdatedBy + '\'' +
                 ", lastUpdatedDate=" + lastUpdatedDate +
-                ", sysName='" + sysName + '\'' +
                 '}';
     }
 }

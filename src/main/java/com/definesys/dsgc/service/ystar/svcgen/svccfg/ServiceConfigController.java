@@ -39,11 +39,10 @@ public class ServiceConfigController {
     @ApiOperation("保存rest快速开发接口配置")
     @PostMapping("/saveRestServiceCode")
     public Response saveRestService(@RequestBody RestServiceConfigDTO restServiceConfigDTO, HttpServletRequest request) {
-
         System.out.println(restServiceConfigDTO);
         // 创建人
         String userName = request.getHeader("userName");
-        return restServiceConfigService.saveService(restServiceConfigDTO, userName);
+        return restServiceConfigService.saveRestService(restServiceConfigDTO, userName);
     }
 
     @ApiOperation("保存soap快速开发接口配置")

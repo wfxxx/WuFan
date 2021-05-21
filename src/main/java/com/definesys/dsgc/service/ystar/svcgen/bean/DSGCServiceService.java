@@ -1,7 +1,7 @@
 package com.definesys.dsgc.service.ystar.svcgen.bean;
 
 
-import com.definesys.dsgc.service.projdir.DSGCProjDirManagerDao;
+import com.definesys.dsgc.service.ystar.svcgen.proj.DSGCProjDirManagerDao;
 import com.definesys.dsgc.service.svclog.bean.DSGCValidResult;
 import com.definesys.dsgc.service.svcmng.bean.DSGCService;
 import com.definesys.mpaas.log.SWordLogger;

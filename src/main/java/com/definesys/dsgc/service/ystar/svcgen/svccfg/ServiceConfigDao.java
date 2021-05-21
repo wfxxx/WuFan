@@ -35,10 +35,11 @@ public class ServiceConfigDao {
      * @return
      */
     public Response commitAndPushCode(String localRepoPath, String message) {
-        //git访问用户
-        gitUsername = StringUtil.isNotBlank(gitUsername) ? gitUsername : fndPropertiesDao.findFndPropertiesByKey("GIT_USERNAME").getPropertyValue();
-        //git用户密码
-        gitPassword = StringUtil.isNotBlank(gitPassword) ? gitPassword : fndPropertiesDao.findFndPropertiesByKey("GIT_PASSWORD").getPropertyValue();
+//        //git访问用户
+//        gitUsername = StringUtil.isNotBlank(gitUsername) ? gitUsername : fndPropertiesDao.findFndPropertiesByKey("GIT_USERNAME").getPropertyValue();
+//        //git用户密码
+//        gitPassword = StringUtil.isNotBlank(gitPassword) ? gitPassword : fndPropertiesDao.findFndPropertiesByKey("GIT_PASSWORD").getPropertyValue();
+//
         boolean b = JGitUtils.doCommitAndPush(localRepoPath, message, gitUsername, gitPassword);
         if (b) {
             return Response.ok().setMessage("提交代码成功");

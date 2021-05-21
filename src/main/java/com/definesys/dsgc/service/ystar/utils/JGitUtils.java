@@ -1,18 +1,17 @@
 package com.definesys.dsgc.service.ystar.utils;
 
 import com.definesys.dsgc.service.utils.FileCopyUtil;
-import org.eclipse.jgit.api.AddCommand;
-import org.eclipse.jgit.api.CloneCommand;
-import org.eclipse.jgit.api.CommitCommand;
-import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.eclipse.jgit.transport.URIish;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +31,7 @@ public class JGitUtils {
      * @param gitPassword
      * @param localRepoPath
      * @Description: clone远程仓库
-     * @author: afan
+     * @author: ystar
      * @return: java.lang.Boolean
      */
     public static boolean clone(String gitRepoUri, String branchName, String gitUsername, String gitPassword, String localRepoPath) {
@@ -52,7 +51,6 @@ public class JGitUtils {
                     .setCredentialsProvider(new UsernamePasswordCredentialsProvider(gitUsername,
                             gitPassword))
                     .setBranch(branchName);
-
             Git git = clone.call();
             git.close();
             status = true;

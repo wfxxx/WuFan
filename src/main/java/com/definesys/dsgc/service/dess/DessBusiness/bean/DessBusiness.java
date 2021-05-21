@@ -25,16 +25,25 @@ public class DessBusiness {
     private String headerPayload;
     private String businessDesc;
     private String businessType;
-    private Integer timeOffset;
+    private Integer stOffSet;
+    private Integer edOffSet;
     @Column(type = ColumnType.JAVA)
     private String isDel;
 
-    public Integer getTimeOffset() {
-        return timeOffset;
+    public Integer getStOffSet() {
+        return stOffSet;
     }
 
-    public void setTimeOffset(Integer timeOffset) {
-        this.timeOffset = timeOffset;
+    public void setStOffSet(Integer stOffSet) {
+        this.stOffSet = stOffSet;
+    }
+
+    public Integer getEdOffSet() {
+        return edOffSet;
+    }
+
+    public void setEdOffSet(Integer edOffSet) {
+        this.edOffSet = edOffSet;
     }
 
     public String getBusinessId() {
