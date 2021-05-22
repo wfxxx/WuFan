@@ -63,7 +63,6 @@ public class DSGCServiceService {
      * 提取共同的封装对象的方法
      */
     public Map<String, Object> GetInstace(DSGCServiceVO serviceVO) {
-
         DSGCService ds = new DSGCService();
         ds.setServNo(serviceVO.getServNo());
         ds.setServStatus(serviceVO.getServStatus());
@@ -89,7 +88,6 @@ public class DSGCServiceService {
         DSGCValidResult as = new DSGCValidResult();
         List<DSGCServicesUri> list = serviceVO.getServicesUris();
         List<DSGCTab> tags = serviceVO.getTags();
-
         Map<String, Object> map = new HashMap<>();
         map.put("DSGCService", ds);
         map.put("tags", tags);

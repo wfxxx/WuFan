@@ -20,7 +20,7 @@ import java.util.Date;
 @SQLQuery(value = {
         @SQL(view = "V_DSGC_SVCGEN_PROJ_INFO", sql = "select proj_id,proj_name,proj_desc,proj_type,proj_port,branch_name,init_status,cur_version,s.sys_code,(select e.SYS_NAME from dsgc_system_entities e where e.SYS_CODE = s.SYS_CODE) sys_name,\n" +
                 "s.conn_id,(select c.CONN_NAME from dsgc_svcgen_conn c where s.CONN_ID = c.CONN_ID) conn_name,repo_grp,repo_name,\n" +
-                "(select concat(c.ATTR2,':',c.ATTR3) from dsgc_svcgen_conn c where s.CONN_ID = c.CONN_ID) repo_uri from dsgc_svcgen_proj_info s")
+                "(select concat(c.ATTR1,'://',c.ATTR2,':',c.ATTR3) from dsgc_svcgen_conn c where s.CONN_ID = c.CONN_ID) repo_uri from dsgc_svcgen_proj_info s")
 })
 @Table("DSGC_SVCGEN_PROJ_INFO")
 @ApiModel(value = "系统项目目录表", description = "此表用于项目划分系统部署")
@@ -214,7 +214,7 @@ public class DSGCSysProfileDir extends MpaasBasePojo implements Serializable {
     }
 
     public String getRepoUri() {
-        return "http://" + repoUri + "/" + repoGrp + "/" + repoName + ".git";
+        return repoUri + "/" + repoGrp + "/" + repoName + ".git";
     }
 
     public void setRepoUri(String repoUri) {

@@ -14,7 +14,9 @@ public class ServiceConfigDTO {
     @NotBlank(message = "所属系统不能为空")
     public String toSystem;
     @NotBlank(message = "项目名称不能为空")
-    public String projectName;
+    public String projId;
+    @NotBlank(message = "项目名称不能为空")
+    public String projName;
     @ApiModelProperty(value = "业务服务http配置IP", required = true)
     @NotBlank(message = "业务服务http配置IP不能为空")
     public String bizReqIp;
@@ -65,12 +67,20 @@ public class ServiceConfigDTO {
         this.toSystem = toSystem;
     }
 
-    public String getProjectName() {
-        return projectName;
+    public String getProjId() {
+        return projId;
     }
 
-    public void setProjectName(String projectName) {
-        this.projectName = projectName;
+    public void setProjId(String projId) {
+        this.projId = projId;
+    }
+
+    public String getProjName() {
+        return projName;
+    }
+
+    public void setProjName(String projName) {
+        this.projName = projName;
     }
 
     public String getBizReqIp() {
@@ -96,7 +106,8 @@ public class ServiceConfigDTO {
                 ", svcName='" + svcName + '\'' +
                 ", svcPath='" + svcPath + '\'' +
                 ", toSystem='" + toSystem + '\'' +
-                ", projectName='" + projectName + '\'' +
+                ", projId='" + projId + '\'' +
+                ", projName='" + projName + '\'' +
                 ", bizReqIp='" + bizReqIp + '\'' +
                 ", bizReqPort='" + bizReqPort + '\'' +
                 ", bizReqPath='" + bizReqPath + '\'' +

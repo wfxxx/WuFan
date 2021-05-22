@@ -47,7 +47,7 @@ public class ServiceConfigService {
     @Autowired
     private FndPropertiesDao fndPropertiesDao;
     @Autowired
-    RFCStepsService rfcStepsService;
+    private RFCStepsService rfcStepsService;
     @Autowired
     private SvcgenServiceInfoDao svcgenServiceInfoDao;
     @Autowired
@@ -73,7 +73,7 @@ public class ServiceConfigService {
      */
     public Response saveRestService(RestServiceConfigDTO restServiceConfigDTO, String userName) {
         // 获取配置项目目录
-        String proId = restServiceConfigDTO.getProjectName();
+        String proId = restServiceConfigDTO.getProjId();
         // 检查服务编号是否存在
         DSGCService service = dsgcServiceDao.findServiceByServNo(restServiceConfigDTO.getSvcCode());
         if (service == null) {
@@ -99,9 +99,10 @@ public class ServiceConfigService {
         }
         // 新增快速配置接口信息
         SvcgenServiceInfo svcgenServiceInfo = new SvcgenServiceInfo();
-        svcgenServiceInfo.setSysCode(restServiceConfigDTO.getSvcCode());
+        svcgenServiceInfo.setSvcCode(restServiceConfigDTO.getSvcCode());
         svcgenServiceInfo.setSvcName(restServiceConfigDTO.getSvcName());
         svcgenServiceInfo.setProjId(proId);
+        svcgenServiceInfo.setProjName(restServiceConfigDTO.getProjName());
         svcgenServiceInfo.setCreatedBy(userName);
         svcgenServiceInfo.setSysCode(restServiceConfigDTO.getToSystem());
         svcgenServiceInfo.setSvcType("REST");
@@ -113,8 +114,8 @@ public class ServiceConfigService {
         return Response.ok().setMessage("接口配置保存成功");
     }
 
-    public Response querySvcGenInfo(String q, int pageIndex, int pageSize) {
-        return Response.ok().data(svcgenServiceInfoDao.querySvcGenInfo(q, pageIndex, pageSize));
+    public Response pageQuerySvcGenInfo(String reqParam, int pageIndex, int pageSize) {
+        return Response.ok().data(svcgenServiceInfoDao.pageQuerySvcGenInfo(reqParam, pageIndex, pageSize));
     }
 
     public Response generateService(String servNo) {
@@ -131,16 +132,16 @@ public class ServiceConfigService {
         boolean isSuccess = false;
         if ("REST".equals(svcGen.getSvcType())) {
             RestServiceConfigDTO restConfig = JSONObject.toJavaObject(JSON.parseObject(configInfo), RestServiceConfigDTO.class);
-            String xmlConfigFile = repoHome + "/src/main/app/" + restConfig.getProjectName() + ".xml";
+            String xmlConfigFile = repoHome + "/src/main/app/" + restConfig.getProjName() + ".xml";
             System.out.println("xmlConfigFile->" + xmlConfigFile);
             System.out.println("-1--->" + restConfig.toString());
-            isSuccess = MuleXmlConfUtils.appendProjectCode(repoHome, restConfig.getProjectName(), svcGen.getSvcType(), restConfig);
+            isSuccess = MuleXmlConfUtils.appendProjectCode(repoHome, restConfig.getProjName(), svcGen.getSvcType(), restConfig);
         } else if ("SOAP".equals(svcGen.getSvcType())) {
             SoapServiceConfigDTO soapConfig = JSONObject.toJavaObject(JSON.parseObject(configInfo), SoapServiceConfigDTO.class);
-            isSuccess = MuleXmlConfUtils.appendProjectCode(repoHome, soapConfig.getProjectName(), svcGen.getSvcType(), soapConfig);
+            isSuccess = MuleXmlConfUtils.appendProjectCode(repoHome, soapConfig.getProjName(), svcGen.getSvcType(), soapConfig);
         } else if ("DB".equals(svcGen.getSvcType())) {
             SoapServiceConfigDTO soapConfig = JSONObject.toJavaObject(JSON.parseObject(configInfo), SoapServiceConfigDTO.class);
-            isSuccess = MuleXmlConfUtils.appendProjectCode(repoHome, soapConfig.getProjectName(), svcGen.getSvcType(), soapConfig);
+            isSuccess = MuleXmlConfUtils.appendProjectCode(repoHome, soapConfig.getProjName(), svcGen.getSvcType(), soapConfig);
         } else if ("SAP".equals(svcGen.getSvcType())) {
             SapServiceConfigDTO sapServiceConfigDTO = JSONObject.toJavaObject(JSON.parseObject(configInfo), SapServiceConfigDTO.class);
             try {
@@ -173,7 +174,8 @@ public class ServiceConfigService {
         SvcgenServiceInfo svcgenServiceInfo = new SvcgenServiceInfo();
         svcgenServiceInfo.setSvcCode(soapServiceConfigDTO.getSvcCode());
         svcgenServiceInfo.setSvcName(soapServiceConfigDTO.getSvcName());
-        svcgenServiceInfo.setProjId(soapServiceConfigDTO.getProjectName());
+        svcgenServiceInfo.setProjId(soapServiceConfigDTO.getProjId());
+        svcgenServiceInfo.setProjName(soapServiceConfigDTO.getProjName());
         svcgenServiceInfo.setCreatedBy(userName);
         svcgenServiceInfo.setSysCode(soapServiceConfigDTO.getToSystem());
         svcgenServiceInfo.setSvcType("SOAP");

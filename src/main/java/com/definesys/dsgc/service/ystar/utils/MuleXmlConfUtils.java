@@ -221,7 +221,7 @@ public class MuleXmlConfUtils {
         String wsdlUri = soapConfig.getWsdlUri();
         String subStr = wsdlUri.substring(wsdlUri.lastIndexOf("/"));
         String wsdlName = subStr.substring(subStr.lastIndexOf("/") + 1, subStr.contains(".") ? subStr.lastIndexOf(".") : subStr.lastIndexOf("?"));
-        String wsdlSavePath = soapConfig.getProjectName() + "/src/main/wsdl/" + wsdlName + ".wsdl";
+        String wsdlSavePath = soapConfig.getProjName() + "/src/main/wsdl/" + wsdlName + ".wsdl";
         //保存WSDL文件
         WSDLUtils wsdlUtils = new WSDLUtils();
         Description desc = wsdlUtils.getDesc(wsdlUri);
@@ -236,10 +236,10 @@ public class MuleXmlConfUtils {
     /*** 添加 cxf 配置 */
     public static boolean appendCxfGlbCfg(Element root, ServiceConfigDTO restConfigDTO) {
         root.addElement("cxf:configuration")
-                .addAttribute("name", "CXF_Configuration_" + restConfigDTO.getProjectName())
+                .addAttribute("name", "CXF_Configuration_" + restConfigDTO.getProjName())
                 .addAttribute("enableMuleSoapHeaders", "false")
                 .addAttribute("initializeStaticBusInstance", "true")
-                .addAttribute("doc:name", "CXF Configuration " + restConfigDTO.getProjectName());
+                .addAttribute("doc:name", "CXF Configuration " + restConfigDTO.getProjName());
         return true;
     }
 
@@ -251,7 +251,7 @@ public class MuleXmlConfUtils {
                 .addAttribute("service", soapConfig.getSltPort())
                 .addAttribute("port", soapConfig.getBizReqPort())
                 .addAttribute("serviceAddress", soapConfig.getBizReqPath())
-                .addAttribute("doc:name", "Web Service Consumer " + soapConfig.getProjectName());
+                .addAttribute("doc:name", "Web Service Consumer " + soapConfig.getProjName());
         return true;
     }
 

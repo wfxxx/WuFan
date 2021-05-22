@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import java.util.List;
 
 /**
- * @author zhenglong
+ * @author ystar
  * @Description: DSGCService 和DSGCValidREsutl接收请求的封装对象
  * @Date 2019/3/13 15:25
  */

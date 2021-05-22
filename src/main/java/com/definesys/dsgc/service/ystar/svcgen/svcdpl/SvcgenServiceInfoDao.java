@@ -32,13 +32,13 @@ public class SvcgenServiceInfoDao {
         return sw.buildQuery().eq("SERV_NO", svcCode).doQueryFirst(SvcgenServiceInfo.class);
     }
 
-    public PageQueryResult<SvcgenServiceInfo> querySvcGenInfo(String q, int page, int
+    public PageQueryResult<SvcgenServiceInfo> pageQuerySvcGenInfo(String reqParam, int page, int
             pageSize) {
         return sw.buildViewQuery("v_dsgc_svcgen_service_info")
                 .or()
-                .like("svcCode", q)
-                .like("svcName", q)
-                .likeNocase("sysCode", q)
+                .like("svcCode", reqParam)
+                .like("svcName", reqParam)
+                .likeNocase("sysCode", reqParam)
                 .orderBy("creationDate", "desc")
                 .doPageQuery(page, pageSize, SvcgenServiceInfo.class);
     }

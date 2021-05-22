@@ -22,15 +22,17 @@ import java.util.UUID;
  * @Date : 2020/1/10 10:30
  */
 @SQLQuery(value = {
-        @SQL(view = "v_dsgc_svcgen_service_info", sql = "select a.svc_code,a.svc_name,a.proj_id,(select p.proj_name from dsgc_svcgen_proj_info p where p.proj_id = a.proj_id)as proj_name,a.sys_code,a.svc_type,a.text_attribute1,a.text_attribute2,a.text_attribute3,a.created_by,a.creation_date,(select b.sys_name from\n" +
-                " dsgc_system_entities  b where a.sys_code = b.sys_code) sys_name from dsgc_svcgen_service_info a ")
+        @SQL(view = "v_dsgc_svcgen_service_info", sql = "select a.svc_code,a.svc_name,a.proj_id,a.dpl_status,a.svc_info,b.proj_name,b.cur_version,a.sys_code,\n" +
+                "b.repo_grp, b.repo_name,b.branch_name,(select concat(c.ATTR1,'://',c.ATTR2,':',c.ATTR3) from dsgc_svcgen_conn c where c.CONN_ID = b.CONN_ID) as repo_uri,a.svc_type,a.text_attribute1,a.text_attribute2,a.text_attribute3,a.created_by,a.creation_date,(select b.sys_name from\n" +
+                "   dsgc_system_entities  b where a.sys_code = b.sys_code) sys_name from dsgc_svcgen_service_info a left join dsgc_svcgen_proj_info b on a.proj_id = b.proj_id ")
 })
 @Component
 @Table("dsgc_svcgen_service_info")
 @ApiModel(value = "服务快速配置表", description = "服务配置信息")
 public class SvcgenServiceInfo extends MpaasBasePojo implements Serializable {
     @ApiModelProperty(value = "服务编号")
-    @RowID(sequence = "DSGC_SVCGEN_SERVICE_INFO_S", type = RowIDType.UUID)
+    @RowID(sequence = "DSGC_SVCGEN_SERVICE_INFO_S", type = RowIDType.AUTO_INCREMENT)
+    @Column(value = "SVG_ID")
     private String svgId;
     @ApiModelProperty(value = "服务编号")
     private String svcCode;
@@ -46,10 +48,20 @@ public class SvcgenServiceInfo extends MpaasBasePojo implements Serializable {
     private String sysName;
     @ApiModelProperty(value = "接口类型")
     private String svcType;
-    @ApiModelProperty(value = "部署状态")
+    @ApiModelProperty(value = "接口部署状态")
     private String dplStatus;
+    @Column(type = ColumnType.JAVA)
+    private String curVersion;//当前部署版本
     @ApiModelProperty(value = "快速配置信息")
     private String svcInfo;
+    @Column(type = ColumnType.JAVA)
+    private String repoGrp;//当前部署版本
+    @Column(type = ColumnType.JAVA)
+    private String repoName;//当前部署版本
+    @Column(type = ColumnType.JAVA)
+    private String repoUri;//当前部署版本
+    @Column(type = ColumnType.JAVA)
+    private String branchName;//代码分支
     @ApiModelProperty(value = "备用字段1", notes = "")
     private String textAttribute1;
     @ApiModelProperty(value = "备用字段2", notes = "")
@@ -77,8 +89,44 @@ public class SvcgenServiceInfo extends MpaasBasePojo implements Serializable {
     public SvcgenServiceInfo() {
     }
 
-    public SvcgenServiceInfo(String svgId) {
-        this.svgId = svgId;
+    public String getBranchName() {
+        return branchName;
+    }
+
+    public void setBranchName(String branchName) {
+        this.branchName = branchName;
+    }
+
+    public String getRepoGrp() {
+        return repoGrp;
+    }
+
+    public void setRepoGrp(String repoGrp) {
+        this.repoGrp = repoGrp;
+    }
+
+    public String getRepoName() {
+        return repoName;
+    }
+
+    public void setRepoName(String repoName) {
+        this.repoName = repoName;
+    }
+
+    public String getRepoUri() {
+        return repoUri + "/" + repoGrp + "/" + repoName + ".git";
+    }
+
+    public void setRepoUri(String repoUri) {
+        this.repoUri = repoUri;
+    }
+
+    public String getCurVersion() {
+        return curVersion;
+    }
+
+    public void setCurVersion(String curVersion) {
+        this.curVersion = curVersion;
     }
 
     public String getSvgId() {
@@ -237,6 +285,7 @@ public class SvcgenServiceInfo extends MpaasBasePojo implements Serializable {
                 ", sysName='" + sysName + '\'' +
                 ", svcType='" + svcType + '\'' +
                 ", dplStatus='" + dplStatus + '\'' +
+                ", curVersion='" + curVersion + '\'' +
                 ", svcInfo='" + svcInfo + '\'' +
                 ", textAttribute1='" + textAttribute1 + '\'' +
                 ", textAttribute2='" + textAttribute2 + '\'' +

@@ -45,6 +45,7 @@ public class ServiceConfigController {
         return restServiceConfigService.saveRestService(restServiceConfigDTO, userName);
     }
 
+
     @ApiOperation("保存soap快速开发接口配置")
     @PostMapping("/saveSoapService")
     public Response saveSoapService(@Valid @RequestBody SoapServiceConfigDTO soapServiceConfigDTO,
@@ -89,11 +90,11 @@ public class ServiceConfigController {
     }
 
     @ApiOperation("查询快速配置接口")
-    @RequestMapping(value = "/querySvcGenInfo", method = RequestMethod.POST)
-    public Response querySvcGenInfo(@RequestParam(required = false) String q,
-                                    @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
-                                    @RequestParam(value = "pageIndex", required = false, defaultValue = "1") int pageIndex) {
-        return restServiceConfigService.querySvcGenInfo(q, pageIndex, pageSize);
+    @RequestMapping(value = "/pageQuerySvcGenInfo", method = RequestMethod.POST)
+    public Response pageQuerySvcGenInfo(@RequestParam(required = false) String reqParam,
+                                        @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
+                                        @RequestParam(value = "pageIndex", required = false, defaultValue = "1") int pageIndex) {
+        return restServiceConfigService.pageQuerySvcGenInfo(reqParam, pageIndex, pageSize);
     }
 
     @ApiOperation("查询快速配置接口")
