@@ -435,7 +435,7 @@ public class EsbCockpitDao {
     //查询一日的日志分组并标记状态
     public List<Map<String, Object>> queryFailApiServNo() {
         return sw.buildQuery().sql("SELECT  DISTINCT (select enti.SYS_NAME sys_name from dsgc_services s , dsgc_system_entities enti where s.serv_no = l.SERV_NO AND enti.SYS_CODE = s.SUBORDINATE_SYSTEM) sys_code " +
-                "from dsgc_log_instance l where  INST_STATUS = '0' and TO_DAYS(l.START_TIME) = TO_DAYS(now())")
+                "from dsgc_log_instance l where  INST_STATUS = '0' and TO_DAYS(l.START_TIME) = TO_DAYS(now()) and SERV_NO<>'N/A' ")
                 .doQuery();
     }
 
