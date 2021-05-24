@@ -1,6 +1,7 @@
 package com.definesys.dsgc.service.ystar.common;
 
 import com.definesys.dsgc.service.consumers.bean.DSGCConsumerEntities;
+import com.definesys.dsgc.service.svclog.bean.DSGCLogInstance;
 import com.definesys.dsgc.service.system.bean.DSGCSystemEntities;
 import com.definesys.dsgc.service.ystar.common.bean.LssuesListBean;
 import com.definesys.dsgc.service.ystar.constant.sql.SQLLoader;
@@ -108,5 +109,17 @@ public class CommonDao {
 
     public String Test() {
         return SQLLoader.sql("SQL_GET_DB_LOCK");
+    }
+
+    public List<DSGCLogInstance> queryLogInstances(String svcCode,String startTime, String endTime) {
+        return this.sw.buildQuery().like("servNo",svcCode).lt("creationDate", endTime).gteq("creationDate", startTime).doQuery(DSGCLogInstance.class);
+    }
+
+    public Map<String, Object> queryBodyPayloadById(String trackId) {
+            return this.sw.buildQuery().sql("select p.TRACK_ID,p.PAYLOAD_DATA from dsgc_log_body_payload p where p.PL_ID like '%OB' and p.TRACK_ID = #trackId").setVar("trackId", trackId).doQueryFirst();
+    }
+
+    public void updLogInstanceBusCount(String id, String count) {
+        this.sw.buildQuery().eq("track_Id", id).update("bus_Count", count).doUpdate(DSGCLogInstance.class);
     }
 }

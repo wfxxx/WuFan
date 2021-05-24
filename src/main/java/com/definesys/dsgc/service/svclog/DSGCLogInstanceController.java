@@ -92,46 +92,13 @@ public class DSGCLogInstanceController {
         String userId = request.getHeader("uid");
         try {
             return logService.queryEsbServLogInst(tempQueryLogCondition, pageSize, pageIndex, userRole, userId, request);
-        } catch (JSONException jex) {
+        } catch (JSONException | HttpClientErrorException | IllegalArgumentException jex) {
             jex.printStackTrace();
             return Response.error(jex.getMessage());
-        } catch (HttpClientErrorException hcex) {
-            hcex.printStackTrace();
-            return Response.error(hcex.getMessage());
-        } catch (IllegalArgumentException ex) {
-            ex.printStackTrace();
-            return Response.error(ex.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             return Response.error("查询数据失败！");
         }
-
-//        DSGCLogInstance logInstance = tempQueryLogCondition.getLogInstance();
-//        List<Object> keyword = tempQueryLogCondition.getKeywordForm();
-//        String reqUrl = tempQueryLogCondition.getHttpReqUrl();
-//        com.alibaba.fastjson.JSONObject reqMap = new com.alibaba.fastjson.JSONObject();
-//        ResultVO<PageQueryResult<DSGCLogInstance>> resultvo = new ResultVO<>();
-//        try{
-//            reqMap.put("keyword", JSON.toJSONString(keyword));
-//            reqMap.put("logInstance",JSON.toJSONString(logInstance));
-//            reqMap.put("pageSize",JSON.toJSONString(pageSize));
-//            reqMap.put("pageIndex",JSON.toJSONString(pageIndex));
-//            resultvo = HttpReqUtil.sendPostRequest(reqUrl,reqMap,request);
-//
-//        }catch(JSONException jex){
-//            jex.printStackTrace();
-//            logger.error("%s", jex.getMessage());
-//            return Response.error("参数解析异常！").setCode("error").setMessage("参数解析异常，请检查请求参数是否正确！");
-//        }catch (HttpClientErrorException hcex){
-//            hcex.printStackTrace();
-//            logger.error("%s", hcex.getMessage());
-//            return Response.error("404，请求的url不存在！").setCode("error").setMessage("404，请求的url不存在，请检查要访问的远程外部接口URL配置是否正确！");
-//        }catch (IllegalArgumentException ex){
-//            ex.printStackTrace();
-//            logger.error("%s", ex.getMessage());
-//            return Response.error("请求的uri不能为空！").setCode("error").setMessage("请求的uri不能为空！");
-//        }
-//        return Response.ok().data(resultvo.getData());
     }
 
 
@@ -353,33 +320,20 @@ public class DSGCLogInstanceController {
                                @RequestParam("startTime") String startTime,
                                @RequestParam("endTime") String endTime,
                                HttpServletResponse response) {
-//        System.out.println(trackId + trackId.getClass());
-//        if ("N/A".equals(servNo) || "n/a".equals(servNo) || "".equals(servNo)) {
-//            logService.noPayload(response);
-//            return;
-//        }
         DSGCLogInstance detailsInterfaceData = logService.findLogById(trackId);
         String type = detailsInterfaceData.getPlStoreType();
-//        detailsInterfaceData.
-//        System.out.println(type);
         if ("DB".equals(type)) {
             try {
-
                 String str = logService.getBodyPayload(ibLob);
-
                 if (str != null) {
                     if (str.trim().length() == 0) {
                         logService.showData(response, "报文为空");
                     } else {
                         str.replaceAll(" ", "");
-//                        System.out.println("|" + str + "|");
                         if (str.contains("<")) {
-//                            System.out.println("---xx---");
                             logService.showData(response, str);
                         } else {
-//                     String s = MsgZLibUtil.decompress(str);
                             String s = MsgCompressUtil.deCompress(str);
-
                             String test = MsgCompressUtil.deCompress("eJzj5bKpyM3RTStKTM9NzSvRt+PlAgA5ggWq");
                             logService.showData(response, s);
                         }

@@ -483,43 +483,6 @@ public class DSGCLogInstance {
         this.payloadData = payloadData;
     }
 
-    @Override
-    public String toString() {
-        return "DSGCLogInstance{" +
-                "trackId='" + trackId + '\'' +
-                ", token='" + token + '\'' +
-                ", servNo='" + servNo + '\'' +
-                ", servName='" + servName + '\'' +
-                ", reqFrom='" + reqFrom + '\'' +
-                ", servOper='" + servOper + '\'' +
-                ", startTime='" + startTime + '\'' +
-                ", endTime='" + endTime + '\'' +
-                ", clientIp='" + clientIp + '\'' +
-                ", instStatus='" + instStatus + '\'' +
-                ", bizStatus='" + bizStatus + '\'' +
-                ", bizStatusDtl='" + bizStatusDtl + '\'' +
-                ", runTimes=" + runTimes +
-                ", resTime='" + resTime + '\'' +
-                ", invokeResult='" + invokeResult + '\'' +
-                ", results='" + results + '\'' +
-                ", ibLob='" + ibLob + '\'' +
-                ", msgNum=" + msgNum +
-                ", msgSize=" + msgSize +
-                ", obLob='" + obLob + '\'' +
-                ", plCompress='" + plCompress + '\'' +
-                ", plStoreType='" + plStoreType + '\'' +
-                ", server='" + server + '\'' +
-                ", sequencesId=" + sequencesId +
-                ", billGuid='" + billGuid + '\'' +
-                ", aysnStatus='" + aysnStatus + '\'' +
-                ", objectVersionNumber=" + objectVersionNumber +
-                ", createdBy='" + createdBy + '\'' +
-                ", creationDate=" + creationDate +
-                ", lastUpdatedBy='" + lastUpdatedBy + '\'' +
-                ", lastUpdateDate=" + lastUpdateDate +
-                '}';
-    }
-
     public String getUrlParams() {
         return urlParams;
     }
@@ -567,5 +530,52 @@ public class DSGCLogInstance {
 
     public void setBusCount(Integer busCount) {
         this.busCount = busCount;
+    }
+
+    @Override
+    public String toString() {
+        return "DSGCLogInstance{" +
+                "trackId='" + trackId + '\'' +
+                ", token='" + token + '\'' +
+                ", servNo='" + servNo + '\'' +
+                ", servName='" + servName + '\'' +
+                ", reqFrom='" + reqFrom + '\'' +
+                ", servOper='" + servOper + '\'' +
+                ", startTime='" + startTime + '\'' +
+                ", endTime='" + endTime + '\'' +
+                ", costDesc='" + costDesc + '\'' +
+                ", clientIp='" + clientIp + '\'' +
+                ", instStatus='" + instStatus + '\'' +
+                ", bizStatus='" + bizStatus + '\'' +
+                ", bizStatusDtl='" + bizStatusDtl + '\'' +
+                ", runTimes=" + runTimes +
+                ", resTime='" + resTime + '\'' +
+                ", invokeResult='" + invokeResult + '\'' +
+                ", results='" + results + '\'' +
+                ", ibLob='" + ibLob + '\'' +
+                ", msgNum=" + msgNum +
+                ", msgSize=" + msgSize +
+                ", msDesc='" + msDesc + '\'' +
+                ", obLob='" + obLob + '\'' +
+                ", plCompress='" + plCompress + '\'' +
+                ", plStoreType='" + plStoreType + '\'' +
+                ", server='" + server + '\'' +
+                ", sequencesId=" + sequencesId +
+                ", billGuid='" + billGuid + '\'' +
+                ", aysnStatus='" + aysnStatus + '\'' +
+                ", accessUser='" + accessUser + '\'' +
+                ", bizKey1='" + bizKey1 + '\'' +
+                ", contentType='" + contentType + '\'' +
+                ", userHeaders='" + userHeaders + '\'' +
+                ", sendTo='" + sendTo + '\'' +
+                ", payloadData='" + payloadData + '\'' +
+                ", objectVersionNumber=" + objectVersionNumber +
+                ", createdBy='" + createdBy + '\'' +
+                ", creationDate=" + creationDate +
+                ", lastUpdatedBy='" + lastUpdatedBy + '\'' +
+                ", lastUpdateDate=" + lastUpdateDate +
+                ", urlParams='" + urlParams + '\'' +
+                ", busCount=" + busCount +
+                '}';
     }
 }

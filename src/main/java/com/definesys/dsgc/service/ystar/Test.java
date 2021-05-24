@@ -1,5 +1,6 @@
 package com.definesys.dsgc.service.ystar;
 
+import com.definesys.dsgc.service.utils.MsgCompressUtil;
 import com.definesys.dsgc.service.ystar.report.util.ReportUtils;
 import com.definesys.dsgc.service.ystar.utils.FileUtils;
 import com.definesys.dsgc.service.ystar.utils.MuleXmlConfUtils;
@@ -24,9 +25,12 @@ public class Test {
 //        str.equals("");
 //        System.out.println(str);
 
-        Date date = new Date(1618911014052L);
+//        Date date = new Date(1618911014052L);
+        String str = "eJx9UstKw0AU3fcrwqzbZmbIVBNqIZlEDNgmphNFREJoQ7tok9JEUaR7ceUfFATXfpXFz/BmWuvUhZt5nMe9Zy7TLYt0keX3llOMH7WH+SwvrR10gqZVtbB0vRxNs3latoGtqXaxnOj1QQdRNisWmY56Tw1NQ8sq58U4Q5aGhqi5Q/rlpAY26/evj7fN8+vny3rLjYq7vKopsr2P0yqF6w2cNe1JroBGoUhcW3i1kGJKMKMGMVmHUumSGpvzIB4IkJDmX18i/L40E9NiHUu1ndpcBNF1wgNXKkyM8S/ru4CZHePooKRjC36WSA7tkzCsVHW9IXT2wjoOckJC0EGBn2YOVXqFUeDGXPjBILn0oiHsMrFi7cNTIt8+3/sFYS0GgTFR6sQD/yL2dvEOpwVKahwbShj76p+YcnTq3FuYtaiBpGYF621j1dXVz9P7BrN6jl0=";
+        str = MsgCompressUtil.deCompress(str);
+        System.out.println(str);
 
-        System.out.println(date);
+        //System.out.println("{NullPayload}");
     }
 
 

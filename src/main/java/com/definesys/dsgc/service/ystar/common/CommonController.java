@@ -83,4 +83,13 @@ public class CommonController {
         String res = this.commonService.Test();
         return Response.ok().data(res);
     }
+
+    @RequestMapping(value = "/updInstBusCnt", method = RequestMethod.GET)
+    public Response updInstBusCnt(@RequestParam String svcCode,
+                                  @RequestParam String key,
+                                  @RequestParam String startTime,
+                                  @RequestParam String endTime) {
+        String res = this.commonService.updInstBusCnt(svcCode,key,startTime, endTime);
+        return Response.ok().data(res);
+    }
 }
