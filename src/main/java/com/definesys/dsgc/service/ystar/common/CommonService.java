@@ -44,8 +44,8 @@ public class CommonService {
         return this.commonDao.Test();
     }
 
-    public String updInstBusCnt(String svcCode,String key,String startTime, String endTime) {
-        List<DSGCLogInstance> logInstances = this.commonDao.queryLogInstances(svcCode,startTime, endTime);
+    public String updInstBusCnt(String svcCode, String key, String startTime, String endTime) {
+        List<DSGCLogInstance> logInstances = this.commonDao.queryLogInstances(svcCode, startTime, endTime);
         if (logInstances.size() > 0) {
             List<String> idList = new ArrayList<>();
             for (DSGCLogInstance log : logInstances) {
@@ -55,6 +55,9 @@ public class CommonService {
                 }
             }
             for (String id : idList) {
+                //
+
+                //更新bsCount
                 Map<String, Object> payload = this.commonDao.queryBodyPayloadById(id);
                 if (payload != null) {
                     String body = String.valueOf(payload.get("PAYLOAD_DATA"));
@@ -64,6 +67,7 @@ public class CommonService {
                         System.out.println("body--1->>>" + body);
                     } else {
                         String count = ResolverUtil.preciseResolver(body, key);
+                        count = count.replaceAll(":", "").replaceAll(" ", "").replaceAll("\"", "");
                         System.out.println("result--->>>" + count);
                         if (StringUtil.isNotBlank(count)) {
                             this.commonDao.updLogInstanceBusCount(id, count);

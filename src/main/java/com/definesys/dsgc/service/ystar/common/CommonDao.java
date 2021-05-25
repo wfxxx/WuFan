@@ -5,6 +5,7 @@ import com.definesys.dsgc.service.svclog.bean.DSGCLogInstance;
 import com.definesys.dsgc.service.system.bean.DSGCSystemEntities;
 import com.definesys.dsgc.service.ystar.common.bean.LssuesListBean;
 import com.definesys.dsgc.service.ystar.constant.sql.SQLLoader;
+import com.definesys.mpaas.log.SWordLogger;
 import com.definesys.mpaas.query.MpaasQuery;
 import com.definesys.mpaas.query.MpaasQueryFactory;
 import com.definesys.mpaas.query.db.PageQueryResult;
@@ -18,6 +19,8 @@ import java.util.Map;
 public class CommonDao {
     @Autowired
     private MpaasQueryFactory sw;
+
+    private SWordLogger logger;
 
     //查询上游系统的名称
     public List<DSGCSystemEntities> getOnSystem() {
