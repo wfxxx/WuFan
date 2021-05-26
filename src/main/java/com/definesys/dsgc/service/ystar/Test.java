@@ -31,6 +31,15 @@ public class Test {
         System.out.println(str);
 
         //System.out.println("{NullPayload}");
+
+        str = "\n" +
+                "AH20004$000000000007000000$炭罐电磁阀出气管总成$1.000$9000$\n" +
+                "AH11002$155000600AA$炭罐电磁阀出气管总成$3.000$9000$\n" +
+                "AH11003$155000600AA$炭罐电磁阀出气管总成$226.000$9000$\n" +
+                "<>";
+        String count = str.split("\\$\n").length + "";
+        System.out.println(count);
+
     }
 
 

@@ -49,30 +49,48 @@ public class CommonService {
         if (logInstances.size() > 0) {
             List<String> idList = new ArrayList<>();
             for (DSGCLogInstance log : logInstances) {
+                //1-更新警告状态
+
+                //2-去重trackId
                 String id = log.getTrackId();
                 if (!idList.contains(id)) {
                     idList.add(id);
                 }
             }
             for (String id : idList) {
-                //
-
-                //更新bsCount
+                //查询payload
                 Map<String, Object> payload = this.commonDao.queryBodyPayloadById(id);
                 if (payload != null) {
                     String body = String.valueOf(payload.get("PAYLOAD_DATA"));
-                    body = MsgCompressUtil.deCompress(body).replaceAll("<soapenv:Body xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">", "").replaceAll("</soapenv:Body>", "")
-                            .replaceAll("<soap-env:Body xmlns:soap-env=\"http://schemas.xmlsoap.org/soap/envelope/\">", "").replaceAll("</soap-env:Body>", "");
-                    if ("{NullPayload}".equals(body.trim())) {
-                        System.out.println("body--1->>>" + body);
-                    } else {
-                        String count = ResolverUtil.preciseResolver(body, key);
-                        count = count.replaceAll(":", "").replaceAll(" ", "").replaceAll("\"", "");
-                        System.out.println("result--->>>" + count);
-                        if (StringUtil.isNotBlank(count)) {
+                    if (svcCode.contains("CMN")) {//FTP接口
+                        if (body.trim().startsWith("无数据")) {
+                            System.out.println("body--1->>>" + body);
+                        } else {
+                            //更新bsCount
+                            String count = (body.split("\\$\n").length - 1) + "";
+                            System.out.println("id->" + id + "  count---->" + count);
                             this.commonDao.updLogInstanceBusCount(id, count);
                         }
+                    } else {
+                        body = MsgCompressUtil.deCompress(body).replaceAll("<soapenv:Body xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">", "").replaceAll("</soapenv:Body>", "")
+                                .replaceAll("<soap-env:Body xmlns:soap-env=\"http://schemas.xmlsoap.org/soap/envelope/\">", "").replaceAll("</soap-env:Body>", "");
+                        //去除头尾
+                        if ("{NullPayload}".equals(body.trim())) {
+                            System.out.println("body--1->>>" + body);
+                        } else {
+                            //更新bsCount
+                            String count = ResolverUtil.preciseResolver(body, key);
+                            count = count.replaceAll(":", "").replaceAll(" ", "").replaceAll("\"", "");
+                            System.out.println("result--->>>" + count);
+                            if (StringUtil.isNotBlank(count)) {
+                                this.commonDao.updLogInstanceBusCount(id, count);
+                            }
+//                        //更新警告状态
+//                        String warnValue = ResolverUtil.preciseResolver(body, "");
+                        }
                     }
+
+
                 }
             }
         }
