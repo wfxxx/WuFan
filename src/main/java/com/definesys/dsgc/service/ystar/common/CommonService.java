@@ -62,17 +62,18 @@ public class CommonService {
                 Map<String, Object> payload = this.commonDao.queryBodyPayloadById(id);
                 if (payload != null) {
                     String body = String.valueOf(payload.get("PAYLOAD_DATA"));
+                    body = MsgCompressUtil.deCompress(body);
                     if (svcCode.contains("CMN")) {//FTP接口
                         if (body.trim().startsWith("无数据")) {
                             System.out.println("body--1->>>" + body);
                         } else {
                             //更新bsCount
-                            String count = (body.split("\\$\n").length - 1) + "";
+                            String count = (body.split("\\n").length - 4) + "";
                             System.out.println("id->" + id + "  count---->" + count);
                             this.commonDao.updLogInstanceBusCount(id, count);
                         }
                     } else {
-                        body = MsgCompressUtil.deCompress(body).replaceAll("<soapenv:Body xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">", "").replaceAll("</soapenv:Body>", "")
+                        body.replaceAll("<soapenv:Body xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">", "").replaceAll("</soapenv:Body>", "")
                                 .replaceAll("<soap-env:Body xmlns:soap-env=\"http://schemas.xmlsoap.org/soap/envelope/\">", "").replaceAll("</soap-env:Body>", "");
                         //去除头尾
                         if ("{NullPayload}".equals(body.trim())) {
