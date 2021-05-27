@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -50,8 +51,19 @@ public class EsbCockpitService {
     }
 
     //查询总交易量
-    public Object queryTotalBusTimes() {
-        return esbCockpitDao.queryTotalBusTimes()==null?0:esbCockpitDao.queryTotalBusTimes().get("all_count");
+    public String queryTotalBusTimes() {
+        String busTimes = esbCockpitDao.queryTotalBusTimes()==null?"0":((BigDecimal)(esbCockpitDao.queryTotalBusTimes().get("all_count"))).toString();
+        DecimalFormat df = new DecimalFormat("######0.00");
+        //大于10万 修改单位为 万
+        if(busTimes.length()>12){
+            Double f = Double.parseDouble(busTimes) / 100000000;
+            return df.format(f)+"亿";
+        }
+        if(busTimes.length()>6) {
+            Double f = Double.parseDouble(busTimes) / 10000;
+            return df.format(f)+"万";
+        }
+        return busTimes;
     }
 
 
