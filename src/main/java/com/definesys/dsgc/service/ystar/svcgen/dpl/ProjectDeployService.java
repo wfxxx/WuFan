@@ -6,6 +6,9 @@ import com.definesys.dsgc.service.esbenv.DSGCBusCfgDao;
 import com.definesys.dsgc.service.esbenv.bean.DSGCEnvMachineCfg;
 import com.definesys.dsgc.service.lkv.FndPropertiesDao;
 import com.definesys.dsgc.service.lkv.bean.FndProperties;
+import com.definesys.dsgc.service.ystar.file.FileService;
+import com.definesys.dsgc.service.ystar.file.bean.ResultEntity;
+import com.definesys.dsgc.service.ystar.file.bean.ScpConnectEntity;
 import com.definesys.dsgc.service.ystar.svcgen.proj.DSGCProjDirManagerDao;
 import com.definesys.dsgc.service.ystar.svcgen.proj.bean.DSGCSysProfileDir;
 import com.definesys.dsgc.service.utils.StringUtil;
@@ -27,6 +30,7 @@ import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
 import org.apache.commons.httpclient.methods.multipart.Part;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -80,6 +84,9 @@ public class ProjectDeployService {
     private ProjectDeployDao projectDeployDao;
     @Autowired
     private SvcGenConnDao svcGenConnDao;
+
+    @Autowired
+    private FileService fileService;
 
     /**
      * @Description: 从远程仓库拉取代码
@@ -155,7 +162,7 @@ public class ProjectDeployService {
      * @param message
      * @param userName
      * @Description: 部署项目
-     * @author: afan
+     * @author: ystar
      * @param: []
      * @return: com.definesys.mpaas.common.http.Response
      */
@@ -168,8 +175,7 @@ public class ProjectDeployService {
                 .getPropertyValue();
         // 本地仓库地址
         dsgcHome = getFndCfgPath("dsgc");
-        repoHome = dsgcHome + "/git-repo";//StringUtil.isNotBlank(repoHome) ? repoHome : fndPropertiesDao.findFndPropertiesByKey("REPO_HOME").getPropertyValue();
-        //curEnv = fndPropertiesDao.findFndPropertiesByKey("DSGC_CURRENT_ENV").getPropertyValue();
+        repoHome = dsgcHome + "/git-repo";
         String warPath = repoHome + "/target/" + deployProjName + ".war";
         File projectFile = new File(repoHome + "/target/");
         File file = new File(repoHome + "/target/");
@@ -208,7 +214,7 @@ public class ProjectDeployService {
             // 保存部署日志,和备份版本号
             SvcGenDeployLog svcgenDeployLog = new SvcGenDeployLog();
             svcgenDeployLog.setDplMsg(message);
-            svcgenDeployLog.setDplStatus("N");
+            svcgenDeployLog.setDplStatus("1");
             svcgenDeployLog.setUserCode(userName);
             svcgenDeployLog.setvId(deployProjName + ".war" + timestamp); // 备份的war包版本号
             svcgenDeployLogDao.insertDeployLog(svcgenDeployLog);
@@ -239,126 +245,10 @@ public class ProjectDeployService {
         return Response.ok().data(pageQueryResult);
     }
 
-
-    /**
-     * @Description: 回退版本
-     * @author: afan
-     * @param: [vId]
-     * @return: com.definesys.mpaas.common.http.Response
-     */
-    public Response revokeProj(String vId) {
-        String curEnv = fndPropertiesDao.findFndPropertiesByKey("DSGC_CURRENT_ENV").getPropertyValue();
-        // 根据当前环境获取集群的节点信息
-        List<String> results = new ArrayList<>();
-        List<DSGCEnvMachineCfg> envMachineCfgByEnvCode = dsgcBusCfgDao.findEnvMachineCfgByEnvCode(curEnv);
-        for (DSGCEnvMachineCfg dsgcEnvMachineCfg : envMachineCfgByEnvCode) {
-            String machineName = dsgcEnvMachineCfg.getMachineName();
-            String machineIp = dsgcEnvMachineCfg.getMachineIp();
-            String machinePort = dsgcEnvMachineCfg.getMachinePort();
-            String url = "http://" + machineIp + ":" + machinePort + "/muletools/revokeProject?vId=" + vId;
-            String rtnBody = sendFile(url, null, null);
-            JSONObject jsonObject = JSON.parseObject(rtnBody);
-            String result = "";
-            String code = jsonObject.getString("code");
-            if ("S".equals(code)) {
-                result = "回退成功";
-            } else {
-                result = "回退失败，请手动操作";
-            }
-            results.add(machineName + ":" + result);
-        }
-
-        svcgenDeployLogDao.updateDeployLog(vId);
-        String s = JSONObject.toJSONString(results);
-        return Response.ok().setMessage(s);
-    }
-
-    /**
-     * @Description: 部署项目到指定服务器
-     * @author: afan
-     * @param: [servers]
-     * @return: com.definesys.mpaas.common.http.Response
-     */
-    public Response syncProject(List<Map<String, String>> servers) {
-
-        // 获取当本war版本部署路径
-        String muleDeployDir = fndPropertiesDao.findFndPropertiesByKey("MULE_DEPLOY_DIR")
-                .getPropertyValue();
-        // 获取部署项目名
-        String deployProjName = fndPropertiesDao.findFndPropertiesByKey("DEPLOY_PROJ_NAME")
-                .getPropertyValue();
-        String warFilePath = muleDeployDir + deployProjName + ".war";
-        File file = new File(warFilePath);
-        List<Map<String, String>> rtmMsg = new ArrayList<>();
-        Map<String, String> map = null;
-        for (Map<String, String> server : servers) {
-            map = new HashMap<String, String>();
-            String sName = server.get("serverName");
-            String url = server.get("url");
-            String rtnBody = this.sendFile(url, file, null);
-            JSONObject jsonObject = JSON.parseObject(rtnBody);
-            String code = jsonObject.getString("code");
-            if ("OK".equals(code) && code != null) {
-                map.put("msg", "部署成功");
-            } else {
-                map.put("msg", "部署失败");
-            }
-            rtmMsg.add(map);
-        }
-        return Response.ok().data(rtmMsg);
-    }
-
-    /**
-     * @Description: 接收要部署的项目文件
-     * @author: afan
-     * @param: [request]
-     * @return: Response
-     */
-    public Response receiveProj(HttpServletRequest request) {
-        // 获取当本war版本部署路径
-        String muleDeployDir = fndPropertiesDao.findFndPropertiesByKey("MULE_DEPLOY_DIR")
-                .getPropertyValue();
-        // 获取部署项目名
-        String deployProjName = fndPropertiesDao.findFndPropertiesByKey("DEPLOY_PROJ_NAME")
-                .getPropertyValue();
-        String warFilePath = muleDeployDir + deployProjName + ".war";
-
-        // 将当前上下文初始化给 CommonsMutipartResolver （多部分解析器）
-        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
-        // 检查form中是否有enctype="multipart/form-data"
-        if (multipartResolver.isMultipart(request)) {
-            // 将request变成多部分request
-            MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
-            // 获取multiRequest 中所有的文件名
-            Iterator<String> iter = multiRequest.getFileNames();
-
-            while (iter.hasNext()) {
-                // 一次遍历所有文件
-                MultipartFile file = multiRequest.getFile(iter.next().toString());
-                if (file != null) {
-
-                    File file1 = new File(warFilePath);
-                    if (file1.exists()) {
-                        file1.delete();
-                    }
-                    // 文件数据存储起来
-                    try {
-                        file.transferTo(file1);
-                        return Response.ok();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-        return Response.error("操作失败");
-    }
-
-
     /*
-     * @Description: http发送文件
+     * @Description: http发送文件 已废弃
      * @author: afan
-     * @param: [xx, file]
+     * @param:
      * @return: void
      */
     public String sendFile(String url, File file, Map<String, String> header) {
@@ -411,9 +301,9 @@ public class ProjectDeployService {
      */
     public Response packageMuleProject(String proId) {
         //maven安装目录
-        mavenHome = getFndCfgPath("maven");//StringUtil.isNotBlank(mavenHome) ? mavenHome : fndPropertiesDao.findFndPropertiesByKey("MAVEN_HOME").getPropertyValue();
+        mavenHome = getFndCfgPath("maven");
         // 本地仓库地址
-        dsgcHome = getFndCfgPath("dsgc");// StringUtil.isNotBlank(dsgcHome) ? dsgcHome : fndPropertiesDao.findFndPropertiesByKey("DSGC_HOME").getPropertyValue();
+        dsgcHome = getFndCfgPath("dsgc");
         repoHome = dsgcHome + "/git-repo";
         //根据proId查询projectName
         String projectName = projDirManagerDao.getSysProfileDirByProId(proId).getProjName();
@@ -422,8 +312,9 @@ public class ProjectDeployService {
         // 打包
         boolean b = MavenUtils.mvnCleanPackage(proAddress, mavenHome);
         if (b) {
-            //String warPath = proAddress + "/target/" + projectName + ".war";
-            return Response.ok().setMessage("编译打包成功!").data("{repoHome}/" + projectName + "/target/" + projectName + ".war");
+            //更新状态字段
+            this.projDirManagerDao.updProjectPackStatus(proId, "1");
+            return Response.ok().setMessage("编译打包成功!").data("/git-repo/" + projectName + "/target/" + projectName + ".war");
         }
         return Response.error("打包失败");
     }
@@ -436,6 +327,10 @@ public class ProjectDeployService {
      */
     public Response deployOrFallBackProject(SvcGenDeployLog deployLog) {
         String proId = deployLog.getProjId();
+        String connIdList = deployLog.getConnIdList();
+        if (StringUtil.isBlank(proId) || StringUtil.isBlank(connIdList)) {
+            return Response.error("部署失败！").setMessage("项目ID不存在或部署目标服务器ID不准确！");
+        }
         DSGCSysProfileDir profileDir = projDirManagerDao.getSysProfileDirByProId(proId);
         if (profileDir != null) {
             String projectName = profileDir.getProjName();
@@ -446,11 +341,10 @@ public class ProjectDeployService {
             try {
                 String fileName = projectName + ".war";
                 // mule安装目录
-                muleHome = getFndCfgPath("mule");//StringUtil.isNotBlank(muleHome) ? muleHome : fndPropertiesDao.findFndPropertiesByKey("MULE_HOME").getPropertyValue();
-                esbPort = getFndCfgPath("MULE_ESB_PORT");//StringUtil.isNotBlank(esbPort) ? esbPort : fndPropertiesDao.findFndPropertiesByKey("MULE_ESB_PORT").getPropertyValue();
-                dsgcHome = getFndCfgPath("dsgc");//StringUtil.isNotBlank(dsgcHome) ? dsgcHome : fndPropertiesDao.findFndPropertiesByKey("DSGC_HOME").getPropertyValue();
+                muleHome = getFndCfgPath("mule");
+                dsgcHome = getFndCfgPath("dsgc");
                 // 本地仓库地址
-                repoHome = dsgcHome + "/git-repo";//StringUtil.isNotBlank(repoHome) ? repoHome : fndPropertiesDao.findFndPropertiesByKey("REPO_HOME").getPropertyValue();
+                repoHome = dsgcHome + "/git-repo";
                 //备份目录
                 String bakFilePath = dsgcHome + "/bak";
                 String version = deployLog.getvId();
@@ -461,8 +355,9 @@ public class ProjectDeployService {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
                 String timestamp = dateFormat.format(date);
                 SvcGenDeployLog svcgenDeployLog = new SvcGenDeployLog();
+
+                String warPath = repoHome + "/" + projectName + "/target/" + fileName;
                 if (version == null) {//部署
-                    String warPath = repoHome + "/" + projectName + "/target/" + fileName;
                     version = projectName + timestamp + ".war";
                     //备份至本地
                     System.out.println("warPath->" + warPath + "\nbakFilePath->" + bakFilePath + "/" + version);
@@ -473,6 +368,7 @@ public class ProjectDeployService {
                     svcgenDeployLog.setDplMsg(dplMsg);
                     svcgenDeployLog.setDplStatus("N");
                     svcgenDeployLog.setUserCode(userId);
+                    svcgenDeployLog.setConnIdList(connIdList);
                     svcgenDeployLog.setvId(version); // 备份的war包版本号
                     svcgenDeployLogDao.insertDeployLog(svcgenDeployLog);
                 } else {//回退
@@ -481,7 +377,22 @@ public class ProjectDeployService {
                 //本地文件路径
                 //String curFilePath = dsgcHome + "/bak";
                 //上传文件至服务器
-                uploadProjectFile(envCode, fileName, muleHome, esbPort, bakFilePath + "/" + version);
+                //uploadProjectFile(envCode, fileName, muleHome, esbPort, bakFilePath + "/" + version);
+                String[] connIdArr = connIdList.split(",");
+                List<String> idList = new ArrayList<>();
+                for (String connId : connIdArr) {
+                    if (!idList.contains(connId)) {
+                        //根据projId查询Conn信息
+                        SvcgenConnBean connBean = this.svcGenConnDao.querySvcGenConnectById(connId);
+                        if (connBean != null) {
+                            System.out.println(connBean.toString());
+                            //
+                            String trgPath = muleHome + "/webapps";
+                            fileService.uploadFile(getScpConnEntity(connBean, warPath, trgPath), fileName);
+                            idList.add(connId);
+                        }
+                    }
+                }
                 //更新项目目录最新版本信息
                 projDirManagerDao.updateProjectVersion(proId, version);
                 return Response.ok().setMessage("部署成功！").data(svcgenDeployLog);
@@ -494,9 +405,20 @@ public class ProjectDeployService {
         }
     }
 
+    public ScpConnectEntity getScpConnEntity(SvcgenConnBean connBean, String filePath, String trgPath) {
+        ScpConnectEntity scpConn = new ScpConnectEntity();
+        scpConn.setTrgIp(connBean.getAttr2());
+        scpConn.setUserName(connBean.getAttr4());
+        scpConn.setPassWord(connBean.getAttr5());
+        scpConn.setFilePath(filePath);
+        scpConn.setTrgPath(trgPath);
+        System.out.println(scpConn.toString());
+        return scpConn;
+    }
+
 
     /**
-     * 上传文件至服务器
+     * 上传文件至服务器 暂不用
      *
      * @param envCode
      * @param fileName
@@ -554,9 +476,6 @@ public class ProjectDeployService {
         SvcGenDeployLog log = projectDeployDao.queryDeployLog(proId, sysProfileDir.getTextAttribute1());
         return log;
     }
-
-
-
 
 
     public Response initProject(String proId) {
@@ -631,5 +550,8 @@ public class ProjectDeployService {
     }
 
 
+    public DSGCSysProfileDir queryProjectFirstInfo(DSGCSysProfileDir project) {
+        return projectDeployDao.queryProjectFirstInfo(project);
+    }
 }
 

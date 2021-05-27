@@ -84,7 +84,21 @@ public class DSGCProjDirManagerDao {
     public void updateProjectVersion(String proId, String version) {
         sw.buildQuery()
                 .eq("PROJ_ID", proId)
-                .update("TEXT_ATTRIBUTE1", version)
+                .update("CUR_VERSION", version)
+                .doUpdate(DSGCSysProfileDir.class);
+    }
+
+    public void updProjectPackStatus(String proId, String status) {
+        sw.buildQuery()
+                .eq("PROJ_ID", proId)
+                .update("pack_status", status)
+                .doUpdate(DSGCSysProfileDir.class);
+    }
+
+    public void updProjectDplStatus(String proId, String status) {
+        sw.buildQuery()
+                .eq("PROJ_ID", proId)
+                .update("dpl_status", status)
                 .doUpdate(DSGCSysProfileDir.class);
     }
 

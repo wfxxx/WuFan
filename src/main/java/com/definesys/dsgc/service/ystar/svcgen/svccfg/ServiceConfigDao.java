@@ -29,18 +29,16 @@ public class ServiceConfigDao {
 
     /**
      * 提交代码
+     * ystar
      *
      * @param message
      * @param localRepoPath
+     * @param username
+     * @param password
      * @return
      */
-    public Response commitAndPushCode(String localRepoPath, String message) {
-//        //git访问用户
-//        gitUsername = StringUtil.isNotBlank(gitUsername) ? gitUsername : fndPropertiesDao.findFndPropertiesByKey("GIT_USERNAME").getPropertyValue();
-//        //git用户密码
-//        gitPassword = StringUtil.isNotBlank(gitPassword) ? gitPassword : fndPropertiesDao.findFndPropertiesByKey("GIT_PASSWORD").getPropertyValue();
-//
-        boolean b = JGitUtils.doCommitAndPush(localRepoPath, message, gitUsername, gitPassword);
+    public Response commitAndPushCode(String username, String password, String localRepoPath, String message) {
+        boolean b = JGitUtils.doCommitAndPush(localRepoPath, message, username, password);
         if (b) {
             return Response.ok().setMessage("提交代码成功");
         }

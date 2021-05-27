@@ -1,8 +1,9 @@
 package com.definesys.dsgc.service.ystar.file;
 
-import com.definesys.dsgc.service.ystar.file.bean.ResultEntity;
 import com.definesys.dsgc.service.ystar.file.bean.ScpConnectEntity;
+import com.definesys.dsgc.service.ystar.svcgen.conn.bean.SvcgenConnBean;
 import com.definesys.dsgc.service.ystar.utils.FileUtils;
+import com.definesys.mpaas.common.http.Response;
 import com.jcraft.jsch.JSchException;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,7 @@ import java.io.IOException;
 public class FileService {
 
     @Async
-    public ResultEntity uploadFile(ScpConnectEntity scpConnectEntity, String remoteFileName) {
+    public Response uploadFile(ScpConnectEntity scpConnectEntity, String remoteFileName) {
         File file = new File(scpConnectEntity.getFilePath());//本地文件
         String code = null;
         String message = null;
@@ -37,7 +38,7 @@ public class FileService {
             code = "Error";
             message = e.getMessage();
         }
-        return new ResultEntity(code, message, null);
+        return new Response(code, message);
     }
 
 }

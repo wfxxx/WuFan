@@ -136,4 +136,7 @@ public class ProjectDeployDao {
                 .doQuery(DSGCSysProfileDir.class);
     }
 
+    public DSGCSysProfileDir queryProjectFirstInfo(DSGCSysProfileDir project) {
+        return this.sw.buildQuery().eq("projId", project.getProjId()).doQueryFirst(DSGCSysProfileDir.class);
+    }
 }

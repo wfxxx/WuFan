@@ -22,7 +22,7 @@ import java.util.UUID;
  * @Date : 2020/1/10 10:30
  */
 @SQLQuery(value = {
-        @SQL(view = "v_dsgc_svcgen_service_info", sql = "select a.svc_code,a.svc_name,a.proj_id,a.dpl_status,a.svc_info,b.proj_name,b.cur_version,a.sys_code,\n" +
+        @SQL(view = "v_dsgc_svcgen_service_info", sql = "select a.svc_code,a.svc_name,a.proj_id,a.pbl_status,a.svc_info,b.proj_name,b.dpl_status,b.pack_status,b.cur_version,a.sys_code,\n" +
                 "b.repo_grp, b.repo_name,b.branch_name,(select concat(c.ATTR1,'://',c.ATTR2,':',c.ATTR3) from dsgc_svcgen_conn c where c.CONN_ID = b.CONN_ID) as repo_uri,a.svc_type,a.text_attribute1,a.text_attribute2,a.text_attribute3,a.created_by,a.creation_date,(select b.sys_name from\n" +
                 "   dsgc_system_entities  b where a.sys_code = b.sys_code) sys_name from dsgc_svcgen_service_info a left join dsgc_svcgen_proj_info b on a.proj_id = b.proj_id ")
 })
@@ -48,7 +48,13 @@ public class SvcgenServiceInfo extends MpaasBasePojo implements Serializable {
     private String sysName;
     @ApiModelProperty(value = "接口类型")
     private String svcType;
+    @ApiModelProperty(value = "代码上传发布状态")
+    private String pblStatus;
+    @ApiModelProperty(value = "代码编译打包状态")
+    @Column(type = ColumnType.JAVA)
+    private String packStatus;
     @ApiModelProperty(value = "接口部署状态")
+    @Column(type = ColumnType.JAVA)
     private String dplStatus;
     @Column(type = ColumnType.JAVA)
     private String curVersion;//当前部署版本
@@ -87,6 +93,22 @@ public class SvcgenServiceInfo extends MpaasBasePojo implements Serializable {
     private Date lastUpdatedDate;
 
     public SvcgenServiceInfo() {
+    }
+
+    public String getPblStatus() {
+        return pblStatus;
+    }
+
+    public void setPblStatus(String pblStatus) {
+        this.pblStatus = pblStatus;
+    }
+
+    public String getPackStatus() {
+        return packStatus;
+    }
+
+    public void setPackStatus(String packStatus) {
+        this.packStatus = packStatus;
     }
 
     public String getBranchName() {
@@ -284,9 +306,15 @@ public class SvcgenServiceInfo extends MpaasBasePojo implements Serializable {
                 ", sysCode='" + sysCode + '\'' +
                 ", sysName='" + sysName + '\'' +
                 ", svcType='" + svcType + '\'' +
+                ", pblStatus='" + pblStatus + '\'' +
+                ", packStatus='" + packStatus + '\'' +
                 ", dplStatus='" + dplStatus + '\'' +
                 ", curVersion='" + curVersion + '\'' +
                 ", svcInfo='" + svcInfo + '\'' +
+                ", repoGrp='" + repoGrp + '\'' +
+                ", repoName='" + repoName + '\'' +
+                ", repoUri='" + repoUri + '\'' +
+                ", branchName='" + branchName + '\'' +
                 ", textAttribute1='" + textAttribute1 + '\'' +
                 ", textAttribute2='" + textAttribute2 + '\'' +
                 ", textAttribute3='" + textAttribute3 + '\'' +

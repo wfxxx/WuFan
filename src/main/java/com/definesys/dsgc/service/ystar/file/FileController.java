@@ -31,6 +31,6 @@ public class FileController {
                                @RequestParam String trgFileName) {
         System.out.println("------导入------");
         //System.out.println(files.size());
-        return Response.ok().data(fileService.uploadFile(scpConnectEntity, trgFileName));
+        return fileService.uploadFile(scpConnectEntity, trgFileName);
     }
 }

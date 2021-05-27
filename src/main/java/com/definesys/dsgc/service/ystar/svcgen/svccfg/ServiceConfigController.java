@@ -2,6 +2,7 @@ package com.definesys.dsgc.service.ystar.svcgen.svccfg;
 
 import com.alibaba.fastjson.JSONObject;
 import com.definesys.dsgc.service.svcgen.bean.TmplConfigBean;
+import com.definesys.dsgc.service.ystar.svcgen.bean.SvcgenServiceInfo;
 import com.definesys.dsgc.service.ystar.svcgen.conn.bean.DBConnVO;
 import com.definesys.dsgc.service.ystar.svcgen.dbcfg.DBSvcCfgService;
 import com.definesys.dsgc.service.ystar.svcgen.restcfg.RestServiceConfigDTO;
@@ -97,6 +98,12 @@ public class ServiceConfigController {
         return restServiceConfigService.pageQuerySvcGenInfo(reqParam, pageIndex, pageSize);
     }
 
+    @ApiOperation("根据条件查询一条数据")
+    @PostMapping(value = "/querySvcGenFirstInfo")
+    public Response querySvcGenFirstInfo(@RequestBody SvcgenServiceInfo svcgen) {
+        return Response.ok().data(restServiceConfigService.querySvcGenFirstInfo(svcgen));
+    }
+
     @ApiOperation("查询快速配置接口")
     @RequestMapping(value = "/querySvcGenInfoByCode", method = {RequestMethod.GET, RequestMethod.POST})
     public Response querySvcGenInfoByCode(@RequestParam(required = false) String svcCode) {
@@ -105,14 +112,8 @@ public class ServiceConfigController {
 
     @ApiOperation("发布接口至项目")
     @RequestMapping(value = "/publishSvcCode", method = RequestMethod.GET)
-    public Response publishSvcCode(@RequestParam String svcCode) {
-        return restServiceConfigService.publishSvcCode(svcCode, "ADD");
-    }
-
-    @ApiOperation("发布接口至项目")
-    @RequestMapping(value = "/undoPublishSvcCode", method = RequestMethod.GET)
-    public Response undoPublishSvcCode(@RequestParam String svcCode) {
-        return restServiceConfigService.publishSvcCode(svcCode, "DEL");
+    public Response publishSvcCode(@RequestParam String svcCode,@RequestParam String operate) {
+        return restServiceConfigService.publishSvcCode(svcCode, operate);//type= ADD / DEL
     }
 
 

@@ -48,6 +48,11 @@ public class DSGCSysProfileDir extends MpaasBasePojo implements Serializable {
     private String branchName;
     @ApiModelProperty(value = "初始化状态")
     private String initStatus;
+    @ApiModelProperty(value = "代码编译打包状态")
+    @Column(value = "PACK_STATUS")
+    private String packStatus;
+    @ApiModelProperty(value = "接口部署状态")
+    private String dplStatus;
     @ApiModelProperty(value = "当前版本")
     private String curVersion;
 
@@ -92,6 +97,22 @@ public class DSGCSysProfileDir extends MpaasBasePojo implements Serializable {
     @SystemColumn(SystemColumnType.LASTUPDATE_ON)
     @Column(value = "last_update_date")
     private Date lastUpdateDate;
+
+    public String getPackStatus() {
+        return packStatus;
+    }
+
+    public void setPackStatus(String packStatus) {
+        this.packStatus = packStatus;
+    }
+
+    public String getDplStatus() {
+        return dplStatus;
+    }
+
+    public void setDplStatus(String dplStatus) {
+        this.dplStatus = dplStatus;
+    }
 
     public String getProjId() {
         return projId;
@@ -307,6 +328,8 @@ public class DSGCSysProfileDir extends MpaasBasePojo implements Serializable {
                 ", repoName='" + repoName + '\'' +
                 ", branchName='" + branchName + '\'' +
                 ", initStatus='" + initStatus + '\'' +
+                ", packStatus='" + packStatus + '\'' +
+                ", dplStatus='" + dplStatus + '\'' +
                 ", curVersion='" + curVersion + '\'' +
                 ", textAttribute1='" + textAttribute1 + '\'' +
                 ", textAttribute2='" + textAttribute2 + '\'' +

@@ -10,7 +10,7 @@ import java.util.List;
 
 @SQLQuery(
         value = {
-                @SQL(view = "svcgen_deploy_log", sql = "select p.PROJ_ID,p.PROJ_NAME,p.INIT_STATUS,g.ENV_CODE,g.V_ID, g.DPL_DATE,(select u.USER_NAME from dsgc_user u where u.USER_ID = g.USER_CODE) DPL_USER,p.TEXT_ATTRIBUTE1 CUR_VERSION,g.DPL_STATUS,g.DPL_MSG \n" +
+                @SQL(view = "svcgen_deploy_log", sql = "select p.PROJ_ID,p.PROJ_NAME,p.INIT_STATUS,g.ENV_CODE,g.V_ID,g.conn_id_list, g.DPL_DATE,(select u.USER_NAME from dsgc_user u where u.USER_ID = g.USER_CODE) DPL_USER,p.CUR_VERSION,g.DPL_STATUS,g.DPL_MSG \n" +
                         "from dsgc_svcgen_proj_info p,dsgc_svcgen_deploy_log g \n" +
                         "where p.PROJ_ID = g.PROJ_ID ")
         }
@@ -30,6 +30,8 @@ public class SvcGenDeployLogVO {
     private Date dplDate;
     @Column("CUR_VERSION")
     private String curVersion;//当前版本
+    @Column("CONN_ID_LIST")
+    private String connIdList;//部署服务器connId
     @Column("DPL_USER")
     private String dplUser;
     @Column("DPM_STATUS")
@@ -44,6 +46,14 @@ public class SvcGenDeployLogVO {
         this.projId = projId;
         this.projName = projName;
         this.initStatus = initStatus;
+    }
+
+    public String getConnIdList() {
+        return connIdList;
+    }
+
+    public void setConnIdList(String connIdList) {
+        this.connIdList = connIdList;
     }
 
     public String getCurVersion() {

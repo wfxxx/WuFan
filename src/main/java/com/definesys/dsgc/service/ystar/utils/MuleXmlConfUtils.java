@@ -109,10 +109,38 @@ public class MuleXmlConfUtils {
      *
      * @param proPath
      * @param proName
-     * @param svcType
      * @param svcConfigDTO
      * @return
      */
+    public static boolean appendRestProjectCode(String proPath, String proName, RestServiceConfigDTO svcConfigDTO) {
+        System.out.println("-appendConf->\n" + svcConfigDTO.toString());
+        try {
+            SAXReader reader = new SAXReader();
+            File cfgFile = new File(FileUtils.replaceFileSeparator(proPath + "/" + proName + "/src/main/app/global-cfg.xml"));
+            Document cfgDoc = reader.read(cfgFile);
+            Element cfgRoot = cfgDoc.getRootElement();
+            File svcFile = new File(FileUtils.replaceFileSeparator(proPath + "/" + proName + "/src/main/app/" + proName + ".xml"));
+            Document svcDoc = reader.read(svcFile);
+            Element svcRoot = svcDoc.getRootElement();
+            //1-先删除原有代码
+            removeCfgCode(cfgRoot, "REST", svcConfigDTO.svcCode);
+            removeFlowCode(svcRoot, svcConfigDTO.svcCode);
+            saveToXml(cfgFile, cfgDoc);
+            saveToXml(svcFile, svcDoc);
+            //2-添加代码
+            //1-添加http-request-configure
+            appendHttpReqGlbCfg(cfgRoot, svcConfigDTO);
+            //2-添加flow接口代码
+            appendRestCode(svcRoot, svcConfigDTO);
+            //5-保存代码至XML文件
+            saveToXml(cfgFile, cfgDoc);
+            saveToXml(svcFile, svcDoc);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
     public static boolean appendProjectCode(String proPath, String proName, String svcType, ServiceConfigDTO svcConfigDTO) {
         System.out.println("-appendConf->\n" + svcConfigDTO.toString());
         try {
@@ -155,6 +183,7 @@ public class MuleXmlConfUtils {
         }
         return true;
     }
+
 
     /*** 添加 http-request 配置 */
     public static boolean appendHttpReqGlbCfg(Element root, ServiceConfigDTO restConfigDTO) {

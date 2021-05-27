@@ -28,8 +28,15 @@ public class SvcgenServiceInfoDao {
         return sw.buildQuery().eq("svcCode", svcCode).unSelect("sysName").doQuery(SvcgenServiceInfo.class);
     }
 
+    public SvcgenServiceInfo querySvcGenFirstInfo(SvcgenServiceInfo svcgen) {
+        return sw.buildViewQuery("v_dsgc_svcgen_service_info")
+                .eq("svcCode", svcgen.getSvcCode())
+                .eq("svcName",svcgen.getSvcName())
+                .doQueryFirst(SvcgenServiceInfo.class);
+    }
+
     public SvcgenServiceInfo querySvcGenInfoBySvcCode(String svcCode) {
-        return sw.buildQuery().eq("svcCode", svcCode).doQueryFirst(SvcgenServiceInfo.class);
+        return sw.buildViewQuery("v_dsgc_svcgen_service_info").eq("svcCode", svcCode).doQueryFirst(SvcgenServiceInfo.class);
     }
 
     public PageQueryResult<SvcgenServiceInfo> pageQuerySvcGenInfo(String reqParam, int page, int pageSize) {
@@ -44,14 +51,14 @@ public class SvcgenServiceInfoDao {
 
     public void updateRestStatus(String svcCode) {
         sw.buildQuery()
-                .update("dplStatus", '1')
+                .update("DPL_STATUS", '1')
                 .eq("svcCode", svcCode)
                 .doUpdate(SvcgenServiceInfo.class);
     }
 
     public void updatePublishStatus(String svcCode, String status) {
         sw.buildQuery()
-                .update("TEXT_ATTRIBUTE3", status)
+                .update("PBL_STATUS", status)
                 .eq("svcCode", svcCode)
                 .doUpdate(SvcgenServiceInfo.class);
     }

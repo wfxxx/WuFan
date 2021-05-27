@@ -39,6 +39,9 @@ public class SvcGenDeployLog {
     @ApiModelProperty(value = "操作人")
     @Column(value = "USER_CODE")
     private String userCode;
+    @ApiModelProperty(value = "部署服务器connId,逗号分割")
+    @Column(value = "CONN_ID_LIST")
+    private String connIdList;
 
     @ApiModelProperty(value = "状态")
     @Column(value = "DPL_STATUS")
@@ -115,6 +118,29 @@ public class SvcGenDeployLog {
 
     public void setDplDate(Date dplDate) {
         this.dplDate = dplDate;
+    }
+
+    public String getConnIdList() {
+        return connIdList;
+    }
+
+    public void setConnIdList(String connIdList) {
+        this.connIdList = connIdList;
+    }
+
+    @Override
+    public String toString() {
+        return "SvcGenDeployLog{" +
+                "logId='" + logId + '\'' +
+                ", envCode='" + envCode + '\'' +
+                ", projId='" + projId + '\'' +
+                ", vId='" + vId + '\'' +
+                ", userCode='" + userCode + '\'' +
+                ", connIdList='" + connIdList + '\'' +
+                ", dplStatus='" + dplStatus + '\'' +
+                ", dplMsg='" + dplMsg + '\'' +
+                ", dplDate=" + dplDate +
+                '}';
     }
 }
 

@@ -46,4 +46,15 @@ public class ScpConnectEntity {
     public void setTrgPath(String trgPath) {
         this.trgPath = trgPath;
     }
+
+    @Override
+    public String toString() {
+        return "ScpConnectEntity{" +
+                "filePath='" + filePath + '\'' +
+                ", trgIp='" + trgIp + '\'' +
+                ", trgPath='" + trgPath + '\'' +
+                ", userName='" + userName + '\'' +
+                ", passWord='" + passWord + '\'' +
+                '}';
+    }
 }

@@ -14,14 +14,14 @@ public class SvcgenConnBean extends MpaasBasePojo {
     @RowID(type = RowIDType.UUID)
     private String connId;
     private String connName;
-    private String connType;
-    private String attr1;
-    private String attr2;
-    private String attr3;
-    private String attr4;
-    private String attr5;
-    private String attr6;
-    private String attr7;
+    private String connType;// IP/Shell/DB/GIT/FTP/RFC
+    private String attr1;//http/https
+    private String attr2;//ip
+    private String attr3;//port
+    private String attr4;//用户名
+    private String attr5;//密码
+    private String attr6;//branch
+    private String attr7;//
     private String attr8;
     private String attr9;
     private String attr10;

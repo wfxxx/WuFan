@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.definesys.dsgc.service.lkv.FndPropertiesDao;
 import com.definesys.dsgc.service.lkv.bean.FndProperties;
+import com.definesys.dsgc.service.ystar.svcgen.conn.SvcGenConnDao;
 import com.definesys.dsgc.service.ystar.svcgen.proj.DSGCProjDirManagerDao;
 import com.definesys.dsgc.service.ystar.svcgen.proj.bean.DSGCSysProfileDir;
 import com.definesys.dsgc.service.svcgen.RFCStepsService;
@@ -56,6 +57,8 @@ public class ServiceConfigService {
     private ServiceConfigDao serviceConfigDao;
     @Autowired
     private DBSvcCfgDao dbSvcCfgDao;
+    @Autowired
+    private SvcGenConnDao svcGenConnDao;
     @Value("${ystar.esb.dsgc_home}")
     private String dsgcHome;
     @Value("${ystar.git.repo_home}")
@@ -266,7 +269,7 @@ public class ServiceConfigService {
         //根据配置内容，向指定文件添加接口配置flow
         if ("ADD".equals(type)) {
             if (svcgenServiceInfo != null) {
-                if ("1".equals(svcgenServiceInfo.getTextAttribute3())) {
+                if ("1".equals(svcgenServiceInfo.getPblStatus())) {
                     return Response.error("发布失败！").setMessage("服务已发布，无需重新操作！");
                 } else if (this.appendSvcContent(svcgenServiceInfo)) {
                     svcgenServiceInfoDao.updatePublishStatus(svcgenServiceInfo.getSvcCode(), "1");
@@ -277,7 +280,7 @@ public class ServiceConfigService {
             }
         } else if ("DEL".equals(type)) {
             if (svcgenServiceInfo != null) {
-                if ("0".equals(svcgenServiceInfo.getTextAttribute3())) {
+                if ("0".equals(svcgenServiceInfo.getPblStatus())) {
                     return Response.error("撤销失败！").setMessage("服务已撤销，无需重新操作！");
                 } else if (this.removeSvcContent(svcgenServiceInfo)) {
                     svcgenServiceInfoDao.updatePublishStatus(svcgenServiceInfo.getSvcCode(), "0");
@@ -300,24 +303,28 @@ public class ServiceConfigService {
         DSGCSysProfileDir proInfo = proDirManagerDao.getSysProfileDirByProId(proId);
         String proName = proInfo.getProjName();
         System.out.println(proInfo.toString());
+        //获取git连接信息
+        SvcgenConnBean svcgenConnBean = svcGenConnDao.querySvcGenConnectById(proInfo.getConnId());
+        String gitUsername = svcgenConnBean.getAttr4();
+        String gitPwd = svcgenConnBean.getAttr5();
         //获取本地仓库地址
-        dsgcHome = dsgcHome = getFndCfgPath("dsgc");//StringUtil.isNotBlank(dsgcHome) ? dsgcHome : fndPropertiesDao.findFndPropertiesByKey("DSGC_HOME").getPropertyValue();
+        dsgcHome = getFndCfgPath("dsgc");//StringUtil.isNotBlank(dsgcHome) ? dsgcHome : fndPropertiesDao.findFndPropertiesByKey("DSGC_HOME").getPropertyValue();
         repoHome = dsgcHome + "/git-repo";
         //配置内容
-        String configInfo = svcgenServiceInfo.getTextAttribute1();
+        String configInfo = svcgenServiceInfo.getSvcInfo();
         if ("REST".equals(svcType)) {
             RestServiceConfigDTO restConfig = JSONObject.toJavaObject(JSON.parseObject(configInfo), RestServiceConfigDTO.class);
-            MuleXmlConfUtils.appendProjectCode(repoHome, proName, svcType, restConfig);
-            serviceConfigDao.commitAndPushCode(repoHome + "/" + proName, "提交REST接口[" + svcgenServiceInfo.getSvcCode() + "]源代码");
+            MuleXmlConfUtils.appendRestProjectCode(repoHome, proName, restConfig);
+            serviceConfigDao.commitAndPushCode(gitUsername, gitPwd, repoHome + "/" + proName, "提交REST接口[" + svcgenServiceInfo.getSvcCode() + "]源代码");
         } else if ("DB".equals(svcType)) {
             TmplConfigBean tcb = JSONObject.toJavaObject(JSON.parseObject(configInfo), TmplConfigBean.class);
-            SvcgenConnBean svcgenConnBean = dbSvcCfgDao.queryDBConnList("DB", tcb.getDbConn());
-            MuleXmlConfUtils.appendDBProjectCode(repoHome, proName, svcgenConnBean, tcb);
-            serviceConfigDao.commitAndPushCode(repoHome + "/" + proName, "提交REST接口[" + svcgenServiceInfo.getSvcCode() + "]源代码");
+            SvcgenConnBean connBean = dbSvcCfgDao.queryDBConnList("DB", tcb.getDbConn());
+            MuleXmlConfUtils.appendDBProjectCode(repoHome, proName, connBean, tcb);
+            serviceConfigDao.commitAndPushCode(gitUsername, gitPwd, repoHome + "/" + proName, "提交REST接口[" + svcgenServiceInfo.getSvcCode() + "]源代码");
         } else if ("SOAP".equals(svcType)) {
             SoapServiceConfigDTO soapCfg = JSONObject.toJavaObject(JSON.parseObject(configInfo), SoapServiceConfigDTO.class);
             MuleXmlConfUtils.appendProjectCode(repoHome, proName, svcType, soapCfg);
-            serviceConfigDao.commitAndPushCode(repoHome + "/" + proName, "提交SOAP接口[" + svcgenServiceInfo.getSvcCode() + "]源代码");
+            serviceConfigDao.commitAndPushCode(gitUsername, gitPwd, repoHome + "/" + proName, "提交SOAP接口[" + svcgenServiceInfo.getSvcCode() + "]源代码");
         }
         return true;
     }
@@ -331,16 +338,22 @@ public class ServiceConfigService {
         //根据项目名称，获取项目目录
         DSGCSysProfileDir proInfo = proDirManagerDao.getProjectInfoByProName(proName);
         System.out.println(proInfo.toString());
+        //获取git连接信息
+        SvcgenConnBean svcgenConnBean = svcGenConnDao.querySvcGenConnectById(proInfo.getConnId());
+        String gitUsername = svcgenConnBean.getAttr4();
+        String gitPwd = svcgenConnBean.getAttr5();
         //获取本地仓库地址
-        dsgcHome = getFndCfgPath("dsgc");//StringUtil.isNotBlank(dsgcHome) ? dsgcHome : fndPropertiesDao.findFndPropertiesByKey("DSGC_HOME").getPropertyValue();
+        dsgcHome = getFndCfgPath("dsgc");
         repoHome = dsgcHome + "/git-repo";
         //删除代码并提交
         MuleXmlConfUtils.removeProjectCode(repoHome, proName, svcType, svcgenServiceInfo.getSvcCode());
-        serviceConfigDao.commitAndPushCode(repoHome + "/" + proName, "删除" + svcType + "接口[" + svcgenServiceInfo.getSvcCode() + "]源代码");
+        serviceConfigDao.commitAndPushCode(gitUsername, gitPwd, repoHome + "/" + proName, "删除" + svcType + "接口[" + svcgenServiceInfo.getSvcCode() + "]源代码");
         return true;
     }
 
-
+    public SvcgenServiceInfo querySvcGenFirstInfo(SvcgenServiceInfo svcgen) {
+        return svcgenServiceInfoDao.querySvcGenFirstInfo(svcgen);
+    }
     public SvcgenServiceInfo querySvcGenInfoByCode(String svcCode) {
         return svcgenServiceInfoDao.querySvcGenInfoBySvcCode(svcCode);
     }
