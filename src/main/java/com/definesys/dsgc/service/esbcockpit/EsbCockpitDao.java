@@ -449,7 +449,7 @@ public class EsbCockpitDao {
                 .doQuery();
     }
 
-    //查询一周系统的调用量与
+    //查询一周系统的调用量
     public List<eCharts3DBean> queryWeekCountAndFailCount(int year, int month, int startDay, int endDay) {
         return sw.buildQuery().sql("SELECT tb2.sys_code code,tb2.name name,tb1.all_count  allCount,tb1.sucess_count sucessCount FROM\n" +
                 "(select e.sys_code,e.sys_name ,sum(t.total_times) as all_count, sum(t.total_times_s) as sucess_count from rp_serv_day t\n" +
@@ -468,6 +468,25 @@ public class EsbCockpitDao {
                 .setVar("endDay", endDay)
                 .doQuery(eCharts3DBean.class);
     }
+
+    //查询一月系统的调用量
+    public List<eCharts3DBean> queryMonthCountAndFailCount(int year, int month) {
+        return sw.buildQuery().sql("SELECT tb2.sys_code code,tb2.name name,tb1.all_count  allCount,tb1.sucess_count sucessCount FROM\n" +
+                "(select e.sys_code,e.sys_name ,sum(t.total_times) as all_count, sum(t.total_times_s) as sucess_count from rp_serv_month t\n" +
+                "left join  dsgc_services s on s.serv_no=t.serv_no\n" +
+                "left join  dsgc_system_entities e on e.sys_code=s.subordinate_system\n" +
+                "where t.year=#year and t.month=#month\n" +
+                "group by e.sys_code,e.sys_name) tb1 RIGHT JOIN\n" +
+                "(select sys_code ,sys_name as name from(select s.serv_no,s.serv_name,e.sys_code,e.sys_name\n" +
+                "from dsgc_services s \n" +
+                "left join dsgc_system_entities e on s.subordinate_system=e.sys_code\n" +
+                "where e.sys_code is not null) as son1\n" +
+                "group by sys_code,sys_name) tb2 on tb2.sys_code = tb1.sys_code")
+                .setVar("year",year)
+                .setVar("month",month)
+                .doQuery(eCharts3DBean.class);
+    }
+
 
     //查询某一年月区间的每月调用总数
     public List<RadarBean> queryMonthCountByYearAndMonth(int year, int startMonth, int endMonth) {
