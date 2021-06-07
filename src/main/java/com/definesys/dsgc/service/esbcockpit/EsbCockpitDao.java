@@ -555,10 +555,10 @@ public class EsbCockpitDao {
     //查询今日接口连接异常与业务异常
     public Map<String, Object> queryConnectAndBusinessException() {
         return sw.buildQuery().sql("SELECT * from\n" +
-                "(SELECT count(BIZ_STATUS) biz_count from dsgc_log_instance where date(START_TIME) = curdate() and BIZ_STATUS <> 1 and SERV_NO <> 'N/A') tb1,\n" +
-                "(SELECT count(INST_STATUS) inst_count from dsgc_log_instance where date(START_TIME) = curdate() and INST_STATUS = 0 and SERV_NO <> 'N/A') tb2,\n" +
-                "(SELECT count(BIZ_STATUS) scuess_count from dsgc_log_instance where date(START_TIME) = curdate() and INST_STATUS = 1  and SERV_NO <> 'N/A') tb3,\n" +
-                "(SELECT count(BIZ_STATUS) all_count from dsgc_log_instance where date(START_TIME) = curdate() and SERV_NO <> 'N/A') tb4 ")
+                "(SELECT count(BIZ_STATUS) biz_count from dsgc_log_instance where date(CREATION_DATE) = curdate() and BIZ_STATUS <> 1 and SERV_NO <> 'N/A') tb1,\n" +
+                "(SELECT count(INST_STATUS) inst_count from dsgc_log_instance where date(CREATION_DATE) = curdate() and INST_STATUS = 0 and SERV_NO <> 'N/A') tb2,\n" +
+                "(SELECT count(BIZ_STATUS) scuess_count from dsgc_log_instance where date(CREATION_DATE) = curdate() and INST_STATUS = 1  and SERV_NO <> 'N/A') tb3,\n" +
+                "(SELECT count(BIZ_STATUS) all_count from dsgc_log_instance where date(CREATION_DATE) = curdate() and SERV_NO <> 'N/A') tb4 ")
                 .doQueryFirst();
     }
 
