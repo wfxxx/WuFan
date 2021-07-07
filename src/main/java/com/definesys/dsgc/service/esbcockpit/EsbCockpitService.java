@@ -316,10 +316,12 @@ public class EsbCockpitService {
         //当前年月
         int nowYear = cal.get(Calendar.YEAR);
         int nowMonth = cal.get(Calendar.MONTH)+1;
+
         //8个月前的年月
-        cal.add(Calendar.MONTH,-8);
+        cal.add(Calendar.MONTH,-7);
         int beforeYear = cal.get(Calendar.YEAR);
         int beforeMonth = cal.get(Calendar.MONTH)+1;
+
         //存在跨年
         if(nowYear!=beforeYear){
             list= esbCockpitDao.queryMonthCountByYearAndMonth(beforeYear, beforeMonth, 12);
