@@ -289,6 +289,7 @@ public class EsbCockpitService {
         result.put("apiFail",queryFailApi());//一日内接口错误的系统
         result.put("allCountAndFailCount",queryAllCountAndFailCount());//一日内所有系统的接口调用总数，错误数
         result.put("weekReport",select3DEchart());//查询伪3DEchart数据
+        result.put("monthReport",select3DEchartMonth());//查询伪3DEchart月数据
         result.put("radar",selectRadar()); //查询雷达图数据
         result.put("balloon",selectBalloon()); //查询驾驶舱右中的气球图数据
         result.put("cone",selectConeData());//查询驾驶舱左上方锥型图数据
@@ -315,10 +316,12 @@ public class EsbCockpitService {
         //当前年月
         int nowYear = cal.get(Calendar.YEAR);
         int nowMonth = cal.get(Calendar.MONTH)+1;
+
         //8个月前的年月
-        cal.add(Calendar.MONTH,-8);
+        cal.add(Calendar.MONTH,-7);
         int beforeYear = cal.get(Calendar.YEAR);
         int beforeMonth = cal.get(Calendar.MONTH)+1;
+
         //存在跨年
         if(nowYear!=beforeYear){
             list= esbCockpitDao.queryMonthCountByYearAndMonth(beforeYear, beforeMonth, 12);
@@ -423,7 +426,7 @@ public class EsbCockpitService {
         return res;
     }
 
-    //查询驾驶舱右下方
+    //查询驾驶舱右下方周柱状图
     public List<eCharts3DBean> select3DEchart(){
         Calendar cal = Calendar.getInstance();
         int weekday = cal.get(Calendar.DAY_OF_WEEK)-2;
@@ -459,6 +462,14 @@ public class EsbCockpitService {
             }
         }
         return reslt;
+    }
+
+    //查询驾驶舱右下方月柱状图
+    public List<eCharts3DBean> select3DEchartMonth(){
+        Calendar cal = Calendar.getInstance();
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH)+1;
+        return esbCockpitDao.queryMonthCountAndFailCount(year,month);
     }
 
     //查询驾驶舱左上方数据
