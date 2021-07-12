@@ -228,10 +228,10 @@ public class DInsController {
      * @return
      */
     @RequestMapping(value = "/manualJobInstance", method = RequestMethod.POST)
-    public Response manualJobInstance(@RequestBody HashMap reqParam, HttpServletRequest request) {
+    public Response manualJobInstance(@RequestBody DInstBean instBean, HttpServletRequest request) {
         JSONObject jsonObject;
         try {
-            jsonObject = dInsService.manualJobInstance(request, reqParam);
+            jsonObject = dInsService.manualJobInstance(request, instBean);
         } catch (Exception e) {
             e.printStackTrace();
             return Response.error("手动调用发生错误");

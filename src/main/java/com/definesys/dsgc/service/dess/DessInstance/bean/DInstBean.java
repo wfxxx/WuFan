@@ -1,10 +1,12 @@
 package com.definesys.dsgc.service.dess.DessInstance.bean;
 
+import com.definesys.dsgc.service.svcgen.bean.OBHeaderBean;
 import com.definesys.mpaas.query.annotation.Column;
 import com.definesys.mpaas.query.annotation.ColumnType;
 import com.definesys.mpaas.query.annotation.Table;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @ClassName DInstBean
@@ -34,6 +36,12 @@ public class DInstBean {
     private String businessType;
     @Column(type = ColumnType.JAVA)
     private String businessName;
+    @Column(type = ColumnType.JAVA)
+    private String headerPayload;
+    @Column(type = ColumnType.JAVA)
+    private List<OBHeaderBean> headerBeanList;
+    @Column(type = ColumnType.JAVA)
+    private String bodyPayload;
 
     public DInstBean() {
     }
@@ -68,6 +76,29 @@ public class DInstBean {
         this.jobName = jobName;
     }
 
+    public String getHeaderPayload() {
+        return headerPayload;
+    }
+
+    public void setHeaderPayload(String headerPayload) {
+        this.headerPayload = headerPayload;
+    }
+
+    public List<OBHeaderBean> getHeaderBeanList() {
+        return headerBeanList;
+    }
+
+    public void setHeaderBeanList(List<OBHeaderBean> headerBeanList) {
+        this.headerBeanList = headerBeanList;
+    }
+
+    public String getBodyPayload() {
+        return bodyPayload;
+    }
+
+    public void setBodyPayload(String bodyPayload) {
+        this.bodyPayload = bodyPayload;
+    }
 
     public Date getNextDoTime() {
         return nextDoTime;

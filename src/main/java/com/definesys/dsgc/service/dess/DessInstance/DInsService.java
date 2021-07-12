@@ -1,5 +1,6 @@
 package com.definesys.dsgc.service.dess.DessInstance;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.definesys.dsgc.service.dess.CommonReqBean;
 import com.definesys.dsgc.service.dess.DessInstance.bean.DInstBean;
@@ -272,11 +273,11 @@ public class DInsService {
     }
 
     //手动调用定时任务 TODO
-    public JSONObject manualJobInstance(HttpServletRequest request, HashMap reqParam) {
+    public JSONObject manualJobInstance(HttpServletRequest request, DInstBean instBean) {
         String dessServiceUrl = this.propertiesDao.queryPropertyByKey(PROPERTY_KEY_DESS_SERVICE_URL);
-        List<String> jobNoList = (List<String>) reqParam.get("jobNo");
-        String body = String.valueOf(reqParam.get("body"));
-        String header = String.valueOf(reqParam.get("header"));
+        List<String> jobNoList = JSONArray.parseArray(instBean.getJobNo(), String.class);
+        String body = instBean.getBodyPayload();
+        String header = instBean.getHeaderPayload();
         List<String> failList = new ArrayList<>();
         for (String jobNo : jobNoList) {
             DInstBean dinstBean = dInsDao.getBusinessIdByJobNo(jobNo);
