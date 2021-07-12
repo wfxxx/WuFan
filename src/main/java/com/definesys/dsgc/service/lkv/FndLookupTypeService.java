@@ -2,6 +2,7 @@ package com.definesys.dsgc.service.lkv;
 
 import com.definesys.dsgc.service.lkv.bean.FndLookupType;
 import com.definesys.dsgc.service.lkv.bean.FndLookupValue;
+import com.definesys.dsgc.service.lkv.bean.FndModules;
 import com.definesys.dsgc.service.lkv.bean.QueryLktParamBean;
 import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +34,16 @@ public class FndLookupTypeService {
         return this.fndLookupTypeDao.query(fndLookupType, pageSize, pageIndex, "and");
     }
 
+    /**
+     * 暂废弃
+     */
     public PageQueryResult<Map<String, Object>> queryOr(FndLookupType fndLookupType, int pageSize, int pageIndex) {
         return this.fndLookupTypeDao.query(fndLookupType, pageSize, pageIndex, "or");
+    }
+
+    public PageQueryResult<FndLookupType> pageQueryFndLkv(FndLookupType fndLookupType, int pageSize, int pageIndex) {
+        PageQueryResult<FndLookupType> queryResult = this.fndLookupTypeDao.pageQueryFndLkv(fndLookupType, pageSize, pageIndex);
+        return queryResult;
     }
 
     @Transactional

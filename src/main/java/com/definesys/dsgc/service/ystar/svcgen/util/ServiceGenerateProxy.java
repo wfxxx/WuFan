@@ -132,7 +132,7 @@ public class ServiceGenerateProxy {
 
     private void updateRfcSvcGenConfig(TmplConfigBean cfg, Object param) throws Exception {
         this.setObjAttrValue(param, "sgObjCode", cfg.getServNo());
-        this.setObjAttrValue(param, "projDir", cfg.getProjDir());
+        this.setObjAttrValue(param, "projDir", cfg.getProjName());
         this.setObjAttrValue(param, "tmplCodeFlag", 3, int.class);
         this.setObjAttrValue(param, "servDir", cfg.getServDir());
         this.setObjAttrValue(param, "psUri", cfg.getSoapPSUri());
@@ -149,7 +149,7 @@ public class ServiceGenerateProxy {
     private void updateRestSvcGenConfig(TmplConfigBean cfg, Object param, boolean needUpdStore) throws Exception {
         this.setObjAttrValue(param, "sgObjCode", cfg.getServNo());
         this.setObjAttrValue(param, "tmplCodeFlag", 1, int.class);
-        this.setObjAttrValue(param, "projDir", cfg.getProjDir());
+        this.setObjAttrValue(param, "projDir", cfg.getProjName());
         this.setObjAttrValue(param, "servDir", cfg.getServDir());
         this.setObjAttrValue(param, "bsName", cfg.getServNameCode() + "BS");
         this.setObjAttrValue(param, "bsURI", cfg.getBsUri());
@@ -167,7 +167,7 @@ public class ServiceGenerateProxy {
     private void updateSaCmptGenConfig(TmplConfigBean cfg, Object param, boolean needUpdStore) throws Exception {
         this.setObjAttrValue(param, "sgObjCode", cfg.getServNo());
         this.setObjAttrValue(param, "tmplCodeFlag", 51, int.class);
-        this.setObjAttrValue(param, "projDir", cfg.getProjDir());
+        this.setObjAttrValue(param, "projDir", cfg.getProjName());
         this.setObjAttrValue(param, "servNameCode", cfg.getServNameCode());
         this.setObjAttrValue(param, "isProfile", "N");
         this.setObjAttrValue(param, "sysCode", cfg.getToSystem());
@@ -181,7 +181,7 @@ public class ServiceGenerateProxy {
     private void updateSoapSvcGenConfig(TmplConfigBean cfg, Object param, boolean needUpdStore) throws Exception {
         this.setObjAttrValue(param, "sgObjCode", cfg.getServNo());
         this.setObjAttrValue(param, "tmplCodeFlag", 0, int.class);
-        this.setObjAttrValue(param, "projDir", cfg.getProjDir());
+        this.setObjAttrValue(param, "projDir", cfg.getProjName());
         this.setObjAttrValue(param, "servDir", cfg.getServDir());
         this.setObjAttrValue(param, "bsName", cfg.getServNameCode() + "BS");
         this.setObjAttrValue(param, "bsURI", cfg.getBsUri());

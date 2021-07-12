@@ -106,26 +106,16 @@
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>1.2.47</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/fastjson-1.2.47.jar</systemPath>
         </dependency>
 
-        <!--        <dependency>-->
-        <!--            <groupId>org.quartz-scheduler</groupId>-->
-        <!--            <artifactId>quartz</artifactId>-->
-        <!--            <version>2.3.0</version>-->
-        <!--&lt;!&ndash;            <scope>provided</scope>&ndash;&gt;-->
-        <!--        </dependency>-->
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20160810</version>
         </dependency>
 
-        <!-- poi -->
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi-excelant</artifactId>
-            <version>3.14</version>
-        </dependency>
         <!--本地测试-->
         <dependency>
             <groupId>mysql</groupId>
@@ -156,12 +146,55 @@
             <systemPath>${project.basedir}/lib/com.bea.core.xml.xmlbeans.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>commons.io</groupId>
-            <artifactId>commons.io</artifactId>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.5</version>
             <scope>system</scope>
-            <version>20200217</version>
-            <systemPath>${project.basedir}/lib/commons-io-2.4.jar</systemPath>
+            <systemPath>${project.basedir}/lib/commons-io-2.5.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.5</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/commons-lang-2.5.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.1.1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/commons-logging-1.1.1.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>3.2.1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/commons-collections-3.2.1.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.11</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/commons-codec-1.11.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>3.1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/commons-httpclient-3.1.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>commons-net</groupId>
+            <artifactId>commons-net</artifactId>
+            <version>3.6</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/commons-net-3.6.jar</systemPath>
+        </dependency>
+
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
@@ -176,17 +209,14 @@
             <version>20200217</version>
             <systemPath>${project.basedir}/lib/wsdl4j.jar</systemPath>
         </dependency>
+
         <dependency>
             <groupId>net.sf.json-lib</groupId>
             <artifactId>json-lib</artifactId>
             <version>2.4</version>
             <classifier>jdk15</classifier>
         </dependency>
-        <dependency>
-            <groupId>commons-httpclient</groupId>
-            <artifactId>commons-httpclient</artifactId>
-            <version>3.1</version>
-        </dependency>
+
         <!--JWT-->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
@@ -194,18 +224,6 @@
             <version>0.9.1</version>
         </dependency>
 
-        <!--  Mule  start-->
-        <!--操作Git命令-->
-        <dependency>
-            <groupId>org.eclipse.jgit</groupId>
-            <artifactId>org.eclipse.jgit</artifactId>
-            <version>4.11.0.201803080745-r</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jgit</groupId>
-            <artifactId>org.eclipse.jgit.archive</artifactId>
-            <version>4.11.0.201803080745-r</version>
-        </dependency>
         <!--Maven操作-->
         <dependency>
             <groupId>org.apache.maven.shared</groupId>
@@ -232,6 +250,115 @@
         </dependency>
 
         <!--  Mule  End-->
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>1.1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/druid-1.1.0.jar</systemPath>
+        </dependency>
+
+<!--        <dependency>-->
+<!--            <groupId>org.apache.ant</groupId>-->
+<!--            <artifactId>ant</artifactId>-->
+<!--            <version>1.8.2</version>-->
+<!--            <scope>system</scope>-->
+<!--            <systemPath>${project.basedir}/lib/ant-1.8.2.jar</systemPath>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.aspectj</groupId>-->
+<!--            <artifactId>aspectjweaver</artifactId>-->
+<!--            <version>1.9.2</version>-->
+<!--            <scope>system</scope>-->
+<!--            <systemPath>${project.basedir}/lib/aspectjweaver-1.9.2.jar</systemPath>-->
+<!--        </dependency>-->
+
+<!--        <dependency>-->
+<!--            <groupId>com.alibaba</groupId>-->
+<!--            <artifactId>druid</artifactId>-->
+<!--            <version>1.1.0</version>-->
+<!--            <scope>system</scope>-->
+<!--            <systemPath>${project.basedir}/lib/druid-1.1.0.jar</systemPath>-->
+<!--        </dependency>-->
+
+<!--        <dependency>-->
+<!--            <groupId>com.google.guava</groupId>-->
+<!--            <artifactId>guava</artifactId>-->
+<!--            <version>18.0</version>-->
+<!--            <scope>system</scope>-->
+<!--            <systemPath>${project.basedir}/lib/guava-18.0.jar</systemPath>-->
+<!--        </dependency>-->
+
+<!--        <dependency>-->
+<!--            <groupId>com.fasterxml.jackson.core</groupId>-->
+<!--            <artifactId>jackson-databind</artifactId>-->
+<!--            <version>2.9.8</version>-->
+<!--            <scope>system</scope>-->
+<!--            <systemPath>${project.basedir}/lib/jackson-databind-2.9.8.jar</systemPath>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>com.fasterxml.jackson.core</groupId>-->
+<!--            <artifactId>jackson-annotations</artifactId>-->
+<!--            <version>2.9.0</version>-->
+<!--            <scope>system</scope>-->
+<!--            <systemPath>${project.basedir}/lib/jackson-annotations-2.9.0.jar</systemPath>-->
+<!--        </dependency>-->
+
+<!--        <dependency>-->
+<!--            <groupId>com.fasterxml.jackson.core</groupId>-->
+<!--            <artifactId>jackson-core</artifactId>-->
+<!--            <version>2.9.8</version>-->
+<!--            <scope>system</scope>-->
+<!--            <systemPath>${project.basedir}/lib/jackson-core-2.9.8.jar</systemPath>-->
+<!--        </dependency>-->
+
+        <!-- poi -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-excelant</artifactId>
+            <version>3.14</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/poi-excelant-3.14.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml-schemas</artifactId>
+            <version>3.14</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/poi-ooxml-schemas-3.14.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>3.14</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/poi-ooxml-3.14.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>3.14</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/poi-3.14.jar</systemPath>
+        </dependency>
+
+        <!--  Mule  start-->
+        <!--操作Git命令-->
+        <dependency>
+            <groupId>org.eclipse.jgit</groupId>
+            <artifactId>org.eclipse.jgit</artifactId>
+            <version>4.11.0.201803080745-r</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/org.eclipse.jgit-4.11.0.201803080745-r.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jgit</groupId>
+            <artifactId>org.eclipse.jgit.archive</artifactId>
+            <version>4.11.0.201803080745-r</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/org.eclipse.jgit.archive-4.11.0.201803080745-r.jar</systemPath>
+        </dependency>
     </dependencies>
 
     <build>

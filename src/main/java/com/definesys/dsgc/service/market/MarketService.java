@@ -6,7 +6,7 @@ import com.definesys.dsgc.service.apideploylog.bean.DagDeployStatBean;
 import com.definesys.dsgc.service.apiroute.ApiRouteDao;
 import com.definesys.dsgc.service.esbenv.DSGCBusCfgDao;
 import com.definesys.dsgc.service.esbenv.bean.DSGCEnvInfoCfg;
-import com.definesys.dsgc.service.lkv.FndPropertiesDao;
+import com.definesys.dsgc.service.ystar.fnd.property.FndPropertiesDao;
 import com.definesys.dsgc.service.lkv.bean.FndProperties;
 import com.definesys.dsgc.service.market.bean.*;
 import com.definesys.dsgc.service.market.bean.PayloadParamDTO;

@@ -17,16 +17,15 @@ import com.definesys.dsgc.service.svcmng.bean.DSGCService;
 import com.definesys.dsgc.service.lkv.bean.FndLookupValue;
 import com.definesys.dsgc.service.users.DSGCUserDao;
 import com.definesys.dsgc.service.users.bean.DSGCUser;
+import com.definesys.dsgc.service.utils.IpUtils;
 import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+import java.util.regex.Pattern;
 
 @Service
 public class SVCAuthService {
@@ -180,7 +179,7 @@ public class SVCAuthService {
         this.addSvcHis(svcHisBean);
         SVCServBasicInfoDTO svcServBasicInfo = new SVCServBasicInfoDTO();
         svcServBasicInfo.setServNo(svcBaseInfoBean.getServNo());
-        dsgcCachesServices.refreshMuleCache("ALL","BAISC_AUTH_CONFIG");
+        //dsgcCachesServices.refreshMuleCache("ALL","BAISC_AUTH_CONFIG");
     }
     public PageQueryResult<SVCAuthSystemResDTO> queryServAuthSystemList(SVCBaseInfoBean svcBaseInfoBean,int pageIndex,int pageSize){
        PageQueryResult<DSGCSystemEntities> queryResult = svcAuthDao.queryServAuthSystemList(svcBaseInfoBean,pageIndex,pageSize);
@@ -399,6 +398,99 @@ public class SVCAuthService {
     //检查该消费者是否持有服务权限
     public List<DSGCSystemAccess> checkSerAuthIsExist(String servNo, List<String> customerList){
         return svcAuthDao.checkSerAuthIsExist(servNo,customerList);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void saveIpRuleConfig(IPRuleConfigVO ipRuleConfigVO){
+        DSGCIpLimitBean dsgcIpLimitBean = svcAuthDao.checkIpRuleConfigIsExist(ipRuleConfigVO);
+        if (dsgcIpLimitBean != null){
+            dsgcIpLimitBean.setRuleType(ipRuleConfigVO.getType());
+            dsgcIpLimitBean.setRuleCron(ipRuleConfigVO.getRule());
+            svcAuthDao.updateIpRuleConfig(dsgcIpLimitBean);
+        }else {
+            DSGCIpLimitBean ipLimitBean = new DSGCIpLimitBean();
+            ipLimitBean.setRuleCron(ipRuleConfigVO.getRule());
+            ipLimitBean.setRuleType(ipRuleConfigVO.getType());
+            ipLimitBean.setLimitTarget(ipRuleConfigVO.getLimitTarget());
+            ipLimitBean.setLimitType(ipRuleConfigVO.getLimitType());
+            svcAuthDao.addIpRuleConfig(ipLimitBean);
+        }
+    }
+
+    public IPRuleConfigVO queryIpRuleConfig( String limitType, String limitTarget){
+        DSGCIpLimitBean dsgcIpLimitBean = svcAuthDao.queryIpRuleConfig(limitType,limitTarget);
+        IPRuleConfigVO ipRuleConfigVO = new IPRuleConfigVO();
+        if (dsgcIpLimitBean != null){
+            ipRuleConfigVO.setType(dsgcIpLimitBean.getRuleType());
+            ipRuleConfigVO.setRule(dsgcIpLimitBean.getRuleCron());
+            ipRuleConfigVO.setLimitTarget(dsgcIpLimitBean.getLimitTarget());
+            ipRuleConfigVO.setLimitType(dsgcIpLimitBean.getLimitType());
+        }
+        return ipRuleConfigVO;
+    }
+    public Map<String,Object> checkIpRule(List<String> ipList){
+        int b = 0;
+        List<String> result = new ArrayList<>();
+        Map<String,Object> map = new HashMap<>();
+        map.put("key",b);
+        map.put("value",null);
+        if(ipList.size() > 100){                //大于100
+            b = 2;
+            map.put("key",2);
+            map.put("value",null);
+            return map;
+        }
+        if (ipList != null && ipList.size()>0){
+            Pattern pattern = Pattern.compile(IpUtils.patternStr);
+            Pattern ptipv4 = Pattern.compile(IpUtils.ptipv4Str);
+            Pattern ptipv4s = Pattern.compile(IpUtils.ptipv4Strs);
+            //    Boolean bool = false;
+            List<String> errorIpList = new ArrayList<>();
+            for (String item: ipList) {
+                Boolean pattern6 = pattern.matcher(item).matches();    //IPV6
+                Boolean pattern4 = ptipv4.matcher(item).matches();    //IPV4
+                Boolean pattern4s = ptipv4s.matcher(item).matches();   //IPV4网段
+                //  bool = patternB || pattern4 || pattern4s;
+                if(!(pattern6 || pattern4 || pattern4s)){
+                    errorIpList.add(item);
+                }else if(pattern6){
+                    result.add(item);
+                }else if(pattern4){
+                    result.add(item);
+                }else if(pattern4s){
+                    int index = item.indexOf("/");
+                    String mask =item.substring(index+1);
+                    String ip = item.substring(0,index);
+                    List<String> list = IpUtils.parseIpMaskRange(ip,mask);
+                    result.addAll(list);
+                }
+            }
+            if(errorIpList.size() > 0){             //有不合法ip地址
+                b = 3;
+                map.put("key",3);
+                map.put("value",errorIpList);
+                return map;
+            }
+            List<String> repetitionList = checkIpRepetition(result);
+            if(repetitionList != null && repetitionList.size()>0){                //是否有重复的
+                b = 1;
+                map.put("key",b);
+                map.put("value",repetitionList);
+                return map;
+            }
+        }
+        return map;
+    }
+    public List<String> checkIpRepetition(List<String> ipList){
+        Set<String> set = new HashSet<>();
+        List<String> repetitionList = new ArrayList<>();
+        for (String item: ipList) {
+            boolean b = set.add(item);
+            if(!b){
+                repetitionList.add(item);
+            }
+        }
+        return repetitionList;
     }
 
 }

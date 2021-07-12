@@ -2,9 +2,8 @@ package com.definesys.dsgc.service.apimng;
 
 import com.definesys.dsgc.service.apimng.bean.*;
 import com.definesys.dsgc.service.svcmng.SVCMngDao;
-import com.definesys.dsgc.service.svcmng.bean.DSGCPayloadParamsBean;
-import com.definesys.dsgc.service.svcmng.bean.DSGCPayloadSampleBean;
-import com.definesys.dsgc.service.svcmng.bean.SVCCommonReqBean;
+import com.definesys.dsgc.service.svcmng.bean.*;
+import com.definesys.dsgc.service.svcmng.bean.DSGCServicesUri;
 import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
 import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.mpaas.query.db.PageQueryResult;
@@ -81,7 +80,7 @@ public class ApiMngService {
         return apiInfoListBean;
     }
 
-    public PageQueryResult<DagRouteInfoBean> getRouteInfoList(CommonReqBean q, int pageIndex, int pageSize,  String userId, String userRole) {
+    public PageQueryResult<DagRouteInfoBean> getRouteInfoList(CommonReqBean q, int pageIndex, int pageSize, String userId, String userRole) {
         if ("Tourist".equals(userRole)) {
             return new PageQueryResult<>();
         } else {
@@ -99,43 +98,44 @@ public class ApiMngService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void addDsgcApi(DSGCApisBean dsgcApisBean, DSGCServicesUri dsgcServicesUri){
+    public void addDsgcApi(DSGCApisBean dsgcApisBean, DSGCSApisUri dsgcsApisUri) {
         apiMngDao.addDsgcApi(dsgcApisBean);
-        apiMngDao.addDsgcUri(dsgcServicesUri);
+        apiMngDao.addDsgcUri(dsgcsApisUri);
         completionThread(dsgcApisBean.getApiCode());
 
     }
 
-    public Boolean checkApiCodeIsExist(CommonReqBean param){
-        Boolean isExist =  apiMngDao.checkApiCodeIsExist(param.getCon0());
+    public Boolean checkApiCodeIsExist(CommonReqBean param) {
+        Boolean isExist = apiMngDao.checkApiCodeIsExist(param.getCon0());
         return isExist;
     }
+
     @Transactional(rollbackFor = Exception.class)
-    public void updateApiDataCompletion(String apiCode){
+    public void updateApiDataCompletion(String apiCode) {
         int completion = 0;
         DSGCApisBean dsgcApisBean = apiMngDao.queryBasicInfoByApiCode(apiCode);
-        if(StringUtil.isNotBlank(dsgcApisBean.getApiCode())){
-            completion +=10;
+        if (StringUtil.isNotBlank(dsgcApisBean.getApiCode())) {
+            completion += 10;
         }
-        if(StringUtil.isNotBlank(dsgcApisBean.getApiName())){
-            completion +=10;
+        if (StringUtil.isNotBlank(dsgcApisBean.getApiName())) {
+            completion += 10;
         }
-        if(StringUtil.isNotBlank(dsgcApisBean.getAppCode())){
-            completion +=10;
+        if (StringUtil.isNotBlank(dsgcApisBean.getAppCode())) {
+            completion += 10;
         }
-        if(StringUtil.isNotBlank(dsgcApisBean.getApiDesc())){
-            completion +=10;
+        if (StringUtil.isNotBlank(dsgcApisBean.getApiDesc())) {
+            completion += 10;
         }
         List<com.definesys.dsgc.service.svcmng.bean.DSGCServicesUri> uris = svcMngDao.queryServUri(apiCode);
-        if(uris != null && uris.size() > 0){
+        if (uris != null && uris.size() > 0) {
             List<String> uriTypeList = new ArrayList<>();
             Iterator<com.definesys.dsgc.service.svcmng.bean.DSGCServicesUri> iterator = uris.iterator();
-            while (iterator.hasNext()){
+            while (iterator.hasNext()) {
                 com.definesys.dsgc.service.svcmng.bean.DSGCServicesUri dsgcServicesUri = iterator.next();
                 uriTypeList.add(dsgcServicesUri.getUriType());
             }
-            if (uriTypeList.contains("REST")){
-                completion +=10;
+            if (uriTypeList.contains("REST")) {
+                completion += 10;
             }
         }
         SVCCommonReqBean param = new SVCCommonReqBean();
@@ -146,18 +146,18 @@ public class ApiMngService {
         param.setQueryType("RES");
         List<DSGCPayloadSampleBean> resSampleBeans = svcMngDao.querySrvPaloadSample(param);
         List<DSGCPayloadParamsBean> resSampleParamBeans = svcMngDao.queryServPayloadParam(param);
-        if(reqSampleBeans.size()>0){
+        if (reqSampleBeans.size() > 0) {
             completion += 10;
         }
-        if(reqSampleParamBeans.size()>0){
-            completion +=5;
+        if (reqSampleParamBeans.size() > 0) {
+            completion += 5;
 
         }
-        if (resSampleBeans.size() >0){
+        if (resSampleBeans.size() > 0) {
             completion += 10;
         }
-        if(resSampleParamBeans.size()>0){
-            completion +=5;
+        if (resSampleParamBeans.size() > 0) {
+            completion += 5;
 
         }
 
@@ -166,13 +166,52 @@ public class ApiMngService {
         apisBean.setApiCode(apiCode);
         apiMngDao.updateApiDataCompletion(apisBean);
     }
-    public void completionThread(String servNo){
-        Runnable myRunnable = new Runnable(){
-            public void run(){
+
+    public void completionThread(String servNo) {
+        Runnable myRunnable = new Runnable() {
+            public void run() {
                 updateApiDataCompletion(servNo);
             }
         };
         Thread thread = new Thread(myRunnable);
         thread.start();
+    }
+
+    public List<ApiUriDTO> queryApisUri(String apiCode) {
+        List<ApiUriDTO> result = new ArrayList<>();
+        if (StringUtil.isNotBlank(apiCode)) {
+            List<DSGCSApisUri> uris = apiMngDao.queryApisUri(apiCode);
+            Iterator<DSGCSApisUri> iterator = uris.iterator();
+            while (iterator.hasNext()) {
+                DSGCSApisUri temp = iterator.next();
+                ApiUriDTO apiUriDTO = new ApiUriDTO();
+                apiUriDTO.setIbUri(temp.getIbUri());
+                apiUriDTO.setUriType(temp.getUriType());
+                apiUriDTO.setHttpMethod(temp.getHttpMethod());
+                apiUriDTO.setSoapOper(temp.getSoapOper());
+                apiUriDTO.setTransportType(temp.getTransportType());
+                result.add(apiUriDTO);
+
+            }
+        }
+        return result;
+    }
+
+    public List<ServUriParamterDTO> queryApisUriParameter(String resCode) {
+        List<ServUriParamterDTO> result = new ArrayList<>();
+        if (StringUtil.isNotBlank(resCode)) {
+            List<DSGCUriParamsBean> dsgcUriParamsBeans = apiMngDao.queryApisUriParameter(resCode);
+            Iterator<DSGCUriParamsBean> iterator = dsgcUriParamsBeans.iterator();
+            while (iterator.hasNext()) {
+                DSGCUriParamsBean temp = iterator.next();
+                ServUriParamterDTO dto = new ServUriParamterDTO();
+                dto.setParamCode(temp.getParamCode());
+                dto.setParamDesc(temp.getParamDesc());
+                dto.setParamSample(temp.getParamSample());
+                result.add(dto);
+            }
+        }
+
+        return result;
     }
 }

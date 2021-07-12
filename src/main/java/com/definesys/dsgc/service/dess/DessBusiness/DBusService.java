@@ -2,8 +2,7 @@ package com.definesys.dsgc.service.dess.DessBusiness;
 
 import com.definesys.dsgc.service.apilr.bean.CommonReqBean;
 import com.definesys.dsgc.service.dess.DessBusiness.bean.DessBusiness;
-import com.definesys.dsgc.service.dess.DessInstance.DInsDao;
-import com.definesys.dsgc.service.lkv.FndPropertiesService;
+import com.definesys.dsgc.service.ystar.fnd.property.FndPropertiesService;
 import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

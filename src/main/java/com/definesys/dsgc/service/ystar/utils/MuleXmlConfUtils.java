@@ -39,7 +39,7 @@ public class MuleXmlConfUtils {
     public static boolean appendDBProjectCode(String proPath, String svcType, SvcgenConnBean svcgenConnBean, TmplConfigBean tmplConfigBean) {
         System.out.println("-appendDBConf->\n" + tmplConfigBean.toString());
         String svcCode = tmplConfigBean.getServNo();
-        String proName = tmplConfigBean.getProjDir();
+        String proName = tmplConfigBean.getProjName();
         try {
             SAXReader reader = new SAXReader();
             File cfgFile = new File(FileUtils.replaceFileSeparator(proPath + "/" + proName + "/src/main/app/global-cfg.xml"));

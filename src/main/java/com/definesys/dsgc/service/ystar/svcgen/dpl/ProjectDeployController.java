@@ -27,13 +27,6 @@ public class ProjectDeployController {
     @Autowired
     private ProjectDeployService projectDeployService;
 
-    @ApiOperation("clone远程仓库代码")
-    @PostMapping("/cloneProject")
-    public Response cloneProject(@RequestBody Map<String, String> map) {
-        return projectDeployService.cloneProject(map);
-    }
-
-    
     @RequestMapping(value = "/queryDeployLog", method = RequestMethod.POST)
     public Response queryDeployLog(@RequestBody SvcGenDeployLog service) {
         return projectDeployService.queryDeployLog();
@@ -46,9 +39,6 @@ public class ProjectDeployController {
                                        @RequestParam(value = "pageIndex", required = false, defaultValue = "1") int pageIndex, HttpServletRequest request) {
         return projectDeployService.pageQueryDeployLog(service, pageSize, pageIndex);
     }
-
-
-
 
     /*** ystar **/
     @ApiOperation("打包项目")

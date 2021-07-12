@@ -70,8 +70,8 @@ public class DInsController {
     public Response saveJobBaseInfo(@RequestBody DInstBean dinstBean, HttpServletRequest request) {
         try {
             dInsService.saveJobBaseInfo(dinstBean);
-            DinstVO2 sendDinstVO = dInsService.getDinstVO(dinstBean.getJobNo());
-            dInsService.UpdateDessTask(request, sendDinstVO);
+//            DinstVO2 sendDinstVO = dInsService.getDinstVO(dinstBean.getJobNo());
+//            dInsService.UpdateDessTask(request, sendDinstVO);
         } catch (Exception e) {
             e.printStackTrace();
             return Response.error("新增发生错误");

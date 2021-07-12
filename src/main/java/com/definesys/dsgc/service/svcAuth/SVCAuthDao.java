@@ -292,4 +292,23 @@ public class SVCAuthDao {
                 .eq("serv_no",servNo)
                 .doQuery(DSGCSystemAccess.class);
     }
+
+    public DSGCIpLimitBean checkIpRuleConfigIsExist(IPRuleConfigVO ipRuleConfigVO){
+        DSGCIpLimitBean dsgcIpLimitBean =  sw.buildQuery().eq("limit_type",ipRuleConfigVO.getLimitType()).eq("limit_target",ipRuleConfigVO.getLimitTarget()).doQueryFirst(DSGCIpLimitBean.class);
+        return dsgcIpLimitBean;
+    }
+
+    public void updateIpRuleConfig(DSGCIpLimitBean dsgcIpLimitBean){
+        sw.buildQuery().eq("ipl_id",dsgcIpLimitBean.getIplId())
+                .update("rule_type",dsgcIpLimitBean.getRuleType())
+                .update("rule_cron",dsgcIpLimitBean.getRuleCron()).doUpdate(DSGCIpLimitBean.class);
+    }
+    public void addIpRuleConfig(DSGCIpLimitBean ipLimitBean){
+        sw.buildQuery().doInsert(ipLimitBean);
+    }
+    public DSGCIpLimitBean queryIpRuleConfig(String limitType, String limitTarget){
+        return sw.buildQuery().sql("select limit_type,limit_target,rule_type,rule_cron from dsgc_ip_limit where limit_type = #limitType and limit_target = #limitTarget")
+                .setVar("limitType",limitType).setVar("limitTarget",limitTarget)
+                .doQueryFirst(DSGCIpLimitBean.class);
+    }
 }

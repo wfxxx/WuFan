@@ -2,6 +2,7 @@ package com.definesys.dsgc.service.lkv;
 
 //import com.definesys.dsgc.aspect.annotation.AuthAspect;
 //import com.definesys.dsgc.aspect.annotation.OperationAspect;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.definesys.dsgc.service.lkv.bean.FndLookupType;
@@ -40,23 +41,23 @@ public class FndLookupTypeController {
         return Response.ok().data(fndModules);
     }
 
-    @RequestMapping(value = "/query", method = {RequestMethod.POST,RequestMethod.GET})
+    @RequestMapping(value = "/query", method = {RequestMethod.POST, RequestMethod.GET})
     public Response query(@RequestBody FndLookupType u,
-                          @RequestParam(value = "pageSize",defaultValue = "10") int pageSize,
-                          @RequestParam(value = "pageIndex",defaultValue = "1") int pageIndex) {
-        PageQueryResult<Map<String, Object>> list = this.fndLookupTypeService.query(u,pageSize,pageIndex);
+                          @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+                          @RequestParam(value = "pageIndex", defaultValue = "1") int pageIndex) {
+        PageQueryResult<Map<String, Object>> list = this.fndLookupTypeService.query(u, pageSize, pageIndex);
         return Response.ok().data(list);
     }
 
-    @RequestMapping(value = "/queryOr", method = {RequestMethod.POST,RequestMethod.GET})
+    @RequestMapping(value = "/pageQueryFndLkv", method = {RequestMethod.POST, RequestMethod.GET})
     public Response queryOr(@RequestBody FndLookupType u,
-                          @RequestParam(value = "pageSize",defaultValue = "10") int pageSize,
-                          @RequestParam(value = "pageIndex",defaultValue = "1") int pageIndex) {
-        PageQueryResult<Map<String, Object>> list = this.fndLookupTypeService.queryOr(u,pageSize,pageIndex);
+                            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+                            @RequestParam(value = "pageIndex", defaultValue = "1") int pageIndex) {
+        PageQueryResult<FndLookupType> list = this.fndLookupTypeService.pageQueryFndLkv(u, pageSize, pageIndex);
         return Response.ok().data(list);
     }
 
-//    @OperationAspect(value = "值列表管理--删除值列表类型信息")
+    //    @OperationAspect(value = "值列表管理--删除值列表类型信息")
     @RequestMapping(value = "/deleteFndLookupType", method = RequestMethod.POST)
     public Response deleteFndLookupType(@RequestBody FndLookupType u) {
         String id = this.fndLookupTypeService.deleteFndLookupType(u);
@@ -65,31 +66,32 @@ public class FndLookupTypeController {
 
     /**
      * 批量删除
+     *
      * @param list 所需删除的id
      * @return
      */
 //    @OperationAspect(value = "值列表管理--批量删除值列表类型信息")
     @RequestMapping(value = "/delFndLookupTypes", method = RequestMethod.POST)
     public Response delFndLookupTypes(@RequestBody List<FndLookupType> list) {
-        List<String> stringList= this.fndLookupTypeService.delFndLookupTypes(list);
+        List<String> stringList = this.fndLookupTypeService.delFndLookupTypes(list);
         return Response.ok().data(stringList);
     }
 
-//    @OperationAspect(value = "值列表管理--修改值列表类型信息")
+    //    @OperationAspect(value = "值列表管理--修改值列表类型信息")
     @RequestMapping(value = "/updateFndLookupType", method = RequestMethod.POST)
     public Response updateFndLookupType(@RequestBody FndLookupType u) {
         String id = this.fndLookupTypeService.updateFndLookupType(u);
         return Response.ok().data(id);
     }
 
-//    @OperationAspect(value = "值列表管理--新增值列表类型信息")
+    //    @OperationAspect(value = "值列表管理--新增值列表类型信息")
     @RequestMapping(value = "/addFndLookupType", method = RequestMethod.POST)
     public Response addFndLookupType(@RequestBody FndLookupType u) {
         String id = this.fndLookupTypeService.addFndLookupType(u);
         return Response.ok().data(id);
     }
 
-//    @OperationAspect(value = "值列表管理--修改值列表Type与值列表Value信息")
+    //    @OperationAspect(value = "值列表管理--修改值列表Type与值列表Value信息")
     @RequestMapping(value = "/modifyFndLookupType", method = RequestMethod.POST)
     public Response modifyUser(HttpServletRequest request) {
         String body = CommonUtils.charReader(request);
@@ -134,34 +136,36 @@ public class FndLookupTypeController {
     }
 
     /**
-     *  值列表类型校重接口
+     * 值列表类型校重接口
+     *
      * @param lookupType
      * @return
      */
-    @RequestMapping(value="/checkLookUpType",method = RequestMethod.POST)
-    public Response checkLookUpType(@RequestBody FndLookupType lookupType){
+    @RequestMapping(value = "/checkLookUpType", method = RequestMethod.POST)
+    public Response checkLookUpType(@RequestBody FndLookupType lookupType) {
         boolean bool = fndLookupTypeService.checkLookUpType(lookupType);
 
-        if(bool){
+        if (bool) {
             return Response.error("值列表类型已存在，请修改后重试！");
         }
         return Response.ok().setMessage("值可以使用！");
     }
 
-    @RequestMapping(value="/updateLookupValue",method = RequestMethod.POST)
-    public Response updateLookupValue (@RequestBody FndLookupType fndLookupType) {
+    @RequestMapping(value = "/updateLookupValue", method = RequestMethod.POST)
+    public Response updateLookupValue(@RequestBody FndLookupType fndLookupType) {
         fndLookupTypeService.margeLookUpValue(fndLookupType);
         return Response.ok();
     }
 
     /**
-     *  通过值列表类型Code查询值列表
+     * 通过值列表类型Code查询值列表
+     *
      * @param lookupTypes
      * @return
      */
-    @RequestMapping(value="/getLookupValuesByTypeList",method = RequestMethod.POST)
-    public Response getLookupValuesByTypeList(@RequestBody List<FndLookupType> lookupTypes){
-        System.out.println("list->"+lookupTypes);
+    @RequestMapping(value = "/getLookupValuesByTypeList", method = RequestMethod.POST)
+    public Response getLookupValuesByTypeList(@RequestBody List<FndLookupType> lookupTypes) {
+        System.out.println("list->" + lookupTypes);
         return Response.ok().data(fndLookupTypeService.getLookupValuesByTypeList(lookupTypes));
     }
 

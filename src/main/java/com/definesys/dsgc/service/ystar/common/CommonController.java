@@ -79,8 +79,8 @@ public class CommonController {
     }
 
     @RequestMapping(value = "/Test", method = RequestMethod.GET)
-    public Response Test() {
-        String res = this.commonService.Test();
+    public Response Test(@RequestParam String url) {
+        String res = this.commonService.Test(url);
         return Response.ok().data(res);
     }
 

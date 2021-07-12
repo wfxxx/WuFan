@@ -69,10 +69,10 @@ public class SVCMngController {
 
     @RequestMapping(value = "/saveServBasicInfo", method = RequestMethod.POST)
     public Response saveServBasicInfo(@RequestBody SVCServBasicInfoDTO svcServBasicInfo) {
-        Boolean needRefresh = svcMngService.saveServBasicInfo(svcServBasicInfo);
-        if (needRefresh) {
-            dsgcCachesServices.refreshMuleCache("ALL", "ALL");
-        }
+//        Boolean needRefresh = svcMngService.saveServBasicInfo(svcServBasicInfo);
+//        if (needRefresh) {
+//            dsgcCachesServices.refreshMuleCache("ALL", "ALL");
+//        }
         svcMngService.saveServBasicInfo(svcServBasicInfo);
         return Response.ok();
     }
@@ -232,7 +232,7 @@ public class SVCMngController {
     public Response modifyServStatus(@RequestBody Map<String, String> map) {
         try {
             svcMngService.modifyServStatus(map);
-            dsgcCachesServices.refreshMuleCache("ALL", "SERVICE_ENABLED");
+            //dsgcCachesServices.refreshMuleCache("ALL", "SERVICE_ENABLED");
         } catch (MpaasBusinessException mp) {
             mp.printStackTrace();
             return Response.error(mp.getMessage());
@@ -264,12 +264,9 @@ public class SVCMngController {
         return Response.ok();
     }
 
-
-    @RequestMapping(value = "/querySvcTrgInfoBySvcNo", method = RequestMethod.POST)
-    public Response querySvcTrgInfoBySvcNo(@RequestBody SVCCommonReqBean param) {
-        return Response.ok().setData(svcMngService.querySvcTrgInfoBySvcNo(param.getCon0()));
+    @RequestMapping(value = "/checkSvcCodeIsExist", method = RequestMethod.GET)
+    public Response checkSvcCodeIsExist(@RequestParam String svcCode) {
+        return Response.ok().setData(svcMngService.checkSvcCodeIsExist(svcCode));
     }
-
-
 }
 

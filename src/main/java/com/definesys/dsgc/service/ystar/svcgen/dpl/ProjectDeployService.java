@@ -1,14 +1,10 @@
 package com.definesys.dsgc.service.ystar.svcgen.dpl;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.definesys.dsgc.service.esbenv.DSGCBusCfgDao;
-import com.definesys.dsgc.service.esbenv.bean.DSGCEnvMachineCfg;
-import com.definesys.dsgc.service.lkv.FndPropertiesDao;
-import com.definesys.dsgc.service.lkv.bean.FndProperties;
+import com.definesys.dsgc.service.ystar.fnd.property.FndPropertiesDao;
 import com.definesys.dsgc.service.ystar.file.FileService;
-import com.definesys.dsgc.service.ystar.file.bean.ResultEntity;
 import com.definesys.dsgc.service.ystar.file.bean.ScpConnectEntity;
+import com.definesys.dsgc.service.ystar.fnd.property.FndPropertiesService;
 import com.definesys.dsgc.service.ystar.svcgen.proj.DSGCProjDirManagerDao;
 import com.definesys.dsgc.service.ystar.svcgen.proj.bean.DSGCSysProfileDir;
 import com.definesys.dsgc.service.utils.StringUtil;
@@ -22,22 +18,9 @@ import com.definesys.dsgc.service.ystar.svcgen.svcdpl.bean.SvcGenDeployLog;
 import com.definesys.dsgc.service.ystar.svcgen.svcdpl.SvcGenDeployLogDao;
 import com.definesys.mpaas.common.http.Response;
 import com.definesys.mpaas.query.db.PageQueryResult;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.multipart.FilePart;
-import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
-import org.apache.commons.httpclient.methods.multipart.Part;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -49,30 +32,12 @@ import java.util.*;
  */
 @Service
 public class ProjectDeployService {
-    @Value("${ystar.git.deploy_proj_name}")
-    private String deployProjName;
-    @Value("${ystar.git.maven_home}")
-    private String mavenHome;
-    @Value("${ystar.git.branch_name}")
-    private String branchName;
-    @Value("${ystar.git.username}")
-    private String gitUsername;
-    @Value("${ystar.git.password}")
-    private String gitPassword;
-    @Value("${ystar.esb.mule_home}")
-    private String muleHome;
-    @Value("${ystar.esb.dsgc_home}")
-    private String dsgcHome;
-    @Value("${ystar.git.repo_home}")
-    private String repoHome;
-    @Value("${ystar.esb.esb_port}")
-    private String esbPort;
 
     @Autowired
     private FndPropertiesDao fndPropertiesDao;
 
     @Autowired
-    private DSGCBusCfgDao dsgcBusCfgDao;
+    private FndPropertiesService fndPropertiesService;
 
     @Autowired
     private SvcGenDeployLogDao svcgenDeployLogDao;
@@ -89,209 +54,19 @@ public class ProjectDeployService {
     private FileService fileService;
 
     /**
-     * @Description: 从远程仓库拉取代码
-     * @author: afan
-     * @param: []
-     * @return: com.definesys.mpaas.common.http.Response
-     */
-    public Response cloneProject(Map<String, String> map) {
-        //git远程仓库地址
-        String gitRepoUri = map.get("gitUrl");
-        String projectName = map.get("projectName");
-        //git远程仓库分支,分支名从tag中获取
-        branchName = StringUtil.isNotBlank(branchName) ? branchName : fndPropertiesDao.findFndPropertiesByKey("GIT_BRANCH_NAME").getPropertyValue();
-        //String branchName = map.get("TAG");
-        //git访问用户
-        gitUsername = StringUtil.isNotBlank(gitUsername) ? gitUsername : fndPropertiesDao.findFndPropertiesByKey("GIT_USERNAME").getPropertyValue();
-        //git用户密码
-        gitPassword = StringUtil.isNotBlank(gitPassword) ? gitPassword : fndPropertiesDao.findFndPropertiesByKey("GIT_PASSWORD").getPropertyValue();
-        // 本地仓库地址
-        repoHome = StringUtil.isNotBlank(repoHome) ? repoHome : fndPropertiesDao.findFndPropertiesByKey("LOCAL_REPO_PATH").getPropertyValue();
-        //获取当前环境
-        String curEnv = fndPropertiesDao.findFndPropertiesByKey("DSGC_CURRENT_ENV").getPropertyValue();
-
-        // clone代码
-        boolean isCloned = JGitUtils.clone(gitRepoUri, branchName, gitUsername, gitPassword,
-                repoHome + "/" + projectName);
-        if (isCloned) {
-            return Response.ok().setMessage("同步远程仓库代码成功").setData(curEnv);
-        }
-        return Response.error("同步代码失败");
-    }
-
-    /**
-     * @Description: 代码提交和远程推送
-     * @author: afan
-     * @param: []
-     * @return: com.definesys.mpaas.common.http.Response
-     */
-    public Response doCommitAndPush(String message) {
-        //git访问用户
-        gitUsername = getFndCfgPath("GIT_USERNAME");//StringUtil.isNotBlank(gitUsername) ? gitUsername : fndPropertiesDao.findFndPropertiesByKey("GIT_USERNAME").getPropertyValue();
-        //git用户密码
-        gitPassword = getFndCfgPath("GIT_PASSWORD");//StringUtil.isNotBlank(gitPassword) ? gitPassword : fndPropertiesDao.findFndPropertiesByKey("GIT_PASSWORD").getPropertyValue();
-        // 本地仓库地址
-        repoHome = getFndCfgPath("dsgc") + "/git-repo";//StringUtil.isNotBlank(repoHome) ? repoHome : fndPropertiesDao.findFndPropertiesByKey("REPO_HOME").getPropertyValue();
-        boolean b = JGitUtils.doCommitAndPush(repoHome, message, gitUsername, gitPassword);
-        if (b) {
-            return Response.ok().setMessage("提交代码成功");
-        }
-        return Response.error("提交代码失败");
-    }
-
-    /**
-     * @Description: 打包项目
-     * @author: afan
-     * @param: []
-     * @return: com.definesys.mpaas.common.http.Response
-     */
-    public Response packageProject() {
-        //maven安装目录
-        mavenHome = getFndCfgPath("maven");
-        // 本地仓库地址
-        repoHome = getFndCfgPath("dsgc") + "/git-repo";
-        // 打包
-        boolean b = MavenUtils.mvnCleanPackage(repoHome, mavenHome);
-        if (b) {
-            return Response.ok().setMessage("编译打包成功!");
-        }
-        return Response.error("打包失败");
-    }
-
-    /**
-     * @param message
-     * @param userName
-     * @Description: 部署项目
-     * @author: ystar
-     * @param: []
-     * @return: com.definesys.mpaas.common.http.Response
-     */
-    public Response deployProject(String message, String userName, String curEnv) {
-        if (curEnv == null || "".equals(curEnv)) {
-            return Response.error("请选择环境");
-        }
-        // 获取部署项目名
-        deployProjName = StringUtil.isNotBlank(deployProjName) ? deployProjName : fndPropertiesDao.findFndPropertiesByKey("DEPLOY_PROJ_NAME")
-                .getPropertyValue();
-        // 本地仓库地址
-        dsgcHome = getFndCfgPath("dsgc");
-        repoHome = dsgcHome + "/git-repo";
-        String warPath = repoHome + "/target/" + deployProjName + ".war";
-        File projectFile = new File(repoHome + "/target/");
-        File file = new File(repoHome + "/target/");
-        File[] files = file.listFiles();
-        for (File file1 : files) {
-            if (file1.getName().endsWith(".war")) {
-                projectFile = file1;
-            }
-
-        }
-        Date date = new Date();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
-        String timestamp = dateFormat.format(date);
-        List<String> results = new ArrayList<>();
-        // 根据当前环境获取集群的节点信息
-        List<DSGCEnvMachineCfg> envMachineCfgByEnvCode = dsgcBusCfgDao.findEnvMachineCfgByEnvCode(curEnv);
-        if (envMachineCfgByEnvCode.size() > 0) {
-            for (DSGCEnvMachineCfg dsgcEnvMachineCfg : envMachineCfgByEnvCode) {
-                String machineName = dsgcEnvMachineCfg.getMachineName();
-                String machineIp = dsgcEnvMachineCfg.getMachineIp();
-                String machinePort = dsgcEnvMachineCfg.getMachinePort();
-                System.out.println(machineIp);
-                String url = "http://" + machineIp + ":" + machinePort + "/muletools/deployProject?timestamp=" + timestamp;
-                String rtnBody = sendFile(url, projectFile, null);
-                JSONObject jsonObject = JSON.parseObject(rtnBody);
-                String result;
-                String code = jsonObject.getString("code");
-                if ("S".equals(code)) {
-                    result = "部署成功";
-                } else {
-                    result = "部署失败，请手动操作";
-                }
-                results.add(machineName + ":" + result);
-            }
-
-            // 保存部署日志,和备份版本号
-            SvcGenDeployLog svcgenDeployLog = new SvcGenDeployLog();
-            svcgenDeployLog.setDplMsg(message);
-            svcgenDeployLog.setDplStatus("1");
-            svcgenDeployLog.setUserCode(userName);
-            svcgenDeployLog.setvId(deployProjName + ".war" + timestamp); // 备份的war包版本号
-            svcgenDeployLogDao.insertDeployLog(svcgenDeployLog);
-
-
-            String s = JSONObject.toJSONString(results);
-            return Response.ok().setMessage(s);
-        } else {
-            return Response.error("找不到节点服务器");
-        }
-    }
-
-    /**
      * @Description: 查询部署记录
      * @author: ystar
      * @param: [service, pageIndex, pageSize]
      * @return: com.definesys.mpaas.common.http.Response
      */
     public Response queryDeployLog() {
-
         List<SvcGenDeployLog> dplLogs = svcgenDeployLogDao.queryDeployLog(null, null);
-
         return Response.ok().data(dplLogs);
     }
 
     public Response pageQueryDeployLog(SvcGenDeployLog service, int pageSize, int pageIndex) {
         PageQueryResult<SvcGenDeployLogVO> pageQueryResult = svcgenDeployLogDao.pageQueryDeployLog(service, pageSize, pageIndex);
         return Response.ok().data(pageQueryResult);
-    }
-
-    /*
-     * @Description: http发送文件 已废弃
-     * @author: afan
-     * @param:
-     * @return: void
-     */
-    public String sendFile(String url, File file, Map<String, String> header) {
-        HttpClient client = new HttpClient();
-        PostMethod postMethod = new PostMethod(url);
-        try {
-            if (file != null) {
-                // FilePart：用来上传文件的类,file即要上传的文件
-                FilePart fp = new FilePart("file", file);
-                Part[] parts = {fp};
-                // 对于MIME类型的请求，httpclient建议全用MulitPartRequestEntity进行包装
-                MultipartRequestEntity mre = new MultipartRequestEntity(parts, postMethod.getParams());
-                postMethod.setRequestEntity(mre);
-            }
-            if (header != null) {
-                for (String headerName : header.keySet()) {
-                    postMethod.setRequestHeader(headerName, header.get(headerName));
-                }
-            }
-            // 由于要上传的文件可能比较大 , 因此在此设置最大的连接超时时间
-            client.getHttpConnectionManager().getParams().setConnectionTimeout(50000);
-            int status = client.executeMethod(postMethod);
-            if (status == HttpStatus.SC_OK) {
-                // 获取返回数据
-                InputStream inputStream = postMethod.getResponseBodyAsStream();
-                BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
-                StringBuffer stringBuffer = new StringBuffer();
-                String str = "";
-                while ((str = br.readLine()) != null) {
-                    stringBuffer.append(str);
-                }
-                String body = stringBuffer.toString();
-                return body;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-
-        } finally {
-            // 释放连接
-            postMethod.releaseConnection();
-        }
-
-        return null;
     }
 
     /**
@@ -301,10 +76,9 @@ public class ProjectDeployService {
      */
     public Response packageMuleProject(String proId) {
         //maven安装目录
-        mavenHome = getFndCfgPath("maven");
+        String mavenHome = fndPropertiesService.getLocalHome("maven");
         // 本地仓库地址
-        dsgcHome = getFndCfgPath("dsgc");
-        repoHome = dsgcHome + "/git-repo";
+        String repoHome = fndPropertiesService.getLocalHome("repo");
         //根据proId查询projectName
         String projectName = projDirManagerDao.getSysProfileDirByProId(proId).getProjName();
         //项目地址
@@ -341,10 +115,10 @@ public class ProjectDeployService {
             try {
                 String fileName = projectName + ".war";
                 // mule安装目录
-                muleHome = getFndCfgPath("mule");
-                dsgcHome = getFndCfgPath("dsgc");
+                String muleHome = fndPropertiesService.getLocalHome("mule");
+                String dsgcHome = fndPropertiesService.getLocalHome("dsgc");
                 // 本地仓库地址
-                repoHome = dsgcHome + "/git-repo";
+                String repoHome = fndPropertiesService.getLocalHome("repo");
                 //备份目录
                 String bakFilePath = dsgcHome + "/bak";
                 String version = deployLog.getvId();
@@ -417,60 +191,6 @@ public class ProjectDeployService {
     }
 
 
-    /**
-     * 上传文件至服务器 暂不用
-     *
-     * @param envCode
-     * @param fileName
-     * @param muleHome
-     * @param curFilePath
-     * @return
-     */
-    @Transactional
-    public Response uploadProjectFile(String envCode, String fileName, String muleHome, String esbPort, String curFilePath) {
-        File file = new File(curFilePath);
-        if (!file.exists()) {
-            return Response.error("部署失败").setMessage("文件不存在!");
-        }
-        List<String> results = new ArrayList<>();
-
-        Map<String, String> headerMap = new HashMap<>();
-        headerMap.put("fileName", fileName);
-        headerMap.put("filePath", muleHome + "/webapps");
-        headerMap.put("Content-Type", "multipart/form-data");
-        // 根据当前环境获取集群的节点信息
-        List<DSGCEnvMachineCfg> envMachineCfgList = dsgcBusCfgDao.findEnvMachineCfgByEnvCode(envCode);
-        String res;
-        if (envMachineCfgList.size() > 0) {
-            for (DSGCEnvMachineCfg machine : envMachineCfgList) {
-                String machineName = machine.getMachineName();
-                String machineIp = machine.getMachineIp();
-                //String machinePort = machine.getMachinePort();
-                System.out.println(machineIp);
-                String url = "http://" + machineIp + ":" + esbPort + "/Test/FileDemo01";
-                String rtnBody = sendFile(url, file, headerMap);//  调用远程接口 上传文件至服务器
-                System.out.println("url->" + url + "\n rtnBody->" + rtnBody);
-                String result;
-                if (StringUtil.isBlank(rtnBody)) {
-                    result = "部署失败，请手动操作";
-                } else {
-                    JSONObject jsonObject = JSON.parseObject(rtnBody);
-                    String code = jsonObject.getString("code");
-                    if ("S".equals(code)) {
-                        result = "部署成功";
-                    } else {
-                        result = "部署失败，请手动操作";
-                    }
-                }
-                results.add(machineName + ":" + result);
-            }
-            res = JSONObject.toJSONString(results);
-        } else {
-            return Response.error("找不到节点服务器");
-        }
-        return Response.ok().setMessage("部署成功！").data(res);
-    }
-
     public SvcGenDeployLog queryLastDeployLog(String proId) {
         DSGCSysProfileDir sysProfileDir = projDirManagerDao.getSysProfileDirByProId(proId);
         SvcGenDeployLog log = projectDeployDao.queryDeployLog(proId, sysProfileDir.getTextAttribute1());
@@ -482,8 +202,7 @@ public class ProjectDeployService {
         DSGCSysProfileDir profileDir = projDirManagerDao.getSysProfileDirByProId(proId);
         SvcgenConnBean svcgenConnBean = svcGenConnDao.querySvcGenConnectById(profileDir.getConnId());
         // 本地仓库地址
-        dsgcHome = getFndCfgPath("dsgc");
-        repoHome = dsgcHome + "/git-repo";
+        String repoHome = fndPropertiesService.getLocalHome("repo");
         //git访问用户
         String gitUsername1 = svcgenConnBean.getAttr4();
         //git用户密码
@@ -517,41 +236,9 @@ public class ProjectDeployService {
         return this.projectDeployDao.getSvcGenProjectList(project);
     }
 
-
-    public String getFndCfgPath(String type) {
-        String key = type;
-        switch (type) {
-            case "dsgc":
-                if (StringUtil.isNotBlank(dsgcHome)) {
-                    return dsgcHome;
-                } else {
-                    key = "DSGC_HOME";
-                }
-                break;
-            case "mule":
-                if (StringUtil.isNotBlank(muleHome)) {
-                    return muleHome;
-                } else {
-                    key = "MULE_HOME";
-                }
-                break;
-            case "maven":
-                if (StringUtil.isNotBlank(mavenHome)) {
-                    return mavenHome;
-                } else {
-                    key = "MAVEN_HOME";
-                }
-                break;
-            default:
-                break;
-        }
-        FndProperties properties = fndPropertiesDao.findFndPropertiesByKey(key);
-        return properties != null ? properties.getPropertyValue() : null;
-    }
-
-
     public DSGCSysProfileDir queryProjectFirstInfo(DSGCSysProfileDir project) {
         return projectDeployDao.queryProjectFirstInfo(project);
     }
+
 }
 

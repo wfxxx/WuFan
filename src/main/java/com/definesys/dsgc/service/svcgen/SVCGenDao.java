@@ -129,7 +129,7 @@ public class SVCGenDao {
         String deveId = (String)res.get("DEVE_ID");
         tcb.setDeveId(deveId);
         tcb.setServNo((String)res.get("SERV_NO"));
-        tcb.setProjDir((String)res.get("PROJECT_DIRE"));
+        tcb.setProjName((String)res.get("PROJECT_DIRE"));
         tcb.setServDir((String)res.get("INTERFACE_DIRE"));
         tcb.setServNameCode((String)res.get("SERV_CODE_NAME"));
         tcb.setToSystem((String)res.get("PROVIDER"));

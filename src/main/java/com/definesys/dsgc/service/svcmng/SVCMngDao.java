@@ -1,6 +1,7 @@
 package com.definesys.dsgc.service.svcmng;
 
 import com.definesys.dsgc.service.apimng.bean.DSGCApisBean;
+import com.definesys.dsgc.service.apimng.bean.DSGCSApisUri;
 import com.definesys.dsgc.service.esbenv.bean.DSGCEnvInfoCfg;
 import com.definesys.dsgc.service.svcmng.bean.*;
 import com.definesys.dsgc.service.system.bean.DSGCSystemAccess;
@@ -452,7 +453,8 @@ public class SVCMngDao {
 
     }
 
-    public DsgcTrgSvcInfo querySvcTrgInfoBySvcNo(String svcNo) {
-        return this.sw.buildQuery().eq("svcNo", svcNo).doQueryFirst(DsgcTrgSvcInfo.class);
+    public boolean checkSvcCodeIsExist(String svcCode) {
+        return this.sw.buildQuery().eq("serv_no", svcCode).doQueryFirst(DSGCService.class) != null;
     }
+
 }

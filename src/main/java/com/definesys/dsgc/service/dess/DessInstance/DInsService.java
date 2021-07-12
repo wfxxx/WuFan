@@ -7,8 +7,8 @@ import com.definesys.dsgc.service.dess.DessInstance.bean.DInstSltBean;
 import com.definesys.dsgc.service.dess.DessInstance.bean.DinstVO;
 import com.definesys.dsgc.service.dess.DessInstance.bean.DinstVO2;
 import com.definesys.dsgc.service.dess.util.CornUtils;
-import com.definesys.dsgc.service.lkv.FndPropertiesService;
-import com.definesys.dsgc.service.lkv.bean.FndProperties;
+import com.definesys.dsgc.service.ystar.fnd.property.FndPropertiesDao;
+import com.definesys.dsgc.service.ystar.fnd.property.FndPropertiesService;
 import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.dsgc.service.utils.httpclient.HttpReqUtil;
 import com.definesys.dsgc.service.utils.httpclient.ResultVO;
@@ -16,11 +16,9 @@ import com.definesys.mpaas.common.http.Response;
 import com.definesys.mpaas.query.db.PageQueryResult;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -28,41 +26,27 @@ import java.util.*;
 /**
  * @ClassName DInsService
  * @Description TODO
- * @Author Xueyunlong
- * @Date 2020-8-3 13:29
+ * @Author ystar
+ * @Date 2020-10-3 13:29
  * @Version 1.0
  **/
 
 @Service("DInsService")
 public class DInsService {
 
-
-    //服务调度程序的访问地址
-    @Value("${ystar.dess.url}")
-    private String dessServiceUrl;
+    public static final String PROPERTY_KEY_DESS_SERVICE_URL = "DESS_SERVICE_URL";
 
     @Autowired
     private DInsDao dInsDao;
+
+    @Autowired
+    private FndPropertiesDao propertiesDao;
 
 
     @Autowired
     private FndPropertiesService fndPropertiesService;
 
-    @PostConstruct
-    private void getDessServiceUrl() {
-        if (StringUtil.isBlank(dessServiceUrl)) {
-            FndProperties fndProperties = fndPropertiesService.findFndPropertiesByKey("DESS_SERVICE_URL");
-            if (fndProperties != null) {
-                dessServiceUrl = fndProperties.getPropertyValue();
-            } else {
-                dessServiceUrl = "";
-            }
-        }
-        System.out.println("dessServiceUrl->" + dessServiceUrl);
-    }
-
     //插入，删除，更新调用下列方法，查询要紫泥做
-
 
     public PageQueryResult queryJobInstaceList(CommonReqBean param, int pageSize, int pageIndex) {
         return dInsDao.queryJobInstaceList(param, pageSize, pageIndex);
@@ -137,6 +121,7 @@ public class DInsService {
     }
 
     public List<Map<String, String>> saveScheduling(DinstVO dinstVO, HttpServletRequest request) {
+        String dessServiceUrl = this.propertiesDao.queryPropertyByKey(PROPERTY_KEY_DESS_SERVICE_URL);
         List<Map<String, String>> parserList = new ArrayList<>();
         DInstBean dinstBean = new DInstBean();
         dinstBean.setJobNo(dinstVO.getJobNo());
@@ -229,6 +214,7 @@ public class DInsService {
     }
 
     public DinstVO getJobScheduling(String jobNo, HttpServletRequest request) {
+        String dessServiceUrl = this.propertiesDao.queryPropertyByKey(PROPERTY_KEY_DESS_SERVICE_URL);
         DInstBean job = dInsDao.getJobInstance(jobNo);
         DinstVO dinstVO = new DinstVO();
         // 返回频率类型字段
@@ -256,6 +242,7 @@ public class DInsService {
 
     //添加,启动任务 TODO
     public void addDessTask(HttpServletRequest request, DinstVO2 dInstVO) {
+        String dessServiceUrl = this.propertiesDao.queryPropertyByKey(PROPERTY_KEY_DESS_SERVICE_URL);
         String dInstBeanStr = JSONObject.toJSONString(dInstVO);
         JSONObject dInstBeanObject = JSONObject.parseObject(dInstBeanStr);
         System.out.println(dInstBeanObject);
@@ -268,6 +255,7 @@ public class DInsService {
 
     //删除，暂停任务
     public void pauseDessTask(HttpServletRequest request, DinstVO2 dInstVO) {
+        String dessServiceUrl = this.propertiesDao.queryPropertyByKey(PROPERTY_KEY_DESS_SERVICE_URL);
         String dInstBeanStr = JSONObject.toJSONString(dInstVO);
         JSONObject dInstBeanObject = JSONObject.parseObject(dInstBeanStr);
         HttpReqUtil.sendPostRequest(dessServiceUrl + "/dess/pauseJob", dInstBeanObject, request);
@@ -276,6 +264,7 @@ public class DInsService {
 
     //更新，重启任务,注意重启会放弃之前的已有的调度。
     public void UpdateDessTask(HttpServletRequest request, DinstVO2 dinstVO) {
+        String dessServiceUrl = this.propertiesDao.queryPropertyByKey(PROPERTY_KEY_DESS_SERVICE_URL);
         String dinstBeanStr = JSONObject.toJSONString(dinstVO);
         JSONObject dinstBeanObject = JSONObject.parseObject(dinstBeanStr);
         System.out.println("dessServiceUrl->" + dessServiceUrl);
@@ -284,11 +273,11 @@ public class DInsService {
 
     //手动调用定时任务 TODO
     public JSONObject manualJobInstance(HttpServletRequest request, HashMap reqParam) {
+        String dessServiceUrl = this.propertiesDao.queryPropertyByKey(PROPERTY_KEY_DESS_SERVICE_URL);
         List<String> jobNoList = (List<String>) reqParam.get("jobNo");
         String body = String.valueOf(reqParam.get("body"));
         String header = String.valueOf(reqParam.get("header"));
-
-        List<String> failList = jobNoList;
+        List<String> failList = new ArrayList<>();
         for (String jobNo : jobNoList) {
             DInstBean dinstBean = dInsDao.getBusinessIdByJobNo(jobNo);
             String businessId = dinstBean.getBusinessId();
@@ -343,6 +332,7 @@ public class DInsService {
 
 
     public Response getAllJobScheduleTime(DInstSltBean bean, HttpServletRequest request) {
+        String dessServiceUrl = this.propertiesDao.queryPropertyByKey(PROPERTY_KEY_DESS_SERVICE_URL);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("startTime", bean.getStartTime());
         jsonObject.put("endTime", bean.getEndTime());

@@ -249,4 +249,22 @@ public class ConsumersDao {
     public List<DagConsumerToken> queryConsumerToken(String envCode, String csmCode) {
         return sw.buildQuery().eq("env_code", envCode).eq("csm_code", csmCode).doQuery(DagConsumerToken.class);
     }
+
+
+    public void updateConsumerStatus(DSGCConsumerAuth dsgcConsumerAuth) {
+        DSGCConsumerAuth consumerAuth = sw.buildQuery()
+                .eq("csmCode", dsgcConsumerAuth.getCsmCode())
+                .eq("env_code", dsgcConsumerAuth.getEnvCode())
+                .doQueryFirst(DSGCConsumerAuth.class);
+        System.out.println(consumerAuth);
+        if (consumerAuth != null) {
+            sw.buildQuery()
+                    .update("ca_attr1", dsgcConsumerAuth.getCaAttr1())
+                    .eq("csm_code", dsgcConsumerAuth.getCsmCode())
+                    .eq("env_code", dsgcConsumerAuth.getEnvCode())
+                    .doUpdate(DSGCConsumerAuth.class);
+        } else {
+            sw.buildQuery().doInsert(dsgcConsumerAuth);
+        }
+    }
 }

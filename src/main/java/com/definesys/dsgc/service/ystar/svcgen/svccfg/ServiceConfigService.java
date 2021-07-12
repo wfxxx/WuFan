@@ -2,8 +2,9 @@ package com.definesys.dsgc.service.ystar.svcgen.svccfg;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.definesys.dsgc.service.lkv.FndPropertiesDao;
+import com.definesys.dsgc.service.ystar.fnd.property.FndPropertiesDao;
 import com.definesys.dsgc.service.lkv.bean.FndProperties;
+import com.definesys.dsgc.service.ystar.fnd.property.FndPropertiesService;
 import com.definesys.dsgc.service.ystar.svcgen.conn.SvcGenConnDao;
 import com.definesys.dsgc.service.ystar.svcgen.proj.DSGCProjDirManagerDao;
 import com.definesys.dsgc.service.ystar.svcgen.proj.bean.DSGCSysProfileDir;
@@ -21,16 +22,13 @@ import com.definesys.dsgc.service.ystar.svcgen.sapcfg.SapServiceConfigDTO;
 import com.definesys.dsgc.service.ystar.svcgen.soapcfg.SoapServiceConfigDTO;
 import com.definesys.dsgc.service.ystar.utils.MuleXmlConfUtils;
 import com.definesys.mpaas.common.http.Response;
-import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -46,7 +44,7 @@ public class ServiceConfigService {
     @Autowired
     private DSGCServiceService dsgcServiceService;
     @Autowired
-    private FndPropertiesDao fndPropertiesDao;
+    private FndPropertiesService fndPropertiesService;
     @Autowired
     private RFCStepsService rfcStepsService;
     @Autowired
@@ -59,14 +57,6 @@ public class ServiceConfigService {
     private DBSvcCfgDao dbSvcCfgDao;
     @Autowired
     private SvcGenConnDao svcGenConnDao;
-    @Value("${ystar.esb.dsgc_home}")
-    private String dsgcHome;
-    @Value("${ystar.git.repo_home}")
-    private String repoHome;
-    @Value("${ystar.esb.mule_home}")
-    private String muleHome;
-    @Value("${ystar.git.maven_home}")
-    private String mavenHome;
 
     /**
      * @Description: Rest接口快速开发
@@ -77,29 +67,6 @@ public class ServiceConfigService {
     public Response saveRestService(RestServiceConfigDTO restServiceConfigDTO, String userName) {
         // 获取配置项目目录
         String proId = restServiceConfigDTO.getProjId();
-        // 检查服务编号是否存在
-        DSGCService service = dsgcServiceDao.findServiceByServNo(restServiceConfigDTO.getSvcCode());
-        if (service == null) {
-            // 新增服务资产
-            DSGCServiceVO dsgcServiceVO = new DSGCServiceVO();
-            dsgcServiceVO.setServNo(restServiceConfigDTO.getSvcCode());
-            dsgcServiceVO.setServName(restServiceConfigDTO.getSvcName());
-            dsgcServiceVO.setServDesc(restServiceConfigDTO.getSvcName());
-            dsgcServiceVO.setBizAddr(restServiceConfigDTO.getSvcPath());
-            dsgcServiceVO.setSubordinateSystem(restServiceConfigDTO.getToSystem());
-            //设置服务地址
-            DSGCServicesUri dsgcServicesUri = new DSGCServicesUri();
-            dsgcServicesUri.setServNo(restServiceConfigDTO.getSvcCode());
-            dsgcServicesUri.setIbUri(restServiceConfigDTO.getSvcPath());
-            dsgcServicesUri.setHttpMethod(restServiceConfigDTO.getBizReqMethod());
-            dsgcServicesUri.setUriType("REST");
-            ArrayList<DSGCServicesUri> servicesUris = new ArrayList<>();
-            servicesUris.add(dsgcServicesUri);
-            dsgcServiceVO.setServicesUris(servicesUris);
-            dsgcServiceService.insertDsgcService(dsgcServiceVO);
-        } else {
-            return Response.error("服务编号已存在！");
-        }
         // 新增快速配置接口信息
         SvcgenServiceInfo svcgenServiceInfo = new SvcgenServiceInfo();
         svcgenServiceInfo.setSvcCode(restServiceConfigDTO.getSvcCode());
@@ -130,8 +97,7 @@ public class ServiceConfigService {
         // 拿到接口完整的配置信息
         String configInfo = svcGen.getTextAttribute1();
         // 本地仓库地址
-        dsgcHome = getFndCfgPath("dsgc");//StringUtil.isNotBlank(dsgcHome) ? dsgcHome : fndPropertiesDao.findFndPropertiesByKey("DSGC_HOME").getPropertyValue();
-        repoHome = dsgcHome + "/git-repo";
+        String repoHome = fndPropertiesService.getLocalHome("repo");
         boolean isSuccess = false;
         if ("REST".equals(svcGen.getSvcType())) {
             RestServiceConfigDTO restConfig = JSONObject.toJavaObject(JSON.parseObject(configInfo), RestServiceConfigDTO.class);
@@ -166,64 +132,24 @@ public class ServiceConfigService {
     }
 
     @Transactional
-    public Response saveSoapService(SoapServiceConfigDTO soapServiceConfigDTO, String userName) {
-        // 判断敏捷开发的服务中是否已经有了
-        List<SvcgenServiceInfo> serviceInfos = svcgenServiceInfoDao.queryServByservNo(soapServiceConfigDTO.getSvcCode());
-        if (serviceInfos.size() > 0) {
-            return Response.error("敏捷服务编号已存在!");
-        }
-        // 保存soap配置
+    public Response saveSoapService(TmplConfigBean tmplConfigBean, String userId) {
+        // 获取配置项目目录
+        String proId = tmplConfigBean.getProjId();
+        DSGCSysProfileDir sysProfileDir = proDirManagerDao.getSysProfileDirByProId(proId);
         // 新增快速配置接口信息
         SvcgenServiceInfo svcgenServiceInfo = new SvcgenServiceInfo();
-        svcgenServiceInfo.setSvcCode(soapServiceConfigDTO.getSvcCode());
-        svcgenServiceInfo.setSvcName(soapServiceConfigDTO.getSvcName());
-        svcgenServiceInfo.setProjId(soapServiceConfigDTO.getProjId());
-        svcgenServiceInfo.setProjName(soapServiceConfigDTO.getProjName());
-        svcgenServiceInfo.setCreatedBy(userName);
-        svcgenServiceInfo.setSysCode(soapServiceConfigDTO.getToSystem());
+        svcgenServiceInfo.setSvcCode(tmplConfigBean.getServNo());
+        svcgenServiceInfo.setSvcName(tmplConfigBean.getSvcName());
+        svcgenServiceInfo.setProjId(proId);
+        svcgenServiceInfo.setProjName(sysProfileDir.getProjName());
+        svcgenServiceInfo.setCreatedBy(userId);
+        svcgenServiceInfo.setSysCode(tmplConfigBean.getAppCode());
         svcgenServiceInfo.setSvcType("SOAP");
-        //去掉空oper
-        soapServiceConfigDTO.setSoapOpers(soapServiceConfigDTO.getSoapOpers().
-                stream().filter(e -> !"".equals(e)).collect(Collectors.toList()));
         // 存服务详细信息
-        String servdetail = JSONObject.toJSONString(soapServiceConfigDTO);
-        svcgenServiceInfo.setTextAttribute1(servdetail);
-        svcgenServiceInfo.setTextAttribute3(soapServiceConfigDTO.getWsdlUri());
+        String svcDetail = JSONObject.toJSONString(tmplConfigBean);
+        svcgenServiceInfo.setSvcInfo(svcDetail);
         svcgenServiceInfoDao.insertSvcServInfo(svcgenServiceInfo);
-        // 注册服务信息
-        List<Map<String, String>> operInfos = soapServiceConfigDTO.getOperInfos();
-        // 截取请求path
-        String completeUrl = soapServiceConfigDTO.getBizReqPath();
-        // String IbUri = completeUrl.substring(StringUtil.getCharIndex(completeUrl,"/",3));
-        for (Map<String, String> operInfo : operInfos) {
-            String[] infos = operInfo.get("info").split(";");
-            String servCode = infos[0];
-            String servName = infos[1];
-            DSGCService serviceBySvc = dsgcServiceDao.findServiceByServNo(servCode);
-            if (serviceBySvc != null) {
-                return Response.error("服务编号已经存在");
-            }
-            // 为每个方法注册服务
-            // 新增服务资产
-            DSGCServiceVO dsgcServiceVO = new DSGCServiceVO();
-            dsgcServiceVO.setServNo(servCode);
-            dsgcServiceVO.setServName(servName);
-            dsgcServiceVO.setServDesc(servName);
-            dsgcServiceVO.setSubordinateSystem(soapServiceConfigDTO.getToSystem());
-            //设置服务地址
-            DSGCServicesUri dsgcServicesUri = new DSGCServicesUri();
-            dsgcServicesUri.setServNo(servCode);
-            dsgcServicesUri.setIbUri(soapServiceConfigDTO.getSvcPath());
-            dsgcServicesUri.setHttpMethod("POST");
-            dsgcServicesUri.setUriType("SOAP");
-            dsgcServicesUri.setSoapOper(operInfo.get("code"));
-            ArrayList<DSGCServicesUri> dsgcServicesUris = new ArrayList<>();
-            dsgcServicesUris.add(dsgcServicesUri);
-            dsgcServiceVO.setServicesUris(dsgcServicesUris);
-            dsgcServiceService.insertDsgcService(dsgcServiceVO);
-
-        }
-        return Response.ok().setMessage("接口保存成功");
+        return Response.ok().setMessage("接口配置保存成功");
     }
 
     public Response saveSapService(SapServiceConfigDTO sapServiceConfigDTO, String userName) {// 判断敏捷开发的服务中是否已经有了
@@ -308,8 +234,7 @@ public class ServiceConfigService {
         String gitUsername = svcgenConnBean.getAttr4();
         String gitPwd = svcgenConnBean.getAttr5();
         //获取本地仓库地址
-        dsgcHome = getFndCfgPath("dsgc");//StringUtil.isNotBlank(dsgcHome) ? dsgcHome : fndPropertiesDao.findFndPropertiesByKey("DSGC_HOME").getPropertyValue();
-        repoHome = dsgcHome + "/git-repo";
+        String repoHome = fndPropertiesService.getLocalHome("repo");
         //配置内容
         String configInfo = svcgenServiceInfo.getSvcInfo();
         if ("REST".equals(svcType)) {
@@ -343,8 +268,7 @@ public class ServiceConfigService {
         String gitUsername = svcgenConnBean.getAttr4();
         String gitPwd = svcgenConnBean.getAttr5();
         //获取本地仓库地址
-        dsgcHome = getFndCfgPath("dsgc");
-        repoHome = dsgcHome + "/git-repo";
+        String repoHome = fndPropertiesService.getLocalHome("repo");
         //删除代码并提交
         MuleXmlConfUtils.removeProjectCode(repoHome, proName, svcType, svcgenServiceInfo.getSvcCode());
         serviceConfigDao.commitAndPushCode(gitUsername, gitPwd, repoHome + "/" + proName, "删除" + svcType + "接口[" + svcgenServiceInfo.getSvcCode() + "]源代码");
@@ -354,13 +278,14 @@ public class ServiceConfigService {
     public SvcgenServiceInfo querySvcGenFirstInfo(SvcgenServiceInfo svcgen) {
         return svcgenServiceInfoDao.querySvcGenFirstInfo(svcgen);
     }
+
     public SvcgenServiceInfo querySvcGenInfoByCode(String svcCode) {
         return svcgenServiceInfoDao.querySvcGenInfoBySvcCode(svcCode);
     }
 
     public Response saveDBService(TmplConfigBean tcb, String userName) {
         // 获取配置项目目录
-        String projectName = tcb.getProjDir();
+        String projectName = tcb.getProjName();
         //查询数据库连接信息
 
         // 检查服务编号是否存在
@@ -400,38 +325,6 @@ public class ServiceConfigService {
         svcgenServiceInfoDao.insertSvcServInfo(svcgenServiceInfo);
         return Response.ok().setMessage("接口配置保存成功");
     }
-
-    public String getFndCfgPath(String type) {
-        String key = type;
-        switch (type) {
-            case "dsgc":
-                if (StringUtil.isNotBlank(dsgcHome)) {
-                    return dsgcHome;
-                } else {
-                    key = "DSGC_HOME";
-                }
-                break;
-            case "mule":
-                if (StringUtil.isNotBlank(muleHome)) {
-                    return muleHome;
-                } else {
-                    key = "MULE_HOME";
-                }
-                break;
-            case "maven":
-                if (StringUtil.isNotBlank(mavenHome)) {
-                    return mavenHome;
-                } else {
-                    key = "MAVEN_HOME";
-                }
-                break;
-            default:
-                break;
-        }
-        FndProperties properties = fndPropertiesDao.findFndPropertiesByKey(key);
-        return properties != null ? properties.getPropertyValue() : null;
-    }
-
 
 }
 

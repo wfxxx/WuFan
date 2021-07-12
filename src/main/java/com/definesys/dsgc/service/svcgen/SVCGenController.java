@@ -51,29 +51,6 @@ public class SVCGenController {
         }
     }
 
-
-//    /**
-//     * 迁移过来的代码，将被废弃
-//     *
-//     * @param filePath
-//     * @return
-//     * @deprecated
-//     */
-//    @RequestMapping(value = "/queryInterDirByProj", method = RequestMethod.POST)
-//    public Response queryInterDirByProj(@RequestBody String filePath) {
-//        JSONObject json = JSONObject.fromObject(filePath);
-//        String path = json.getString("filePath");
-//        if (StringUtil.isBlank(path)) {
-//            return Response.error("请求参数文件路径不能为空！").setCode("error");
-//        }
-//        try {
-//            Map<String,Object> filePathList = svc.queryInterDirByProj(path);
-//            return Response.ok().data(filePathList);
-//        } catch (Exception ex) {
-//            return Response.error("检索文件失败").setCode("error").setMessage(ex.getMessage());
-//        }
-//    }
-
     @RequestMapping(value = "/queryAllSystem", method = RequestMethod.GET)
     public Response queryAllSystem(HttpServletRequest request) {
         String uId = request.getHeader("uid");
@@ -111,22 +88,6 @@ public class SVCGenController {
             return Response.error(e.getMessage());
         }
     }
-
-//    @RequestMapping(value = "/vaildSapConnInfo", method = RequestMethod.POST)
-//    public Response vaildSapConnInfo(@RequestBody SapConnInfoJsonBean sci, HttpServletRequest request) {
-//        try {
-//            Response vaildRes = this.validUser(request);
-//            if (Response.CODE_OK.equals(vaildRes.getCode())) {
-//                String userId = request.getHeader("uid");
-//                return Response.ok().data(this.rfcs.vaildSapConnInfo(userId, sci));
-//            } else {
-//                return vaildRes;
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return Response.error(e.getMessage());
-//        }
-//    }
 
     @RequestMapping(value = "/syncRfcFromSap", method = RequestMethod.POST)
     public Response vaildSapConnInfo(@RequestBody RFCSyncJsonBean sj, HttpServletRequest request) {
@@ -231,6 +192,32 @@ public class SVCGenController {
             return Response.error("发生错误，请联系管理员处理！");
         }
     }
+
+    @RequestMapping(value = "/resolveMuleWsdl", method = RequestMethod.POST)
+    public Response resolveWsdl(@RequestBody WSDLResolveBean wsdl,HttpServletRequest request) {
+        try {
+            if (wsdl.getWsdlUri() == null || wsdl.getWsdlUri().trim().length() == 0) {
+                return Response.error("WSDL地址不能为空！");
+            }
+            return this.svc.resolveMuleWsdl(wsdl);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.error("发生错误，请联系管理员处理！");
+        }
+    }
+
+    @RequestMapping(value = "/generateServiceCode", method = RequestMethod.POST)
+    public Response generateServiceCode(@RequestBody TmplConfigBean tcb,HttpServletRequest request) {
+
+        String userId = request.getHeader("uid");
+        try {
+            return svc.generateServiceCode(userId,tcb);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.error("发生错误，请联系管理员处理！");
+        }
+    }
+
 
 
     private Response validUser(HttpServletRequest request) {

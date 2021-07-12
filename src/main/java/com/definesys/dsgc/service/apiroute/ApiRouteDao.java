@@ -247,6 +247,11 @@ public class ApiRouteDao {
         return sw.buildQuery().sql("select dds.* from dag_deploy_stat dds,dag_code_version dcv where dds.vid = dcv.vid and dcv.sour_type = 'route' and dcv.sour_code = #sourCode and dds.env_code = #envCode")
                 .setVar("sourCode", sourCode).setVar("envCode", envCode)
                 .doQueryFirst(DagDeployStatBean.class);
+    }
 
+    public String delRouteConfigByCode(String routeCode) {
+        DagCodeVersionBean code = sw.buildQuery().eq("sourCode", routeCode).doQueryFirst(DagCodeVersionBean.class);
+        sw.buildQuery().eq("sourCode", routeCode).doDelete(code);
+        return code.getVid();
     }
 }

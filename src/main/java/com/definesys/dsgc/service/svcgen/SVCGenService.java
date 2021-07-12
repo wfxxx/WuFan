@@ -2,15 +2,12 @@ package com.definesys.dsgc.service.svcgen;
 
 import com.definesys.dsgc.service.svcgen.bean.*;
 import com.definesys.dsgc.service.svcgen.utils.ServiceGenerateProxy;
-import com.definesys.dsgc.service.svcinfo.bean.SVCUriBean;
 import com.definesys.dsgc.service.users.bean.DSGCUser;
 import com.definesys.dsgc.service.system.bean.DSGCSystemEntities;
 import com.definesys.dsgc.service.lkv.FndLookupTypeDao;
 import com.definesys.dsgc.service.users.DSGCUserService;
 import com.definesys.dsgc.service.utils.FileCopyUtil;
 import com.definesys.dsgc.service.utils.UserHelper;
-import com.definesys.dsgc.service.ystar.svcgen.bean.WSDLObjectBean;
-import com.definesys.dsgc.service.ystar.utils.WSDLUtils;
 import com.definesys.mpaas.common.exception.MpaasBusinessException;
 import com.definesys.mpaas.common.http.Response;
 import com.definesys.mpaas.query.MpaasQueryFactory;
@@ -20,16 +17,15 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class SVCGenService {
 
-    public Map<String,String> fileTypeMap = new HashMap<String,String>();
+    public Map<String, String> fileTypeMap = new HashMap<String, String>();
 
-    public Map<String,String> fileTypeMeaningMap = new HashMap<String,String>();
+    public Map<String, String> fileTypeMeaningMap = new HashMap<String, String>();
 
-    public Map<String,DSGCUser> userMap = new HashMap<String,DSGCUser>();
+    public Map<String, DSGCUser> userMap = new HashMap<String, DSGCUser>();
 
 
     private ServiceGenerateProxy sgProxy = ServiceGenerateProxy.newInstance();
@@ -57,7 +53,7 @@ public class SVCGenService {
             int i = cfjb.getFilePath().lastIndexOf("/");
             if (i != -1) {
                 if (cfjb.getFileSuffix() != null) {
-                    cfjb.setFileName(cfjb.getFilePath().substring(i + 1,cfjb.getFilePath().indexOf(cfjb.getFileSuffix())));
+                    cfjb.setFileName(cfjb.getFilePath().substring(i + 1, cfjb.getFilePath().indexOf(cfjb.getFileSuffix())));
                 } else {
                     cfjb.setFileName(cfjb.getFilePath().substring(i + 1));
                 }
@@ -91,13 +87,13 @@ public class SVCGenService {
      */
     private void initUserMap() {
         List<DSGCUser> allUsers = this.us.findAll();
-        Map<String,DSGCUser> userNameMap = new HashMap<String,DSGCUser>();
+        Map<String, DSGCUser> userNameMap = new HashMap<String, DSGCUser>();
 
         if (allUsers != null) {
             Iterator<DSGCUser> userIter = allUsers.iterator();
             while (userIter.hasNext()) {
                 DSGCUser user = userIter.next();
-                userNameMap.put(user.getUserId(),user);
+                userNameMap.put(user.getUserId(), user);
             }
         }
         this.userMap = userNameMap;
@@ -118,16 +114,16 @@ public class SVCGenService {
     }
 
     private void initFileTypeMap() {
-        Map<String,String> tmpMap = new HashMap<String,String>();
-        tmpMap.put(".proxy","ps");
-        tmpMap.put(".bix","bs");
-        tmpMap.put(".pipeline","pp");
-        tmpMap.put(".wsdl","wsdl");
-        tmpMap.put(".xsd","xsd");
-        tmpMap.put(".xsl","xsl");
-        tmpMap.put(".xqy","xqy");
-        tmpMap.put(".sa","sa");
-        tmpMap.put(".wadl","wadl");
+        Map<String, String> tmpMap = new HashMap<String, String>();
+        tmpMap.put(".proxy", "ps");
+        tmpMap.put(".bix", "bs");
+        tmpMap.put(".pipeline", "pp");
+        tmpMap.put(".wsdl", "wsdl");
+        tmpMap.put(".xsd", "xsd");
+        tmpMap.put(".xsl", "xsl");
+        tmpMap.put(".xqy", "xqy");
+        tmpMap.put(".sa", "sa");
+        tmpMap.put(".wadl", "wadl");
         this.fileTypeMap = tmpMap;
     }
 
@@ -172,7 +168,7 @@ public class SVCGenService {
      * @throws Exception
      */
     public List<ServcieAccountBean> getServcieAccountList(String uid) throws Exception {
-       return this.svcGenDao.getServcieAccountList(uid,this.userHelper.user(uid));
+        return this.svcGenDao.getServcieAccountList(uid, this.userHelper.user(uid));
     }
 
     /**
@@ -181,13 +177,13 @@ public class SVCGenService {
      * @param parantFilePath
      * @return
      */
-    public Map<String,Object> queryInterDirByProj(String parantFilePath) {
+    public Map<String, Object> queryInterDirByProj(String parantFilePath) {
         List<String> List = null;
-        Map<String,Object> fileMap = null;
+        Map<String, Object> fileMap = null;
         try {
             List<String> fileList = FileCopyUtil.getChildDir(parantFilePath);
             if (fileList.size() > 0) {
-                fileMap = new HashMap<String,Object>();
+                fileMap = new HashMap<String, Object>();
                 List = new ArrayList<String>();
                 String strkey = null;
                 String strValue = null;
@@ -195,17 +191,17 @@ public class SVCGenService {
                     //截取路径，路径 : 目录名称 键值对格式
                     if (ss.contains("/")) {
                         //linux  unix java 环境下 路径
-                        strkey = ss.substring(0,ss.lastIndexOf("/") + 1);
+                        strkey = ss.substring(0, ss.lastIndexOf("/") + 1);
                         strValue = ss.substring(ss.lastIndexOf("/") + 1);
                     } else if (ss.contains("\\")) {
                         //win环境下
-                        strkey = ss.substring(0,ss.lastIndexOf("\\") + 1);
+                        strkey = ss.substring(0, ss.lastIndexOf("\\") + 1);
                         strValue = ss.substring(ss.lastIndexOf("\\") + 1);
                     }
                     List.add(strValue);
                 }
-                fileMap.put("projPath",strkey);
-                fileMap.put("projName",List);
+                fileMap.put("projPath", strkey);
+                fileMap.put("projName", List);
                 return fileMap;
             } else {
                 return fileMap;
@@ -224,11 +220,11 @@ public class SVCGenService {
      *
      * @return
      */
-    public List<DeployProfileSltBean> getUserCanDeployList(String uid,String servNo) {
+    public List<DeployProfileSltBean> getUserCanDeployList(String uid, String servNo) {
         List<DeployProfileSltBean> res = new ArrayList<DeployProfileSltBean>();
         UserHelper uh = this.userHelper.user(uid);
         if (uh.isSvcGenEditorByServNo(servNo)) {
-            return svcGenDao.getUserCanDeployProfiles(uid,servNo);
+            return svcGenDao.getUserCanDeployProfiles(uid, servNo);
         }
         return res;
     }
@@ -273,65 +269,65 @@ public class SVCGenService {
 
     /**
      * 获取svc类型的sg对象
+     *
      * @param q
      * @param uid
      * @param pageSize
      * @param pageIndex
      * @return
      */
-    public PageQueryResult<SvcGenObjJsonBean> getSgSvcObjList(SvcGenObjReqBean q,String uid,int pageSize,int pageIndex){
-        return this.getSgObjList(true,q,uid,pageSize,pageIndex);
+    public PageQueryResult<SvcGenObjJsonBean> getSgSvcObjList(SvcGenObjReqBean q, String uid, int pageSize, int pageIndex) {
+        return this.getSgObjList(true, q, uid, pageSize, pageIndex);
     }
 
     /**
      * 获取非svc类型对象，包括sa tmpl misc
+     *
      * @param q
      * @param uid
      * @param pageSize
      * @param pageIndex
      * @return
      */
-    public PageQueryResult<SvcGenObjJsonBean> getSgCmptObjList(SvcGenObjReqBean q,String uid,int pageSize,int pageIndex){
-        return this.getSgObjList(false,q,uid,pageSize,pageIndex);
+    public PageQueryResult<SvcGenObjJsonBean> getSgCmptObjList(SvcGenObjReqBean q, String uid, int pageSize, int pageIndex) {
+        return this.getSgObjList(false, q, uid, pageSize, pageIndex);
     }
 
-    private PageQueryResult<SvcGenObjJsonBean> getSgObjList(boolean isSvcType,SvcGenObjReqBean q,String uid,int pageSize,int pageIndex){
+    private PageQueryResult<SvcGenObjJsonBean> getSgObjList(boolean isSvcType, SvcGenObjReqBean q, String uid, int pageSize, int pageIndex) {
         UserHelper uh = this.userHelper.user(uid);
-        PageQueryResult<SvcGenObjJsonBean> resPageQ = this.svcGenDao.getSgObjList(isSvcType,q,uid,uh,pageSize,pageIndex);
+        PageQueryResult<SvcGenObjJsonBean> resPageQ = this.svcGenDao.getSgObjList(isSvcType, q, uid, uh, pageSize, pageIndex);
         List<SvcGenObjJsonBean> resLst = resPageQ.getResult();
-        if(resLst != null){
+        if (resLst != null) {
             Iterator<SvcGenObjJsonBean> resIter = resLst.iterator();
-            while (resIter.hasNext()){
+            while (resIter.hasNext()) {
                 SvcGenObjJsonBean ob = resIter.next();
-                this.initReadOnlyForSvcGenObjBean(ob,uid);
+                this.initReadOnlyForSvcGenObjBean(ob, uid);
             }
         }
         return resPageQ;
     }
 
-    public SvcGenObjJsonBean getSvcGenObjInfo(String sgObjCode,String uid) {
+    public SvcGenObjJsonBean getSvcGenObjInfo(String sgObjCode, String uid) {
         UserHelper uh = this.userHelper.user(uid);
-        return this.getSvcGenObjInfo(sgObjCode,uid,uh);
+        return this.getSvcGenObjInfo(sgObjCode, uid, uh);
     }
 
-    public SvcGenObjJsonBean getSvcGenObjInfo(String sgObjCode,String uid,UserHelper uh) {
-        SvcGenObjJsonBean res = this.svcGenDao.getSvcGenObjInfo(sgObjCode,uid,uh);
-        if(res != null){
-            this.initReadOnlyForSvcGenObjBean(res,uid);
+    public SvcGenObjJsonBean getSvcGenObjInfo(String sgObjCode, String uid, UserHelper uh) {
+        SvcGenObjJsonBean res = this.svcGenDao.getSvcGenObjInfo(sgObjCode, uid, uh);
+        if (res != null) {
+            this.initReadOnlyForSvcGenObjBean(res, uid);
         }
         return res;
     }
 
 
-
-    private void initReadOnlyForSvcGenObjBean(SvcGenObjJsonBean ob,String uid){
+    private void initReadOnlyForSvcGenObjBean(SvcGenObjJsonBean ob, String uid) {
         UserHelper uh = this.userHelper.user(uid);
         ob.setReadonly(true);
-        if(uid != null &&  ob !=null){
-            if(uh.isAdmin() || uh.isSuperAdministrator()){
+        if (uid != null && ob != null) {
+            if (uh.isAdmin() || uh.isSuperAdministrator()) {
                 ob.setReadonly(false);
-            }
-            else {
+            } else {
                 if ("Y".equals(ob.getEnabled())) {
                     if (ob.getServNo() == null) {
                         //如果还没有服务资产化，则应该为系统负责人且是资源创建人，或者更新人时可以编辑
@@ -345,7 +341,7 @@ public class SVCGenService {
                             ob.setReadonly(false);
                         }
                     }
-                } else{
+                } else {
                     //已经被废弃了，无法操作权限
                     ob.setReadonly(true);
                 }
@@ -353,10 +349,49 @@ public class SVCGenService {
         }
     }
 
-    public int deleteSvcGenObj(String uid,String sgObjCode) throws Exception{
+    public int deleteSvcGenObj(String uid, String sgObjCode) throws Exception {
         UserHelper uh = this.userHelper.user(uid);
-        SvcGenObjJsonBean objJsonBean = this.getSvcGenObjInfo(sgObjCode,uid,uh);
-        return this.svcGenDao.deleteSvcGenObj(objJsonBean,uid,uh);
+        SvcGenObjJsonBean objJsonBean = this.getSvcGenObjInfo(sgObjCode, uid, uh);
+        return this.svcGenDao.deleteSvcGenObj(objJsonBean, uid, uh);
+    }
+
+
+    public Response resolveMuleWsdl(WSDLResolveBean wsdl) throws Exception {
+        String saCode = wsdl.getSaCode();
+        if (saCode != null && saCode.trim().length() > 0) {
+            SABean sa = this.svcGenDao.getSaInfoBySaCode(saCode);
+            //根据系统编号，默认设置下一步的提供方系统
+            Response res = this.sgProxy.parseSpyWSDL(wsdl.getWsdlUri(), sa.getUn(), sa.getPd());
+            if (Response.CODE_OK.equals(res.getCode())) {
+                return res.setMessage(sa.getSystemCode());
+            } else {
+                return res;
+            }
+        }
+        return this.sgProxy.parseSpyWSDL(wsdl.getWsdlUri(), null, null);
+    }
+
+    /**
+     * 生成服务代码
+     *
+     * @param loginUser
+     * @param tcb
+     * @return
+     * @throws Exception
+     */
+    public Response generateServiceCode(String loginUser, TmplConfigBean tcb) throws Exception {
+        System.out.println(tcb.toString());
+        Map<String, Object> paramMap = new HashMap<String, Object>();
+        paramMap.put("TO_RESOLVE_LIST", tcb.getToResolveFileList());
+        paramMap.put("resolveDenpendencies", tcb.getResolveDenpendencies());
+        if ("0".equals(tcb.getTmplFlag())) {
+            if (tcb.getSaForWsdl() != null && tcb.getSaForWsdl().trim().length() > 0) {
+                SABean sa = this.svcGenDao.getSaInfoBySaCode(tcb.getSaForWsdl());
+                tcb.setWsdlUN(sa.getUn());
+                tcb.setWsdlPD(sa.getPd());
+            }
+        }
+        return this.sgProxy.generateServiceCode(loginUser, tcb, paramMap);
     }
 
 }

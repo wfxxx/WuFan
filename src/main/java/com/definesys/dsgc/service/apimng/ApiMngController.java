@@ -1,11 +1,11 @@
 package com.definesys.dsgc.service.apimng;
 
 import com.alibaba.fastjson.JSONObject;
-import com.definesys.dsgc.service.apimng.bean.CommonReqBean;
-import com.definesys.dsgc.service.apimng.bean.DSGCApisBean;
-import com.definesys.dsgc.service.apimng.bean.DSGCServicesUri;
+import com.definesys.dsgc.service.apimng.bean.*;
+import com.definesys.dsgc.service.svcmng.bean.SVCCommonReqBean;
+import com.definesys.dsgc.service.svcmng.bean.ServUriDTO;
+import com.definesys.dsgc.service.svcmng.bean.ServUriParamterDTO;
 import com.definesys.mpaas.common.http.Response;
-import com.definesys.dsgc.service.apimng.bean.ApiBasicInfoDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/dsgc/dag/")
@@ -73,16 +74,17 @@ public class ApiMngController {
         dsgcApisBean.setApiName(apiParams.getString("apiName"));
         dsgcApisBean.setApiDesc(apiParams.getString("apiDesc"));
         dsgcApisBean.setAppCode(apiParams.getString("appCode"));
-        DSGCServicesUri dsgcServicesUri = new DSGCServicesUri();
-        dsgcServicesUri.setServNo(uriParams.getString("servNo"));
-        dsgcServicesUri.setIbUri(uriParams.getString("ibUri"));
-        dsgcServicesUri.setUriType(uriParams.getString("uriType"));
-        dsgcServicesUri.setHttpMethod(uriParams.getString("httpMethod"));
-        dsgcServicesUri.setProvider(uriParams.getString("provider"));
-        apiMngService.addDsgcApi(dsgcApisBean, dsgcServicesUri);
+        DSGCSApisUri dsgcApisUri = new DSGCSApisUri();
+        dsgcApisUri.setServNo(uriParams.getString("servNo"));
+        dsgcApisUri.setIbUri(uriParams.getString("ibUri"));
+        dsgcApisUri.setUriType(uriParams.getString("uriType"));
+        dsgcApisUri.setHttpMethod(uriParams.getString("httpMethod"));
+        dsgcApisUri.setProvider(uriParams.getString("provider"));
+        apiMngService.addDsgcApi(dsgcApisBean, dsgcApisUri);
         return Response.ok();
     }
-    @RequestMapping(value = "/checkApiCodeIsExist",method = RequestMethod.POST)
+
+    @RequestMapping(value = "/checkApiCodeIsExist", method = RequestMethod.POST)
     public Response checkApiCodeIsExist(@RequestBody CommonReqBean param) {
         try {
             Boolean isExist = apiMngService.checkApiCodeIsExist(param);
@@ -91,5 +93,17 @@ public class ApiMngController {
             e.printStackTrace();
             return Response.error("验证API编号失败！");
         }
+    }
+
+    @RequestMapping(value = "/queryApisUri", method = RequestMethod.POST)
+    public Response queryApisUri(@RequestBody CommonReqBean param) {
+        List<ApiUriDTO> result = apiMngService.queryApisUri(param.getCon0());
+        return Response.ok().setData(result);
+    }
+
+    @RequestMapping(value = "/queryApisUriParameter", method = RequestMethod.POST)
+    public Response queryApisUriParameter(@RequestBody CommonReqBean param) {
+        List<ServUriParamterDTO> result = apiMngService.queryApisUriParameter(param.getCon0());
+        return Response.ok().setData(result);
     }
 }

@@ -266,81 +266,103 @@ public class DSGCLogInstanceController {
         return Response.ok();
     }
 
-    @ResponseBody
     @RequestMapping(value = "/getHeaderPayload", method = RequestMethod.GET)
-    public void getHeaderPayload(@RequestParam("trackId") String trackId,
-                                 @RequestParam("ibLob") String ibLob,
-                                 String startTime,
-                                 String endTime,
-                                 HttpServletResponse response) {
+    public Response getHeaderPayload(@RequestParam("trackId") String trackId,
+                                     @RequestParam("ibLob") String ibLob,
+                                     @RequestParam("envCode") String envCode,
+                                     String startTime,
+                                     String endTime) {
         try {
-            response.setContentType("text/xml;charset=UTF-8");
-            PrintWriter out = response.getWriter();
-            if (trackId == null || "".equals(trackId)) {
-                out.print("trackId 为空");
-                out.flush();
-                out.close();
-                return;
+            String switchUrl = this.logService.getSwitchUrl(envCode);
+            if (switchUrl != null) {
+                String res = HttpReqUtil.getObject(switchUrl + "/dsgc/logInstance/getHeaderPayload?trackId=" + trackId + "&ibLob=" + ibLob + "&envCode=" + envCode + "&startTime=" + startTime + "&endTime=" + endTime, String.class);
+                return Response.ok().data(res);
             }
-            if (ibLob == null || "".equals(ibLob)) {
-                out.print("ibLob 为空");
-                out.flush();
-                out.close();
-                return;
-            }
+
             String str = logService.getHeaderPayload(trackId, ibLob);
             if (str != null) {
                 if (str.trim().length() == 0) {
-                    logService.showData(response, "报文为空");
+                    Response.ok().data("无报文");
                 } else {
-                    str.replaceAll(" ", "");
-                    if (str.contains("<")) {
-                        out.println(str);
-                    } else {
-                        String s = MsgCompressUtil.deCompress(str);
-                        out.println(s);
+                    str = str.replaceAll(" ", "");
+                    if (!str.contains("<")) {
+                        str = MsgCompressUtil.deCompress(str);
                     }
-                    out.flush();
-                    out.close();
+                    Response.ok().data(str);
                 }
             } else {
-                logService.noPayload(response);
+                Response.ok().data("无报文");
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return Response.ok().data("无报文");
     }
 
-    @ResponseBody
     @RequestMapping(value = "/getBodyPayload", method = RequestMethod.GET)
-    public void getBodyPayload(@RequestParam("ibLob") String ibLob,
-                               @RequestParam("servNo") String servNo,
-                               @RequestParam("trackId") String trackId,
-                               @RequestParam("startTime") String startTime,
-                               @RequestParam("endTime") String endTime,
-                               HttpServletResponse response) {
+    public Response getBodyPayload(@RequestParam("ibLob") String ibLob,
+                                   @RequestParam("servNo") String servNo,
+                                   @RequestParam("trackId") String trackId,
+                                   @RequestParam("envCode") String envCode,
+                                   @RequestParam("startTime") String startTime,
+                                   @RequestParam("endTime") String endTime,
+                                   @RequestParam(value = "jobId", required = false, defaultValue = "undefined") String jobId,
+                                   @RequestParam(value = "bodyType", required = false, defaultValue = "undefined") String bodyType) {
+        try {
+            String switchUrl = this.logService.getSwitchUrl(envCode);
+            if (switchUrl != null) {
+                String res = HttpReqUtil.getObject(switchUrl + "/dsgc/logInstance/getBodyPayload?trackId=" + trackId + "&servNo=" + servNo + "&ibLob=" + ibLob + "&startTime=" + startTime + "&endTime=" + endTime + "&jobId=" + jobId + "&envCode=" + envCode + "&bodyType=" + bodyType, String.class);
+                return Response.ok().data(res);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (!"undefined".equals(jobId)) {
+            try {
+                String str = "";
+                if ("req".equals(bodyType)) {
+                    str = logService.getReqBodyRetry(jobId);
+                } else if ("res".equals(bodyType)) {
+                    str = logService.getResBodyRetry(jobId);
+                }
+                if (str != null) {
+                    if (str.trim().length() == 0 || str.trim().equals("{NullPayload}")) {
+                        return Response.ok().data("无报文");
+                    } else {
+                        str.replaceAll(" ", "");
+                        return Response.ok().data(str);
+                    }
+
+                } else {
+                    return Response.ok().data("无报文");
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         DSGCLogInstance detailsInterfaceData = logService.findLogById(trackId);
         String type = detailsInterfaceData.getPlStoreType();
         if ("DB".equals(type)) {
             try {
                 String str = logService.getBodyPayload(ibLob);
                 if (str != null) {
-                    if (str.trim().length() == 0) {
-                        logService.showData(response, "报文为空");
+                    if (str.trim().length() == 0 || str.trim().equals("{NullPayload}")) {
+                        return Response.ok().data("无报文");
                     } else {
-                        str.replaceAll(" ", "");
-                        if (str.contains("<")) {
-                            logService.showData(response, str);
-                        } else {
-                            String s = MsgCompressUtil.deCompress(str);
-                            String test = MsgCompressUtil.deCompress("eJzj5bKpyM3RTStKTM9NzSvRt+PlAgA5ggWq");
-                            logService.showData(response, s);
+                        str = str.replaceAll(" ", "");
+                        if (!str.contains("<")) {
+                            str = MsgCompressUtil.deCompress(str);
                         }
+                        if ("{NullPayload}".equals(str.trim())) {
+                            return Response.ok().data("无报文");
+                        }
+                        return Response.ok().data(str);
                     }
 
                 } else {
-                    logService.noPayload(response);
+                    return Response.ok().data("无报文");
                 }
 
             } catch (Exception e) {
@@ -349,31 +371,24 @@ public class DSGCLogInstanceController {
         } else if ("BOTH".equals(type)) {
             try {
                 String str = logService.getBodyPayload(ibLob);
-//                System.out.println(str);
                 if (str != null) {
-//                    if (str.indexOf("<?xml version=") != -1) {
-                    if (str.contains("<")) {
-                        logService.showData(response, str);
-                    } else {
-//                      String s = MsgZLibUtil.decompress(str);
-                        String s = MsgCompressUtil.deCompress(str);
-//                        System.out.println(s);
-                        logService.showData(response, s);
+                    if (!str.contains("<")) {
+                        str = MsgCompressUtil.deCompress(str);
                     }
+                    return Response.ok().data(str);
                 } else {
                     String path = logService.dealPath(startTime, servNo, ibLob);
                     String fileContent = logService.readFileByLines(path);
                     if (fileContent != null && !"error".equals(fileContent)) {
-//                        if (fileContent.indexOf("<?xml version=") != -1) {
-                        if (fileContent.contains("<")) {
-                            logService.showData(response, fileContent);
-                        } else {
-                            String s = MsgCompressUtil.deCompress(fileContent);
-//                        String s = MsgZLibUtil.decompress(fileContent);
-                            logService.showData(response, s);
+                        if (!fileContent.contains("<")) {
+                            str = MsgCompressUtil.deCompress(fileContent);
                         }
+                        if ("{NullPayload}".equals(str.trim())) {
+                            return Response.ok().data("无报文");
+                        }
+                        return Response.ok().data(str);
                     } else {
-                        logService.noPayload(response);
+                        return Response.ok().data("无报文");
                     }
                 }
             } catch (Exception e) {
@@ -383,40 +398,37 @@ public class DSGCLogInstanceController {
             try {
                 String path = logService.dealPath(startTime, servNo, ibLob);
                 String fileContent = logService.readFileByLines(path);
-//                System.out.println(fileContent);
                 if (fileContent != null && !"error".equals(fileContent)) {
-//                    if (fileContent.indexOf("<?xml version=") != -1) {
-                    if (fileContent.contains("<")) {
-                        logService.showData(response, fileContent);
-                    } else {
-                        String s = MsgCompressUtil.deCompress(fileContent);
-//                      String s = MsgZLibUtil.decompress(fileContent);
-                        logService.showData(response, s);
+                    if (!fileContent.contains("<")) {
+                        fileContent = MsgCompressUtil.deCompress(fileContent);
                     }
+                    return Response.ok().data(fileContent);
                 } else {
-                    logService.noPayload(response);
+                    return Response.ok().data("无报文");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {
-            logService.noPayload(response);
+            return Response.ok().data("无报文");
         }
+        return Response.ok().data("无报文");
     }
 
-    @RequestMapping(value = "/getErrMsg", method = RequestMethod.GET)
+
+    @RequestMapping(value = "/getErrorPayload", method = RequestMethod.GET)
     @ResponseBody
-    public void getErrMsg(String errLob, HttpServletResponse response) {
+    public Response getErrorPayload(String errLob, HttpServletResponse response) {
+        String res = "";
         try {
             response.setContentType("text/xml;charset=UTF-8");
-            String str = logService.getErrMsg(errLob);
-            if (!str.contains("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")) {
-                str = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><payload>" + str + "</payload>";
-            }
-            logService.showData(response, str);
+            res = logService.getErrMsg(errLob);
+
         } catch (Exception e) {
             e.printStackTrace();
+            res = "无异常";
         }
+        return Response.ok().data(res);
     }
 
     @RequestMapping(value = "/getAllSystemCodeAndName", method = RequestMethod.GET)
@@ -426,18 +438,18 @@ public class DSGCLogInstanceController {
         return Response.ok().data(systemEntitiesList.size() > 0 ? systemEntitiesList : null);
     }
 
-    @RequestMapping(value = "/getRetryDetial",method = {RequestMethod.POST, RequestMethod.GET})
+    @RequestMapping(value = "/getRetryDetial", method = {RequestMethod.POST, RequestMethod.GET})
     public Response getRetryDetial(@RequestBody TempQueryLogCondition tempQueryLogCondition,
-                                   HttpServletRequest request){
+                                   HttpServletRequest request) {
         try {
-            return logService.getRetryDetial(tempQueryLogCondition,request);
-        }catch(JSONException jex){
+            return logService.getRetryDetial(tempQueryLogCondition, request);
+        } catch (JSONException jex) {
             jex.printStackTrace();
             return Response.error(jex.getMessage());
-        }catch (HttpClientErrorException hcex){
+        } catch (HttpClientErrorException hcex) {
             hcex.printStackTrace();
             return Response.error(hcex.getMessage());
-        }catch (IllegalArgumentException ex){
+        } catch (IllegalArgumentException ex) {
             ex.printStackTrace();
             return Response.error(ex.getMessage());
         } catch (Exception e) {

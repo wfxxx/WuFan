@@ -136,6 +136,7 @@ public class YStarUtil {
         return result;
     }
 
+
     public static void main(String[] args) {
         try {
             callMethod(new ShellUtil(), "checkValid", 5, new Class<?>[]{String.class, String.class, String.class},

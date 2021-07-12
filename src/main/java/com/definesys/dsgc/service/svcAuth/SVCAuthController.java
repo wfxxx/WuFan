@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "dsgc/svcauth")
@@ -170,6 +172,38 @@ public class SVCAuthController {
     @RequestMapping(value = "/checkSerAuthIsExist",method = RequestMethod.POST)
     public Response checkSerAuthIsExist(@RequestBody CommonReqBean param, HttpServletRequest request){
         return Response.ok().setData(svcAuthService.checkSerAuthIsExist(param.getApiCode(),param.getSelectSystemList()));
+    }
+
+    @RequestMapping(value="/saveIpRuleConfig",method = RequestMethod.POST)
+    public Response saveIpRuleConfig(@RequestBody IPRuleConfigVO ipRuleConfigVO){
+        try {
+            svcAuthService.saveIpRuleConfig(ipRuleConfigVO);
+            return Response.ok();
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("保存ip规则失败，请稍后再试！");
+        }
+    }
+
+    @RequestMapping(value = "/queryIpRuleConfig",method = RequestMethod.GET)
+    public Response queryIpRuleConfig(@RequestParam String limitType,@RequestParam String limitTarget){
+        try{
+            IPRuleConfigVO ipRuleConfigVO = svcAuthService.queryIpRuleConfig(limitType,limitTarget);
+            return Response.ok().setData(ipRuleConfigVO);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("查询ip黑白名单失败！");
+        }
+    }
+    @RequestMapping(value = "/checkIpRule",method = RequestMethod.POST)
+    public Response checkIpRule(@RequestBody List<String> ipList){
+        try{
+            Map<String,Object> result= svcAuthService.checkIpRule(ipList);
+            return Response.ok().setData(result);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error("检查ip值失败！");
+        }
     }
 
 

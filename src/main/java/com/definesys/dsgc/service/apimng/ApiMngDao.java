@@ -1,6 +1,7 @@
 package com.definesys.dsgc.service.apimng;
 
 import com.definesys.dsgc.service.apimng.bean.*;
+import com.definesys.dsgc.service.svcmng.bean.DSGCUriParamsBean;
 import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
 import com.definesys.mpaas.query.MpaasQuery;
 import com.definesys.mpaas.query.MpaasQueryFactory;
@@ -13,13 +14,13 @@ import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public class  ApiMngDao {
+public class ApiMngDao {
     @Autowired
     private MpaasQueryFactory sw;
 
     public PageQueryResult<DSGCApisBean> queryApiMngList(CommonReqBean q, int pageIndex, int pageSize, String userId, String userRole, List<String> sysCodeList) {
         MpaasQuery query = sw.buildQuery()
-                .sql("select * from (select da.API_ID, da.API_CODE,da.API_NAME,da.API_DESC,(select dse.SYS_NAME from DSGC_SYSTEM_ENTITIES dse where dse.SYS_CODE = da.APP_CODE) APP_CODE,da.APP_CODE sys_code,da.INFO_FULL,dsu.PROVIDER,dsu.HTTP_METHOD,dsu.IB_URI,da.CREATION_DATE from DSGC_APIS da left join DSGC_SERVICES_URI dsu on da.API_CODE = dsu.SERV_NO order by CREATION_DATE desc) t ");
+                .sql("select * from (select da.API_ID, da.API_CODE,da.API_NAME,da.API_DESC,(select dse.SYS_NAME from DSGC_SYSTEM_ENTITIES dse where dse.SYS_CODE = da.APP_CODE) APP_CODE,da.APP_CODE SYS_CODE,da.INFO_FULL,dsu.PROVIDER,dsu.HTTP_METHOD,dsu.IB_URI,da.CREATION_DATE from DSGC_APIS da left join DSGC_APIS_URI dsu on da.API_CODE = dsu.SERV_NO order by CREATION_DATE desc) t ");
         if ("Y".equals(q.getIsComplete())) {
             query.and()
                     .ne("infoFull", "100")
@@ -28,9 +29,9 @@ public class  ApiMngDao {
         if ("SystemLeader".equals(userRole)) {
             if (sysCodeList.size() != 0) {
                 if (sysCodeList.size() <= 1) {
-                    query.and().eq("sys_code", sysCodeList.get(0));
+                    query.and().eq("SYS_CODE", sysCodeList.get(0));
                 } else {
-                    query.and().in("sys_code", sysCodeList);
+                    query.and().in("SYS_CODE", sysCodeList);
                 }
             } else {
                 return new PageQueryResult<>();
@@ -45,9 +46,9 @@ public class  ApiMngDao {
                             .likeNocase("apiCode", conNoSpace)
                             .likeNocase("apiName", conNoSpace)
                             .likeNocase("appCode", conNoSpace)
-                            .likeNocase("provider",conNoSpace)
-                            .likeNocase("httpMethod",conNoSpace)
-                            .likeNocase("ibUri",conNoSpace);
+                            .likeNocase("provider", conNoSpace)
+                            .likeNocase("httpMethod", conNoSpace)
+                            .likeNocase("ibUri", conNoSpace);
                 }
             }
         }
@@ -98,8 +99,8 @@ public class  ApiMngDao {
                             .likeNocase("routeCode", conNoSpace)
                             .likeNocase("routePath", conNoSpace)
                             .likeNocase("routeMethod", conNoSpace)
-                            .likeNocase("bsCode",conNoSpace)
-                            .likeNocase("appCode",conNoSpace);
+                            .likeNocase("bsCode", conNoSpace)
+                            .likeNocase("appCode", conNoSpace);
                 }
             }
         }
@@ -108,24 +109,33 @@ public class  ApiMngDao {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void addDsgcApi(DSGCApisBean dsgcApisBean){
+    public void addDsgcApi(DSGCApisBean dsgcApisBean) {
         sw.buildQuery().doInsert(dsgcApisBean);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void addDsgcUri(DSGCServicesUri dsgcServicesUri){
-        sw.buildQuery().doInsert(dsgcServicesUri);
+    public void addDsgcUri(DSGCSApisUri dsgcsApisUri) {
+        sw.buildQuery().doInsert(dsgcsApisUri);
     }
 
-    public Boolean checkApiCodeIsExist(String routeCode){
-        DSGCApisBean dagRoutesBean = sw.buildQuery().eq("api_code",routeCode).doQueryFirst(DSGCApisBean.class);
-        if (dagRoutesBean == null){
+    public Boolean checkApiCodeIsExist(String routeCode) {
+        DSGCApisBean dagRoutesBean = sw.buildQuery().eq("api_code", routeCode).doQueryFirst(DSGCApisBean.class);
+        if (dagRoutesBean == null) {
             return false;
-        }else {
+        } else {
             return true;
         }
     }
-    public void updateApiDataCompletion(DSGCApisBean apisBean){
-        sw.buildQuery().eq("api_code",apisBean.getApiCode()).update("info_full",apisBean.getInfoFull()).doUpdate(DSGCApisBean.class);
+
+    public void updateApiDataCompletion(DSGCApisBean apisBean) {
+        sw.buildQuery().eq("api_code", apisBean.getApiCode()).update("info_full", apisBean.getInfoFull()).doUpdate(DSGCApisBean.class);
+    }
+
+    public List<DSGCSApisUri> queryApisUri(String apiCode) {
+        return sw.buildQuery().eq("servNo", apiCode).doQuery(DSGCSApisUri.class);
+    }
+
+    public List<DSGCUriParamsBean> queryApisUriParameter(String resCode) {
+        return sw.buildQuery().eq("resCode", resCode).doQuery(DSGCUriParamsBean.class);
     }
 }

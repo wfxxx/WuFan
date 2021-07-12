@@ -48,7 +48,6 @@ public class DSGCCachesController {
     //    @OperationAspect(value = "刷新服务器缓存")
     @RequestMapping(value = "/refreshCache", method = RequestMethod.GET)
     public Response refreshCache(HttpServletRequest request) {
-
         List<Map> res = dsgcCachesServices.refresh("ALL", "ALL");
         return Response.ok().data(res);
     }

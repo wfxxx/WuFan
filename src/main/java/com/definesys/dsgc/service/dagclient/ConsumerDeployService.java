@@ -72,7 +72,6 @@ public class ConsumerDeployService {
             }
         } else if ("ESB".equals(env.getEnvType()) && "MULE".equals(env.getTechType())) {
             //undo   部署用户名密码，更新表数据
-
         }
 
         return res;

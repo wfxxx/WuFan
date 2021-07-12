@@ -49,10 +49,6 @@ public class FndLookupTypeDao {
         FndLookupType fndLookupType1 = this.sw.buildQuery()
                 .eq("lookupId", fndLookupType.getLookupId())
                 .doQueryFirst(FndLookupType.class);
-        FndModules modules = this.sw.buildQuery()
-                .eq("moduleId", fndLookupType1.getModuleId())
-                .doQueryFirst(FndModules.class);
-        fndLookupType1.setFndModules(modules);
         List<FndLookupValue> values = this.sw.buildQuery()
                 .eq("lookupId", fndLookupType1.getLookupId())
                 .doQuery(FndLookupValue.class);
@@ -296,7 +292,7 @@ public class FndLookupTypeDao {
                 "WHERE T.LOOKUP_ID = V.LOOKUP_ID and t.lookup_type = #lookUpType and V.LOOKUP_CODE = #lookupCode ";
         Map<String, Object> lookUpValue = sw.buildQuery().sql(sql).setVar("lookUpType", lookUpType)
                 .setVar("lookupCode", lookupCode).doQueryFirst();
-        return lookUpValue.size() >0;
+        return lookUpValue.size() > 0;
     }
 
 
@@ -309,6 +305,23 @@ public class FndLookupTypeDao {
             sql += " and t.lookup_type in (" + YStarUtil.getSqlWhereClause(lktCode) + ")";
         }
         return this.sw.buildQuery().sql(sql).doQuery(QueryLktParamBean.class);
+    }
+
+
+    public PageQueryResult<FndLookupType> pageQueryFndLkv(FndLookupType fndLookupType, int pageSize, int pageIndex) {
+        return this.sw.buildQuery()
+                .or()
+                .like("lookupType", fndLookupType.getLookupType())
+                .like("lookupName", fndLookupType.getLookupName())
+                .like("lookupDescription", fndLookupType.getLookupDescription())
+                .doPageQuery(pageIndex, pageSize, FndLookupType.class);
+    }
+
+    public List<FndLookupValue> queryLkvListById(String lookupId) {
+        return this.sw.buildQuery().eq("lookupId", lookupId).doQuery(FndLookupValue.class);
+    }
+    public List<FndModules> queryModuleListById(String moduleId) {
+        return this.sw.buildQuery().eq("moduleId", moduleId).doQuery(FndModules.class);
     }
 
 }

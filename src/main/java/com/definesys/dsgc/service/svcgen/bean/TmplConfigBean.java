@@ -4,15 +4,21 @@ import com.definesys.dsgc.service.svcgen.bean.db.RspDTO;
 import com.definesys.dsgc.service.svcgen.bean.db.TblDTO;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class TmplConfigBean {
+    private String projId;
+    private String projName;
+    private String svcCode;
+    private String svcName;
+
     private String dpName;
     private String envCode;
     private String isEnable;
     private String deveId;
     private String servNo;
-    private String projDir;
+
     private String servDir;
     private String servNameCode;
     private String appCode;
@@ -42,12 +48,6 @@ public class TmplConfigBean {
     private TblDTO[] tbls;
     private RspDTO[] rsps;
     private String sqlcode;
-
-//    //创建服务代码并同时创建服务资产信息
-//    private String servAssetNo;
-//    private String servName;
-//    private String servSystem;
-//    private String servShareType;
 
     public String getDpName() {
         return dpName;
@@ -87,14 +87,6 @@ public class TmplConfigBean {
 
     public void setServNo(String servNo) {
         this.servNo = servNo;
-    }
-
-    public String getProjDir() {
-        return projDir;
-    }
-
-    public void setProjDir(String projDir) {
-        this.projDir = projDir;
     }
 
     public String getServDir() {
@@ -314,35 +306,35 @@ public class TmplConfigBean {
         this.sqlcode = sqlcode;
     }
 
-    //    public String getServAssetNo() {
-//        return servAssetNo;
-//    }
-//
-//    public void setServAssetNo(String servAssetNo) {
-//        this.servAssetNo = servAssetNo;
-//    }
-//
-//    public String getServName() {
-//        return servName;
-//    }
-//
-//    public void setServName(String servName) {
-//        this.servName = servName;
-//    }
-//
-//    public String getServSystem() {
-//        return servSystem;
-//    }
-//
-//    public void setServSystem(String servSystem) {
-//        this.servSystem = servSystem;
-//    }
-//
-//    public String getServShareType() {
-//        return servShareType;
-//    }
-//
-//    public void setServShareType(String servShareType) {
-//        this.servShareType = servShareType;
-//    }
+    public String getProjId() {
+        return projId;
+    }
+
+    public void setProjId(String projId) {
+        this.projId = projId;
+    }
+
+    public String getProjName() {
+        return projName;
+    }
+
+    public void setProjName(String projName) {
+        this.projName = projName;
+    }
+
+    public String getSvcCode() {
+        return svcCode;
+    }
+
+    public void setSvcCode(String svcCode) {
+        this.svcCode = svcCode;
+    }
+
+    public String getSvcName() {
+        return svcName;
+    }
+
+    public void setSvcName(String svcName) {
+        this.svcName = svcName;
+    }
 }

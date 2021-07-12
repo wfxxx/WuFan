@@ -310,8 +310,6 @@ public class DSGCLogInstanceDao {
         for (Map<String, Object> item : result) {
             Object PAYLOAD_DATA = item.get("PAYLOAD_DATA");
             if (PAYLOAD_DATA != null) {
-//                return PAYLOAD_DATA.toString();
-                // return StringUtils.ClobToString((Clob) PAYLOAD_DATA);
                 return String.valueOf(PAYLOAD_DATA);
             }
         }

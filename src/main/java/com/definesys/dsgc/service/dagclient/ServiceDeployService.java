@@ -48,16 +48,16 @@ public class ServiceDeployService {
         ServiceProxy.ServiceSetVO req = new ServiceProxy.ServiceSetVO();
         req.host = bsInfo.getHostName();
         req.name = bsInfo.getBsCode();
-        if (bsInfo.getConnectTimeout()!=null && bsInfo.getConnectTimeout().longValue() != 0l) {
-            req.connect_timeout = bsInfo.getConnectTimeout().longValue();
+        if (bsInfo.getConnectTimeout()!=null && bsInfo.getConnectTimeout() != 0l) {
+            req.connect_timeout = bsInfo.getConnectTimeout();
         }
 
         req.path = bsInfo.getPaths();
         req.port = Integer.parseInt(bsInfo.getPort());
 
         req.protocol = bsInfo.getProtocal();
-        if (bsInfo.getReadTimeout() != null && bsInfo.getReadTimeout().longValue() != 0l) {
-            req.read_timeout = bsInfo.getReadTimeout().longValue();
+        if (bsInfo.getReadTimeout() != null && bsInfo.getReadTimeout() != 0l) {
+            req.read_timeout = bsInfo.getReadTimeout();
         }
         if(bsInfo.getRtyCount() != null) {
             req.retries = bsInfo.getRtyCount().intValue();

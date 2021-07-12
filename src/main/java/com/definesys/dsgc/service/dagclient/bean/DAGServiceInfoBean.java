@@ -7,20 +7,8 @@ import com.definesys.mpaas.query.annotation.SQLQuery;
 import com.definesys.mpaas.query.model.MpaasBasePojo;
 
 @SQLQuery(value={
-        @SQL(view="V_BS_DTL",sql="select v.vid,\n" +
-                "       b.bs_code,\n" +
-                "       d.protocal,\n" +
-                "       d.host_name,\n" +
-                "       d.port,\n" +
-                "       d.paths,\n" +
-                "       d.rty_count,\n" +
-                "       d.connect_timeout,\n" +
-                "       d.send_timeout,\n" +
-                "       d.read_timeout\n" +
-                "  from dag_code_version v, dag_bs b, dag_bs_dtl d\n" +
-                " where v.sour_code = b.bs_code\n" +
-                "   and v.vid = d.vid\n" +
-                "   and v.vid = #vidVar")
+        @SQL(view="V_BS_DTL",sql="select v.vid,b.bs_code,d.protocal,d.host_name,d.port,d.paths,d.rty_count,d.connect_timeout,d.send_timeout,d.read_timeout from dag_code_version v, dag_bs b, dag_bs_dtl d\n" +
+                " where v.sour_code = b.bs_code and v.vid = d.vid and v.vid = #vidVar")
 })
 public class DAGServiceInfoBean extends MpaasBasePojo {
 

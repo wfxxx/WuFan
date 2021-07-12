@@ -8,7 +8,7 @@ import com.definesys.dsgc.service.dess.DessInstance.bean.DInstBean;
 import com.definesys.dsgc.service.dess.DessLog.bean.DessLog;
 import com.definesys.dsgc.service.dess.DessLog.bean.DessLogPayload;
 import com.definesys.dsgc.service.dess.DessLog.bean.DessLogVO;
-import com.definesys.dsgc.service.lkv.FndPropertiesService;
+import com.definesys.dsgc.service.ystar.fnd.property.FndPropertiesService;
 import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

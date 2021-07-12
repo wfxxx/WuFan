@@ -5,6 +5,7 @@ import com.definesys.dsgc.service.svclog.bean.DSGCLogInstance;
 import com.definesys.dsgc.service.system.bean.DSGCSystemEntities;
 import com.definesys.dsgc.service.utils.MsgCompressUtil;
 import com.definesys.dsgc.service.utils.StringUtil;
+import com.definesys.dsgc.service.ystar.svcgen.util.WsdlUtil;
 import com.definesys.dsgc.ystar.util.ResolverUtil;
 import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,8 @@ public class CommonService {
     }
 
 
-    public String Test() {
+    public String Test(String uri) {
+        WsdlUtil.resolveWsdlByUrl(uri,null,null);
         return this.commonDao.Test();
     }
 

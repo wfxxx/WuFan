@@ -1,5 +1,6 @@
 package com.definesys.dsgc.service.apiroute;
 
+import com.definesys.dsgc.service.apiplugin.ApiPlugInDao;
 import com.definesys.dsgc.service.apiplugin.bean.DAGPluginListVO;
 import com.definesys.dsgc.service.apiroute.bean.*;
 import com.definesys.dsgc.service.dagclient.DAGClientService;
@@ -24,6 +25,8 @@ import java.util.*;
 public class ApiRouteService {
     @Autowired
     private ApiRouteDao apiRouteDao;
+    @Autowired
+    private ApiPlugInDao apiPlugInDao;
     @Autowired
     private SVCLogDao sldao;
 
@@ -93,6 +96,8 @@ public class ApiRouteService {
         DagRoutesBean dagBsbean = apiRouteDao.queryApiRouteById(param);
         if (dagBsbean != null){
             apiRouteDao.delApiRoute(param);
+            String vId = apiRouteDao.delRouteConfigByCode(dagBsbean.getRouteCode());
+            apiPlugInDao.delDagPluginUsingById(vId);
         }else {
             throw new Exception("路由不存在！");
         }

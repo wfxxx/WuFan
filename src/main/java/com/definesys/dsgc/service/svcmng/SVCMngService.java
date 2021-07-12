@@ -1135,8 +1135,7 @@ public class SVCMngService {
         }
     }
 
-
-    public DsgcTrgSvcInfo querySvcTrgInfoBySvcNo(String svcNo) {
-        return svcMngDao.querySvcTrgInfoBySvcNo(svcNo);
+    public boolean checkSvcCodeIsExist(String svcCode) {
+        return svcMngDao.checkSvcCodeIsExist(svcCode);
     }
 }

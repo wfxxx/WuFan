@@ -1,7 +1,6 @@
 package com.definesys.dsgc.service.dagclient;
 
 import com.definesys.dsgc.service.dagclient.bean.DAGEnvBean;
-import com.definesys.dsgc.service.lkv.FndPropertiesDao;
 import com.definesys.mpaas.query.MpaasQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;

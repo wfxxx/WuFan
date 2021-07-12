@@ -1,7 +1,6 @@
 package com.definesys.dsgc.service.ystar.excel;
 
 import com.definesys.dsgc.service.svcinfo.bean.SVCUriBean;
-import com.definesys.dsgc.service.svcmng.bean.DSGCPayloadParamsBean;
 import com.definesys.dsgc.service.svcmng.bean.DSGCPayloadSampleBean;
 import com.definesys.dsgc.service.ystar.excel.bean.SvcPayloadParam;
 import com.definesys.mpaas.query.MpaasQueryFactory;

@@ -27,6 +27,9 @@ public class DessBusiness {
     private String businessType;
     private Integer stOffSet;
     private Integer edOffSet;
+    private String ftpSrcPath;
+    private String ftpTrgPath;
+    private String connId;
     @Column(type = ColumnType.JAVA)
     private String isDel;
 
@@ -140,5 +143,29 @@ public class DessBusiness {
 
     public void setIsDel(String isDel) {
         this.isDel = isDel;
+    }
+
+    public String getFtpSrcPath() {
+        return ftpSrcPath;
+    }
+
+    public void setFtpSrcPath(String ftpSrcPath) {
+        this.ftpSrcPath = ftpSrcPath;
+    }
+
+    public String getFtpTrgPath() {
+        return ftpTrgPath;
+    }
+
+    public void setFtpTrgPath(String ftpTrgPath) {
+        this.ftpTrgPath = ftpTrgPath;
+    }
+
+    public String getConnId() {
+        return connId;
+    }
+
+    public void setConnId(String connId) {
+        this.connId = connId;
     }
 }

@@ -161,4 +161,8 @@ public class ApiPlugInDao {
         return sw.buildQuery().eq("vid",vid).doQuery(com.definesys.dsgc.service.apiplugin.bean.DagPluginUsingBean.class);
     }
 
+    public void delDagPluginUsingById(String vId) {
+        sw.buildQuery().eq("vid", vId).doDelete(DagPluginUsingBean.class);
+    }
+
 }

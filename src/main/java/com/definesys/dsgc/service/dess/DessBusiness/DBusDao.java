@@ -30,10 +30,10 @@ public class DBusDao {
     public PageQueryResult<DessBusiness> queryBusinessList(CommonReqBean param, int pageSize, int pageIndex) {
         StringBuffer sqlStr = null;
         if ("oracle".equals(dbType)) {
-            sqlStr = new StringBuffer("select dl.BUSINESS_ID,dl.BUSINESS_NAME,dl.BUSINESS_DESC,dl.INVOKE_URL,dl.WEBSERVICE_TYPE,dl.INVOKE_OPERATION,dl.CREATION_DATE,dl.BUSINESS_TYPE from DESS_BUSINESS dl where 1=1 ");
+            sqlStr = new StringBuffer("select dl.BUSINESS_ID,dl.BUSINESS_NAME,dl.BUSINESS_DESC,dl.INVOKE_URL,dl.WEBSERVICE_TYPE,dl.INVOKE_OPERATION,dl.CREATION_DATE,dl.BUSINESS_TYPE,dl.FTP_SRC_PATH,dl.FTP_TRG_PATH from DESS_BUSINESS dl where 1=1 ");
         }
         if ("mysql".equals(dbType)) {
-            sqlStr = new StringBuffer("select dl.BUSINESS_ID,dl.BUSINESS_NAME,dl.BUSINESS_DESC,dl.INVOKE_URL,dl.WEBSERVICE_TYPE,dl.INVOKE_OPERATION,dl.CREATION_DATE,dl.BUSINESS_TYPE from DESS_BUSINESS dl where 1=1 ");
+            sqlStr = new StringBuffer("select dl.BUSINESS_ID,dl.BUSINESS_NAME,dl.BUSINESS_DESC,dl.INVOKE_URL,dl.WEBSERVICE_TYPE,dl.INVOKE_OPERATION,dl.CREATION_DATE,dl.BUSINESS_TYPE,dl.FTP_SRC_PATH,dl.FTP_TRG_PATH from DESS_BUSINESS dl where 1=1 ");
         }
         MpaasQuery mq = sw.buildQuery();
         if (StringUtil.isNotBlank(param.getCon0())) {

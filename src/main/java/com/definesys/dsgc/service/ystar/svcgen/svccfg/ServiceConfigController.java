@@ -48,16 +48,15 @@ public class ServiceConfigController {
 
 
     @ApiOperation("保存soap快速开发接口配置")
-    @PostMapping("/saveSoapService")
-    public Response saveSoapService(@Valid @RequestBody SoapServiceConfigDTO soapServiceConfigDTO,
-                                    BindingResult result, HttpServletRequest request) {
-        // 参数校验
-        if (result.hasErrors()) {
-            return Response.error(result.getAllErrors().get(0).getDefaultMessage());
+    @PostMapping("/saveSoapServiceCode")
+    public Response saveSoapService(@Valid @RequestBody TmplConfigBean tcb, HttpServletRequest request) {
+        String userId = request.getHeader("uid");
+        try {
+            return restServiceConfigService.saveSoapService(tcb, userId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.error("发生错误，请联系管理员处理！");
         }
-        // 创建人
-        String userName = request.getHeader("userName");
-        return restServiceConfigService.saveSoapService(soapServiceConfigDTO, userName);
     }
 
     @ApiOperation("保存db快速开发接口配置")
@@ -112,7 +111,7 @@ public class ServiceConfigController {
 
     @ApiOperation("发布接口至项目")
     @RequestMapping(value = "/publishSvcCode", method = RequestMethod.GET)
-    public Response publishSvcCode(@RequestParam String svcCode,@RequestParam String operate) {
+    public Response publishSvcCode(@RequestParam String svcCode, @RequestParam String operate) {
         return restServiceConfigService.publishSvcCode(svcCode, operate);//type= ADD / DEL
     }
 
