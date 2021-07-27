@@ -694,7 +694,7 @@ public class MyNtyDao {
         return null;
     }
 
-    public PageQueryResult<DSGCMnNotices> findDSGCMnNotices(DSGCMnNotices dsgcMnNotices,int pageSize,int pageIndex) {
+    public PageQueryResult<DSGCMnNotices> findDSGCMnNotices(DSGCMnNotices dsgcMnNotices, int pageSize, int pageIndex) {
         MpaasQuery mpaasQuery = this.sw.buildQuery()
                 .eq("ntyUser",dsgcMnNotices.getNtyUser());
         if (StringUtils.isNotEmpty(dsgcMnNotices.getMnTitle())) {
@@ -719,7 +719,9 @@ public class MyNtyDao {
         if (StringUtils.isNotEmpty(dsgcMnNotices.getMnLevel()) && !dsgcMnNotices.getMnLevel().equals("all")){
             mpaasQuery = mpaasQuery.eq("mnLevel",dsgcMnNotices.getMnLevel());
         }
+        mpaasQuery.groupBy("REF_VALUE");
         PageQueryResult<DSGCMnNotices> dsgcMnNoticesList = mpaasQuery.doPageQuery(pageIndex,pageSize,DSGCMnNotices.class);
+
         return dsgcMnNoticesList;
     }
 
@@ -926,7 +928,7 @@ public class MyNtyDao {
 
     public DSGCMnNotices getNoticesCount(String ntyUser){
         if(ntyUser != null) {
-            return sw.buildQuery().sql("select count(1) allCount,count(case when read_stat = 0 then 1 else null end)  unreadCount from DSGC_MN_NOTICES where nty_user = #ntyUser ")
+            return sw.buildQuery().sql("SELECT count(*) allCount,count(case when read_stat = 0 then 1 else null end) unreadCount from (select * from DSGC_MN_NOTICES where nty_user = #ntyUser GROUP BY REF_VALUE) tab")
                     .setVar("ntyUser",ntyUser)
                     .doQueryFirst(DSGCMnNotices.class);
         } else {
