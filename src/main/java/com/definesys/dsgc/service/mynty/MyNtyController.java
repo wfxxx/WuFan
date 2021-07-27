@@ -193,8 +193,10 @@ public class MyNtyController {
 
 
     @RequestMapping(value = "/findDSGCMnNotices", method = RequestMethod.POST)
-    public Response findDSGCMnNotices(@RequestBody DSGCMnNotices dsgcMnNotices) {
-        return Response.ok().data(this.mns.findDSGCMnNotices(dsgcMnNotices));
+    public Response findDSGCMnNotices(@RequestBody DSGCMnNotices dsgcMnNotices,
+                                      @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
+                                      @RequestParam(value = "pageIndex", required = false, defaultValue = "1") int pageIndex) {
+        return Response.ok().data(this.mns.findDSGCMnNotices(dsgcMnNotices, pageSize, pageIndex));
     }
 
     @RequestMapping(value = "getServByUser", method = RequestMethod.POST)

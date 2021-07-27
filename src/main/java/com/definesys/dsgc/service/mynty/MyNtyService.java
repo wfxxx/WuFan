@@ -380,7 +380,7 @@ public class MyNtyService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public MyMnNoticesDTO findDSGCMnNotices(DSGCMnNotices dsgcMnNotices) {
+    public MyMnNoticesDTO findDSGCMnNotices(DSGCMnNotices dsgcMnNotices, int pageSize, int pageIndex) {
         MyMnNoticesDTO myMnNoticesDTO = new MyMnNoticesDTO();
 
         DSGCMnNotices noticesCount = this.mndao.getNoticesCount(dsgcMnNotices.getNtyUser());
@@ -392,7 +392,7 @@ public class MyNtyService {
             myMnNoticesDTO.setUnreadCount(0);
         }
 
-        List<DSGCMnNotices> mnNotices = this.mndao.findDSGCMnNotices(dsgcMnNotices);
+        PageQueryResult<DSGCMnNotices> mnNotices = this.mndao.findDSGCMnNotices(dsgcMnNotices,pageSize,pageIndex);
         myMnNoticesDTO.setNotices(mnNotices);
 
         return myMnNoticesDTO;
