@@ -1,11 +1,13 @@
 package com.definesys.dsgc.service.mynty.bean;
 
+import com.definesys.mpaas.query.db.PageQueryResult;
+
 import java.util.List;
 
 public class MyMnNoticesDTO {
     private Integer allCount;
     private Integer unreadCount;
-    private List<DSGCMnNotices> notices;
+    private PageQueryResult<DSGCMnNotices> notices;
 
     public Integer getAllCount() {
         return allCount;
@@ -23,11 +25,11 @@ public class MyMnNoticesDTO {
         this.unreadCount = unreadCount;
     }
 
-    public List<DSGCMnNotices> getNotices() {
+    public PageQueryResult<DSGCMnNotices> getNotices() {
         return notices;
     }
 
-    public void setNotices(List<DSGCMnNotices> notices) {
+    public void setNotices(PageQueryResult<DSGCMnNotices> notices) {
         this.notices = notices;
     }
 }

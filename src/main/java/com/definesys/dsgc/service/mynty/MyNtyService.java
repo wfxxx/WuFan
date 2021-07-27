@@ -29,11 +29,11 @@ public class MyNtyService {
     @Autowired
     private UserHelper userHelper;
 
-    public PageQueryResult<MyNtyQueryListBean> queryMNRules(String uid,MyNtyQueryParamVO reqParam,int pageSize,int pageIndex) {
+    public PageQueryResult<MyNtyQueryListBean> queryMNRules(String uid, MyNtyQueryParamVO reqParam, int pageSize, int pageIndex) {
 
         UserHelper uh = this.userHelper.user(uid);
 
-        PageQueryResult<MyNtyQueryListBean> res = this.mndao.queryMNRules(uid,uh,reqParam,pageSize,pageIndex);
+        PageQueryResult<MyNtyQueryListBean> res = this.mndao.queryMNRules(uid, uh, reqParam, pageSize, pageIndex);
 
         List<MyNtyQueryListBean> resLst = res.getResult();
         if (resLst != null) {
@@ -52,11 +52,11 @@ public class MyNtyService {
         return res;
     }
 
-    public void cancelSubscribe(String uid,RuleStatSetVO reqParam) {
-        this.mndao.cancelSubscribe(uid,reqParam);
+    public void cancelSubscribe(String uid, RuleStatSetVO reqParam) {
+        this.mndao.cancelSubscribe(uid, reqParam);
     }
 
-    public String setRuleStat(String uid,RuleStatSetVO reqParam) {
+    public String setRuleStat(String uid, RuleStatSetVO reqParam) {
         MyNtyRulesBean rule = this.mndao.getMyNtyRuleDtl(reqParam.getRuleId());
         if (rule != null) {
             UserHelper uh = this.userHelper.user(uid);
@@ -72,8 +72,8 @@ public class MyNtyService {
         return "S";
     }
 
-    public void delMNRule(String uid,String ruleId) throws Exception{
-        if(ruleId != null && ruleId.trim().length() > 0){
+    public void delMNRule(String uid, String ruleId) throws Exception {
+        if (ruleId != null && ruleId.trim().length() > 0) {
             MyNtyRulesBean rule = this.mndao.getMyNtyRuleDtl(ruleId);
             //执行更新操作要先判断权限
             UserHelper uh = this.userHelper.user(uid);
@@ -120,9 +120,9 @@ public class MyNtyService {
         return res;
     }
 
-    public MyNtyRuleDetailVO updateMNRuleDetail(String uid,MyNtyRuleDetailVO reqParam) throws Exception {
+    public MyNtyRuleDetailVO updateMNRuleDetail(String uid, MyNtyRuleDetailVO reqParam) throws Exception {
         MyNtyRulesBean rule = new MyNtyRulesBean();
-        if (reqParam.getRuleId() != null && reqParam.getRuleId().trim().length() >0) {
+        if (reqParam.getRuleId() != null && reqParam.getRuleId().trim().length() > 0) {
             //执行更新操作要先判断权限
             UserHelper uh = this.userHelper.user(uid);
             //执行更新操作，要判断权限
@@ -137,8 +137,8 @@ public class MyNtyService {
 
         rule.setRunInterval(reqParam.getRunInterval() * 60 * 60 * 1000);
         rule.setRuleExprDesc(reqParam.getRuleExpr());
-        Map<String,String> lkv = mndao.getRuleExprDescLKV(reqParam.getRuleType());
-        rule.setRuleExpr(mndao.covertDescToRealExpress(reqParam.getRuleExpr(),lkv));
+        Map<String, String> lkv = mndao.getRuleExprDescLKV(reqParam.getRuleType());
+        rule.setRuleExpr(mndao.covertDescToRealExpress(reqParam.getRuleExpr(), lkv));
 
         rule.setDisableTime(reqParam.getDisableTime());
         rule.setMnLevel(reqParam.getMnLevel());
@@ -169,8 +169,8 @@ public class MyNtyService {
      * @return
      * @deprecated
      */
-    public List<MyNtyRulesBean> getMNRules(String userId,String ruleType) {
-        List<MyNtyRulesBean> res = mndao.getMNRules(userId,ruleType);
+    public List<MyNtyRulesBean> getMNRules(String userId, String ruleType) {
+        List<MyNtyRulesBean> res = mndao.getMNRules(userId, ruleType);
         if (res != null) {
             Iterator<MyNtyRulesBean> mnrbIter = res.iterator();
             while (mnrbIter.hasNext()) {
@@ -194,10 +194,10 @@ public class MyNtyService {
      * @param chgs
      * @deprecated
      */
-    public void updateMNRules(String userId,List<MyNtyRulesBean> chgs) {
+    public void updateMNRules(String userId, List<MyNtyRulesBean> chgs) {
         if (chgs != null) {
             Iterator<MyNtyRulesBean> mnrbIter = chgs.iterator();
-            Map<String,Map<String,String>> lkvStore = new HashMap<String,Map<String,String>>();
+            Map<String, Map<String, String>> lkvStore = new HashMap<String, Map<String, String>>();
             while (mnrbIter.hasNext()) {
                 MyNtyRulesBean mnrb = mnrbIter.next();
                 if (mnrb.getIsEnableBL()) {
@@ -207,14 +207,14 @@ public class MyNtyService {
                 }
                 mnrb.setRunInterval(mnrb.getRunInterval() * 60 * 60 * 1000);
                 mnrb.setRuleExprDesc(mnrb.getRuleExpr());
-                Map<String,String> lkv = lkvStore.get(mnrb.getRuleType());
+                Map<String, String> lkv = lkvStore.get(mnrb.getRuleType());
                 if (lkv == null) {
                     lkv = mndao.getRuleExprDescLKV(mnrb.getRuleType());
-                    lkvStore.put(mnrb.getRuleType(),lkv);
+                    lkvStore.put(mnrb.getRuleType(), lkv);
                 }
-                mnrb.setRuleExpr(mndao.covertDescToRealExpress(mnrb.getRuleExpr(),lkv));
+                mnrb.setRuleExpr(mndao.covertDescToRealExpress(mnrb.getRuleExpr(), lkv));
             }
-            mndao.updateMNRules(userId,chgs);
+            mndao.updateMNRules(userId, chgs);
         }
     }
 
@@ -227,10 +227,10 @@ public class MyNtyService {
     public MyNtyServSltBean saveMNSubcributeServList(MyNtyServSltBean sltReq) {
         sltReq = this.refreshMNServSltBean(sltReq);
         //更新数据库
-        mndao.saveMNSubcributeServ(sltReq.getRuleType(),sltReq.getRuleId(),sltReq.getOldDel(),sltReq.getOldAdd());
+        mndao.saveMNSubcributeServ(sltReq.getRuleType(), sltReq.getRuleId(), sltReq.getOldDel(), sltReq.getOldAdd());
 
         //刷新查询结果
-        sltReq.setSltServs(mndao.getMNSubcributedServ(sltReq.getRuleType(),sltReq.getRuleId(),sltReq.getFilterServNo(),sltReq.getFilterServName(),sltReq.getFilterServSystem(),sltReq.getOldDel(),sltReq.getOldAdd()));
+        sltReq.setSltServs(mndao.getMNSubcributedServ(sltReq.getRuleType(), sltReq.getRuleId(), sltReq.getFilterServNo(), sltReq.getFilterServName(), sltReq.getFilterServSystem(), sltReq.getOldDel(), sltReq.getOldAdd()));
 
         //保存后，重制用户的操作记录
         sltReq.setOldDel(null);
@@ -248,7 +248,7 @@ public class MyNtyService {
 
 
         sltReq = this.refreshMNServSltBean(sltReq);
-        sltReq.setSltServs(mndao.getMNSubcributedServ(sltReq.getRuleType(),sltReq.getRuleId(),sltReq.getFilterServNo(),sltReq.getFilterServName(),sltReq.getFilterServSystem(),sltReq.getOldDel(),sltReq.getOldAdd()));
+        sltReq.setSltServs(mndao.getMNSubcributedServ(sltReq.getRuleType(), sltReq.getRuleId(), sltReq.getFilterServNo(), sltReq.getFilterServName(), sltReq.getFilterServSystem(), sltReq.getOldDel(), sltReq.getOldAdd()));
 
         return sltReq;
     }
@@ -353,7 +353,7 @@ public class MyNtyService {
      *
      * @param chgs
      */
-    public void updateServExcptSubRules(String userId,List<ServExcptSubRulesBean> chgs) {
+    public void updateServExcptSubRules(String userId, List<ServExcptSubRulesBean> chgs) {
         if (chgs != null) {
             Iterator<ServExcptSubRulesBean> iter = chgs.iterator();
             while (iter.hasNext()) {
@@ -376,23 +376,23 @@ public class MyNtyService {
             }
         }
         //将jsonbean转化为数据库实体bean
-        mndao.updServExcptSubRules(userId,chgs);
+        mndao.updServExcptSubRules(userId, chgs);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public MyMnNoticesDTO findDSGCMnNotices(DSGCMnNotices dsgcMnNotices) {
+    public MyMnNoticesDTO findDSGCMnNotices(DSGCMnNotices dsgcMnNotices, int pageSize, int pageIndex) {
         MyMnNoticesDTO myMnNoticesDTO = new MyMnNoticesDTO();
 
         DSGCMnNotices noticesCount = this.mndao.getNoticesCount(dsgcMnNotices.getNtyUser());
-        if(noticesCount!=null){
+        if (noticesCount != null) {
             myMnNoticesDTO.setAllCount(noticesCount.getAllCount());
             myMnNoticesDTO.setUnreadCount(noticesCount.getUnreadCount());
-        }else {
+        } else {
             myMnNoticesDTO.setAllCount(0);
             myMnNoticesDTO.setUnreadCount(0);
         }
 
-        List<DSGCMnNotices> mnNotices = this.mndao.findDSGCMnNotices(dsgcMnNotices);
+        PageQueryResult<DSGCMnNotices> mnNotices = this.mndao.findDSGCMnNotices(dsgcMnNotices, pageSize, pageIndex);
         myMnNoticesDTO.setNotices(mnNotices);
 
         return myMnNoticesDTO;
@@ -403,7 +403,7 @@ public class MyNtyService {
         return this.mndao.findDSGCMnNoticesByMnTitle(dsgcMnNotices);
     }
 
-    public List<Map<String,Object>> getServByUser(DSGCUser dsgcUser) {
+    public List<Map<String, Object>> getServByUser(DSGCUser dsgcUser) {
         return mndao.getServByUser(dsgcUser);
     }
 
@@ -421,7 +421,7 @@ public class MyNtyService {
 
 
         sltReq = this.refreshMNUserSltBean(sltReq);
-        sltReq.setSltUsers(mndao.getMNSubUser(sltReq.getRuleType(),sltReq.getRuleId(),sltReq.getFilterUserName(),sltReq.getFilterUserDesc(),sltReq.getOldDel(),sltReq.getOldAdd()));
+        sltReq.setSltUsers(mndao.getMNSubUser(sltReq.getRuleType(), sltReq.getRuleId(), sltReq.getFilterUserName(), sltReq.getFilterUserDesc(), sltReq.getOldDel(), sltReq.getOldAdd()));
 
         return sltReq;
     }
@@ -486,10 +486,10 @@ public class MyNtyService {
     public MyNtyUserSltBean saveMNSubUser(MyNtyUserSltBean sltReq) {
         sltReq = this.refreshMNUserSltBean(sltReq);
         //更新数据库
-        mndao.saveMNSubUser(sltReq.getRuleType(),sltReq.getRuleId(),sltReq.getOldDel(),sltReq.getOldAdd());
+        mndao.saveMNSubUser(sltReq.getRuleType(), sltReq.getRuleId(), sltReq.getOldDel(), sltReq.getOldAdd());
 
         //刷新查询结果
-        sltReq.setSltUsers(mndao.getMNSubUser(sltReq.getRuleType(),sltReq.getRuleId(),sltReq.getFilterUserName(),sltReq.getFilterUserDesc(),sltReq.getOldDel(),sltReq.getOldAdd()));
+        sltReq.setSltUsers(mndao.getMNSubUser(sltReq.getRuleType(), sltReq.getRuleId(), sltReq.getFilterUserName(), sltReq.getFilterUserDesc(), sltReq.getOldDel(), sltReq.getOldAdd()));
 
         //保存后，重制用户的操作记录
         sltReq.setOldDel(null);
@@ -497,24 +497,24 @@ public class MyNtyService {
         return sltReq;
     }
 
-    public PageQueryResult<UserResDTO> queryUserList(CommonReqBean commonReqBean,int pageSize,int pageIndex,String userRole){
+    public PageQueryResult<UserResDTO> queryUserList(CommonReqBean commonReqBean, int pageSize, int pageIndex, String userRole) {
         PageQueryResult<UserResDTO> resDTOPageQueryResult = new PageQueryResult<>();
-        if("SuperAdministrators".equals(userRole) || "Administrators".equals(userRole)||"SystemLeader".equals(userRole)){
+        if ("SuperAdministrators".equals(userRole) || "Administrators".equals(userRole) || "SystemLeader".equals(userRole)) {
             List<FndLookupValue> lookupValueList = svcAuthDao.queryFndModuleByLookupType("plateFormRole");
-            PageQueryResult<DSGCUser> userList = mndao.queryUserList(commonReqBean,pageSize,pageIndex);
+            PageQueryResult<DSGCUser> userList = mndao.queryUserList(commonReqBean, pageSize, pageIndex);
             Long total = userList.getCount();
-            List<UserResDTO> resDTOS = userDataMapping(userList.getResult(),lookupValueList);
+            List<UserResDTO> resDTOS = userDataMapping(userList.getResult(), lookupValueList);
             resDTOPageQueryResult.setCount(total);
             resDTOPageQueryResult.setResult(resDTOS);
-        }else {
+        } else {
             return null;
         }
         return resDTOPageQueryResult;
     }
 
-    public List<UserResDTO> userDataMapping(List<DSGCUser> dsgcUsers,List<FndLookupValue> lookupValueList){
+    public List<UserResDTO> userDataMapping(List<DSGCUser> dsgcUsers, List<FndLookupValue> lookupValueList) {
         List<UserResDTO> result = new ArrayList<>();
-        for (int i=0;i<dsgcUsers.size();i++){
+        for (int i = 0; i < dsgcUsers.size(); i++) {
             UserResDTO userResDTO = new UserResDTO();
             userResDTO.setUserId(dsgcUsers.get(i).getUserId());
             userResDTO.setUserName(dsgcUsers.get(i).getUserName());
@@ -522,8 +522,8 @@ public class MyNtyService {
             userResDTO.setUserDescription(dsgcUsers.get(i).getUserDescription());
             userResDTO.setUserMail(dsgcUsers.get(i).getUserMail());
             userResDTO.setUserPhone(dsgcUsers.get(i).getUserPhone());
-            for (int j = 0;j<lookupValueList.size();j++){
-                if (userResDTO.getUserRole().equals(lookupValueList.get(j).getLookupCode())){
+            for (int j = 0; j < lookupValueList.size(); j++) {
+                if (userResDTO.getUserRole().equals(lookupValueList.get(j).getLookupCode())) {
                     userResDTO.setUserRoleName(lookupValueList.get(j).getMeaning());
                     break;
                 }
@@ -534,7 +534,7 @@ public class MyNtyService {
     }
 
 
-    public MyMnNoticesCountDTO getUserMNNoticesCount(String userId){
+    public MyMnNoticesCountDTO getUserMNNoticesCount(String userId) {
         return this.mndao.getNoticesCountDTO(userId);
     }
 
@@ -542,8 +542,8 @@ public class MyNtyService {
         if (notice != null) {
             try {
                 Class pusherClass = Class.forName("com.definesys.dsgc.mnpush.NoticePush");
-                Method pushMethod = pusherClass.getMethod("push",String.class,String.class,String.class,String.class,String.class,String.class,String.class);
-                boolean res = (Boolean)pushMethod.invoke(pusherClass.newInstance(),notice.getSendTo(),notice.getNtyTitle(),notice.getNtySour(),notice.getMnLevel(),notice.getCntShort(),notice.getCntText(),notice.getCntFormat());
+                Method pushMethod = pusherClass.getMethod("push", String.class, String.class, String.class, String.class, String.class, String.class, String.class);
+                boolean res = (Boolean) pushMethod.invoke(pusherClass.newInstance(), notice.getSendTo(), notice.getNtyTitle(), notice.getNtySour(), notice.getMnLevel(), notice.getCntShort(), notice.getCntText(), notice.getCntFormat());
                 return res;
             } catch (Exception e) {
                 e.printStackTrace();

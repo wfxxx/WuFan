@@ -50,8 +50,6 @@ public class EsbHomeController {
     //获取ESB服务运行统计柱状图数据
     @PostMapping("/querySortVist")
     public Response querySortVist(@RequestBody Map<String,Object> params,HttpServletRequest request){
-        String startTime= params.get("startTime")!=null? (String) params .get("startTime") :null;
-        String endTime=params.get("endTime")!=null?(String)params.get("endTime"):null;
         String limitTime= params.get("limitTime")!=null?(String)params.get("limitTime"):null;
         List<EsbHomeHisto> result;
         try{
@@ -66,12 +64,24 @@ public class EsbHomeController {
     //获取ESB服务 业务交易量统计柱状图数据 ystar 20210712
     @PostMapping("/queryBusSortData")
     public Response queryBusSortData(@RequestBody Map<String,Object> params,HttpServletRequest request){
-        String startTime= params.get("startTime")!=null? (String) params .get("startTime") :null;
-        String endTime=params.get("endTime")!=null?(String)params.get("endTime"):null;
         String limitTime= params.get("limitTime")!=null?(String)params.get("limitTime"):null;
         List<EsbHomeHisto> result;
         try{
             result= esbHomeService.queryBusSortData(limitTime);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.error(e.getMessage());
+        }
+        return Response.ok().setData(result);
+    }
+
+    //获取ESB服务 业务交易量统计柱状图数据 ystar 20210712
+    @PostMapping("/querySvcBusSortData")
+    public Response querySvcBusSortData(@RequestBody Map<String,Object> params,HttpServletRequest request){
+        String type= params.get("type")!=null?(String)params.get("type"):null;
+        List<Map<String, Object>> result;
+        try{
+            result= esbHomeService.querySvcBusSortData(type);
         }catch (Exception e){
             e.printStackTrace();
             return Response.error(e.getMessage());

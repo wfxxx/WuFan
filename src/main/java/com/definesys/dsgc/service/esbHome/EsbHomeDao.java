@@ -370,9 +370,9 @@ public class EsbHomeDao {
                     break;
                 case "week":
                     sql = "  select sum(t.total_times) as total,t.day day from rp_serv_day t where \n" +
-                            "\tstr_to_date(concat(t.year,'-',t.month,'-',t.day),'%Y-%m-%d')>date_sub(curdate(),INTERVAL WEEKDAY(curdate()) + 0 DAY)\n" +
+                            "\tstr_to_date(concat(t.year,'-',t.month,'-',t.day),'%Y-%m-%d')>=date_sub(curdate(),INTERVAL WEEKDAY(curdate()) + 0 DAY)\n" +
                             "    and\n" +
-                            "    str_to_date(concat(t.year,'-',t.month,'-',t.day),'%Y-%m-%d')<date_sub(curdate(),INTERVAL WEEKDAY(curdate()) - 6 DAY)\n" +
+                            "    str_to_date(concat(t.year,'-',t.month,'-',t.day),'%Y-%m-%d')<=date_sub(curdate(),INTERVAL WEEKDAY(curdate()) - 6 DAY)\n" +
                             "  group  by t.day order by t.day desc; ";
                     break;
                 case "day":
@@ -427,15 +427,15 @@ public class EsbHomeDao {
                     break;
                 case "week":
                     sql = "  select sum(t.bus_total_times) as total,t.day day from rp_serv_day t where \n" +
-                            "\tstr_to_date(concat(t.year,'-',t.month,'-',t.day),'%Y-%m-%d')>date_sub(curdate(),INTERVAL WEEKDAY(curdate()) + 0 DAY)\n" +
+                            "\tstr_to_date(concat(t.year,'-',t.month,'-',t.day),'%Y-%m-%d')>= date_sub(curdate(),INTERVAL WEEKDAY(curdate()) + 0 DAY)\n" +
                             "    and\n" +
-                            "    str_to_date(concat(t.year,'-',t.month,'-',t.day),'%Y-%m-%d')<date_sub(curdate(),INTERVAL WEEKDAY(curdate()) - 6 DAY)\n" +
-                            "  group  by t.day order by t.day desc; ";
+                            "    str_to_date(concat(t.year,'-',t.month,'-',t.day),'%Y-%m-%d')<= date_sub(curdate(),INTERVAL WEEKDAY(curdate()) - 6 DAY)\n" +
+                            "  group  by t.day order by t.day desc";
                     break;
                 case "day":
                     sql = "select sum(t.bus_total_times) as total,t.hour hour from rp_serv_hour t \n" +
                             "where str_to_date(CONCAT(t.year,'-',t.month,'-',t.day),'%Y-%m-%d')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d'),'%Y-%m-%d')\n" +
-                            "group  by t.hour order by t.hour desc;";
+                            "group  by t.hour order by t.hour desc";
                     break;
                 default:
                     break;
@@ -504,10 +504,10 @@ public class EsbHomeDao {
             }
             if ("mysql".equals(dbType)) {
                 sql = "  select sum(t.total_times_f) as total,t.day day from rp_serv_day t where \n" +
-                        "\tstr_to_date(concat(t.year,'-',t.month,'-',t.day),'%Y-%m-%d')>date_sub(curdate(),INTERVAL WEEKDAY(curdate()) + 0 DAY)\n" +
+                        "\tstr_to_date(concat(t.year,'-',t.month,'-',t.day),'%Y-%m-%d')>=date_sub(curdate(),INTERVAL WEEKDAY(curdate()) + 0 DAY)\n" +
                         "    and\n" +
                         "    str_to_date(concat(t.year,'-',t.month,'-',t.day),'%Y-%m-%d')<date_sub(curdate(),INTERVAL WEEKDAY(curdate()) - 6 DAY)\n" +
-                        "  group  by t.day order by t.day desc; ";
+                        "  group  by t.day order by t.day desc ";
             }
             resulSql.sql(sql);
         } else if (limitTime.equals("day")) {
@@ -717,5 +717,61 @@ public class EsbHomeDao {
 
     public DSGCSystemEntities querySystemByCode(String sysCode) {
         return sw.buildQuery().eq("sys_code", sysCode).doQueryFirst(DSGCSystemEntities.class);
+    }
+
+    /**
+     * 查询每个接口的业务量统计
+     **/
+    public List<Map<String, Object>> querySvcBusSortData(String type) {
+        MpaasQuery mq = sw.buildQuery();
+        String sql = null;
+        if ("mysql".equals(dbType)) {
+            switch (type) {
+                case "year":
+                    sql = " select IFNULL(sum(t.bus_total_times),0) as TOTAL,t.SERV_NO from rp_serv_month t \n" +
+                            "where t.year=LPAD(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y'),4,0) group  by t.month order by TOTAL desc ";
+                    break;
+                case "month":
+                    sql = "  select IFNULL(sum(t.bus_total_times),0) as TOTAL,t.SERV_NO from rp_serv_day t where   LPAD(t.year,4,0)=DATE_FORMAT(CURRENT_TIMESTAMP,'%Y') and  LPAD(t.month,2,0)=DATE_FORMAT(CURRENT_TIMESTAMP,'%m') group  by t.SERV_NO order by TOTAL desc ";
+                    break;
+                case "week":
+                    sql = "  select IFNULL(sum(t.bus_total_times),0) as TOTAL,t.SERV_NO from rp_serv_day t where str_to_date(concat(t.year,'-',t.month,'-',t.day),'%Y-%m-%d')>=date_sub(curdate(),INTERVAL WEEKDAY(curdate()) + 0 DAY) \n" +
+                            "                     and  str_to_date(concat(t.year,'-',t.month,'-',t.day),'%Y-%m-%d')<=date_sub(curdate(),INTERVAL WEEKDAY(curdate()) - 6 DAY)\n" +
+                            "   group  by t.SERV_NO order by TOTAL desc ";
+                    break;
+                case "day":
+                    sql = "select IFNULL(sum(t.bus_total_times),0) as TOTAL,t.SERV_NO from rp_serv_hour t \n" +
+                            "           where str_to_date(CONCAT(t.year,'-',t.month,'-',t.day),'%Y-%m-%d')=str_to_date(DATE_FORMAT(CURRENT_TIMESTAMP,'%Y-%m-%d'),'%Y-%m-%d')\n" +
+                            "            group  by t.SERV_NO order by t.hour desc";
+                    break;
+                default:
+                    break;
+            }
+
+        } else if ("oracle".equals(dbType)) {
+            switch (type) {
+                case "year":
+                    sql = "select sum(t.bus_total_times) as TOTAL,t.SERV_NO from rp_serv_month t " +
+                            " where to_date(t.year,'yyyy')=to_date(to_char(sysdate,'yyyy'),'yyyy') group  by t.SERV_NO order by TOTAL desc";
+                    break;
+                case "month":
+                    sql = "select sum(t.bus_total_times) as TOTAL,t.SERV_NO from rp_serv_day t " +
+                            " where to_date(t.year||'-'||t.month,'yyyy-mm')=to_date(to_char(sysdate,'yyyy-mm'),'yyyy-mm') group  by t.SERV_NO order by TOTAL desc";
+                    break;
+                case "week":
+                    sql = "select sum(t.bus_total_times) as TOTAL,t.SERV_NO from rp_serv_day t" +
+                            " where to_char(to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd'),'iw')=to_char(sysdate,'iw') and t.year=to_char(sysdate,'yyyy') group  by t.SERV_NO order by TOTAL desc";
+                    break;
+                case "day":
+                    sql = "select sum(t.bus_total_times) as TOTAL,t.SERV_NO from rp_serv_hour t" +
+                            " where to_date(t.year||'-'||t.month||'-'||t.day,'yyyy-mm-dd')=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') group  by t.SERV_NO order by TOTAL desc";
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        return mq.sql(sql).doQuery();
+
     }
 }

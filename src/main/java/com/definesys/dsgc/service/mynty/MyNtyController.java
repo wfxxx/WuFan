@@ -25,25 +25,25 @@ public class MyNtyController {
 
 
     @RequestMapping(value = "/queryMNRules", method = RequestMethod.POST)
-    public Response queryMNRules(@RequestBody MyNtyQueryParamVO reqParam,HttpServletRequest request,
+    public Response queryMNRules(@RequestBody MyNtyQueryParamVO reqParam, HttpServletRequest request,
                                  @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
                                  @RequestParam(value = "pageIndex", required = false, defaultValue = "1") int pageIndex) {
         String uId = request.getHeader("uid");
-        return Response.ok().setData(this.mns.queryMNRules(uId,reqParam,pageSize,pageIndex));
+        return Response.ok().setData(this.mns.queryMNRules(uId, reqParam, pageSize, pageIndex));
     }
 
 
     @RequestMapping(value = "/cancelSubscribe", method = RequestMethod.POST)
-    public Response cancelSubscribe(@RequestBody RuleStatSetVO reqParam,HttpServletRequest request) {
+    public Response cancelSubscribe(@RequestBody RuleStatSetVO reqParam, HttpServletRequest request) {
         String uId = request.getHeader("uid");
-        this.mns.cancelSubscribe(uId,reqParam);
+        this.mns.cancelSubscribe(uId, reqParam);
         return Response.ok();
     }
 
     @RequestMapping(value = "/setRuleStat", method = RequestMethod.POST)
-    public Response setRuleStat(@RequestBody RuleStatSetVO reqParam,HttpServletRequest request) {
+    public Response setRuleStat(@RequestBody RuleStatSetVO reqParam, HttpServletRequest request) {
         String uId = request.getHeader("uid");
-        String res = this.mns.setRuleStat(uId,reqParam);
+        String res = this.mns.setRuleStat(uId, reqParam);
         if ("S".equals(res)) {
             return Response.ok();
         } else {
@@ -52,10 +52,10 @@ public class MyNtyController {
     }
 
     @RequestMapping(value = "/delMNRule", method = RequestMethod.POST)
-    public Response delMNRule(@RequestBody MyNtyRuleIdVO reqParam,HttpServletRequest request) {
+    public Response delMNRule(@RequestBody MyNtyRuleIdVO reqParam, HttpServletRequest request) {
         String uId = request.getHeader("uid");
         try {
-            this.mns.delMNRule(uId,reqParam.getRuleId());
+            this.mns.delMNRule(uId, reqParam.getRuleId());
             return Response.ok();
         } catch (Exception e) {
             return Response.error(e.getMessage());
@@ -63,20 +63,19 @@ public class MyNtyController {
     }
 
     @RequestMapping(value = "/getMNRuleDetail", method = RequestMethod.POST)
-    public Response getMNRuleDetail(@RequestBody MyNtyRuleIdVO reqParam,HttpServletRequest request){
-       return Response.ok().setData(this.mns.getMNRuleDetail(reqParam.getRuleId()));
+    public Response getMNRuleDetail(@RequestBody MyNtyRuleIdVO reqParam, HttpServletRequest request) {
+        return Response.ok().setData(this.mns.getMNRuleDetail(reqParam.getRuleId()));
     }
 
     @RequestMapping(value = "/updateMNRuleDetail", method = RequestMethod.POST)
-    public Response updateMNRuleDetail(@RequestBody MyNtyRuleDetailVO reqParam,HttpServletRequest request){
+    public Response updateMNRuleDetail(@RequestBody MyNtyRuleDetailVO reqParam, HttpServletRequest request) {
         String uId = request.getHeader("uid");
         try {
-            return Response.ok().setData(this.mns.updateMNRuleDetail(uId,reqParam));
-        }catch (Exception e){
+            return Response.ok().setData(this.mns.updateMNRuleDetail(uId, reqParam));
+        } catch (Exception e) {
             return Response.error(e.getMessage());
         }
     }
-
 
 
     /**
@@ -88,7 +87,7 @@ public class MyNtyController {
      * @deprecated
      */
     @RequestMapping(value = "/getMNRules", method = RequestMethod.GET)
-    public Response getMNRules(@RequestParam String ruleType,HttpServletRequest request) {
+    public Response getMNRules(@RequestParam String ruleType, HttpServletRequest request) {
         //获取用户id
         String userId = request.getHeader("uid");
         if (userId == null) {
@@ -101,7 +100,7 @@ public class MyNtyController {
         }
 
         //根据用户id获取服务错误订阅规则列表
-        return Response.ok().setData(mns.getMNRules(userId,ruleType));
+        return Response.ok().setData(mns.getMNRules(userId, ruleType));
     }
 
 
@@ -112,13 +111,13 @@ public class MyNtyController {
      * @param request
      */
     @RequestMapping(value = "/updMNRules", method = RequestMethod.POST)
-    public Response updateMNRules(@RequestBody List<MyNtyRulesBean> chgs,HttpServletRequest request) {
+    public Response updateMNRules(@RequestBody List<MyNtyRulesBean> chgs, HttpServletRequest request) {
         //获取用户id
         String userId = request.getHeader("uid");
         if (userId == null) {
             return Response.error("无效的用户！");
         }
-        mns.updateMNRules(userId,chgs);
+        mns.updateMNRules(userId, chgs);
         return Response.ok().setMessage("保存成功！");
     }
 
@@ -147,13 +146,13 @@ public class MyNtyController {
      * @return
      */
     @RequestMapping(value = "/updServExcptSubRules", method = RequestMethod.POST)
-    public Response updateServExceptionSubRules(@RequestBody List<ServExcptSubRulesBean> chgs,HttpServletRequest request) {
+    public Response updateServExceptionSubRules(@RequestBody List<ServExcptSubRulesBean> chgs, HttpServletRequest request) {
         //获取用户id
         String userId = request.getHeader("uid");
         if (userId == null) {
             return Response.error("无效的用户！");
         }
-        mns.updateServExcptSubRules(userId,chgs);
+        mns.updateServExcptSubRules(userId, chgs);
         return Response.ok().setMessage("保存成功！");
     }
 
@@ -165,7 +164,7 @@ public class MyNtyController {
      * @return
      */
     @RequestMapping(value = "/getMNSubcributeServices", method = RequestMethod.POST)
-    public Response getMNSubcributeServices(@RequestBody MyNtyServSltBean sltReq,HttpServletRequest request) {
+    public Response getMNSubcributeServices(@RequestBody MyNtyServSltBean sltReq, HttpServletRequest request) {
         //获取用户id
         String userId = request.getHeader("uid");
         if (userId == null) {
@@ -182,7 +181,7 @@ public class MyNtyController {
      * @return
      */
     @RequestMapping(value = "/saveMNSubcributeServices", method = RequestMethod.POST)
-    public Response saveMNSubcributeServices(@RequestBody MyNtyServSltBean sltReq,HttpServletRequest request) {
+    public Response saveMNSubcributeServices(@RequestBody MyNtyServSltBean sltReq, HttpServletRequest request) {
         //获取用户id
         String userId = request.getHeader("uid");
         if (userId == null) {
@@ -193,13 +192,15 @@ public class MyNtyController {
 
 
     @RequestMapping(value = "/findDSGCMnNotices", method = RequestMethod.POST)
-    public Response findDSGCMnNotices(@RequestBody DSGCMnNotices dsgcMnNotices) {
-        return Response.ok().data(this.mns.findDSGCMnNotices(dsgcMnNotices));
+    public Response findDSGCMnNotices(@RequestBody DSGCMnNotices dsgcMnNotices,
+                                      @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
+                                      @RequestParam(value = "pageIndex", required = false, defaultValue = "1") int pageIndex) {
+        return Response.ok().data(this.mns.findDSGCMnNotices(dsgcMnNotices, pageSize, pageIndex));
     }
 
     @RequestMapping(value = "getServByUser", method = RequestMethod.POST)
     public Response getServByUser(@RequestBody DSGCUser dsgcUser) {
-        List<Map<String,Object>> servByUser = mns.getServByUser(dsgcUser);
+        List<Map<String, Object>> servByUser = mns.getServByUser(dsgcUser);
         return Response.ok().setData(servByUser);
     }
 
@@ -223,7 +224,7 @@ public class MyNtyController {
 
 
     @RequestMapping(value = "/getMNSubUser", method = RequestMethod.POST)
-    public Response getMNSubUser(@RequestBody MyNtyUserSltBean sltReq,HttpServletRequest request) {
+    public Response getMNSubUser(@RequestBody MyNtyUserSltBean sltReq, HttpServletRequest request) {
         //获取用户id
         String userId = request.getHeader("uid");
         if (userId == null) {
@@ -233,7 +234,7 @@ public class MyNtyController {
     }
 
     @RequestMapping(value = "/saveMNSubUser", method = RequestMethod.POST)
-    public Response saveMNSubUser(@RequestBody MyNtyUserSltBean sltReq,HttpServletRequest request) {
+    public Response saveMNSubUser(@RequestBody MyNtyUserSltBean sltReq, HttpServletRequest request) {
         //获取用户id
         String userId = request.getHeader("uid");
         if (userId == null) {
@@ -242,19 +243,19 @@ public class MyNtyController {
         return Response.ok().setData(mns.saveMNSubUser(sltReq));
     }
 
-    @RequestMapping(value = "getUserList",method = RequestMethod.POST)
+    @RequestMapping(value = "getUserList", method = RequestMethod.POST)
     public Response queryUserList(@RequestBody() CommonReqBean commonReqBean,
                                   @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
-                                  @RequestParam(value = "pageIndex", required = false, defaultValue = "1") int pageIndex,HttpServletRequest request){
-        String userRole= request.getHeader("userRole");
+                                  @RequestParam(value = "pageIndex", required = false, defaultValue = "1") int pageIndex, HttpServletRequest request) {
+        String userRole = request.getHeader("userRole");
 
-        PageQueryResult<UserResDTO> result = mns.queryUserList(commonReqBean,pageSize,pageIndex,userRole);
+        PageQueryResult<UserResDTO> result = mns.queryUserList(commonReqBean, pageSize, pageIndex, userRole);
 
         return Response.ok().setData(result);
     }
 
     @RequestMapping(value = "/getMNNoticeCount", method = RequestMethod.GET)
-    public Response getMNNoticeCount(HttpServletRequest request){
+    public Response getMNNoticeCount(HttpServletRequest request) {
         String userId = request.getHeader("uid");
         return Response.ok().setData(this.mns.getUserMNNoticesCount(userId));
     }

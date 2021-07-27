@@ -694,7 +694,7 @@ public class MyNtyDao {
         return null;
     }
 
-    public List<DSGCMnNotices> findDSGCMnNotices(DSGCMnNotices dsgcMnNotices) {
+    public PageQueryResult<DSGCMnNotices> findDSGCMnNotices(DSGCMnNotices dsgcMnNotices,int pageSize,int pageIndex) {
         MpaasQuery mpaasQuery = this.sw.buildQuery()
                 .eq("ntyUser",dsgcMnNotices.getNtyUser());
         if (StringUtils.isNotEmpty(dsgcMnNotices.getMnTitle())) {
@@ -719,8 +719,7 @@ public class MyNtyDao {
         if (StringUtils.isNotEmpty(dsgcMnNotices.getMnLevel()) && !dsgcMnNotices.getMnLevel().equals("all")){
             mpaasQuery = mpaasQuery.eq("mnLevel",dsgcMnNotices.getMnLevel());
         }
-        List<DSGCMnNotices> dsgcMnNoticesList = mpaasQuery.doQuery(DSGCMnNotices.class);
-
+        PageQueryResult<DSGCMnNotices> dsgcMnNoticesList = mpaasQuery.doPageQuery(pageIndex,pageSize,DSGCMnNotices.class);
         return dsgcMnNoticesList;
     }
 
