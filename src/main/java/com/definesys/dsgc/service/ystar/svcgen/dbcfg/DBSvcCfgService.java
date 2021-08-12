@@ -61,7 +61,7 @@ public class DBSvcCfgService {
                 dBconnVO.setSidOrServNameLabel(svcgenConnBean.getAttr6());
                 dBconnVO.setSidOrServNameValue(svcgenConnBean.getAttr7());
             } else if ("mysql".equals(svcgenConnBean.getAttr1())) {
-                dBconnVO.setDbName(svcgenConnBean.getAttr6());
+                dBconnVO.setDbName(svcgenConnBean.getAttr7());
             }
             return dBconnVO;
         } else {

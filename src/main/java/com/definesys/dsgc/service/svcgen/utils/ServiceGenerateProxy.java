@@ -248,8 +248,8 @@ public class ServiceGenerateProxy {
 
     /*** 解析WSDL **/
     public Response parseSpyWSDL(String wsdlUri, String uriUN, String uriPD) throws Exception {
-        Method parseSpyWSDL = this.svcgenClass.getMethod("parseSpyWSDL", String.class, String.class, String.class);
-        Object res = parseSpyWSDL.invoke(this.svcgen, wsdlUri, uriUN, uriPD);
+        Method parseSpyWSDL = this.svcgenClass.getMethod("parseMuleSpyWSDL", String.class);
+        Object res = parseSpyWSDL.invoke(this.svcgen, wsdlUri);
         if (res != null) {
             Method getRntMethod = this.getAttributeGetMethod(res.getClass(), "rmb");
             Object rtnObj = getRntMethod.invoke(res);

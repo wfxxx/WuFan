@@ -1,25 +1,21 @@
-package com.definesys.dsgc.service.svcgen.bean;
+package com.definesys.dsgc.service.ystar.mg.bean;
 
+import com.definesys.dsgc.service.svcgen.bean.OBHeaderBean;
 import com.definesys.dsgc.service.svcgen.bean.db.RspDTO;
 import com.definesys.dsgc.service.svcgen.bean.db.TblDTO;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class TmplConfigBean {
-    private String projId;
-    private String projName;
-    private String prjName;
-    private String svcCode;
-    private String svcName;
+    private String erroMsg = null;
 
     private String dpName;
     private String envCode;
     private String isEnable;
     private String deveId;
     private String servNo;
-
+    private String projDir;
     private String servDir;
     private String servNameCode;
     private String appCode;
@@ -48,98 +44,60 @@ public class TmplConfigBean {
     private String dbOper;
     private TblDTO[] tbls;
     private RspDTO[] rsps;
-    private String sqlcode;
+    private String sqlCode;
+
+    private String inputMeta;
+    private String outputMeta;
 
 
-    private String attr1;
-    private String attr2;
-    private String attr3;
-    private String attr4;
-    private String attr5;
-    private String attr6;
-    private String attr7;
-    private String attr8;
-    private String attr9;
-    private String attr10;
+    private String inputTransMapping;
+    private String outputTransMapping;
 
-    public String getAttr1() {
-        return attr1;
+//    //创建服务代码并同时创建服务资产信息
+//    private String servAssetNo;
+//    private String servName;
+//    private String servSystem;
+//    private String servShareType;
+
+
+    public String getErroMsg() {
+        return erroMsg;
     }
 
-    public void setAttr1(String attr1) {
-        this.attr1 = attr1;
+    public void setErroMsg(String erroMsg) {
+        this.erroMsg = erroMsg;
     }
 
-    public String getAttr2() {
-        return attr2;
+    public String getInputMeta() {
+        return inputMeta;
     }
 
-    public void setAttr2(String attr2) {
-        this.attr2 = attr2;
+    public void setInputMeta(String inputMeta) {
+        this.inputMeta = inputMeta;
     }
 
-    public String getAttr3() {
-        return attr3;
+    public String getOutputMeta() {
+        return outputMeta;
     }
 
-    public void setAttr3(String attr3) {
-        this.attr3 = attr3;
+    public void setOutputMeta(String outputMeta) {
+        this.outputMeta = outputMeta;
     }
 
-    public String getAttr4() {
-        return attr4;
+    public String getInputTransMapping() {
+        return inputTransMapping;
     }
 
-    public void setAttr4(String attr4) {
-        this.attr4 = attr4;
+    public void setInputTransMapping(String inputTransMapping) {
+        this.inputTransMapping = inputTransMapping;
     }
 
-    public String getAttr5() {
-        return attr5;
+    public String getOutputTransMapping() {
+        return outputTransMapping;
     }
 
-    public void setAttr5(String attr5) {
-        this.attr5 = attr5;
-    }
-
-    public String getAttr6() {
-        return attr6;
-    }
-
-    public void setAttr6(String attr6) {
-        this.attr6 = attr6;
-    }
-
-    public String getAttr7() {
-        return attr7;
-    }
-
-    public void setAttr7(String attr7) {
-        this.attr7 = attr7;
-    }
-
-    public String getAttr8() {
-        return attr8;
-    }
-
-    public void setAttr8(String attr8) {
-        this.attr8 = attr8;
-    }
-
-    public String getAttr9() {
-        return attr9;
-    }
-
-    public void setAttr9(String attr9) {
-        this.attr9 = attr9;
-    }
-
-    public String getAttr10() {
-        return attr10;
-    }
-
-    public void setAttr10(String attr10) {
-        this.attr10 = attr10;
+    public void setOutputTransMapping(String outputTransMapping) {
+        this.outputTransMapping = outputTransMapping;
     }
 
     public String getDpName() {
@@ -180,6 +138,14 @@ public class TmplConfigBean {
 
     public void setServNo(String servNo) {
         this.servNo = servNo;
+    }
+
+    public String getProjDir() {
+        return projDir;
+    }
+
+    public void setProjDir(String projDir) {
+        this.projDir = projDir;
     }
 
     public String getServDir() {
@@ -391,51 +357,43 @@ public class TmplConfigBean {
         this.rsps = rsps;
     }
 
-    public String getSqlcode() {
-        return sqlcode;
+    public String getSqlCode() {
+        return sqlCode;
     }
 
-    public void setSqlcode(String sqlcode) {
-        this.sqlcode = sqlcode;
+    public void setSqlCode(String sqlCode) {
+        this.sqlCode = sqlCode;
     }
 
-    public String getProjId() {
-        return projId;
-    }
-
-    public void setProjId(String projId) {
-        this.projId = projId;
-    }
-
-    public String getPrjName() {
-        return prjName;
-    }
-
-    public void setPrjName(String prjName) {
-        this.prjName = prjName;
-    }
-
-    public String getSvcCode() {
-        return svcCode;
-    }
-
-    public void setSvcCode(String svcCode) {
-        this.svcCode = svcCode;
-    }
-
-    public String getSvcName() {
-        return svcName;
-    }
-
-    public void setSvcName(String svcName) {
-        this.svcName = svcName;
-    }
-
-    public String getProjName() {
-        return projName;
-    }
-
-    public void setProjName(String projName) {
-        this.projName = projName;
-    }
+    //    public String getServAssetNo() {
+//        return servAssetNo;
+//    }
+//
+//    public void setServAssetNo(String servAssetNo) {
+//        this.servAssetNo = servAssetNo;
+//    }
+//
+//    public String getServName() {
+//        return servName;
+//    }
+//
+//    public void setServName(String servName) {
+//        this.servName = servName;
+//    }
+//
+//    public String getServSystem() {
+//        return servSystem;
+//    }
+//
+//    public void setServSystem(String servSystem) {
+//        this.servSystem = servSystem;
+//    }
+//
+//    public String getServShareType() {
+//        return servShareType;
+//    }
+//
+//    public void setServShareType(String servShareType) {
+//        this.servShareType = servShareType;
+//    }
 }

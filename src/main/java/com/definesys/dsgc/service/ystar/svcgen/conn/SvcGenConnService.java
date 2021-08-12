@@ -1,5 +1,10 @@
 package com.definesys.dsgc.service.ystar.svcgen.conn;
 
+import com.definesys.dsgc.common.utils.DSUtils;
+import com.definesys.dsgc.service.svcgen.bean.SABean;
+import com.definesys.dsgc.service.svcgen.bean.TmplConfigBean;
+import com.definesys.dsgc.service.ystar.mg.conn.bean.DBconnVO;
+import com.definesys.dsgc.service.ystar.mg.conn.bean.MuleSvcConnBean;
 import com.definesys.dsgc.service.ystar.svcgen.conn.bean.SapConnInfoJsonBean;
 import com.definesys.dsgc.service.utils.CommonUtils;
 import com.definesys.dsgc.service.utils.StringUtil;
@@ -20,6 +25,8 @@ import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -68,7 +75,7 @@ public class SvcGenConnService {
                 connSuccess = sapConnValidBean.isSapConnValid();
             } else if ("FTP".equals(connType)) {
                 connSuccess = this.checkFtpConnInfoValid(attr1, attr2, attr3, attr4, attr5);
-            } else if ("IP".equals(connType) || "GIT".equals(connType)) {
+            } else if ("REST".equals(connType) || "SOAP".equals(connType) || "GIT".equals(connType)) {
                 connSuccess = this.checkIpPortConnInfoValid(attr2, attr3);
             } else if ("Shell".equals(connType)) {
                 connSuccess = this.checkShellConnInfoValid(attr2, attr4, attr5);
@@ -82,6 +89,7 @@ public class SvcGenConnService {
                 return Response.error("连接失败！");
             }
         } catch (Exception e) {
+            e.printStackTrace();
             return Response.error("测试DB连接失败，请检查连接信息，稍后再试！");
         }
     }
@@ -91,29 +99,23 @@ public class SvcGenConnService {
         Boolean connSuccess = false;
         String url = "";
         if ("oracle".equals(dbType)) {
-            url = "jdbc:oracle:thin:@//" + ip + ":" + port + "/" + sidOrServNameValue;
+            url = "jdbc:oracle:thin:@//" + ip + ":" + port + "/" + dbName;
         } else if ("mysql".equals(dbType)) {
             url = "jdbc:mysql://" + ip + ":" + port + "/" + dbName + "?useSSL=false";
         }
         Connection connection = null;
         try {
             connection = JdbcConnection.getDSGCDBConnectTest(dbType, url, username, password);
-            connSuccess = connection != null;
+            System.out.println(dbType + " " + url + " " + username + " " + password);
+            connSuccess = (connection != null);
         } catch (ClassNotFoundException e) {
-            connSuccess = false;
             e.printStackTrace();
             throw new MpaasBusinessException("数据库驱动加载失败，无法连接数据库");
         } catch (SQLException e) {
-            connSuccess = false;
             e.printStackTrace();
             throw new MpaasBusinessException("getDBConnect异常，无法连接数据库");
         } finally {
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-
-            }
+            DSUtils.close(connection);
         }
         return connSuccess;
     }
@@ -168,9 +170,42 @@ public class SvcGenConnService {
     public Response saveSvcGenConnectInfo(SvcgenConnBean svcgenConnBean) {
         String connId = svcgenConnBean.getConnId();
         if (StringUtil.isNotBlank(connId)) {
-            this.connDao.removeSvcGenDBConnectInfoById(connId);
+            this.connDao.removeSvcGenConnById(connId);
         }
         return Response.ok().data(this.connDao.addSvcGenDBConnectInfo(svcgenConnBean));
+    }
+
+    public Response removeSvcGenConnById(String connId) {
+        this.connDao.removeSvcGenConnById(connId);
+        return Response.ok().setMessage("删除成功！");
+    }
+
+
+    public Response listQuerySvcGenConnByType(String dbType) {
+        return Response.ok().data(connDao.listQuerySvcGenConnByType(dbType));
+    }
+
+    public DBconnVO sigQueryDBConnByName(String connName) {
+        if (StringUtil.isNotBlank(connName)) {
+            SvcgenConnBean connBean = connDao.querySvcGenConnectByName(connName);
+            DBconnVO dBconnVO = new DBconnVO();
+            dBconnVO.setConnId(connBean.getConnId());
+            dBconnVO.setConnName(connBean.getConnName());
+            dBconnVO.setDbType(connBean.getAttr1());
+            dBconnVO.setDbIp(connBean.getAttr2());
+            dBconnVO.setPort(connBean.getAttr3());
+            dBconnVO.setConnUN(connBean.getAttr4());
+            dBconnVO.setConnPD(connBean.getAttr5());
+            if ("oracle".equals(connBean.getAttr1())) {
+                dBconnVO.setSidOrServNameLabel(connBean.getAttr6());
+                dBconnVO.setSidOrServNameValue(connBean.getAttr7());
+            } else if ("mysql".equals(connBean.getAttr1())) {
+                dBconnVO.setDbName(connBean.getAttr7());
+            }
+            return dBconnVO;
+        } else {
+            throw new MpaasBusinessException("请求参数错误，请检查参数！");
+        }
     }
 
 }

@@ -14,10 +14,12 @@ public class SvcGenConnDao {
     @Autowired
     private MpaasQueryFactory sw;
 
-    public PageQueryResult pageQuerySvcGenConn(SvcgenConnBean svcgenConnBean, int pageIndex, int pageSize) {
+    public PageQueryResult<SvcgenConnBean> pageQuerySvcGenConn(SvcgenConnBean svcgenConnBean, int pageIndex, int pageSize) {
         return this.sw.buildQuery()
                 .eq("connName", svcgenConnBean.getConnName())
                 .eq("connType", svcgenConnBean.getConnType())
+                .eq("envCode",svcgenConnBean.getEnvCode())
+                .orderBy("lastUpdateDate","DESC")
                 .doPageQuery(pageIndex, pageSize, SvcgenConnBean.class);
     }
 
@@ -37,7 +39,7 @@ public class SvcGenConnDao {
         return svcgenConnBean.getConnId();
     }
 
-    public void removeSvcGenDBConnectInfoById(String connId) {
+    public void removeSvcGenConnById(String connId) {
         this.sw.buildQuery().eq("connId", connId).doDelete(SvcgenConnBean.class);
     }
 
@@ -46,6 +48,21 @@ public class SvcGenConnDao {
     }
     public SvcgenConnBean querySvcGenConnectByName(String  connName) {
         return sw.buildQuery().eq("connName", connName).doQueryFirst(SvcgenConnBean.class);
+    }
+
+    public SvcgenConnBean sigQuerySvcGenConnect(String  connName,String connType,String dbType) {
+        return sw.buildQuery()
+                .eq("connName", connName)
+                .eq("connType", connType)
+                .eq("attr1", dbType)
+                .doQueryFirst(SvcgenConnBean.class);
+    }
+
+    public List<SvcgenConnBean> listQuerySvcGenConnByType(String dbType) {
+        return this.sw.buildQuery()
+                .eq("connType", "DB")
+                .eq("attr1", dbType)
+                .doQuery(SvcgenConnBean.class);
     }
 
 }

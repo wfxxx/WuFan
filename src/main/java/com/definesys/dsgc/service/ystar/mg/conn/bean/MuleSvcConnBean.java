@@ -1,4 +1,4 @@
-package com.definesys.dsgc.service.ystar.svcgen.conn.bean;
+package com.definesys.dsgc.service.ystar.mg.conn.bean;
 
 import com.definesys.mpaas.query.annotation.*;
 import com.definesys.mpaas.query.json.MpaasDateTimeDeserializer;
@@ -7,15 +7,15 @@ import com.definesys.mpaas.query.model.MpaasBasePojo;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import java.io.Serializable;
 import java.util.Date;
 
-@Table(value = "dsgc_svcgen_conn")
-public class SvcgenConnBean extends MpaasBasePojo {
-    @RowID(type = RowIDType.UUID)
+@Table(value = "mule_svc_conn")
+public class MuleSvcConnBean extends MpaasBasePojo implements Serializable {
+    @RowID(type = RowIDType.AUTO_INCREMENT)
     private String connId;
     private String connName;
     private String connType;// IP/Shell/DB/GIT/FTP/RFC
-    private String envCode;//环境代码
     private String attr1;//http/https
     private String attr2;//ip
     private String attr3;//port
@@ -82,14 +82,6 @@ public class SvcgenConnBean extends MpaasBasePojo {
 
     public void setConnType(String connType) {
         this.connType = connType;
-    }
-
-    public String getEnvCode() {
-        return envCode;
-    }
-
-    public void setEnvCode(String envCode) {
-        this.envCode = envCode;
     }
 
     public String getAttr1() {

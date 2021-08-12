@@ -23,15 +23,6 @@ import java.util.List;
  */
 @Service
 public class DSGCSystemService {
-
-    @Value("${wldevserver.hostname}")
-    private String devhostName;
-    @Value("${wldevserver.portname}")
-    private String devportName;
-    @Value("${wldevserver.username}")
-    private String devuserName;
-    @Value("${wldevserver.password}")
-    private String devpassword;
     SimpleDateFormat format2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     @Autowired

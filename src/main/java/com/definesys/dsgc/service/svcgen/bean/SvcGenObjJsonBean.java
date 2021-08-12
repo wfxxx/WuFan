@@ -7,41 +7,6 @@ import java.util.Date;
 
 public class SvcGenObjJsonBean {
     private static final String BASE_SQL=
-//            "select t.obj_id,\n" +
-//            "        t.obj_type,\n" +
-//            "        t.obj_code,\n" +
-//            "        (select fv.meaning from fnd_lookup_types ft,fnd_lookup_values fv where ft.lookup_id = fv.lookup_id and ft.lookup_type = 'SVCGEN_OBJ_TYPE' and fv.lookup_code = t.obj_type) obj_type_meaning,\n" +
-//            "        t.obj_name,\n" +
-//            "        t.obj_desc,\n" +
-//            "        t.sys_code,\n" +
-//            "        (select e.sys_name from dsgc_system_entities e where e.sys_code = t.sys_code) sys_code_meaning,\n" +
-//            "        t.serv_no,\n" +
-//            "        s.serv_name,\n" +
-//            "        s.subordinate_system serv_system,\n" +
-//            "        (select e.sys_name from dsgc_system_entities e where e.sys_code = s.subordinate_system) serv_system_meaning,\n" +
-//            "        s.share_type serv_share_type,\n" +
-//            "        (select fv.meaning from fnd_lookup_types ft,fnd_lookup_values fv where ft.lookup_id = fv.lookup_id and ft.lookup_type = 'SVC_SHARE_TYPE' and fv.lookup_code = s.share_type) serv_share_type_meaning,\n" +
-//            "        t.is_enable enabled,\n" +
-//            "        (select fv.meaning from fnd_lookup_types ft,fnd_lookup_values fv where ft.lookup_id = fv.lookup_id and ft.lookup_type = 'SVCGEN_OBJ_ENABLED' and fv.lookup_code = t.is_enable) enabled_meaning,\n" +
-//            "        v.stat vc_stat,\n" +
-//            "        (select fv.meaning from fnd_lookup_types ft,fnd_lookup_values fv where ft.lookup_id = fv.lookup_id and ft.lookup_type = 'SVCGEN_VC_STAT' and fv.lookup_code = v.stat) vc_stat_meaning,\n" +
-//            "        p.last_update_date,\n" +
-//            "        p.last_updated_by,\n" +
-//            "        p.created_by,\n" +
-//            "        (select u.user_name from dsgc_user u where u.user_id = p.last_updated_by) last_updated_by_name,\n" +
-//            "        h.tmpl_code,\n" +
-//            "         (select fv.meaning from fnd_lookup_types ft,fnd_lookup_values fv where ft.lookup_id = fv.lookup_id and (ft.lookup_type = 'SVCGEN_TMPL_LIST' or ft.lookup_type = 'SVCGEN_CMPT_TMPL_LIST') and fv.lookup_code = h.tmpl_code||'') tmpl_code_meaning\n" +
-//            "   from dsgc_svcgen_obj t,\n" +
-//            "        dsgc_services s,\n" +
-//            "        dsgc_svcgen_vc v,\n" +
-//            "        dsgc_svcgen_files_header h,\n" +
-//            "        dsgc_svcgen_tmpl p\n" +
-//            "  where t.obj_code = p.serv_no\n" +
-//            "    and p.is_profile = 'N'\n" +
-//            "    and t.serv_no = s.serv_no(+)\n" +
-//            "    and t.obj_code = h.serv_no(+)\n" +
-//            "    and h.is_enable(+) = 'Y'\n" +
-//            "    and h.vid = v.vid(+) \n";
     "SELECT t.obj_id,t.obj_type,t.obj_code,(SELECT fv.meaning FROM fnd_lookup_types ft,fnd_lookup_values fv " +
             "WHERE ft.lookup_id = fv.lookup_id AND ft.lookup_type = 'SVCGEN_OBJ_TYPE' AND fv.lookup_code = t.obj_type ) obj_type_meaning," +
             "t.obj_name,t.obj_desc,t.sys_code,( SELECT e.sys_name FROM dsgc_system_entities e WHERE e.sys_code = t.sys_code ) sys_code_meaning," +
