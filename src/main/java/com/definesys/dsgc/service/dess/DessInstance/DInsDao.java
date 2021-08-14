@@ -29,30 +29,12 @@ public class DInsDao {
     private String dbType;
 
 
-    public PageQueryResult queryJobInstaceList(CommonReqBean param, int pageSize, int pageIndex) {
-        StringBuffer sqlStr = new StringBuffer("select di.*,db.BUSINESS_TYPE,db.BUSINESS_NAME from DESS_INSTANCE di left join DESS_BUSINESS db on di.BUSINESS_ID = db.BUSINESS_ID where 1=1 ");
-        MpaasQuery mq = sw.buildQuery();
-        // 检索搜索框条件
-        if (StringUtil.isNotBlank(param.getCon0())) {
-            String[] conArray = param.getCon0().trim().split(" ");
-            for (String s : conArray) {
-                if (s != null && s.length() > 0) {
-                    sqlStr.append(this.generateLikeAndCluse(s));
-                }
-            }
-        }
-        // 检索下拉列表类型
-        if (param.getQueryType().equals("ALL")) {
-        } else {
-            String[] conArray = param.getQueryType().trim().split(" ");
-            for (String s : conArray) {
-                if (s != null && s.length() > 0) {
-                    sqlStr.append("and db.BUSINESS_TYPE like '%" + s + "%'");
-                }
-            }
-        }
-        mq.sql(sqlStr.toString() + " order by di.creation_date desc");
-        return mq.doPageQuery(pageIndex, pageSize, DInstBean.class);
+    public PageQueryResult<DInstBean> queryJobInstanceList(CommonReqBean param, int pageSize, int pageIndex) {
+        String str = param.getCon0();
+        return this.sw.buildViewQuery("V_DESS_INSTANCE").or()
+                .like("jobNo", str).like("jobName", str).like("businessType", str)
+                .like("businessName", str).like("jobDescription", str)
+                .doPageQuery(pageIndex, pageSize, DInstBean.class);
     }
 
     private String generateLikeAndCluse(String con) {

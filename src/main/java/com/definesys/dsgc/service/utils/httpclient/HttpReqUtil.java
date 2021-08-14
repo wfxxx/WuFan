@@ -35,12 +35,8 @@ public class HttpReqUtil {
         headers.set("token", request.getHeader("token"));
         //将请求头部和参数合成一个请求
         HttpEntity<JSONObject> requestEntity = new HttpEntity<>(params, headers);
-        //执行HTTP请求，将返回的结构使用ResultVO类格式化
-//        ResponseEntity<ResultVO> response = client.exchange(url, method, requestEntity, ResultVO.class);
         ResponseEntity<ResultVO> response = client.exchange(url, method, requestEntity, new ParameterizedTypeReference<ResultVO>() {
         });
-
-        //System.out.println(response.getBody());
         return response.getBody();
     }
 

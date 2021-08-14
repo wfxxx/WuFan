@@ -1,8 +1,11 @@
 package com.definesys.dsgc.service.dess.DessBusiness.bean;
 
+import com.definesys.dsgc.service.svcgen.bean.OBHeaderBean;
 import com.definesys.mpaas.query.annotation.*;
 import com.definesys.mpaas.query.model.MpaasBasePojo;
 import io.swagger.models.auth.In;
+
+import java.util.List;
 
 /**
  * @ClassName DessBusiness
@@ -32,6 +35,16 @@ public class DessBusiness {
     private String connId;
     @Column(type = ColumnType.JAVA)
     private String isDel;
+    @Column(type = ColumnType.JAVA)
+    private List<OBHeaderBean> headerBeanList;
+
+    public List<OBHeaderBean> getHeaderBeanList() {
+        return headerBeanList;
+    }
+
+    public void setHeaderBeanList(List<OBHeaderBean> headerBeanList) {
+        this.headerBeanList = headerBeanList;
+    }
 
     public Integer getStOffSet() {
         return stOffSet;

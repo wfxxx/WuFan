@@ -8,6 +8,7 @@ import com.definesys.dsgc.service.dess.DessInstance.bean.DInstSltBean;
 import com.definesys.dsgc.service.dess.DessInstance.bean.DinstVO;
 import com.definesys.dsgc.service.dess.DessInstance.bean.DinstVO2;
 import com.definesys.dsgc.service.dess.util.CornUtils;
+import com.definesys.dsgc.service.svcgen.bean.OBHeaderBean;
 import com.definesys.dsgc.service.ystar.fnd.property.FndPropertiesDao;
 import com.definesys.dsgc.service.ystar.fnd.property.FndPropertiesService;
 import com.definesys.dsgc.service.utils.StringUtil;
@@ -49,8 +50,18 @@ public class DInsService {
 
     //插入，删除，更新调用下列方法，查询要紫泥做
 
-    public PageQueryResult queryJobInstaceList(CommonReqBean param, int pageSize, int pageIndex) {
-        return dInsDao.queryJobInstaceList(param, pageSize, pageIndex);
+    public PageQueryResult<DInstBean> queryJobInstanceList(CommonReqBean param, int pageSize, int pageIndex) {
+        PageQueryResult<DInstBean> pageQueryResult = dInsDao.queryJobInstanceList(param, pageSize, pageIndex);
+        List<DInstBean> instBeans = pageQueryResult.getResult();
+        for (DInstBean instBean : instBeans) {
+            String header = instBean.getHeaderPayload();
+            if (StringUtil.isNotBlank(header)) {
+                List<OBHeaderBean> headerBeans = JSONArray.parseArray(header, OBHeaderBean.class);
+                instBean.setHeaderBeanList(headerBeans);
+            }
+
+        }
+        return pageQueryResult;
     }
 
     public DinstVO2 getDinstVO(String jobNo) {
@@ -255,11 +266,12 @@ public class DInsService {
 
 
     //删除，暂停任务
-    public void pauseDessTask(HttpServletRequest request, DinstVO2 dInstVO) {
+    public void pauseDessTask(HttpServletRequest request, String jobNo,String groupName) {
         String dessServiceUrl = this.propertiesDao.queryPropertyByKey(PROPERTY_KEY_DESS_SERVICE_URL);
-        String dInstBeanStr = JSONObject.toJSONString(dInstVO);
-        JSONObject dInstBeanObject = JSONObject.parseObject(dInstBeanStr);
-        HttpReqUtil.sendPostRequest(dessServiceUrl + "/dess/pauseJob", dInstBeanObject, request);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("jobNo", jobNo);
+        jsonObject.put("groupName",groupName);
+        HttpReqUtil.sendPostRequest(dessServiceUrl + "/dess/pauseJob", jsonObject, request);
     }
 
 
@@ -273,30 +285,14 @@ public class DInsService {
     }
 
     //手动调用定时任务 TODO
-    public JSONObject manualJobInstance(HttpServletRequest request, DInstBean instBean) {
+    public Response manualJobInstance(HttpServletRequest request, DInstBean instBean) {
         String dessServiceUrl = this.propertiesDao.queryPropertyByKey(PROPERTY_KEY_DESS_SERVICE_URL);
-        List<String> jobNoList = JSONArray.parseArray(instBean.getJobNo(), String.class);
-        String body = instBean.getBodyPayload();
-        String header = instBean.getHeaderPayload();
-        List<String> failList = new ArrayList<>();
-        for (String jobNo : jobNoList) {
-            DInstBean dinstBean = dInsDao.getBusinessIdByJobNo(jobNo);
-            String businessId = dinstBean.getBusinessId();
-            if (StringUtil.isNotBlank(businessId)) {
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("businessId", businessId);
-                jsonObject.put("header", header);
-                jsonObject.put("body", body);
-                HttpReqUtil.sendPostRequest(dessServiceUrl + "/dess/manualJob", jsonObject, request);
-            } else {
-                jobNoList.remove(jobNo);
-                failList.add(jobNo);
-            }
+        DInstBean dinstBean = dInsDao.getBusinessIdByJobNo(instBean.getJobNo());
+        String businessId = dinstBean.getBusinessId();
+        if (StringUtil.isBlank(businessId)) {
+            return Response.error("定时任务不存在！");
         }
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("successJob", jobNoList);
-        jsonObject.put("failJob", failList);
-        return jsonObject;
+        return Response.ok().data(HttpReqUtil.sendPostRequest(dessServiceUrl + "/dess/manualJob", (JSONObject) JSONObject.toJSON(dinstBean), request));
     }
 
 

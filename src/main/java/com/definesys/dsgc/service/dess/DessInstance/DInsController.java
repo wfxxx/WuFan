@@ -3,6 +3,7 @@ package com.definesys.dsgc.service.dess.DessInstance;
 
 import com.alibaba.fastjson.JSONObject;
 import com.definesys.dsgc.service.dess.CommonReqBean;
+import com.definesys.dsgc.service.dess.DessBusiness.bean.DessBusiness;
 import com.definesys.dsgc.service.dess.DessInstance.bean.DInstBean;
 import com.definesys.dsgc.service.dess.DessInstance.bean.DInstSltBean;
 import com.definesys.dsgc.service.dess.DessInstance.bean.DinstVO;
@@ -52,7 +53,7 @@ public class DInsController {
         }
         PageQueryResult result;
         try {
-            result = dInsService.queryJobInstaceList(param, pageSize, pageIndex);
+            result = dInsService.queryJobInstanceList(param, pageSize, pageIndex);
         } catch (Exception e) {
             e.printStackTrace();
             return Response.error("获取作业列表失败");
@@ -99,16 +100,17 @@ public class DInsController {
     /**
      * 删除作业实例
      *
-     * @param commonReqBean
+     * @param dInstBean
      * @return
      */
 
     @RequestMapping(value = "/delJobInstance", method = RequestMethod.POST)
-    public Response delJobInstance(@RequestBody CommonReqBean commonReqBean, HttpServletRequest request) {
+    public Response delJobInstance(@RequestBody DInstBean dInstBean, HttpServletRequest request) {
         try {
-            dInsService.delJobInstance(commonReqBean.getCon0());
-            DinstVO2 sendDinstVO = dInsService.getDinstVO(commonReqBean.getCon0());
-            dInsService.pauseDessTask(request, sendDinstVO);
+            String jobNo = dInstBean.getJobNo();
+            String groupName = dInstBean.getGroupName();
+            dInsService.delJobInstance(jobNo);
+            dInsService.pauseDessTask(request, jobNo, groupName);
         } catch (Exception e) {
             e.printStackTrace();
             return Response.error("删除发生错误");
@@ -132,7 +134,7 @@ public class DInsController {
             } else {
                 //当用户停止调用时，下一次调度时间未知。
                 dinstBean.setNextDoTime(null);
-                dInsService.pauseDessTask(request, sendDInstVO);
+                dInsService.pauseDessTask(request, dinstBean.getJobNo(),dinstBean.getGroupName());
             }
             dInsService.updateJobInstanceStatus(dinstBean);
 
@@ -224,19 +226,12 @@ public class DInsController {
     /**
      * 手动调用定时任务
      *
-     * @param reqParam
+     * @param instBean
      * @return
      */
     @RequestMapping(value = "/manualJobInstance", method = RequestMethod.POST)
     public Response manualJobInstance(@RequestBody DInstBean instBean, HttpServletRequest request) {
-        JSONObject jsonObject;
-        try {
-            jsonObject = dInsService.manualJobInstance(request, instBean);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Response.error("手动调用发生错误");
-        }
-        return Response.ok().data(jsonObject);
+        return dInsService.manualJobInstance(request, instBean);
     }
 
 

@@ -1,9 +1,7 @@
 package com.definesys.dsgc.service.dess.DessInstance.bean;
 
 import com.definesys.dsgc.service.svcgen.bean.OBHeaderBean;
-import com.definesys.mpaas.query.annotation.Column;
-import com.definesys.mpaas.query.annotation.ColumnType;
-import com.definesys.mpaas.query.annotation.Table;
+import com.definesys.mpaas.query.annotation.*;
 
 import java.util.Date;
 import java.util.List;
@@ -15,6 +13,13 @@ import java.util.List;
  * @Date 2020-7-28 18:18
  * @Version 1.0
  **/
+@SQLQuery(value = {
+        @SQL(view = "V_DESS_INSTANCE",
+                sql = "select di.JOB_NO,di.JOB_NAME,di.JOB_TYPE,di.JOB_STATUS,di.NEXT_DO_TIME,di.ALIVE_START,di.ALIVE_END,di.GROUP_NAME,di.SUCESS_TIMES,di.FAIL_TIMES,di.AVG_RUN_TIME\n" +
+                        ",di.JOB_DESCRIPTION,di.JOB_RATE,di.JOB_FREQUENCY,db.BUSINESS_ID,db.BUSINESS_TYPE,db.BUSINESS_NAME,db.HEADER_PAYLOAD,db.BODY_PAYLOAD\n" +
+                        "from DESS_INSTANCE di left join DESS_BUSINESS db on di.BUSINESS_ID = db.BUSINESS_ID "
+        )
+})
 @Table(value = "DESS_INSTANCE")
 public class DInstBean {
 

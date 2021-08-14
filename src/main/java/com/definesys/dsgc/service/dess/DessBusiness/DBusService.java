@@ -1,7 +1,10 @@
 package com.definesys.dsgc.service.dess.DessBusiness;
 
+import com.alibaba.fastjson.JSONArray;
 import com.definesys.dsgc.service.apilr.bean.CommonReqBean;
 import com.definesys.dsgc.service.dess.DessBusiness.bean.DessBusiness;
+import com.definesys.dsgc.service.svcgen.bean.OBHeaderBean;
+import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.dsgc.service.ystar.fnd.property.FndPropertiesService;
 import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,35 +29,50 @@ public class DBusService {
     private FndPropertiesService fndPropertiesService;
 
 
-
-    public PageQueryResult<DessBusiness> queryBusinessList(CommonReqBean param, int pageSize, int pageIndex){
-        PageQueryResult<DessBusiness> pageQueryResult = dBusDao.queryBusinessList(param,pageSize,pageIndex);
+    public PageQueryResult<DessBusiness> queryBusinessList(CommonReqBean param, int pageSize, int pageIndex) {
+        PageQueryResult<DessBusiness> pageQueryResult = dBusDao.queryBusinessList(param, pageSize, pageIndex);
         List<DessBusiness> cantDelbsName = dBusDao.checkDel();
-        for (DessBusiness item:pageQueryResult.getResult()) {
-            for (DessBusiness ele:cantDelbsName) {
-                if(item.getBusinessName().equals(ele.getBusinessName())){
+        for (DessBusiness item : pageQueryResult.getResult()) {
+            for (DessBusiness ele : cantDelbsName) {
+                if (item.getBusinessName().equals(ele.getBusinessName())) {
                     item.setIsDel("false");
                     break;
-                }else{
+                } else {
                     item.setIsDel("true");
                 }
             }
         }
         return pageQueryResult;
     }
-    public void addBusiness(DessBusiness dessBusiness){
+
+    public void addBusiness(DessBusiness dessBusiness) {
+        List<OBHeaderBean> headerBeans = dessBusiness.getHeaderBeanList();
+        if (headerBeans != null) {
+            dessBusiness.setHeaderPayload(JSONArray.toJSONString(headerBeans));
+        }
         dBusDao.addBusiness(dessBusiness);
     }
-    public boolean checkBusinessName(CommonReqBean param){
+
+    public boolean checkBusinessName(CommonReqBean param) {
         return dBusDao.checkBusinessName(param.getCon0());
     }
-    public void delBusiness(String businessId){
+
+    public void delBusiness(String businessId) {
         dBusDao.delBusiness(businessId);
     }
-    public DessBusiness getBusinessDtl(String id){
-        return dBusDao.getBusinessDtl(id);
+
+    public DessBusiness getBusinessDtl(String id) {
+        DessBusiness dessBusiness = dBusDao.getBusinessDtl(id);
+        String headerPayload = dessBusiness.getHeaderPayload();
+        if (StringUtil.isNotBlank(headerPayload)) {
+            dessBusiness.setHeaderBeanList(JSONArray.parseArray(headerPayload, OBHeaderBean.class));
+        }
+        return dessBusiness;
     }
-    public void updateBusinessDtl(DessBusiness dessBusiness){
+
+    public void updateBusinessDtl(DessBusiness dessBusiness) {
+        List<OBHeaderBean> headerBeans = dessBusiness.getHeaderBeanList();
+        dessBusiness.setHeaderPayload(JSONArray.toJSONString(headerBeans));
         dBusDao.updateBusinessDtl(dessBusiness);
     }
 }
