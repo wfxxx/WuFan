@@ -12,7 +12,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Table(value = "dsgc_apis_uri")
-public class DSGCSApisUri extends MpaasBasePojo implements Serializable{
+public class DSGCApisUri extends MpaasBasePojo implements Serializable{
 
     private String servNo;
 

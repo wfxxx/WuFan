@@ -35,6 +35,7 @@ public class HttpReqUtil {
         headers.set("token", request.getHeader("token"));
         //将请求头部和参数合成一个请求
         HttpEntity<JSONObject> requestEntity = new HttpEntity<>(params, headers);
+        System.out.println(requestEntity);
         ResponseEntity<ResultVO> response = client.exchange(url, method, requestEntity, new ParameterizedTypeReference<ResultVO>() {
         });
         return response.getBody();

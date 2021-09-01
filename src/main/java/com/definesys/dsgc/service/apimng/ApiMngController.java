@@ -2,9 +2,8 @@ package com.definesys.dsgc.service.apimng;
 
 import com.alibaba.fastjson.JSONObject;
 import com.definesys.dsgc.service.apimng.bean.*;
-import com.definesys.dsgc.service.svcmng.bean.SVCCommonReqBean;
-import com.definesys.dsgc.service.svcmng.bean.ServUriDTO;
 import com.definesys.dsgc.service.svcmng.bean.ServUriParamterDTO;
+import com.definesys.mpaas.common.exception.MpaasBusinessException;
 import com.definesys.mpaas.common.http.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +21,27 @@ public class ApiMngController {
 
     @Autowired
     private ApiMngService apiMngService;
+
+    /**
+     * 删除服务
+     *
+     * @param map
+     * @return
+     */
+    @GetMapping(value = "/delApiByCode")
+    public Response delApiByCode(@RequestParam String apiCode) {
+        try {
+            apiMngService.delApiByCode(apiCode);
+        } catch (MpaasBusinessException mp) {
+            mp.printStackTrace();
+            return Response.error(mp.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.error("删除服务失败");
+        }
+        return Response.ok().setMessage("删除成功！");
+    }
+
 
     /**
      * API资产管理查询
@@ -74,7 +94,7 @@ public class ApiMngController {
         dsgcApisBean.setApiName(apiParams.getString("apiName"));
         dsgcApisBean.setApiDesc(apiParams.getString("apiDesc"));
         dsgcApisBean.setAppCode(apiParams.getString("appCode"));
-        DSGCSApisUri dsgcApisUri = new DSGCSApisUri();
+        DSGCApisUri dsgcApisUri = new DSGCApisUri();
         dsgcApisUri.setServNo(uriParams.getString("servNo"));
         dsgcApisUri.setIbUri(uriParams.getString("ibUri"));
         dsgcApisUri.setUriType(uriParams.getString("uriType"));

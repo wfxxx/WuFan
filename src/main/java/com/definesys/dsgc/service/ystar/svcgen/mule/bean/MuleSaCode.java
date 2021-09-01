@@ -9,7 +9,7 @@ import java.util.Date;
 
 @Table(value = "MULE_SA_CODE")
 public class MuleSaCode implements Serializable {
-
+    @RowID( type = RowIDType.UUID)
     private String saId;
     private String saUserName;
     private String saPassword;

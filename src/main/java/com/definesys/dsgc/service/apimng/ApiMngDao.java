@@ -114,8 +114,8 @@ public class ApiMngDao {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void addDsgcUri(DSGCSApisUri dsgcsApisUri) {
-        sw.buildQuery().doInsert(dsgcsApisUri);
+    public void addDsgcUri(DSGCApisUri DSGCApisUri) {
+        sw.buildQuery().doInsert(DSGCApisUri);
     }
 
     public Boolean checkApiCodeIsExist(String routeCode) {
@@ -131,11 +131,19 @@ public class ApiMngDao {
         sw.buildQuery().eq("api_code", apisBean.getApiCode()).update("info_full", apisBean.getInfoFull()).doUpdate(DSGCApisBean.class);
     }
 
-    public List<DSGCSApisUri> queryApisUri(String apiCode) {
-        return sw.buildQuery().eq("servNo", apiCode).doQuery(DSGCSApisUri.class);
+    public List<DSGCApisUri> queryApisUri(String apiCode) {
+        return sw.buildQuery().eq("servNo", apiCode).doQuery(DSGCApisUri.class);
     }
 
     public List<DSGCUriParamsBean> queryApisUriParameter(String resCode) {
         return sw.buildQuery().eq("resCode", resCode).doQuery(DSGCUriParamsBean.class);
+    }
+
+    public void delApiByCode(String apiCode) {
+        this.sw.buildQuery().eq("apiCode", apiCode).doDelete(DSGCApisBean.class);
+    }
+
+    public void delApiUriByCode(String apiCode) {
+        this.sw.buildQuery().eq("servNo", apiCode).doDelete(DSGCApisUri.class);
     }
 }

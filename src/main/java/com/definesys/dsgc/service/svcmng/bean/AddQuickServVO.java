@@ -8,8 +8,8 @@ public class AddQuickServVO {
     private String servUri;
     private String soapFunction;
     private String httpMethod;
-    private String sourceType;
-
+    private String svgType;
+    private String svgCode;
 
     public String getServNo() {
         return servNo;
@@ -67,11 +67,19 @@ public class AddQuickServVO {
         this.httpMethod = httpMethod;
     }
 
-    public String getSourceType() {
-        return sourceType;
+    public String getSvgType() {
+        return svgType;
     }
 
-    public void setSourceType(String sourceType) {
-        this.sourceType = sourceType;
+    public void setSvgType(String svgType) {
+        this.svgType = svgType;
+    }
+
+    public String getSvgCode() {
+        return svgCode;
+    }
+
+    public void setSvgCode(String svgCode) {
+        this.svgCode = svgCode;
     }
 }

@@ -4,6 +4,15 @@ public class CommonReqBean {
     private String con0;
     private String userRole;
     private String queryType;
+    private String status;
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
     public String getCon0() {
         return con0;

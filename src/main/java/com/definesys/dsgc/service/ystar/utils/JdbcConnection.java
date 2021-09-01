@@ -14,6 +14,10 @@ public class JdbcConnection {
             Class.forName("com.mysql.cj.jdbc.Driver");
             DriverManager.setLoginTimeout(3);
             return DriverManager.getConnection(url, username, password);
+        } else if ("sqlserver".equals(dbType)) {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            DriverManager.setLoginTimeout(3);
+            return DriverManager.getConnection(url, username, password);
         }
         return null;
     }

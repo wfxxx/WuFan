@@ -17,7 +17,7 @@ import java.util.Date;
 })
 @Table(value = "MULE_SVG_CODE")
 public class MuleSvgCode implements Serializable {
-
+    @RowID( type = RowIDType.UUID)
     private String mscId;
     private String svgCode;
     private String svgName;
@@ -33,6 +33,9 @@ public class MuleSvgCode implements Serializable {
     private String prjName;
     private String svgObHeader;
     private String svcCode;
+    private String envCode;
+    @Column(type = ColumnType.JAVA)
+    private String envName;
 
     private String attr1;
     private String attr2;
@@ -44,6 +47,7 @@ public class MuleSvgCode implements Serializable {
     private String attr8;
     private String attr9;
     private String attr10;
+
     @SystemColumn(SystemColumnType.OBJECT_VERSION)
     @Column(value = "object_version_number")
     private Integer objectVersionNumber;
@@ -106,6 +110,22 @@ public class MuleSvgCode implements Serializable {
 
     public void setSvgName(String svgName) {
         this.svgName = svgName;
+    }
+
+    public String getEnvCode() {
+        return envCode;
+    }
+
+    public void setEnvCode(String envCode) {
+        this.envCode = envCode;
+    }
+
+    public String getEnvName() {
+        return envName;
+    }
+
+    public void setEnvName(String envName) {
+        this.envName = envName;
     }
 
     public String getMscId() {

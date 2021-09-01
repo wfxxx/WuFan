@@ -9,6 +9,7 @@ import com.definesys.dsgc.service.ystar.svcgen.conn.SvcGenConnDao;
 import com.definesys.dsgc.service.ystar.svcgen.conn.bean.SvcgenConnBean;
 import com.definesys.dsgc.service.ystar.svcgen.mule.bean.MuleSaCode;
 import com.definesys.dsgc.service.ystar.svcgen.mule.bean.MuleSvgCode;
+import com.definesys.dsgc.service.ystar.svcgen.mule.bean.MuleSvgDeploy;
 import com.definesys.mpaas.common.http.Response;
 import com.definesys.mpaas.query.MpaasQuery;
 import com.definesys.mpaas.query.MpaasQueryFactory;
@@ -16,6 +17,7 @@ import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -96,6 +98,10 @@ public class MuleSvcGenDao {
             mg.setAttr2(cfg.getAttr2());
             mg.setAttr3(cfg.getAttr3());
             mg.setAttr4(cfg.getAttr4());
+            mg.setAttr5(cfg.getAttr5());
+            mg.setAttr6(cfg.getAttr6());
+            mg.setAttr7(cfg.getAttr7());
+            mg.setAttr10(cfg.getAttr10());
         } else if ("0".equals(flag)) {//SOAP配置方式
             mg.setSvgType("SOAP");
             mg.setPsUri(cfg.getSoapPSUri());
@@ -105,6 +111,10 @@ public class MuleSvcGenDao {
             mg.setAttr4(cfg.getAttr4());
             mg.setAttr5(cfg.getAttr5());
             mg.setAttr6(cfg.getAttr6());
+            mg.setAttr7(cfg.getAttr7());
+            mg.setAttr8(cfg.getAttr8());
+            mg.setAttr9(cfg.getAttr9());
+            mg.setAttr10(cfg.getAttr10());
         } else if ("30".equals(flag)) {//DB配置方式-查询
             mg.setSvgType("DB");
             mg.setPsUri(cfg.getRestPSUri());
@@ -125,8 +135,9 @@ public class MuleSvcGenDao {
         this.sw.buildQuery().doInsert(mg);
     }
 
-    public PageQueryResult<MuleSvgCode> pageQueryMuleSvgCode(int pageIndex, int pageSize, String svgCode, String sysCode, String sysName) {
-        MpaasQuery mq = sw.buildViewQuery("V_MULE_SVG_CODE").or();
+    public PageQueryResult<MuleSvgCode> pageQueryMuleSvgCode(int pageIndex, int pageSize, String svgStatus, String svgCode, String sysCode, String sysName) {
+        MpaasQuery mq = sw.buildViewQuery("V_MULE_SVG_CODE")
+                .eq("svgStatus", svgStatus).or();
         if (StringUtil.isNotBlank(svgCode)) {
             mq.like("svgCode", svgCode);
         }
@@ -140,8 +151,9 @@ public class MuleSvcGenDao {
     }
 
     public List<MuleSvgCode> listQueryMuleSvgCode(MuleSvgCode svgCodeBean) {
-        return sw.buildViewQuery("V_MULE_SVG_CODE")
+        return sw.buildViewQuery("V_MULE_SVG_CODE").or()
                 .eq("svgCode", svgCodeBean.getSvgCode())
+                .eq("svgName", svgCodeBean.getSvgName())
                 .doQuery(MuleSvgCode.class);
     }
 
@@ -220,5 +232,50 @@ public class MuleSvcGenDao {
             mq.like("sysName", sysName);
         }
         return mq.doPageQuery(pageIndex, pageSize, MuleSaCode.class);
+    }
+
+    public void delMuleSvgById(String mscId) {
+        this.sw.buildQuery().eq("mscId", mscId).doDelete(MuleSvgCode.class);
+    }
+
+    public MuleSvgCode sigQueryMuleSvgByCode(String svgCode) {
+        return this.sw.buildViewQuery("V_MULE_SVG_CODE").eq("svgCode", svgCode).doQueryFirst(MuleSvgCode.class);
+    }
+
+
+    public List<MuleSvgDeploy> listQueryMuleSvgDeployByCode(String svgCode) {
+        return this.sw.buildViewQuery("V_MULE_SVG_DEPLOY").eq("svgCode", svgCode).doQuery(MuleSvgDeploy.class);
+    }
+
+    public MuleSvgDeploy sigQueryMuleSvgDeployById(String msdId) {
+        return this.sw.buildQuery().eq("msdId", msdId).doQueryFirst(MuleSvgDeploy.class);
+    }
+
+    public void saveMuleSvgDeploy(MuleSvgDeploy muleSvgDeploy) {
+        this.sw.buildQuery().doInsert(muleSvgDeploy);
+    }
+
+    public void deploySvgMuleCode(String svgCode, String envCode) {
+        this.sw.buildQuery()
+                .eq("SVG_CODE", svgCode)
+                .update("ENV_CODE", envCode)
+                .update("SVG_STATUS", "1")
+                .table("mule_svg_code")
+                .doUpdate();
+    }
+
+    public void updMuleDeployDate(String svgCode, String uid) {
+        this.sw.buildQuery()
+                .eq("SVG_CODE", svgCode)
+                .update("DEPLOY_DATE", new Date())
+                .update("DEPLOY_USER", uid)
+                .table("mule_svg_deploy").doUpdate();
+
+    }
+
+    public void delDeployProfileById(String msdId) {
+        this.sw.buildQuery()
+                .eq("msdId", msdId)
+                .doDelete(MuleSvgDeploy.class);
     }
 }

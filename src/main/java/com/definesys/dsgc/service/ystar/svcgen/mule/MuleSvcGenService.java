@@ -2,15 +2,18 @@ package com.definesys.dsgc.service.ystar.svcgen.mule;
 
 import com.definesys.dsgc.service.svcgen.bean.*;
 import com.definesys.dsgc.service.svcgen.utils.ServiceGenerateProxy;
+import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.dsgc.service.utils.UserHelper;
 import com.definesys.dsgc.service.ystar.mg.bean.CommonReqBean;
 import com.definesys.dsgc.service.ystar.mg.svg.bean.MuleSvgCodeBean;
 import com.definesys.dsgc.service.ystar.svcgen.mule.bean.MuleSaCode;
 import com.definesys.dsgc.service.ystar.svcgen.mule.bean.MuleSvgCode;
+import com.definesys.dsgc.service.ystar.svcgen.mule.bean.MuleSvgDeploy;
 import com.definesys.mpaas.common.http.Response;
 import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Iterator;
 import java.util.List;
@@ -98,13 +101,36 @@ public class MuleSvcGenService {
         String svgCode = commonReqBean.getCon0();
         String sysCode = commonReqBean.getCon0();
         String sysName = commonReqBean.getCon0();
-
+        String svgStatus = commonReqBean.getStatus();
         try {
-            result = muleSvcGenDao.pageQueryMuleSvgCode(pageIndex, pageSize, svgCode, sysCode, sysName);
+            result = muleSvcGenDao.pageQueryMuleSvgCode(pageIndex, pageSize, svgStatus, svgCode, sysCode, sysName);
         } catch (Exception e) {
             return Response.error("查询失败！").data(e);
         }
         return Response.ok().setMessage("查询成功！").data(result);
+    }
+
+    public Response listQueryMuleSvgCode(MuleSvgCode muleSvgCode) {
+        return Response.ok().data(muleSvcGenDao.listQueryMuleSvgCode(muleSvgCode));
+    }
+
+
+    @Transactional
+    public Response delMuleSvgById(String mscId) {
+        this.muleSvcGenDao.delMuleSvgById(mscId);
+        return Response.ok().setMessage("删除成功！");
+    }
+
+    public Response sigQueryMuleSvgByCode(String svgCode) {
+        return Response.ok().data(this.muleSvcGenDao.sigQueryMuleSvgByCode(svgCode));
+    }
+
+    public Response listQueryMuleSvgDeployByCode(String svgCode) {
+        return Response.ok().data(this.muleSvcGenDao.listQueryMuleSvgDeployByCode(svgCode));
+    }
+
+    public Response sigQueryMuleSvgDeployById(String msdId) {
+        return Response.ok().data(this.muleSvcGenDao.sigQueryMuleSvgDeployById(msdId));
     }
 
 
@@ -137,5 +163,39 @@ public class MuleSvcGenService {
     }
 
 
+    @Transactional
+    public Response saveMuleSvgDeploy(MuleSvgDeploy muleSvgDeploy) {
+        this.muleSvcGenDao.saveMuleSvgDeploy(muleSvgDeploy);
+        return Response.ok().setMessage("新增成功！");
+    }
+
+    @Transactional
+    public Response deploySvgMuleCode(MuleSvgDeploy muleSvgDeploy, String uid) {
+        if (StringUtil.isBlank(uid)) {
+            return Response.error("部署失败，操作人用户不存在！");
+        }
+
+        String svgCode = muleSvgDeploy.getSvgCode();
+        MuleSvgCode code = this.muleSvcGenDao.sigQueryMuleSvgByCode(svgCode);
+        MuleSvgDeploy deploy = this.muleSvcGenDao.sigQueryMuleSvgDeployById(muleSvgDeploy.getMsdId());
+        String envCode = code.getEnvCode();
+        if (StringUtil.isNotBlank(envCode)) {
+            envCode += "," + muleSvgDeploy.getEnvCode();
+        } else {
+            envCode = muleSvgDeploy.getEnvCode();
+        }
+        if (deploy != null) {
+            envCode = deploy.getEnvCode();
+        }
+
+        this.muleSvcGenDao.deploySvgMuleCode(svgCode, envCode);
+        this.muleSvcGenDao.updMuleDeployDate(svgCode, uid);
+        return Response.ok().setMessage("部署成功！");
+    }
+
+    public Response delDeployProfileById(String msdId) {
+        this.muleSvcGenDao.delDeployProfileById(msdId);
+        return Response.ok().setMessage("删除成功！");
+    }
 }
 

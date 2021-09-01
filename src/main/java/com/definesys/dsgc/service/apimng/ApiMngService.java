@@ -3,9 +3,9 @@ package com.definesys.dsgc.service.apimng;
 import com.definesys.dsgc.service.apimng.bean.*;
 import com.definesys.dsgc.service.svcmng.SVCMngDao;
 import com.definesys.dsgc.service.svcmng.bean.*;
-import com.definesys.dsgc.service.svcmng.bean.DSGCServicesUri;
 import com.definesys.dsgc.service.system.bean.DSGCSystemUser;
 import com.definesys.dsgc.service.utils.StringUtil;
+import com.definesys.mpaas.common.exception.MpaasBusinessException;
 import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +22,15 @@ public class ApiMngService {
 
     @Autowired
     private SVCMngDao svcMngDao;
+
+    @Transactional(rollbackFor = Exception.class)
+    public void delApiByCode(String apiCode) {
+        if (StringUtil.isBlank(apiCode)) {
+            throw new MpaasBusinessException("服务不存在，无法删除，请联系管理员");
+        }
+        apiMngDao.delApiUriByCode(apiCode);
+        apiMngDao.delApiByCode(apiCode);
+    }
 
     public PageQueryResult<APIInfoListBean> queryApiMngList(CommonReqBean param, int pageIndex, int pageSize, String userId, String userRole) {
         if ("Tourist".equals(userRole)) {
@@ -98,9 +107,9 @@ public class ApiMngService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void addDsgcApi(DSGCApisBean dsgcApisBean, DSGCSApisUri dsgcsApisUri) {
+    public void addDsgcApi(DSGCApisBean dsgcApisBean, DSGCApisUri DSGCApisUri) {
         apiMngDao.addDsgcApi(dsgcApisBean);
-        apiMngDao.addDsgcUri(dsgcsApisUri);
+        apiMngDao.addDsgcUri(DSGCApisUri);
         completionThread(dsgcApisBean.getApiCode());
 
     }
@@ -180,10 +189,10 @@ public class ApiMngService {
     public List<ApiUriDTO> queryApisUri(String apiCode) {
         List<ApiUriDTO> result = new ArrayList<>();
         if (StringUtil.isNotBlank(apiCode)) {
-            List<DSGCSApisUri> uris = apiMngDao.queryApisUri(apiCode);
-            Iterator<DSGCSApisUri> iterator = uris.iterator();
+            List<DSGCApisUri> uris = apiMngDao.queryApisUri(apiCode);
+            Iterator<DSGCApisUri> iterator = uris.iterator();
             while (iterator.hasNext()) {
-                DSGCSApisUri temp = iterator.next();
+                DSGCApisUri temp = iterator.next();
                 ApiUriDTO apiUriDTO = new ApiUriDTO();
                 apiUriDTO.setIbUri(temp.getIbUri());
                 apiUriDTO.setUriType(temp.getUriType());

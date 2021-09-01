@@ -87,7 +87,7 @@ public class DBusDao {
 
     public List<DessBusiness> checkDel() {
         return sw.buildQuery()
-                .sql("select db.BUSINESS_NAME from DESS_INSTANCE di left join DESS_BUSINESS db on db.BUSINESS_ID = DI.BUSINESS_ID")
+                .sql("select DISTINCT di.BUSINESS_ID as BUSINESS_ID from DESS_BUSINESS db,DESS_INSTANCE di where db.BUSINESS_ID = di.BUSINESS_ID ")
                 .doQuery(DessBusiness.class);
     }
 

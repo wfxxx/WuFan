@@ -111,7 +111,7 @@ public class MulePrjService {
     public Response initMuleProject(String prjId) {
         MulePrjInfoBean prjInfoBean = this.prjDao.sigQueryMulePrjById(prjId);
         String prjName = prjInfoBean.getPrjName();
-        String prjPort = prjInfoBean.getPrjPort();
+        String prjPort = prjInfoBean.getSubPrjName();
         String repoHome = propertiesService.getLocalHome("repo");
         boolean initFlag = true;
         if (StringUtil.isBlank(repoHome)) {

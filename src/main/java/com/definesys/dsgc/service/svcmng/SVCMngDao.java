@@ -1,13 +1,12 @@
 package com.definesys.dsgc.service.svcmng;
 
 import com.definesys.dsgc.service.apimng.bean.DSGCApisBean;
-import com.definesys.dsgc.service.apimng.bean.DSGCSApisUri;
+import com.definesys.dsgc.service.apimng.bean.DSGCApisUri;
 import com.definesys.dsgc.service.esbenv.bean.DSGCEnvInfoCfg;
 import com.definesys.dsgc.service.svcmng.bean.*;
 import com.definesys.dsgc.service.system.bean.DSGCSystemAccess;
 import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.dsgc.service.utils.UserHelper;
-import com.definesys.dsgc.service.ystar.constant.sql.SqlUtils;
 import com.definesys.mpaas.query.MpaasQuery;
 import com.definesys.mpaas.query.MpaasQueryFactory;
 import com.definesys.mpaas.query.db.PageQueryResult;
@@ -126,7 +125,8 @@ public class SVCMngDao {
                 .update("serv_desc", dsgcService.getServDesc())
                 .update("share_type", dsgcService.getShareType())
                 .update("subordinate_system", dsgcService.getSubordinateSystem())
-                .doUpdate(DSGCService.class);
+                .table("dsgc_services")
+                .doUpdate();
     }
 
     public List<DSGCServicesUri> queryServUri(String servNo) {
@@ -173,14 +173,7 @@ public class SVCMngDao {
     }
 
     public void addServUri(DSGCServicesUri servicesUri) {
-        sw.buildQuery()
-                .doInsert(servicesUri);
-//                .sql("insert into dsgc_service_uri (serv_no,ib_uri,uri_type) value (#{servNo},#{ibUri},#{uriType}) ")
-//                .setVar("servNo",servicesUri.getServNo())
-//                .setVar("ibUri",servicesUri.getIbUri())
-//                .setVar("uriType",servicesUri.getUriType())
-//                .doInsert();
-
+        sw.buildQuery().doInsert(servicesUri);
     }
 
     public void addServUriParamter(DSGCUriParamsBean list) {
@@ -294,6 +287,16 @@ public class SVCMngDao {
             return true;
         } else {
             return false;
+        }
+    }
+
+    public Boolean checkServUriIsExsit(String uri) {
+        DSGCApisUri dsgcApisUri = sw.buildQuery().eq("ib_uri", uri).doQueryFirst(DSGCApisUri.class);
+        DSGCServicesUri dsgcServicesUri = sw.buildQuery().eq("ib_uri", uri).doQueryFirst(DSGCServicesUri.class);
+        if (dsgcServicesUri == null && dsgcApisUri == null) {
+            return false;
+        } else {
+            return true;
         }
     }
 
@@ -457,4 +460,19 @@ public class SVCMngDao {
         return this.sw.buildQuery().eq("serv_no", svcCode).doQueryFirst(DSGCService.class) != null;
     }
 
+    public DsgcTrgSvcInfo sigQuerySvcTrgInfoBySvcCode(String svcNo) {
+        return this.sw.buildQuery().eq("svcNo", svcNo).doQueryFirst(DsgcTrgSvcInfo.class);
+    }
+
+    public void saveSvcTrgInfo(DsgcTrgSvcInfo trgSvcInfo) {
+        this.sw.buildQuery().doInsert(trgSvcInfo);
+    }
+
+    public void updSvcTrgInfo(DsgcTrgSvcInfo trgSvcInfo) {
+        this.sw.buildQuery().eq("svcNo", trgSvcInfo.getSvcNo())
+                .update("CONN_ID", trgSvcInfo.getConnId())
+                .update("SVC_TRG_TYPE", trgSvcInfo.getSvcTrgType())
+                .update("SVC_TRG_VALUE", trgSvcInfo.getSvcTrgValue())
+                .doUpdate(DsgcTrgSvcInfo.class);
+    }
 }

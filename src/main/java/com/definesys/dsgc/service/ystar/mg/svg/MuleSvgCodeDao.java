@@ -69,10 +69,10 @@ public class MuleSvgCodeDao {
     public void updMuleSvgCode(MuleSvgCodeBean svgCodeBean) {
         sw.buildQuery()
                 .eq("mscId", svgCodeBean.getMscId())
-                .update("svgName",svgCodeBean.getSvgName())
-                .update("sysCode",svgCodeBean.getSysCode())
-                .update("toSystem",svgCodeBean.getToSystem())
-                .update("svgDesc",svgCodeBean.getSvgDesc())
+                .update("svgName", svgCodeBean.getSvgName())
+                .update("sysCode", svgCodeBean.getSysCode())
+                .update("toSystem", svgCodeBean.getToSystem())
+                .update("svgDesc", svgCodeBean.getSvgDesc())
                 .doUpdate(svgCodeBean);
     }
 
@@ -80,6 +80,14 @@ public class MuleSvgCodeDao {
         sw.buildQuery()
                 .eq("svgCode", svgCode)
                 .update("SVG_STATUS", status)
+                .doUpdate(MuleSvgCodeBean.class);
+    }
+
+    public void updMuleSvgCode(String svgCode, String status, String svcCode) {
+        sw.buildQuery()
+                .eq("svgCode", svgCode)
+                .update("SVG_STATUS", status)
+                .update("SVC_CODE", svcCode)
                 .doUpdate(MuleSvgCodeBean.class);
     }
 

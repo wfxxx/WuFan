@@ -69,10 +69,6 @@ public class SVCMngController {
 
     @RequestMapping(value = "/saveServBasicInfo", method = RequestMethod.POST)
     public Response saveServBasicInfo(@RequestBody SVCServBasicInfoDTO svcServBasicInfo) {
-//        Boolean needRefresh = svcMngService.saveServBasicInfo(svcServBasicInfo);
-//        if (needRefresh) {
-//            dsgcCachesServices.refreshMuleCache("ALL", "ALL");
-//        }
         svcMngService.saveServBasicInfo(svcServBasicInfo);
         return Response.ok();
     }
@@ -158,6 +154,12 @@ public class SVCMngController {
     @RequestMapping(value = "/checkServNoIsExsit", method = RequestMethod.POST)
     public Response checkServNoIsExsit(@RequestBody SVCCommonReqBean param) {
         Boolean isExist = svcMngService.checkServNoIsExsit(param);
+        return Response.ok().setData(isExist);
+    }
+
+    @RequestMapping(value = "/checkServUriIsExsit", method = RequestMethod.POST)
+    public Response checkServUriIsExsit(@RequestBody SVCCommonReqBean param) {
+        Boolean isExist = svcMngService.checkServUriIsExsit(param);
         return Response.ok().setData(isExist);
     }
 
@@ -268,5 +270,17 @@ public class SVCMngController {
     public Response checkSvcCodeIsExist(@RequestParam String svcCode) {
         return Response.ok().setData(svcMngService.checkSvcCodeIsExist(svcCode));
     }
+
+    @PostMapping(value = "/saveSvcTrgInfo")
+    public Response saveSvcTrgInfo(@RequestBody DsgcTrgSvcInfo trgSvcInfo) {
+        svcMngService.saveSvcTrgInfo(trgSvcInfo);
+        return Response.ok().setMessage("保存成功！");
+    }
+    @GetMapping(value = "/querySvcTrgInfoBySvcNo")
+    public Response querySvcTrgInfoBySvcNo(@RequestParam String svcNo) {
+        return Response.ok().data(svcMngService.querySvcTrgInfoBySvcNo(svcNo));
+    }
+
+
 }
 

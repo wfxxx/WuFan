@@ -26,6 +26,7 @@ import com.definesys.dsgc.service.utils.HttpURLClient;
 import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.dsgc.service.utils.StringUtils;
 import com.definesys.dsgc.service.utils.UserHelper;
+import com.definesys.dsgc.service.ystar.mg.svg.MuleSvgCodeDao;
 import com.definesys.mpaas.common.exception.MpaasBusinessException;
 import com.definesys.mpaas.query.db.PageQueryResult;
 
@@ -63,6 +64,9 @@ public class SVCMngService {
 
     @Autowired
     private DAGEnvDao dagEnvDao;
+
+    @Autowired
+    private MuleSvgCodeDao muleSvgCodeDao;
 
     private ServiceGenerateProxy sgProxy = ServiceGenerateProxy.newInstance();
 
@@ -1000,6 +1004,10 @@ public class SVCMngService {
         return svcMngDao.checkServNoIsExsit(param.getCon0());
     }
 
+    public Boolean checkServUriIsExsit(SVCCommonReqBean param) {
+        return svcMngDao.checkServUriIsExsit(param.getCon0());
+    }
+
     @Transactional(rollbackFor = Exception.class)
     public void addRestServ(AddRestServVO addRestServVO) {
         if (addRestServVO != null) {
@@ -1091,20 +1099,23 @@ public class SVCMngService {
             dsgcService.setServName(addQuickServVO.getServName());
             dsgcService.setSubordinateSystem(addQuickServVO.getAppCode());
             dsgcService.setShareType(addQuickServVO.getShareType());
+            dsgcService.setInfoFull(40);
             svcMngDao.addServ(dsgcService);
             DSGCServicesUri dsgcServicesUri = new DSGCServicesUri();
             dsgcServicesUri.setServNo(addQuickServVO.getServNo());
             dsgcServicesUri.setIbUri(addQuickServVO.getServUri());
-            dsgcServicesUri.setUriType(addQuickServVO.getSourceType());
-            if ("REST".equals(addQuickServVO.getSourceType())) {
+            dsgcServicesUri.setUriType(addQuickServVO.getSvgType());
+            if ("REST".equals(addQuickServVO.getSvgType())) {
                 dsgcServicesUri.setHttpMethod(addQuickServVO.getHttpMethod());
             }
-            if ("SOAP".equals(addQuickServVO.getSourceType())) {
+            if ("SOAP".equals(addQuickServVO.getSvgType())) {
                 dsgcServicesUri.setSoapOper(addQuickServVO.getSoapFunction());
                 dsgcServicesUri.setHttpMethod("POST");
             }
             dsgcServicesUri.setTransportType("http");
             svcMngDao.addServUri(dsgcServicesUri);
+            //更新MG
+            muleSvgCodeDao.updMuleSvgCode(addQuickServVO.getSvgCode(), "2", addQuickServVO.getServNo());
         }
     }
 
@@ -1137,5 +1148,22 @@ public class SVCMngService {
 
     public boolean checkSvcCodeIsExist(String svcCode) {
         return svcMngDao.checkSvcCodeIsExist(svcCode);
+    }
+
+    public void saveSvcTrgInfo(DsgcTrgSvcInfo trgSvcInfo) {
+        String svcNo = trgSvcInfo.getSvcNo();
+        if (StringUtil.isBlank(svcNo)) {
+            return;
+        }
+        DsgcTrgSvcInfo trgInfo = this.svcMngDao.sigQuerySvcTrgInfoBySvcCode(svcNo);
+        if (trgInfo == null) {
+            this.svcMngDao.saveSvcTrgInfo(trgSvcInfo);
+        } else {
+            this.svcMngDao.updSvcTrgInfo(trgSvcInfo);
+        }
+    }
+
+    public DsgcTrgSvcInfo querySvcTrgInfoBySvcNo(String svcNo) {
+        return this.svcMngDao.sigQuerySvcTrgInfoBySvcCode(svcNo);
     }
 }

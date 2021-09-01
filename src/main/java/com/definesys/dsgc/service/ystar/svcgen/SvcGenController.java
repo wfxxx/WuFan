@@ -8,6 +8,8 @@ import com.definesys.dsgc.service.ystar.mg.conn.bean.DBconnVO;
 import com.definesys.dsgc.service.ystar.svcgen.conn.SvcGenConnService;
 import com.definesys.dsgc.service.ystar.svcgen.conn.bean.SvcgenConnBean;
 import com.definesys.dsgc.service.ystar.svcgen.mule.MuleSvcGenService;
+import com.definesys.dsgc.service.ystar.svcgen.mule.bean.MuleSvgCode;
+import com.definesys.dsgc.service.ystar.svcgen.mule.bean.MuleSvgDeploy;
 import com.definesys.mpaas.common.http.Response;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -129,13 +131,55 @@ public class SvcGenController {
         }
     }
 
-    @RequestMapping(value = "/svg/getSgSvcObjList", method = RequestMethod.POST)
-    public Response getSgSvcObjList(@RequestBody CommonReqBean commonReqBean, HttpServletRequest request,
+    @RequestMapping(value = "/svg/pageQueryMuleSvgCode", method = RequestMethod.POST)
+    public Response pageQueryMuleSvgCode(@RequestBody CommonReqBean commonReqBean, HttpServletRequest request,
                                     @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
                                     @RequestParam(value = "pageIndex", required = false, defaultValue = "1") int pageIndex) {
         String uId = request.getHeader("uid");
         return this.muleSvcGenService.pageQueryMuleSvgCode(commonReqBean, pageIndex, pageSize);
     }
 
+    @PostMapping(value = "/svg/listQueryMuleSvgCode")
+    public Response listQueryMuleSvgCode(@RequestBody MuleSvgCode muleSvgCode) {
+        return this.muleSvcGenService.listQueryMuleSvgCode(muleSvgCode);
+    }
+
+
+    @RequestMapping(value = "/svg/delMuleSvgById", method = RequestMethod.GET)
+    public Response delMuleSvgById(@RequestParam String mscId) {
+        return this.muleSvcGenService.delMuleSvgById(mscId);
+    }
+
+    @RequestMapping(value = "/svg/sigQueryMuleSvgByCode", method = RequestMethod.GET)
+    public Response sigQueryMuleSvgByCode(@RequestParam String svgCode) {
+        return this.muleSvcGenService.sigQueryMuleSvgByCode(svgCode);
+    }
+
+
+    @RequestMapping(value = "/svg/listQueryMuleSvgDeployByCode", method = RequestMethod.GET)
+    public Response listQueryMuleSvgDeployByCode(@RequestParam String svgCode) {
+        return this.muleSvcGenService.listQueryMuleSvgDeployByCode(svgCode);
+    }
+
+    @RequestMapping(value = "/svg/sigQueryMuleSvgDeployById", method = RequestMethod.GET)
+    public Response sigQueryMuleSvgDeployById(@RequestParam String msdId) {
+        return this.muleSvcGenService.sigQueryMuleSvgDeployById(msdId);
+    }
+
+    @PostMapping(value = "/svg/saveMuleSvgDeploy")
+    public Response saveMuleSvgDeploy(@RequestBody MuleSvgDeploy muleSvgDeploy) {
+        return this.muleSvcGenService.saveMuleSvgDeploy(muleSvgDeploy);
+    }
+
+    @PostMapping(value = "/svg/deploySvgMuleCode")
+    public Response deploySvgMuleCode(@RequestBody MuleSvgDeploy muleSvgDeploy, HttpServletRequest request) {
+        String uid = request.getHeader("uid");
+        return this.muleSvcGenService.deploySvgMuleCode(muleSvgDeploy, uid);
+    }
+
+    @GetMapping(value = "/svg/delDeployProfileById")
+    public Response delDeployProfileById(@RequestParam String msdId) {
+        return this.muleSvcGenService.delDeployProfileById(msdId);
+    }
 
 }

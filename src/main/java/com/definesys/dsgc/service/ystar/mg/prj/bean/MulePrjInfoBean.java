@@ -1,5 +1,8 @@
 package com.definesys.dsgc.service.ystar.mg.prj.bean;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.mpaas.query.annotation.*;
 import com.definesys.mpaas.query.json.MpaasDateTimeSerializer;
 import com.definesys.mpaas.query.model.MpaasBasePojo;
@@ -18,7 +21,7 @@ import java.util.Date;
  * @history: upd by ystar 2020-12-27
  */
 @SQLQuery(value = {
-        @SQL(view = "V_MULE_PRJ_INFO", sql = "select prj_id,prj_name,prj_desc,prj_port,prj_status,cur_version,s.sys_code,(select e.SYS_NAME from dsgc_system_entities e where e.SYS_CODE = s.SYS_CODE) sys_name " +
+        @SQL(view = "V_MULE_PRJ_INFO", sql = "select prj_id,prj_name,prj_desc,sub_prj_name,prj_status,s.sys_code,(select e.SYS_NAME from dsgc_system_entities e where e.SYS_CODE = s.SYS_CODE) sys_name " +
                 "from mule_prj_info s")
 })
 @Table("mule_prj_info")
@@ -30,14 +33,14 @@ public class MulePrjInfoBean extends MpaasBasePojo implements Serializable {
     private String prjName;
     @ApiModelProperty(value = "系统工程目录描述")
     private String prjDesc;
-    @ApiModelProperty(value = "项目端口")
-    private String prjPort;
-    @ApiModelProperty(value = "系统表主键")
+    @ApiModelProperty(value = "子目录")
+    private String subPrjName;
+    @Column(type = ColumnType.JAVA)
+    private String subPrjNameList;
+    @ApiModelProperty(value = "子目录名称")
     private String sysCode;
-    @ApiModelProperty(value = "项目状态，0-未初始化;1-已初始化；2-已打包；3-已部署")
+    @ApiModelProperty(value = "项目状态，0-弃用;1-启用")
     private String prjStatus;
-    @ApiModelProperty(value = "当前版本")
-    private String curVersion;
     @ApiModelProperty(value = "备用字段1", notes = "")
     private String textAttribute1;
     @ApiModelProperty(value = "备用字段2", notes = "")
@@ -69,6 +72,21 @@ public class MulePrjInfoBean extends MpaasBasePojo implements Serializable {
     @Column(value = "last_update_date")
     private Date lastUpdateDate;
 
+    public String getSubPrjNameList() {
+        if (StringUtil.isNotBlank(this.subPrjName)) {
+            this.subPrjNameList = "";
+            JSONArray arr = JSONArray.parseArray(this.subPrjName);
+            for (int i = 0; i < arr.size(); i++) {
+                JSONObject obj = arr.getJSONObject(i);
+                subPrjNameList += obj.get("code") + ",";
+            }
+            if (subPrjNameList.contains(",")) {
+                subPrjNameList = subPrjNameList.substring(0, subPrjNameList.length() - 1);
+            }
+        }
+        return subPrjNameList;
+    }
+
     public String getPrjId() {
         return prjId;
     }
@@ -93,12 +111,12 @@ public class MulePrjInfoBean extends MpaasBasePojo implements Serializable {
         this.prjDesc = prjDesc;
     }
 
-    public String getPrjPort() {
-        return prjPort;
+    public String getSubPrjName() {
+        return subPrjName;
     }
 
-    public void setPrjPort(String prjPort) {
-        this.prjPort = prjPort;
+    public void setSubPrjName(String subPrjName) {
+        this.subPrjName = subPrjName;
     }
 
     public String getSysCode() {
@@ -115,14 +133,6 @@ public class MulePrjInfoBean extends MpaasBasePojo implements Serializable {
 
     public void setPrjStatus(String prjStatus) {
         this.prjStatus = prjStatus;
-    }
-
-    public String getCurVersion() {
-        return curVersion;
-    }
-
-    public void setCurVersion(String curVersion) {
-        this.curVersion = curVersion;
     }
 
     public String getTextAttribute1() {
@@ -203,10 +213,10 @@ public class MulePrjInfoBean extends MpaasBasePojo implements Serializable {
                 "prjId='" + prjId + '\'' +
                 ", prjName='" + prjName + '\'' +
                 ", prjDesc='" + prjDesc + '\'' +
-                ", prjPort='" + prjPort + '\'' +
+                ", subPrjName='" + subPrjName + '\'' +
+                ", subPrjNameList='" + subPrjNameList + '\'' +
                 ", sysCode='" + sysCode + '\'' +
                 ", prjStatus='" + prjStatus + '\'' +
-                ", curVersion='" + curVersion + '\'' +
                 ", textAttribute1='" + textAttribute1 + '\'' +
                 ", textAttribute2='" + textAttribute2 + '\'' +
                 ", textAttribute3='" + textAttribute3 + '\'' +

@@ -18,8 +18,10 @@ import java.util.Date;
 @SQLQuery(value = {
         @SQL(view = "bus_base_view", sql = " select cfg.*,sver.server_name from( select inf.*,m.machine_name from DSGC_ENV_INFO_CFG inf, DSGC_ENV_MACHINE_CFG m where inf.env_code = m.env_code(+)) cfg, DSGC_ENV_SERVER_CFG sver where cfg.env_code = sver.env_code(+) "),
         @SQL(view = "bus_detail_view", sql = " select * from ( select cfg.*,sver.server_name from( select inf.*,m.machine_name from DSGC_ENV_INFO_CFG inf, DSGC_ENV_MACHINE_CFG m where inf.env_code = m.env_code(+)) cfg, DSGC_ENV_SERVER_CFG sver where cfg.env_code = sver.env_code(+)  ) c where c.DEIC_ID = #deicId "),
-        @SQL(view = "bus_allInfo_view", sql = "  select cf.*, mc.server_count ,sec.node_count from dsgc_env_info_cfg cf left join (select count(mc.demc_id) server_count, mc.env_code from dsgc_env_machine_cfg mc, dsgc_env_info_cfg c where mc.env_code = c.env_code group by mc.env_code) mc on cf.env_code = mc.env_code LEFT JOIN \n" +
-                "(select count(sc.desc_id) node_count, sc.env_code from dsgc_env_server_cfg sc, dsgc_env_info_cfg c where sc.env_code = c.env_code group by sc.env_code) sec on cf.env_code = sec.env_code order by cf.env_seq asc  ")})
+        @SQL(view = "bus_allInfo_view", sql = " select * from (\n" +
+                "select cf.*, mc.SERVER_COUNT ,sec.NODE_COUNT from dsgc_env_info_cfg cf left join (select count(mc.demc_id) server_count, mc.env_code from dsgc_env_machine_cfg mc, dsgc_env_info_cfg c where mc.env_code = c.env_code group by mc.env_code) mc on cf.env_code = mc.env_code " +
+                " LEFT JOIN (select count(sc.desc_id) node_count, sc.env_code from dsgc_env_server_cfg sc, dsgc_env_info_cfg c where sc.env_code = c.env_code group by sc.env_code) sec on cf.env_code = sec.env_code order by cf.env_seq asc) d ")})
+
 @Table("DSGC_ENV_INFO_CFG")
 public class DSGCEnvInfoCfg extends MpaasBasePojo {
 

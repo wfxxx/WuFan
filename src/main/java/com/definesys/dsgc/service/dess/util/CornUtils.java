@@ -2,6 +2,7 @@ package com.definesys.dsgc.service.dess.util;
 
 import com.alibaba.fastjson.JSONObject;
 import com.definesys.dsgc.service.dess.DessInstance.bean.DInstBean;
+import com.definesys.dsgc.service.utils.StringUtil;
 import com.definesys.dsgc.service.utils.httpclient.HttpReqUtil;
 import com.definesys.dsgc.service.utils.httpclient.ResultVO;
 
@@ -29,11 +30,12 @@ public class CornUtils {
      * @return
      */
     public static List<Map<String, String>> getNextTenRunTimes(HttpServletRequest request, String dessServiceUrl, String cornExpression, Date aliveStart, Date aliveEnd) {
-        DInstBean dinstBean = new DInstBean(cornExpression, aliveStart, aliveEnd);
-        String dinstBeanStr = JSONObject.toJSONString(dinstBean);
-        JSONObject dinstBeanObject = JSONObject.parseObject(dinstBeanStr);
-        ResultVO<List<Map<String, String>>> result = HttpReqUtil.sendPostRequest(dessServiceUrl + "/dess/getNextTenRunTimes", dinstBeanObject, request);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("jobFrequency", StringUtil.isBlank(cornExpression) ? "" : cornExpression);
+        jsonObject.put("aliveStart", aliveStart == null ? new Date() : aliveStart);
+        jsonObject.put("aliveEnd", aliveEnd == null ? new Date() : aliveEnd);
+        System.out.println(jsonObject);
+        ResultVO<List<Map<String, String>>> result = HttpReqUtil.sendPostRequest(dessServiceUrl + "/dess/getNextTenRunTimes", jsonObject, request);
         return result.getData();
     }
-
 }

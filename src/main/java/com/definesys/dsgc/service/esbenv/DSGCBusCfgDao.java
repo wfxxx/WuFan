@@ -26,8 +26,9 @@ public class DSGCBusCfgDao {
     private MpaasQueryFactory sw;
 
 
-    public List<DSGCEnvInfoCfg> queryEnvInfoCfgListPage() {
+    public List<DSGCEnvInfoCfg> queryEnvInfoCfgListPage(String envType) {
         return sw.buildViewQuery("bus_allInfo_view")
+                .eq("envType", envType)
                 .doQuery(DSGCEnvInfoCfg.class);
     }
 
@@ -36,36 +37,36 @@ public class DSGCBusCfgDao {
         MpaasQuery mq = sw.buildQuery();
 
         String deicId = envInfoCfg.getDeicId();
-        if(StringUtil.isBlank(deicId)){
+        if (StringUtil.isBlank(deicId)) {
             mq.doInsert(envInfoCfg);
-        }else{
-            mq.eq("deic_id",envInfoCfg.getDeicId())
+        } else {
+            mq.eq("deic_id", envInfoCfg.getDeicId())
                     .doUpdate(envInfoCfg);
         }
     }
 
     public DSGCEnvInfoCfg findEnvInfoCfgByDeicId(String deicId) {
         return sw.buildQuery()
-                .eq("deicId",deicId)
+                .eq("deicId", deicId)
                 .doQueryFirst(DSGCEnvInfoCfg.class);
     }
 
     public List<DSGCEnvMachineCfg> findEnvMachineCfgByEnvCode(String envCode) {
         return sw.buildQuery()
-                .eq("env_code",envCode)
+                .eq("env_code", envCode)
                 .doQuery(DSGCEnvMachineCfg.class);
     }
 
     public List<DSGCEnvServerCfg> findEnvServerCfgByEnvCode(String envCode) {
         return sw.buildQuery()
-                .eq("env_code",envCode)
+                .eq("env_code", envCode)
                 .doQuery(DSGCEnvServerCfg.class);
     }
 
 
     public List<SvcgenDeployControl> findSvcgenDeployControlByEnvCode(String envCode) {
         return sw.buildQuery()
-                .eq("env_code",envCode)
+                .eq("env_code", envCode)
                 .doQuery(SvcgenDeployControl.class);
     }
 
@@ -73,10 +74,10 @@ public class DSGCBusCfgDao {
         MpaasQuery mq = sw.buildQuery();
 
         String demcId = envMachineCfg.getDemcId();
-        if(StringUtil.isBlank(demcId)){
+        if (StringUtil.isBlank(demcId)) {
             mq.doInsert(envMachineCfg);
-        }else{
-            mq.eq("demc_id",envMachineCfg.getDemcId())
+        } else {
+            mq.eq("demc_id", envMachineCfg.getDemcId())
                     .doUpdate(envMachineCfg);
         }
     }
@@ -86,10 +87,10 @@ public class DSGCBusCfgDao {
         MpaasQuery mq = sw.buildQuery();
 
         String descId = envServerCfg.getDescId();
-        if(StringUtil.isBlank(descId)){
+        if (StringUtil.isBlank(descId)) {
             mq.doInsert(envServerCfg);
-        }else{
-            mq.eq("desc_id",envServerCfg.getDescId())
+        } else {
+            mq.eq("desc_id", envServerCfg.getDescId())
                     .doUpdate(envServerCfg);
         }
     }
@@ -98,37 +99,38 @@ public class DSGCBusCfgDao {
         MpaasQuery mq = sw.buildQuery();
 
         String sdcId = deployControl.getSdcId();
-        if(StringUtil.isBlank(sdcId)){
+        if (StringUtil.isBlank(sdcId)) {
             mq.doInsert(deployControl);
-        }else{
-            mq.eq("sdc_id",deployControl.getSdcId())
+        } else {
+            mq.eq("sdc_id", deployControl.getSdcId())
                     .doUpdate(deployControl);
         }
     }
 
     public void delEnvMachineCfgByDemcId(String demcId) {
         sw.buildQuery()
-                .eq("demc_id",demcId)
+                .eq("demc_id", demcId)
                 .doDelete(DSGCEnvMachineCfg.class);
     }
 
     public void delEnvServerCfgBydDescId(String descId) {
         sw.buildQuery()
-                .eq("desc_id",descId)
+                .eq("desc_id", descId)
                 .doDelete(DSGCEnvServerCfg.class);
     }
 
     public void delSvcgenDeployControlBySdcId(String sdcId) {
         sw.buildQuery()
-                .eq("sdc_id",sdcId)
+                .eq("sdc_id", sdcId)
                 .doDelete(SvcgenDeployControl.class);
     }
 
-    public void delEnvInfoByDeid(String deid){
-        sw.buildQuery().eq("deic_id",deid)
+    public void delEnvInfoByDeid(String deid) {
+        sw.buildQuery().eq("deic_id", deid)
                 .doDelete(DSGCEnvInfoCfg.class);
     }
-    public List<DSGCEnvInfoCfg> queryEnvInfoCfgByEnvSeq(int envSeq){
-    return sw.buildQuery().eq("envSeq",envSeq).doQuery(DSGCEnvInfoCfg.class);
+
+    public List<DSGCEnvInfoCfg> queryEnvInfoCfgByEnvSeq(int envSeq) {
+        return sw.buildQuery().eq("envSeq", envSeq).doQuery(DSGCEnvInfoCfg.class);
     }
 }

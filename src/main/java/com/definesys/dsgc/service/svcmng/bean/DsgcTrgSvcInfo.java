@@ -16,15 +16,17 @@ import java.util.Date;
  * @Description:
  * @Date 2021/4/21 11:58
  */
-@Table(value = "DSGC_TRG_SVC_INFO")
+@Table(value = "dsgc_trg_svc_cfg")
 @ApiModel(value = "系统服务对应信息", description = "系统服务对应信息")
 public class DsgcTrgSvcInfo extends MpaasBasePojo implements Serializable {
     @RowID(type = RowIDType.UUID)
-    private String tsId;
+    private String tscId;
     @Column(value = "SVC_NO")
     private String svcNo;
     @Column(value = "SVC_TRG_TYPE")
     private String svcTrgType;
+    @Column(value = "SVC_TRG_NAME")
+    private String svcTrgName;
     @Column(value = "SVC_TRG_VALUE")
     private String svcTrgValue;
     @Column(value = "CONN_ID")
@@ -49,12 +51,20 @@ public class DsgcTrgSvcInfo extends MpaasBasePojo implements Serializable {
     @Column(value = "last_update_date")
     private Date lastUpdateDate;
 
-    public String getTsId() {
-        return tsId;
+    public String getTscId() {
+        return tscId;
     }
 
-    public void setTsId(String tsId) {
-        this.tsId = tsId;
+    public void setTscId(String tscId) {
+        this.tscId = tscId;
+    }
+
+    public String getSvcTrgName() {
+        return svcTrgName;
+    }
+
+    public void setSvcTrgName(String svcTrgName) {
+        this.svcTrgName = svcTrgName;
     }
 
     public String getSvcNo() {
@@ -129,19 +139,4 @@ public class DsgcTrgSvcInfo extends MpaasBasePojo implements Serializable {
         this.lastUpdateDate = lastUpdateDate;
     }
 
-    @Override
-    public String toString() {
-        return "DsgcTrgSvcInfo{" +
-                "tsId='" + tsId + '\'' +
-                ", svcNo='" + svcNo + '\'' +
-                ", svcTrgType='" + svcTrgType + '\'' +
-                ", svcTrgValue='" + svcTrgValue + '\'' +
-                ", connId='" + connId + '\'' +
-                ", objectVersionNumber=" + objectVersionNumber +
-                ", createdBy='" + createdBy + '\'' +
-                ", creationDate=" + creationDate +
-                ", lastUpdatedBy='" + lastUpdatedBy + '\'' +
-                ", lastUpdateDate=" + lastUpdateDate +
-                '}';
-    }
 }

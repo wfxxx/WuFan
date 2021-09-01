@@ -31,14 +31,13 @@ public class DBusService {
 
     public PageQueryResult<DessBusiness> queryBusinessList(CommonReqBean param, int pageSize, int pageIndex) {
         PageQueryResult<DessBusiness> pageQueryResult = dBusDao.queryBusinessList(param, pageSize, pageIndex);
-        List<DessBusiness> cantDelbsName = dBusDao.checkDel();
+        List<DessBusiness> businesses = dBusDao.checkDel();
         for (DessBusiness item : pageQueryResult.getResult()) {
-            for (DessBusiness ele : cantDelbsName) {
-                if (item.getBusinessName().equals(ele.getBusinessName())) {
+            item.setIsDel("true");
+            for (DessBusiness business : businesses) {
+                if (item.getBusinessId().equals(business.getBusinessId())) {
                     item.setIsDel("false");
                     break;
-                } else {
-                    item.setIsDel("true");
                 }
             }
         }

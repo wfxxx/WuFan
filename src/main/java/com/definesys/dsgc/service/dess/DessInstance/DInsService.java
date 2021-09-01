@@ -226,6 +226,7 @@ public class DInsService {
     }
 
     public DinstVO getJobScheduling(String jobNo, HttpServletRequest request) {
+        System.out.println(jobNo);
         String dessServiceUrl = this.propertiesDao.queryPropertyByKey(PROPERTY_KEY_DESS_SERVICE_URL);
         DInstBean job = dInsDao.getJobInstance(jobNo);
         DinstVO dinstVO = new DinstVO();
