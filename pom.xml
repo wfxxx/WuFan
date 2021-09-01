@@ -406,7 +406,8 @@
                         WEB-INF/lib/tools-*.jar,
                         WEB-INF/lib/jconsole-*.jar,
                         WEB-INF/lib/byte-buddy-*.jar,
-                        WEB-INF/lib/mysql-connector-java-8.0.22.jar
+                        WEB-INF/lib/mysql-connector-java-8.0.22.jar,
+                        WEB-INF/lib/sqljdbc42.jar
                     </packagingExcludes>
                     <outputDirectory>${pom.basedir}/deploy/</outputDirectory>
                 </configuration>
