@@ -96,18 +96,20 @@ public class SvcGenConnService {
 
 
     public boolean checkDBConnInfoValid(String dbType, String ip, String port, String username, String password, String sidOrServNameValue, String dbName) {
-        Boolean connSuccess = false;
         String url = "";
         if ("oracle".equals(dbType)) {
             url = "jdbc:oracle:thin:@//" + ip + ":" + port + "/" + dbName;
         } else if ("mysql".equals(dbType)) {
             url = "jdbc:mysql://" + ip + ":" + port + "/" + dbName + "?useSSL=false";
+        } else if ("sqlserver".equals(dbType)) {
+            url = "jdbc:sqlserver://" + ip + ":" + port + ";database=" + dbName + ";user=" + username + ";password=" + password + ";integratedSecurity=true";
+        } else if ("hive".equals(dbType)) {
+            url = "";
         }
         Connection connection = null;
         try {
-            connection = JdbcConnection.getDSGCDBConnectTest(dbType, url, username, password);
             System.out.println(dbType + " " + url + " " + username + " " + password);
-            connSuccess = (connection != null);
+            connection = JdbcConnection.getDSGCDBConnectTest(dbType, url, username, password);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
             throw new MpaasBusinessException("数据库驱动加载失败，无法连接数据库");
@@ -117,7 +119,7 @@ public class SvcGenConnService {
         } finally {
             DSUtils.close(connection);
         }
-        return connSuccess;
+        return true;
     }
 
     public SapConnValidBean checkSapConnInfoValid(String lang, String sapIp, String sapClient, String connUN, String connPD, String sn) {
