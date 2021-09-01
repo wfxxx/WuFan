@@ -102,9 +102,9 @@ public class SvcGenConnService {
         } else if ("mysql".equals(dbType)) {
             url = "jdbc:mysql://" + ip + ":" + port + "/" + dbName + "?useSSL=false";
         } else if ("sqlserver".equals(dbType)) {
-            url = "jdbc:sqlserver://" + ip + ":" + port + ";database=" + dbName + ";user=" + username + ";password=" + password ;
+            url = "jdbc:sqlserver://" + ip + ":" + port + ";database=" + dbName + ";user=" + username + ";password=" + password;
         } else if ("hive".equals(dbType)) {
-            url = "";
+            url = "jdbc:hive2://" + ip + ":" + port + ";database=" + dbName ;
         }
         Connection connection = null;
         try {

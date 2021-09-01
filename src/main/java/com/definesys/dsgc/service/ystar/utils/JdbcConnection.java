@@ -17,7 +17,10 @@ public class JdbcConnection {
         } else if ("sqlserver".equals(dbType)) {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             DriverManager.setLoginTimeout(3);
-            System.out.println(url);
+            return DriverManager.getConnection(url, username, password);
+        } else if ("hive".equals(dbType)) {
+            Class.forName("com.cloudera.hive.jdbc41.HS2Driver");
+            DriverManager.setLoginTimeout(30);
             return DriverManager.getConnection(url, username, password);
         }
         return null;

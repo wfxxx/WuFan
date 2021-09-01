@@ -129,6 +129,12 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/sqljdbc42.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>hive</groupId>
+            <artifactId>HiveJDBC41</artifactId>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/HiveJDBC41.jar</systemPath>
+        </dependency>
         <!--        <dependency>-->
         <!--            <groupId>mysql</groupId>-->
         <!--            <artifactId>mysql-connector-java</artifactId>-->
@@ -407,7 +413,8 @@
                         WEB-INF/lib/jconsole-*.jar,
                         WEB-INF/lib/byte-buddy-*.jar,
                         WEB-INF/lib/mysql-connector-java-8.0.22.jar,
-                        WEB-INF/lib/sqljdbc42.jar
+                        WEB-INF/lib/sqljdbc42.jar,
+                        WEB-INF/lib/HiveJDBC41.jar
                     </packagingExcludes>
                     <outputDirectory>${pom.basedir}/deploy/</outputDirectory>
                 </configuration>

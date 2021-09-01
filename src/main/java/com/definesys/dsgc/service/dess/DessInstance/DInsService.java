@@ -293,7 +293,8 @@ public class DInsService {
         if (StringUtil.isBlank(businessId)) {
             return Response.error("定时任务不存在！");
         }
-        return Response.ok().data(HttpReqUtil.sendPostRequest(dessServiceUrl + "/dess/manualJob", (JSONObject) JSONObject.toJSON(dinstBean), request));
+        instBean.setBusinessId(businessId);
+        return Response.ok().data(HttpReqUtil.sendPostRequest(dessServiceUrl + "/dess/manualJob", (JSONObject) JSONObject.toJSON(instBean), request));
     }
 
 
