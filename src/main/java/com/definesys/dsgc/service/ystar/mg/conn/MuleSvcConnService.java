@@ -124,13 +124,10 @@ public class MuleSvcConnService {
         Connection connection = null;
         try {
             connection = JdbcConnection.getDSGCDBConnectTest(dbType, url, username, password);
-            connSuccess = connection != null;
         } catch (ClassNotFoundException e) {
-            connSuccess = false;
             e.printStackTrace();
             throw new MpaasBusinessException("数据库驱动加载失败，无法连接数据库");
         } catch (SQLException e) {
-            connSuccess = false;
             e.printStackTrace();
             throw new MpaasBusinessException("getDBConnect异常，无法连接数据库");
         } finally {
@@ -141,7 +138,7 @@ public class MuleSvcConnService {
 
             }
         }
-        return connSuccess;
+        return true;
     }
 
 

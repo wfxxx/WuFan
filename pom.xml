@@ -123,6 +123,12 @@
             <version>8.0.22</version>
             <systemPath>${project.basedir}/lib/mysql-connector-java-8.0.22.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>sqlserver</groupId>
+            <artifactId>sqljdbc42</artifactId>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/sqljdbc42.jar</systemPath>
+        </dependency>
         <!--        <dependency>-->
         <!--            <groupId>mysql</groupId>-->
         <!--            <artifactId>mysql-connector-java</artifactId>-->
