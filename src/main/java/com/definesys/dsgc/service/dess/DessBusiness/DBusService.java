@@ -25,9 +25,6 @@ public class DBusService {
     @Autowired
     private DBusDao dBusDao;
 
-    @Autowired
-    private FndPropertiesService fndPropertiesService;
-
 
     public PageQueryResult<DessBusiness> queryBusinessList(CommonReqBean param, int pageSize, int pageIndex) {
         PageQueryResult<DessBusiness> pageQueryResult = dBusDao.queryBusinessList(param, pageSize, pageIndex);

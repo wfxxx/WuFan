@@ -11,7 +11,7 @@ import java.util.Date;
  * @Date 2020-7-28 18:21
  * @Version 1.0
  **/
-@Table(value = "DESS_LOG")
+@Table(value = "dess_log")
 public class DessLog {
     @RowID(sequence = "DESS_LOG_S", type = RowIDType.AUTO)
     private String logId;

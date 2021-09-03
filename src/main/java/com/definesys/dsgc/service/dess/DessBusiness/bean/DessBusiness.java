@@ -14,7 +14,7 @@ import java.util.List;
  * @Date 2020-7-28 18:19
  * @Version 1.0
  **/
-@Table(value = "DESS_BUSINESS")
+@Table(value = "dess_business")
 public class DessBusiness {
     @RowID(type = RowIDType.UUID)
     private String businessId;

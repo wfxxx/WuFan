@@ -12,6 +12,7 @@ public class FtpUtil {
         FTPClient ftp = new FTPClient();
         //验证登录
         try {
+            ftp.setConnectTimeout(10000);
             ftp.connect(ip, port);
             return ftp.login(name, pwd);
         } catch (IOException e) {

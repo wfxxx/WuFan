@@ -5,11 +5,11 @@ import com.definesys.mpaas.query.annotation.*;
 /**
  * @ClassName DessLogPayload
  * @Description TODO
- * @Author Xueyunlong
+ * @Author ystar
  * @Date 2020-8-3 14:30
  * @Version 1.0
  **/
-@Table("DESS_LOG_PAYLOAD")
+@Table("dess_log_payload")
 public class DessLogPayload {
 
     private String logId  ;

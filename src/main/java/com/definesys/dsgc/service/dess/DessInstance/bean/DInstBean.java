@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * @ClassName DInstBean
  * @Description TODO
- * @Author Xueyunlong
+ * @Author ystar
  * @Date 2020-7-28 18:18
  * @Version 1.0
  **/
@@ -17,10 +17,10 @@ import java.util.List;
         @SQL(view = "V_DESS_INSTANCE",
                 sql = "select di.JOB_NO,di.JOB_NAME,di.JOB_TYPE,di.JOB_STATUS,di.NEXT_DO_TIME,di.ALIVE_START,di.ALIVE_END,di.GROUP_NAME,di.SUCESS_TIMES,di.FAIL_TIMES,di.AVG_RUN_TIME\n" +
                         ",di.JOB_DESCRIPTION,di.JOB_RATE,di.JOB_FREQUENCY,db.BUSINESS_ID,db.BUSINESS_TYPE,db.BUSINESS_NAME,db.HEADER_PAYLOAD,db.BODY_PAYLOAD\n" +
-                        "from DESS_INSTANCE di left join DESS_BUSINESS db on di.BUSINESS_ID = db.BUSINESS_ID "
+                        "from dess_instance di left join dess_business db on di.BUSINESS_ID = db.BUSINESS_ID "
         )
 })
-@Table(value = "DESS_INSTANCE")
+@Table(value = "dess_instance")
 public class DInstBean {
 
     private String jobNo;

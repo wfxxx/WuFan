@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.io.Serializable;
 import java.util.Date;
 
-@Table(value = "DAG_DEPLOY_STAT")
+@Table(value = "dag_deploy_stat")
 public class DagDeployStatBean  extends MpaasBasePojo implements Serializable {
     @RowID(type = RowIDType.UUID)
     private String ddsId;

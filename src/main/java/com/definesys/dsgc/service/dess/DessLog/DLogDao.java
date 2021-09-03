@@ -19,7 +19,7 @@ import java.util.Map;
 /**
  * @ClassName DLogDao
  * @Description TODO
- * @Author Xueyunlong
+ * @Author ystar
  * @Date 2020-8-3 13:30
  * @Version 1.0
  **/
